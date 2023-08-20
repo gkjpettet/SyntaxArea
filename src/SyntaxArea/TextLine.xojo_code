@@ -586,7 +586,7 @@ Inherits SyntaxArea.TextSegment
 		    If(word.Type = TYPE_WORD Or word.Type = TYPE_PLACEHOLDER Or displayInvisible) And _
 		      x + word.Width >= 0 And x < g.Width And y >= 0 And y <= g.Height + g.TextHeight Then
 		      If word.Type = TYPE_TAB Then
-		         // A small hack to make the visible chaacterr the same width as the tab
+		        // A small hack to make the visible chaacterr the same width as the tab
 		        s = VISIBLE_TAB_CHAR
 		      ElseIf word.Type = TYPE_SPACE Then
 		        s = VISIBLE_SPACE_CHAR

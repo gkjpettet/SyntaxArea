@@ -1,7 +1,8 @@
 #tag Class
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
-	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
+Implements MessageCentre.MessageReceiver
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
 		Sub Opening()
 		  mBlockBeginPosX = -1
@@ -154,6 +155,14 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ReceiveMessage(theMessage As MessageCentre.Message)
+		  /// Part of the MessageCentre.MessageReceiver interface.
+		  
+		  #Pragma Warning "TODO: Implement!"
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 526564726177732074686520656E746972652063616E7661732E
 		Sub Redraw(forced as Boolean = False)
 		  /// Redraws the entire canvas.
@@ -212,6 +221,21 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		Event Opening()
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  #Pragma Warning "TODO: Remove this dependency on a bundled image"
+			  
+			  If gBlockstartimage = Nil Then
+			    gBlockstartimage = SyntaxArea.LoadMaskedPicture(blockStartMarker)
+			  End If
+			  
+			  Return gBlockstartimage
+			End Get
+		#tag EndGetter
+		Protected Shared BlockStartImage As Picture
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520706F736974696F6E206F66207468652063617265742E
 		#tag Getter
@@ -275,7 +299,7 @@ Inherits SyntaxArea.NSScrollViewCanvas
 			Set
 			  If mEnablelinefoldings And Not value Then Lines.UnfoldAll
 			  mEnableLineFoldings = value
-			  LineNumberOffset = 0
+			  mLineNumberOffset = 0
 			  UpdateDesiredColumn
 			  InvalidateAllLines
 			  Redraw
@@ -314,6 +338,10 @@ Inherits SyntaxArea.NSScrollViewCanvas
 
 	#tag Property, Flags = &h21
 		Private FullRefresh As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared gBlockStartImage As Picture
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C2069676E6F726520746865206E6578742063616C6C20746F207265647261772E
@@ -379,6 +407,23 @@ Inherits SyntaxArea.NSScrollViewCanvas
 			End Get
 		#tag EndGetter
 		LineNumberOffset As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mLineNumbersFontSize
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mLineNumbersFontSize = Min(value, Max(FontSize, value))
+			  mLineNumberOffset = 0
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		LineNumbersFontSize As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 546865206C696E65206E756D626572207465787420666F6E742E
@@ -516,6 +561,10 @@ Inherits SyntaxArea.NSScrollViewCanvas
 
 	#tag Property, Flags = &h21
 		Private mLineNumberOffset As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLineNumbersFontSize As Integer = 9
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1006,6 +1055,14 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabWidth"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersFontSize"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
