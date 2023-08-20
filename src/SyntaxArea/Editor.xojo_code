@@ -53,20 +53,29 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 43616C63756C6174657320746865206D6178696D756D20766572746963616C207363726F6C6C6261722076616C75652E
-		Protected Sub CalculateMaxVerticalSB()
+	#tag Method, Flags = &h21, Description = 43616C63756C6174657320746865206D6178696D756D20766572746963616C207363726F6C6C6261722076616C75652E
+		Private Sub CalculateMaxVerticalSB()
 		  /// Calculates the maximum vertical scrollbar value.
 		  
 		  If mVerticalScrollbar = Nil Then Return
 		  
 		  If EnableLineFoldings Then
-		    mVerticalScrollbar.MaximumValue = lines.Count - lines.invisibleLines - MaxVisibleLines
+		    mVerticalScrollbar.MaximumValue = Lines.Count - Lines.invisibleLines - MaxVisibleLines
 		  Else
-		    mVerticalScrollbar.MaximumValue = lines.Count - MaxVisibleLines
+		    mVerticalScrollbar.MaximumValue = Lines.Count - MaxVisibleLines
 		  End If
 		  
 		  // Update the pageStep so a page jump is always the number of visible lines or a page.
 		  mVerticalScrollbar.PageStep = MaxVisibleLines - 1
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 4368616E676573207468652063757272656E742073656C656374696F6E2E
+		Private Sub ChangeSelection(selStart As Integer, selLength As Integer, viaDoubleClick As Boolean = False)
+		  /// Changes the current selection.
+		  
+		  #Pragma Warning "TODO: Implement!"
 		  
 		End Sub
 	#tag EndMethod
@@ -93,6 +102,66 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 4D61726B7320616C6C206C696E657320666F7220726564726177696E672E
+		Sub InvalidateAllLines()
+		  /// Marks all lines for redrawing.
+		  
+		  InvalidateLine(-1)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 496E76616C69646174657320286D61726B7320666F7220726564726177696E67292074686520676976656E206C696E652E20496620696E646578203C2030207468656E20696E76616C69646174657320616C6C206C696E65732E
+		Sub InvalidateLine(index As Integer)
+		  /// Invalidates (marks for redrawing) the given line.
+		  /// If index < 0 then invalidates all lines.
+		  
+		  mFullRefresh = index < 0 or mFullRefresh
+		  InvalidLines.Value(index) = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865726527732061206E6577206C696E652074686174277320746865206C6F6E67657374206C696E652E
+		Private Sub MaxLineLengthChanged(longestLineIndex As Integer)
+		  /// Called by the line manager, when there's a new line that's the longest line.
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  If longestLineIndex < 0 Then Return
+		  
+		  // OPTIMISE: Consider getting the screen width by reading all the word lengths in this line.
+		  Var maxLine As SyntaxArea.TextLine = Lines.GetLine(longestLineIndex)
+		  If maxline = Nil Or Abs(maxLine.length - mLastLongestLineLength) < 2 Then Return
+		  
+		  // Cache the length.
+		  mLastLongestLineLength = maxLine.length
+		  
+		  // Measure the string in pixels.
+		  Var tmp As Picture = TemporaryPicture
+		  Var maxLength As Single = maxLine.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters)
+		  If maxLength = mLastLongestLinePixels Then Return
+		  
+		  mLastLongestLinePixels = maxLength
+		  
+		  // Raise our custom event.
+		  RaiseEvent MaxLineLengthChanged(mLastLongestLinePixels)
+		  
+		  // Handle the horizontal scrollbar.
+		  CalculateMaxHorizontalSB
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 526564726177732074686520656E746972652063616E7661732E
+		Sub Redraw(forced as Boolean = False)
+		  /// Redraws the entire canvas.
+		  
+		  #Pragma Warning "TODO: Implement!"
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 52657475726E7320612074656D706F726172792070696374757265206F626A6563742077697468207468652063757272656E742054657874466F6E7420616E6420466F6E7453697A6520746861742063616E206265207573656420666F722067726170686963616C2063616C63756C6174696F6E732E
 		Private Function TemporaryPicture() As Picture
 		  /// Returns a temporary picture object with the current TextFont and FontSize that can be used for graphical calculations.
@@ -111,11 +180,62 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateDesiredColumn(pos As Integer = -1)
+		  // Saves the screen position of the given character offset.
+		  
+		  If Lines.Count = 0 Then Return
+		  
+		  If pos < 0 Then pos = CaretPos
+		  
+		  mDesiredColumnCharPos = pos
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0, Description = 546865206C656E677468206F6620746865206C6F6E67657374206C696E6520686173206368616E6765642E
+		Event MaxLineLengthChanged(maxLineLengthInPixels As Single)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206F70656E696E672E
 		Event Opening()
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520706F736974696F6E206F66207468652063617265742E
+		#tag Getter
+			Get
+			  Return mCaretPos
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value = mCaretPos Then Return
+			  
+			  ChangeSelection(value, 0)
+			  
+			End Set
+		#tag EndSetter
+		CaretPos As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E20696E76697369626C6520636861726163746572732028652E672E207370616365732C2072657475726E732C20657463292077696C6C20626520647261776E2E
+		#tag Getter
+			Get
+			  Return mDisplayInvisibleCharacters
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mDisplayInvisibleCharacters = value
+			  UpdateDesiredColumn
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		DisplayInvisibleCharacters As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E206C696E65206E756D626572732077696C6C20626520646973706C617965642E
 		#tag Getter
@@ -134,6 +254,26 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		DisplayLineNumbers As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  return mEnablelinefoldings
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If mEnablelinefoldings And Not value Then Lines.UnfoldAll
+			  mEnableLineFoldings = value
+			  LineNumberOffset = 0
+			  UpdateDesiredColumn
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		EnableLineFoldings As Boolean
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0, Description = 5468652063757272656E7420666F6E742073697A652E
 		#tag Getter
 			Get
@@ -147,9 +287,9 @@ Inherits SyntaxArea.NSScrollViewCanvas
 			  mFontSize = value
 			  TextHeight = 0
 			  
-			  lastLongestLineLength = 0
-			  lastLongestLinePixels = 0
-			  MaxLineLengthChanged(lines.LongestLineIdx)
+			  mlastLongestLineLength = 0
+			  mLastLongestLinePixels = 0
+			  MaxLineLengthChanged(Lines.LongestLineIdx)
 			  
 			  CalculateMaxHorizontalSB
 			  CalculateMaxVerticalSB
@@ -160,6 +300,10 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		#tag EndSetter
 		FontSize As Integer
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private FullRefresh As Boolean
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C2069676E6F726520746865206E6578742063616C6C20746F207265647261772E
 		#tag Getter
@@ -185,6 +329,23 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		IgnoreRepaint As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h21, Description = 4B6579203D206C696E6520696E6465782C2056616C7565203D20426F6F6C65616E
+		#tag Getter
+			Get
+			  If mInvalidlines = Nil Then mInvalidlines = New Dictionary
+			  
+			  Return mInvalidlines
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mInvalidlines = value
+			End Set
+		#tag EndSetter
+		Private InvalidLines As Dictionary
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -195,7 +356,7 @@ Inherits SyntaxArea.NSScrollViewCanvas
 			    tmp.Graphics.FontName = LineNumbersTextFont
 			    tmp.Graphics.FontSize = LineNumbersFontSize
 			    tmp.Graphics.Bold = True
-			    mLineNumberOffset = tmp.Graphics.TextWidth(str(lines.Count)) + 10
+			    mLineNumberOffset = tmp.Graphics.TextWidth(str(Lines.Count)) + 10
 			    
 			    If EnableLineFoldings Then
 			      mLineNumberOffset = LineNumberOffset + blockStartImage.Width + 2
@@ -227,12 +388,59 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		LineNumbersTextFont As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1, Description = 54686520656469746F722773206C696E65206D616E616765722E
+		#tag Getter
+			Get
+			  If mLines = Nil Then
+			    mLines = New SyntaxArea.LineManager(TextStorage, TabWidth)
+			    
+			    // Register to receive messages from this line manager only.
+			    Self.RegisterForMessage(mLines)
+			  End If
+			  
+			  Return mLines
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mLines = value
+			End Set
+		#tag EndSetter
+		Protected Lines As SyntaxArea.LineManager
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 546865206E756D626572206F66206C696E657320746861742063616E20666974206F6E746F207468652063616E7661732E
+		#tag Note
+			Careful:
+			This returns just the number of rows that fit into the Canvas.
+			This is not the same as the number of text lines that may be appearing in
+			the Canvas if line folding is used! Get that value from `Self.VisibleAndHiddenLines()`.
+		#tag EndNote
+		#tag Getter
+			Get
+			  // Check to prevent a `ThreadAccessingUIException` when called from a thread.
+			  If Thread.Current = Nil Then
+			    mMaxVisibleLines = Min(Me.Height / TextHeight, Lines.Count)
+			  End
+			  
+			  Return mMaxVisibleLines
+			  
+			End Get
+		#tag EndGetter
+		MaxVisibleLines As Integer
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mBlockBeginPosX As Double = -1
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCaretBlinker As CaretBlinker
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCaretPos As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -244,11 +452,27 @@ Inherits SyntaxArea.NSScrollViewCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDesiredColumnCharPos As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDisplayInvisibleCharacters As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDisplayLineNumbers As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mEnableLineFoldings As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mFontSize As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFullRefresh As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -264,6 +488,18 @@ Inherits SyntaxArea.NSScrollViewCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mIndentString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, Description = 4B6579203D206C696E6520696E6465782C2056616C7565203D20426F6F6C65616E
+		Private mInvalidlines As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastLongestLineLength As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLastLongestLinePixels As Single
 	#tag EndProperty
 
@@ -273,6 +509,14 @@ Inherits SyntaxArea.NSScrollViewCanvas
 
 	#tag Property, Flags = &h21
 		Private mLineNumbersTextFont As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLines As SyntaxArea.LineManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMaxVisibleLines As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -287,6 +531,10 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		Private mSelectionStart As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mTabWidth As Integer = 4
+	#tag EndProperty
+
 	#tag Property, Flags = &h21, Description = 41206361636865642074656D706F7261727920706963747572652074686174206973207573656420696E7465726E616C6C7920666F722067726170686963732063616C63756C6174696F6E732E
 		Private mTempPicture As Picture
 	#tag EndProperty
@@ -297,6 +545,10 @@ Inherits SyntaxArea.NSScrollViewCanvas
 
 	#tag Property, Flags = &h21
 		Private mTextHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTextStorage As SyntaxArea.GapBuffer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -353,6 +605,27 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		SelectionStart As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 5468652077696474682028696E20636F6C756D6E7329206F662061207461622E
+		#tag Getter
+			Get
+			  Return mTabwidth
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value <= 0 Then value = 1
+			  
+			  mIndentString = ""
+			  mTabWidth = value
+			  Lines.TabWidth = value
+			  UpdateDesiredColumn
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		TabWidth As Integer
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0, Description = 5468652063757272656E7420656469746F7220666F6E742E
 		#tag Getter
 			Get
@@ -396,6 +669,29 @@ Inherits SyntaxArea.NSScrollViewCanvas
 	#tag Property, Flags = &h0, Description = 54686520746578742073656C656374696F6E20636F6C6F75722E
 		TextSelectionColor As ColorGroup
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h1, Description = 54686520746578742073746F7261676520666F72207468697320656469746F722E
+		#tag Getter
+			Get
+			  If mTextStorage = Nil Then
+			    // Create a new gap buffer...
+			    mTextStorage = New SyntaxArea.GapBuffer
+			    
+			    // and blinker timer.
+			    mCaretBlinker = New CaretBlinker(Self)
+			  End If
+			  
+			  Return mTextStorage
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mTextstorage = value
+			End Set
+		#tag EndSetter
+		Protected TextStorage As SyntaxArea.GapBuffer
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = DEFAULT_FONT, Type = String, Dynamic = False, Default = \"", Scope = Public, Description = 5468652064656661756C7420666F6E7420746F207573652E
@@ -619,6 +915,86 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SelectionStart"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextSelectionColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumberOffset"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayLineNumbers"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersTextFont"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RightScrollMargin"
+			Visible=false
+			Group="Behavior"
+			InitialValue="150"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaxVisibleLines"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EnableLineFoldings"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayInvisibleCharacters"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CaretPos"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabWidth"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

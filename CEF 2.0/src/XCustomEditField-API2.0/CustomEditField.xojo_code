@@ -1584,7 +1584,7 @@ Implements MessageReceiver
 		    end if
 		    
 		    // repaint gutter background, if needed
-		    if fullRefresh or lastDrawnTopLine <> ScrollPosition then
+		    if mfullRefresh or lastDrawnTopLine <> ScrollPosition then
 		      gg.DrawingColor = GutterBackgroundColor.lighterColor(10, true)
 		      gg.FillRectangle LineNumberOffset - FoldingOffset, 0, FoldingOffset, g.Height
 		      gg.DrawingColor = GutterBackgroundColor
@@ -1644,7 +1644,7 @@ Implements MessageReceiver
 		    
 		    if _
 		      invalidLines.HasKey(lineIdx) or _
-		      fullRefresh or _
+		      mfullRefresh or _
 		      selection.IsLineIndexInRange(lineIdx) or _
 		      (previouslyDrawnSelection <> nil and previouslyDrawnSelection.IsLineIndexInRange(lineIdx)) then
 		      
@@ -1831,7 +1831,7 @@ Implements MessageReceiver
 		  
 		  //invalid lines are no longer invalid
 		  invalidLines.RemoveAll
-		  fullRefresh = False
+		  mfullRefresh = False
 		  previouslyDrawnSelection = selection
 		  
 		  if MatchingBlockHighlight <> nil then
@@ -2773,7 +2773,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h0
 		Sub InvalidateLine(index as integer)
 		  //invalidates the given line, that is, mark it for redrawing
-		  fullRefresh = index < 0 or fullRefresh
+		  mfullRefresh = index < 0 or mfullRefresh
 		  invalidLines.Value(index) = true
 		End Sub
 	#tag EndMethod
@@ -3002,10 +3002,10 @@ Implements MessageReceiver
 		  //oh yes... this can be a lot better, for starters we can get the screen width by reading all the word lengths in this line... I guess I'm just lazy.
 		  if longestLineIndex < 0 then Return
 		  var maxLine as TextLine = lines.getLine(longestLineIndex)
-		  if maxline = nil or abs(maxLine.length - lastLongestLineLength) < 2 then Return
+		  if maxline = nil or abs(maxLine.length - mlastLongestLineLength) < 2 then Return
 		  
 		  //cache length
-		  lastLongestLineLength = maxLine.length
+		  mlastLongestLineLength = maxLine.length
 		  
 		  //measure string in pixels
 		  var tmp as Picture = TemporaryPicture
@@ -4691,12 +4691,12 @@ Implements MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub updateDesiredColumn(charPos as integer = - 1)
+		Protected Sub updateDesiredColumn(pos as integer = -1)
 		  //saves the screenposition of the given offset
 		  if lines.Count = 0 then Return
 		  
-		  if CharPos < 0 then charPos = CaretPos
-		  desiredColumnCharPos = CharPos
+		  if pos < 0 then pos = Self.CaretPos
+		  mdesiredColumnCharPos = pos
 		End Sub
 	#tag EndMethod
 
@@ -5281,10 +5281,10 @@ Implements MessageReceiver
 		#tag Getter
 			Get
 			  var x, y as Double
-			  var calcPos as Integer = desiredColumnCharPos
+			  var calcPos as Integer = mdesiredColumnCharPos
 			  
 			  //or the caretpos
-			  if desiredColumnCharPos < 0 then calcPos = CaretPos
+			  if mdesiredColumnCharPos < 0 then calcPos = CaretPos
 			  
 			  //find screenpos
 			  XYatCharPos(calcPos, x, y)
@@ -5350,10 +5350,6 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h1
 		Protected cursorIsIbeam As boolean = true
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected desiredColumnCharPos As Integer
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5500,7 +5496,7 @@ Implements MessageReceiver
 			  mFontSize = value
 			  TextHeight = 0
 			  
-			  lastLongestLineLength = 0
+			  mlastLongestLineLength = 0
 			  mlastLongestLinePixels = 0
 			  MaxLineLengthChanged(lines.LongestLineIdx)
 			  
@@ -5513,10 +5509,6 @@ Implements MessageReceiver
 		#tag EndSetter
 		FontSize As Integer
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h1
-		Protected fullRefresh As boolean
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared gBlockendimage As picture
@@ -5730,10 +5722,6 @@ Implements MessageReceiver
 		Protected lastDrawnTopLine As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected lastLongestLineLength As Integer
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private lastMouseDownX As Integer
 	#tag EndProperty
@@ -5779,25 +5767,25 @@ Implements MessageReceiver
 			Get
 			  if not displayLineNumbers then Return 0
 			  
-			  if mlineNumOffset = 0 then
+			  if mlineNumberOffset = 0 then
 			    var tmp as Picture = TemporaryPicture
 			    tmp.graphics.FontName = LineNumbersTextFont
 			    tmp.graphics.FontSize = LineNumbersFontSize
 			    tmp.Graphics.Bold = true
-			    mlineNumOffset = tmp.graphics.TextWidth(str(lines.Count)) + 10
+			    mlineNumberOffset = tmp.graphics.TextWidth(str(lines.Count)) + 10
 			    
 			    if EnableLineFoldings then
-			      mlineNumOffset = LineNumberOffset + blockStartImage.Width + 2
+			      mlineNumberOffset = LineNumberOffset + blockStartImage.Width + 2
 			    end if
 			  end if
 			  
-			  return mlineNumOffset
+			  return mlineNumberOffset
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  #pragma unused value
-			  mlineNumOffset = 0
+			  mlineNumberOffset = 0
 			End Set
 		#tag EndSetter
 		Protected LineNumberOffset As Integer
@@ -5934,6 +5922,10 @@ Implements MessageReceiver
 		Private mDarkModeColors As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mdesiredColumnCharPos As Integer
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mDisplaydirtylines As boolean
 	#tag EndProperty
@@ -5960,6 +5952,10 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mFontSize As Integer = 0
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mfullRefresh As boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -6002,6 +5998,10 @@ Implements MessageReceiver
 		Private mKeepEntireTextIndented As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mlastLongestLineLength As Integer
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected mlastLongestLinePixels As single
 	#tag EndProperty
@@ -6011,15 +6011,15 @@ Implements MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mlineNumberOffset As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLinenumbersFontSize As Integer = 9
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLinenumberstextfont As string = "System"
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mlineNumOffset As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
