@@ -487,7 +487,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Shared Function findNext(ignoreCase as boolean, wrapAround as boolean, redraw as boolean, startPos as integer) As boolean
-		  dim Target as CustomEditField = CustomEditField.CurrentFocusedField
+		  var Target as CustomEditField = CustomEditField.CurrentFocusedField
 		  if Target = nil then Return false
 		  
 		  addFindTerm
@@ -509,7 +509,7 @@ End
 		    lastWrapAroundValue = CurrentFindWindow.wrapAround.Value
 		  end if
 		  
-		  dim Target as CustomEditField = CustomEditField.CurrentFocusedField
+		  var Target as CustomEditField = CustomEditField.CurrentFocusedField
 		  if Target = nil then Return
 		  
 		  addReplaceTerm
@@ -520,18 +520,18 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Shared Sub replaceAll()
-		  dim Target as CustomEditField = CustomEditField.CurrentFocusedField
+		  var Target as CustomEditField = CustomEditField.CurrentFocusedField
 		  if Target = nil then Return
 		  
-		  dim count as Integer
-		  dim eventID as Integer = System.Ticks // -> grouped undo
+		  var count as Integer
+		  var eventID as Integer = System.Ticks // -> grouped undo
 		  
 		  addFindTerm
 		  addReplaceTerm
 		  Target.ignoreRepaint = true
-		  dim startPos as Integer = 0 //start at begining of file
+		  var startPos as Integer = 0 //start at begining of file
 		  while findNext(lastIgnoreCaseValue, false, false, startPos) //WITHOUT wrapping, since this could lead to an infinite loop if replacement contains find term.
-		    Target.private_replace(Target.SelStart, Target.SelLength, lastReplaceTerm, true, eventID)
+		    Target.private_replace(Target.SelectionStart, Target.SelectionLength, lastReplaceTerm, true, eventID)
 		    count = count + 1
 		    startPos = Target.CaretPos //update startPos
 		  wend

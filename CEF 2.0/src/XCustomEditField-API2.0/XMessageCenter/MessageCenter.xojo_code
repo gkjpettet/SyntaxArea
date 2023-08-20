@@ -37,7 +37,7 @@ Protected Module MessageCenter
 		    messages = new dictionary
 		  end if
 		  
-		  dim tmp as dictionary
+		  var tmp as dictionary
 		  
 		  if messages.hasKey(messageType) then
 		    tmp = messages.value(messageType)
@@ -59,14 +59,14 @@ Protected Module MessageCenter
 		  
 		  if messages = nil then return //no receivers
 		  
-		  dim type as Variant
+		  var type as Variant
 		  type = theMessage.messageType
 		  
 		  //no receivers for msg
 		  if not messages.hasKey(type) then return
 		  
-		  dim receivers as dictionary
-		  dim receiver as messageReceiver
+		  var receivers as dictionary
+		  var receiver as messageReceiver
 		  
 		  //send to all receivers
 		  receivers=messages.value(type)
@@ -85,7 +85,7 @@ Protected Module MessageCenter
 		  if not messages.hasKey(messageType) then return
 		  
 		  //remove receiver
-		  dim receivers as dictionary
+		  var receivers as dictionary
 		  receivers = messages.value(messageType)
 		  
 		  if not receivers.hasKey(theReceiver) then Return
@@ -100,10 +100,10 @@ Protected Module MessageCenter
 		  if messages = nil then return //no receivers
 		  
 		  //find the object within our registered receivers
-		  dim item as integer
-		  dim type as Variant
-		  dim receivers as dictionary
-		  dim typesToRemove() as Variant
+		  var item as integer
+		  var type as Variant
+		  var receivers as dictionary
+		  var typesToRemove() as Variant
 		  
 		  for item=0 to messages.KeyCount-1
 		    //msg type

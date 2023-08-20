@@ -20,8 +20,8 @@ Inherits DesktopApplication
 
 	#tag Event
 		Function UnhandledException(error As RuntimeException) As Boolean
-		  Dim md As New MessageDialog
-		  Dim trimmedStack() As String
+		  var md As New MessageDialog
+		  var trimmedStack() As String
 		  trimmedStack = error.Stack
 		  // Prepare the error dialog
 		  md.Message = "Oops??"
@@ -44,7 +44,7 @@ Inherits DesktopApplication
 
 	#tag MenuHandler
 		Function FileNewWIndow() As Boolean Handles FileNewWIndow.Action
-		  dim win as new DemoWindow
+		  var win as new DemoWindow
 		  win.Show
 		  Return True
 		  
@@ -53,21 +53,21 @@ Inherits DesktopApplication
 
 	#tag MenuHandler
 		Function FileOpenFile() As Boolean Handles FileOpenFile.Action
-		  dim file as FolderItem = FolderItem.ShowOpenFileDialog("")
+		  var file as FolderItem = FolderItem.ShowOpenFileDialog("")
 		  if file = nil then Return true
 		  
-		  dim stream as BinaryStream = BinaryStream.Open(file)
+		  var stream as BinaryStream = BinaryStream.Open(file)
 		  if stream = nil then Return true
 		  
-		  dim tmp as new MemoryBlock(stream.Length)
+		  var tmp as new MemoryBlock(stream.Length)
 		  tmp.StringValue(0, stream.Length) = stream.Read(stream.Length)
 		  stream.Close
 		  
-		  dim encoding as TextEncoding = DemoWindow.GuessEncoding(tmp.StringValue(0, tmp.size))
+		  var encoding as TextEncoding = DemoWindow.GuessEncoding(tmp.StringValue(0, tmp.size))
 		  
 		  if encoding <> nil and not encoding.Equals(Encodings.UTF16) and not encoding.Equals(Encodings.UTF8) then encoding = nil
 		  
-		  dim w as new DemoWindow
+		  var w as new DemoWindow
 		  w.TestField.Text = tmp.StringValue(0, tmp.Size).defineEncoding(encoding)
 		  'w.TestField.ClearDirtyLines
 		  w.Show
@@ -81,7 +81,7 @@ Inherits DesktopApplication
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  dim f as FolderItem = App.ExecutableFile.Parent
+			  var f as FolderItem = App.ExecutableFile.Parent
 			  
 			  #if TargetMacOS
 			    
@@ -92,10 +92,10 @@ Inherits DesktopApplication
 			    
 			  #else
 			    
-			    dim parent as FolderItem = f
+			    var parent as FolderItem = f
 			    f = parent.Child("Resources")
 			    if not f.Exists then
-			      dim appName as string = App.ExecutableFile.Name
+			      var appName as string = App.ExecutableFile.Name
 			      if appName.Right(4) = ".exe" then
 			        appName = appName.Left(appName.Length - 4)
 			      end if

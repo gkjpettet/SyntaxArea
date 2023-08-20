@@ -24,10 +24,10 @@ Protected Module Debugging
 		  #pragma DisableBackgroundTasks
 		  
 		  if AccumulatedTimesOfNames <> nil then
-		    dim lines() as String
+		    var lines() as String
 		    
 		    for each name as String in AccumulatedTimesOfNames.Keys
-		      dim t as Double = AccumulatedTimesOfNames.Value(name).DoubleValue
+		      var t as Double = AccumulatedTimesOfNames.Value(name).DoubleValue
 		      lines.Add name + ": " + Str (t / 1000, "#") + "ms"
 		    next
 		    
@@ -56,7 +56,7 @@ Protected Module Debugging
 		Protected Sub AccumulationStop(name as String)
 		  if DebugBuild or LogToFile then
 		    
-		    dim now as Double = System.Microseconds
+		    var now as Double = System.Microseconds
 		    
 		    if AccumulatedStartsOfNames = nil then
 		      break // oops - you called Stop without calling Start first!
@@ -64,7 +64,7 @@ Protected Module Debugging
 		    end if
 		    
 		    // look up the start time for 'name'
-		    dim start as Double = AccumulatedStartsOfNames.Lookup (name, 0)
+		    var start as Double = AccumulatedStartsOfNames.Lookup (name, 0)
 		    if start = 0 then
 		      break // oops - you called Stop without calling Start first!
 		      return
@@ -84,7 +84,7 @@ Protected Module Debugging
 		Protected Sub DebugLog(s as String)
 		  if DebugBuild or LogToFile then
 		    static spc as String = "                                                                                                              "
-		    dim msg as String = spc.Left(Depth*2) + s.Trim
+		    var msg as String = spc.Left(Depth*2) + s.Trim
 		    System.DebugLog msg
 		    if LogToFile then
 		      TextOutputStream.Open(LogFile()).WriteLine DateTime.Now.SQLDateTime + " " + msg

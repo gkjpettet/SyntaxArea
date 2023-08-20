@@ -39,8 +39,8 @@ Protected Class HighlightContext
 		  // Appends this context to the parent xml node.
 		  // This is done to export the syntax definition as an xml file.
 		  
-		  dim xdoc as XmlDocument
-		  dim node, context as XmlNode
+		  var xdoc as XmlDocument
+		  var node, context as XmlNode
 		  
 		  xdoc = parent.OwnerDocument
 		  context=parent.AppendChild(xdoc.CreateElement("highlightContext"))
@@ -98,8 +98,8 @@ Protected Class HighlightContext
 		  //keywords
 		  if keywords.LastIndex > -1 then
 		    node=context.AppendChild(xdoc.CreateElement("keywords"))
-		    dim tmp as String
-		    dim kw as XmlNode
+		    var tmp as String
+		    var kw as XmlNode
 		    for each tmp in keywords
 		      kw=node.AppendChild(xdoc.CreateElement("string"))
 		      kw.AppendChild(xdoc.CreateTextNode(tmp))
@@ -111,8 +111,8 @@ Protected Class HighlightContext
 		  //regexes
 		  if regexes.LastIndex > -1 then
 		    node=context.AppendChild(xdoc.CreateElement("regExes"))
-		    dim tmp as String
-		    dim kw as XmlNode
+		    var tmp as String
+		    var kw as XmlNode
 		    for each tmp in regexes
 		      kw=node.AppendChild(xdoc.CreateElement("string"))
 		      kw.AppendChild(xdoc.CreateTextNode(tmp))
@@ -122,7 +122,7 @@ Protected Class HighlightContext
 		  end if
 		  
 		  //finally, subcontexs, if any
-		  dim subContext as HighlightContext
+		  var subContext as HighlightContext
 		  for each subContext in subContexts
 		    if subContext.Name = "fieldwhitespace" or subContext.isPlaceholder then Continue for
 		    subContext.appendToXMLNode(context,depth+1)
@@ -143,7 +143,7 @@ Protected Class HighlightContext
 		  
 		  //if add whitespace tokenizer
 		  if createBlank then
-		    dim blankSpaceContext as new HighlightContext(false, false)
+		    var blankSpaceContext as new HighlightContext(false, false)
 		    blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))"'"([\s])"
 		    blankSpaceContext.Name = "fieldwhitespace"
 		    addSubContext(blankSpaceContext)
@@ -153,7 +153,7 @@ Protected Class HighlightContext
 
 	#tag Method, Flags = &h0
 		Function Contexts() As highlightcontext()
-		  dim current, tmp() as HighlightContext
+		  var current, tmp() as HighlightContext
 		  
 		  for each current in subContexts
 		    if current.Name <> "fieldwhitespace" and current.Enabled then tmp.Add current
@@ -176,7 +176,7 @@ Protected Class HighlightContext
 		  
 		  //finally, build the pattern using the keywords, regexes and subcontexts (these are exclusive)
 		  //check for keywords
-		  dim keyword as String
+		  var keyword as String
 		  if keywords.LastIndex > -1 then
 		    _contextPattern = "\b("
 		    for Each keyword in keywords
@@ -187,7 +187,7 @@ Protected Class HighlightContext
 		  end if
 		  
 		  //else, check for regexes
-		  dim aRegEx as String
+		  var aRegEx as String
 		  if regexes.LastIndex >-1 then
 		    _contextPattern="("
 		    for Each aRegEx in regexes
@@ -210,7 +210,7 @@ Protected Class HighlightContext
 		  // This method is original from Nick Lockwood: http://www.charcoaldesign.co.uk/oss#tokenizer
 		  // It speeds up the matching of the matched regex.
 		  
-		  dim escaped, inCharClass, prevBracket as Boolean = false
+		  var escaped, inCharClass, prevBracket as Boolean = false
 		  escaped = false
 		  for i as integer = 0 to pattern.Length-1
 		    select case pattern.Middle(i,1)
@@ -218,7 +218,7 @@ Protected Class HighlightContext
 		      escaped = true
 		      prevBracket = false
 		    case "("
-		      dim nextChar as String = pattern.Middle(i+1,1)
+		      var nextChar as String = pattern.Middle(i+1,1)
 		      if not inCharClass and not escaped and nextChar <> "?" then subExpressionCount = subExpressionCount + 1
 		      prevBracket = false
 		      escaped = false
@@ -247,14 +247,14 @@ Protected Class HighlightContext
 		  
 		  
 		  //Highlight this context
-		  dim match as RegExMatch
-		  dim scanNextLine as Boolean = false
+		  var match as RegExMatch
+		  var scanNextLine as Boolean = false
 		  
 		  //if there's a start and end regexes we need to find the EndRegEx
 		  if StartRegEx.trim<>"" and mEndRegEx<>nil then
 		    //find end...
 		    #if true
-		      dim oldPattern as String = scanner.SearchPattern
+		      var oldPattern as String = scanner.SearchPattern
 		      scanner.SearchPattern = EndRegEx
 		      match = scanner.Search(TheText, positionB + subExpression.Bytes) //fix, added .lenb to support utf correctly
 		      scanner.SearchPattern = oldPattern
@@ -276,9 +276,9 @@ Protected Class HighlightContext
 		    end if
 		  end if
 		  
-		  dim entry as HighlightContext
-		  dim substring as String
-		  dim startPos, startPosB, charPos, charPosB as Integer
+		  var entry as HighlightContext
+		  var substring as String
+		  var startPos, startPosB, charPos, charPosB as Integer
 		  
 		  //scan subcontexts
 		  substring = mSearchPattern
@@ -310,7 +310,7 @@ Protected Class HighlightContext
 		      substring=match.SubExpressionString(0)
 		      
 		      // determine which token was matched
-		      dim tknIndex as integer
+		      var tknIndex as integer
 		      for i as integer = 1 to match.SubExpressionCount - 1
 		        if match.SubExpressionString(i) = substring then
 		          tknIndex = subExpressionIndex.IndexOf(i)
@@ -323,8 +323,8 @@ Protected Class HighlightContext
 		      end if
 		      
 		      #if DebugBuild
-		        dim start as Integer = match.SubExpressionStartB(0)
-		        dim wtf as String = subExpression.LeftBytes(start)
+		        var start as Integer = match.SubExpressionStartB(0)
+		        var wtf as String = subExpression.LeftBytes(start)
 		        #pragma unused wtf
 		      #endif
 		      charPos = subExpression.LeftBytes(match.SubExpressionStartB(0)).Length
@@ -342,17 +342,17 @@ Protected Class HighlightContext
 		      if entry<>nil and not entry.isPlaceholder then
 		        call entry.Highlight(subExpression, substring, position + startPos, positionB + startPosB, mScanner, tokens, placeholders)
 		        #if DebugBuild
-		          dim asub as String = subExpression.LeftBytes(mScanner.SearchStartPosition)
+		          var asub as String = subExpression.LeftBytes(mScanner.SearchStartPosition)
 		          #pragma unused asub
 		        #endif
 		        startPos = subExpression.LeftBytes(mScanner.SearchStartPosition).Length
 		        startPosB = mScanner.SearchStartPosition
 		        
 		      elseIf entry <> nil and entry.isPlaceholder then
-		        dim label as String = match.SubExpressionString(match.SubExpressionCount - 1)
-		        dim tmp as Integer = TheText.LeftBytes(match.SubExpressionStartB(match.SubExpressionCount - 1)).Length
+		        var label as String = match.SubExpressionString(match.SubExpressionCount - 1)
+		        var tmp as Integer = TheText.LeftBytes(match.SubExpressionStartB(match.SubExpressionCount - 1)).Length
 		        
-		        dim placeholder as new TextPlaceholder(startPos + position, substring.Length, tmp + position, label.Length, entry.HighlightColor, entry.BackgroundColor, entry.Bold, entry.Italic, entry.Underline)
+		        var placeholder as new TextPlaceholder(startPos + position, substring.Length, tmp + position, label.Length, entry.HighlightColor, entry.BackgroundColor, entry.Bold, entry.Italic, entry.Underline)
 		        tokens.Add(placeholder)
 		        placeholders.Add(placeholder)
 		        
@@ -372,8 +372,8 @@ Protected Class HighlightContext
 
 	#tag Method, Flags = &h21
 		Private Sub IndentNode(node As XmlNode, level As Integer, indentCloseTag As Boolean = False)
-		  Dim i As Integer
-		  Dim s As String
+		  var i As Integer
+		  var s As String
 		  s = EndOfLine
 		  For i = 1 To level
 		    s = s + Chr(9) // Tab
@@ -388,7 +388,7 @@ Protected Class HighlightContext
 	#tag Method, Flags = &h0
 		Sub ListKeywords(storage() as string)
 		  //add mine..
-		  dim keyword as String
+		  var keyword as String
 		  for each keyword in keywords
 		    storage.Add(keyword)
 		  next
@@ -403,8 +403,8 @@ Protected Class HighlightContext
 	#tag Method, Flags = &h0
 		Sub LoadFromXmlNode(node as xmlNode)
 		  //load context out of an xml node
-		  dim tmpObj as Variant
-		  dim tmp as String
+		  var tmpObj as Variant
+		  var tmp as String
 		  
 		  //Highlight color
 		  Name = node.GetAttribute("name")
@@ -435,9 +435,9 @@ Protected Class HighlightContext
 		  tmp = node.GetAttribute("enabled")
 		  Enabled = tmp <> "false"
 		  
-		  dim i, j as Integer
-		  dim subNode as XmlNode
-		  dim subContext as HighlightContext
+		  var i, j as Integer
+		  var subNode as XmlNode
+		  var subContext as HighlightContext
 		  
 		  for i=0 to node.ChildCount-1
 		    subNode=node.Child(i)
@@ -475,7 +475,7 @@ Protected Class HighlightContext
 		    
 		    //get the regex for the subContexts
 		    if subContexts.LastIndex>= 0 then
-		      dim s as String = "("
+		      var s as String = "("
 		      for each current as HighlightContext in subContexts
 		        s = s + current.ContextSearchPattern+"|"
 		      next

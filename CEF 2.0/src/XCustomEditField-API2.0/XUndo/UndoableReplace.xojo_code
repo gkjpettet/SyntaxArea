@@ -34,7 +34,7 @@ Implements UndoableAction
 		Sub Redo()
 		  if owner = nil then Return
 		  owner.private_replace(offset, originalText.Length, text, true)
-		  owner.SelStart = min(owner.TextLength, max(0, owner.CaretPos))
+		  owner.SelectionStart = min(owner.TextLength, max(0, owner.CaretPos))
 		End Sub
 	#tag EndMethod
 
@@ -43,7 +43,7 @@ Implements UndoableAction
 		  if owner = nil then Return
 		  owner.private_replace(offset, text.Length, originalText, true)
 		  owner.private_lines.setAttributesOfLinesInRange(offset, length, attrs)
-		  owner.SelStart = min(owner.TextLength, max(0, oldCaretPos))
+		  owner.SelectionStart = min(owner.TextLength, max(0, oldCaretPos))
 		End Sub
 	#tag EndMethod
 

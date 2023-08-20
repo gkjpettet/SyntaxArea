@@ -4,7 +4,7 @@ Protected Class LinesLock
 		Sub Constructor(cef as CustomEditField)
 		  // acquire a lock on the LineManager
 		  
-		  dim lineMgr as LineManager = cef.private_lines
+		  var lineMgr as LineManager = cef.private_lines
 		  
 		  if lineMgr.linesLock = nil then
 		    lineMgr.linesLock = new CriticalSection

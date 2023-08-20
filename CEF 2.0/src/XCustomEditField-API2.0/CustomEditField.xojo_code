@@ -25,7 +25,7 @@ Implements MessageReceiver
 		  mHighlighter = nil
 		  
 		  // avoid circular references
-		  caretBlinker = nil
+		  mCaretBlinker = nil
 		  lines = nil
 		  
 		  if CurrentFocusedField = self then gCurrentFocusedField = nil
@@ -74,7 +74,7 @@ Implements MessageReceiver
 		    changeSelection(DragTextPos, 0)
 		  end if
 		  
-		  caretState = true
+		  caretvisible = true
 		  Redraw
 		End Function
 	#tag EndEvent
@@ -86,7 +86,7 @@ Implements MessageReceiver
 		  
 		  CurrentEventID = System.Ticks
 		  
-		  dim moveWithin as Boolean
+		  var moveWithin as Boolean
 		  ignoreRepaint = true
 		  //check if the text comes from this same field.
 		  moveWithin = DragSource = self
@@ -113,7 +113,7 @@ Implements MessageReceiver
 		  end if
 		  
 		  //select the text
-		  changeSelection(SelStart, -obj.Text.Length)
+		  changeSelection(SelectionStart, -obj.Text.Length)
 		  ignoreRepaint = False
 		  
 		  //if drag comes from an external source, mouseUp isn't raised, so clean up if needed
@@ -132,7 +132,7 @@ Implements MessageReceiver
 	#tag Event
 		Sub FocusLost()
 		  CurrentEventID = 0
-		  hasFocus = False
+		  mhasFocus = False
 		  RaiseEvent LostFocus
 		  enableBlinker(False)
 		  Redraw
@@ -141,9 +141,9 @@ Implements MessageReceiver
 
 	#tag Event
 		Sub FocusReceived()
-		  hasFocus = true
+		  mhasFocus = true
 		  RaiseEvent GotFocus
-		  enableBlinker(SelLength = 0)
+		  enableBlinker(SelectionLength = 0)
 		  Redraw
 		  
 		  gCurrentFocusedField = self
@@ -179,16 +179,16 @@ Implements MessageReceiver
 		      declare function modifierFlags lib CocoaLib selector "modifierFlags" (id as Ptr) as integer
 		      
 		      static NSAppObject as Ptr = sharedApplication( NSClassFromString( "NSApplication" ))
-		      dim evt as Ptr = currentEvent( NSAppObject )
+		      var evt as Ptr = currentEvent( NSAppObject )
 		      static deadKeyState as integer //Dead keys state is kept between calls
 		      
 		      const unicodeStringLength = 4
 		      static unicodeString as new MemoryBlock( unicodeStringLength )
 		      
-		      dim currentKeyboard as Ptr = TISCopyCurrentKeyboardInputSource
-		      dim layoutData as Ptr = TISGetInputSourceProperty( currentKeyboard, "TISPropertyUnicodeKeyLayoutData" )
+		      var currentKeyboard as Ptr = TISCopyCurrentKeyboardInputSource
+		      var layoutData as Ptr = TISGetInputSourceProperty( currentKeyboard, "TISPropertyUnicodeKeyLayoutData" )
 		      
-		      dim realLength as integer
+		      var realLength as integer
 		      call UCKeyTranslate( CFDataGetBytePtr( layoutData ), keyCode( evt ), 0, ShiftRight( modifierFlags( evt ), 16 ) AND &hFF, LMGetKbdType, 0, deadKeyState, unicodeStringLength, realLength, unicodeString )
 		      CFRelease currentKeyboard
 		      
@@ -207,8 +207,8 @@ Implements MessageReceiver
 		    Return true
 		  end if
 		  
-		  dim result as Boolean
-		  caretBlinker.Reset
+		  var result as Boolean
+		  mcaretBlinker.Reset
 		  result = HandleKeyDown(key)
 		  
 		  Return result
@@ -225,7 +225,7 @@ Implements MessageReceiver
 		  'EditSelectAll.Enabled = true
 		  'end if
 		  '
-		  'dim c as new Clipboard
+		  'var c as new Clipboard
 		  'EditPaste.Enabled =  c.TextAvailable
 		  EnableMenuItems
 		End Sub
@@ -236,24 +236,24 @@ Implements MessageReceiver
 		  CurrentEventID = 0
 		  Dragging = False
 		  
-		  if not hasFocus then self.SetFocus
+		  if not mhasFocus then self.SetFocus
 		  dragTextOnDrag = False
 		  
 		  if MouseDown(X,Y) then Return true
 		  if IsContextualClick then Return False
 		  
 		  ignoreRepaint = true
-		  dim selstart as Integer
+		  var selstart as Integer
 		  
 		  selStart = CharPosAtXY(x,y)
 		  
 		  if Keyboard.ShiftKey then
 		    changeSelection(min(selStart, CaretPos), abs(selStart - CaretPos))
 		    
-		  elseif x < LineNumOffset then
+		  elseif x < LineNumberOffset then
 		    selectedLine = lines.getLineNumberForOffset(selStart)
 		    
-		    if EnableLineFoldings and x >= LineNumOffset - blockStartImage.Width - 2 then
+		    if EnableLineFoldings and x >= LineNumberOffset - blockStartImage.Width - 2 then
 		      //toggle foldings here!
 		      ToggleLineFold(selectedLine)
 		      CreateMouseOverBlockHighlight(selectedLine)
@@ -264,7 +264,7 @@ Implements MessageReceiver
 		      GutterClicked(selectedLine, x, y)
 		    end if
 		    
-		  elseif SelLength > 0 and SelStart >= self.SelStart and SelStart <= self.SelStart + SelLength then
+		  elseif SelectionLength > 0 and SelStart >= self.SelectionStart and SelStart <= self.SelectionStart + SelectionLength then
 		    //omg drag!
 		    dragTextOnDrag = true
 		    
@@ -353,7 +353,7 @@ Implements MessageReceiver
 		  MouseMove(X,Y)
 		  
 		  //change mouse cursors
-		  if x > LineNumOffset then //enter field
+		  if x > LineNumberOffset then //enter field
 		    if cursorIsIbeam then Return
 		    me.MouseCursor = System.Cursors.IBeam
 		    cursorIsIbeam = true
@@ -380,7 +380,7 @@ Implements MessageReceiver
 		    Return
 		  end if
 		  
-		  if x < LineNumOffset - blockStartImage.Width - 2 then
+		  if x < LineNumberOffset - blockStartImage.Width - 2 then
 		    if MouseOverBlock <> nil then
 		      MouseOverBlock = nil
 		      Redraw
@@ -398,9 +398,9 @@ Implements MessageReceiver
 		  Dragging = False
 		  
 		  // Koen Van Hulle:  check for triple click
-		  if x > LineNumOffset and not checkTripleClick(x,y) then
+		  if x > LineNumberOffset and not checkTripleClick(x,y) then
 		    //check for double click
-		    if x > LineNumOffset and not checkDoubleClick(x,y) then
+		    if x > LineNumberOffset and not checkDoubleClick(x,y) then
 		      mouseUp(x,y)
 		      isDoubleClick = False
 		      
@@ -458,7 +458,7 @@ Implements MessageReceiver
 		  me.AcceptTextDrop
 		  me.AcceptRawDataDrop("objectID")
 		  
-		  enableBlinker(hasFocus and SelLength = 0)
+		  enableBlinker(mhasFocus and SelectionLength = 0)
 		  ignoreRepaint = False
 		  
 		  if TextSelectionColor = &c000000 then
@@ -493,7 +493,7 @@ Implements MessageReceiver
 
 	#tag MenuHandler
 		Function EditCut() As Boolean Handles EditCut.Action
-		  dim c as new Clipboard
+		  var c as new Clipboard
 		  
 		  #if EditFieldGlobals.Replace00With01
 		    c.Text = me.SelText.ReplaceAll (Chr(1), Chr(0))
@@ -543,7 +543,7 @@ Implements MessageReceiver
 		  // (i.e. how to remember all created objects of a class and then invoke a method on all of them.
 		  
 		  for each cef_wr as WeakRef in gWeakCEFs.Keys
-		    dim cef as CustomEditField = CustomEditField (cef_wr.Value)
+		    var cef as CustomEditField = CustomEditField (cef_wr.Value)
 		    if cef = nil then
 		      break // this should not happen
 		    else
@@ -577,8 +577,8 @@ Implements MessageReceiver
 		  call fetchAutocompleteOptions
 		  if CurrentAutocompleteOptions = nil then Return //nothing to autocomplete.
 		  
-		  dim maxIndex as Integer = CurrentAutocompleteOptions.Options.LastIndex
-		  dim firstMatch, longestCommonPrefix, currentPathComponent as String
+		  var maxIndex as Integer = CurrentAutocompleteOptions.Options.LastIndex
+		  var firstMatch, longestCommonPrefix, currentPathComponent as String
 		  
 		  longestCommonPrefix = CurrentAutocompleteOptions.LongestCommonPrefix
 		  currentPathComponent = CurrentAutocompleteOptions.CurrentPathComponent
@@ -597,7 +597,7 @@ Implements MessageReceiver
 		    Return
 		  end if
 		  
-		  dim y as Double
+		  var y as Double
 		  XYAtCharPos(CaretPos, CaretLine, AutocompleteSuggestionInsertionX, y)
 		End Sub
 	#tag EndMethod
@@ -605,13 +605,13 @@ Implements MessageReceiver
 	#tag Method, Flags = &h1
 		Protected Sub AutocompleteManual()
 		  //get word where caret is at
-		  dim CurrentWordSegment as TextSegment = CurrentWord
+		  var CurrentWordSegment as TextSegment = CurrentWord
 		  if CurrentWordSegment.length = 0 then Return
 		  
 		  //suggestion to autocomplete?
 		  if trailingSuggestion.Length > 0 and trailingSuggestion <> "…" then
 		    
-		    dim suggestionLength as Integer
+		    var suggestionLength as Integer
 		    if trailingSuggestion.Right(1) = "…" then
 		      suggestionLength = trailingSuggestion.Length - 1
 		      
@@ -634,13 +634,13 @@ Implements MessageReceiver
 		  if CurrentAutocompleteOptions.Options.LastIndex < 0 then Return
 		  
 		  //find XY pos of caret
-		  dim x,y, fx, fy as Double
+		  var x,y, fx, fy as Double
 		  XYAtCharPos(CaretPos, CaretLine, x,y)
 		  getFieldXY(fx, fy)
 		  x = x + fx
 		  y = y + fy
 		  
-		  dim cx, cy as Integer
+		  var cx, cy as Integer
 		  cx = x
 		  cy = y
 		  
@@ -663,7 +663,7 @@ Implements MessageReceiver
 		  //the string "option" was selected in the suggestions window.
 		  
 		  if option <> "" then
-		    if SelLength > 0 then
+		    if SelectionLength > 0 then
 		      //replace highlighted text
 		      SelText = option
 		      
@@ -685,9 +685,9 @@ Implements MessageReceiver
 		  
 		  //check indentations
 		  if AutoIndentNewLines and not mIndentVisually then
-		    dim thisLine as TextLine = lines.getLine(CaretLine)
+		    var thisLine as TextLine = lines.getLine(CaretLine)
 		    if thisLine <> nil and thisLine.isBlockEnd then
-		      dim state as Variant
+		      var state as Variant
 		      if private_indentLine (CaretLine, false, state) then
 		        InvalidateLine (CaretLine)
 		      end
@@ -702,7 +702,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Function BookmarkList() As integer()
-		  dim indexes(), index as Integer
+		  var indexes(), index as Integer
 		  
 		  for each index in BookmarkTable.keys
 		    indexes.Add index
@@ -718,20 +718,20 @@ Implements MessageReceiver
 		Protected Sub CalculateMaxHorizontalSB()
 		  //maximum horizontal scrollbar value
 		  //Thanks to Thomas Tempelmann for his suggestions.
-		  if horizontalSB <> nil Then
-		    dim contentWidth as integer = lastLongestLinePixels + LineNumOffset + RightScrollMargin
+		  if mHorizontalScrollBar <> nil Then
+		    var contentWidth as integer = mlastLongestLinePixels + LineNumberOffset + RightScrollMargin
 		    
-		    dim n as Integer = self.Width
-		    dim max as Integer = contentWidth - n
+		    var n as Integer = self.Width
+		    var max as Integer = contentWidth - n
 		    if max <= 0 then
 		      max = 0
 		      n = 0
 		    end
 		    
-		    horizontalSB.enabled = max > 0 // you may want to remove this one
-		    horizontalSB.MaximumValue = max
-		    horizontalSB.PageStep = n
-		    horizontalSB.LineStep = 8
+		    mHorizontalScrollBar.enabled = max > 0 // you may want to remove this one
+		    mHorizontalScrollBar.MaximumValue = max
+		    mHorizontalScrollBar.PageStep = n
+		    mHorizontalScrollBar.LineStep = 8
 		  end if
 		End Sub
 	#tag EndMethod
@@ -739,15 +739,15 @@ Implements MessageReceiver
 	#tag Method, Flags = &h1
 		Protected Sub CalculateMaxVerticalSB()
 		  //maximum vertical scrollbar value
-		  if verticalSB <> nil then
+		  if mVerticalScrollbar <> nil then
 		    if EnableLineFoldings then
-		      verticalSB.MaximumValue = lines.Count - lines.invisibleLines - MaxVisibleLines
+		      mVerticalScrollbar.MaximumValue = lines.Count - lines.invisibleLines - MaxVisibleLines
 		    else
-		      verticalSB.MaximumValue = lines.Count - MaxVisibleLines
+		      mVerticalScrollbar.MaximumValue = lines.Count - MaxVisibleLines
 		    end if
 		    
 		    //update the pageStep so a page jump is always th number of visible lines... or a page.
-		    verticalSB.PageStep = MaxVisibleLines - 1
+		    mVerticalScrollbar.PageStep = MaxVisibleLines - 1
 		  end if
 		End Sub
 	#tag EndMethod
@@ -766,7 +766,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Function CaretColumn() As Integer
-		  dim line as TextLine = lines.getLine(CaretLine)
+		  var line as TextLine = lines.getLine(CaretLine)
 		  if line <> nil then
 		    return CaretPos - line.offset
 		  end if
@@ -782,14 +782,14 @@ Implements MessageReceiver
 	#tag Method, Flags = &h1
 		Protected Sub changeScrollValues(horizontal as integer, vertical as integer)
 		  //changes view to the given scroll values
-		  caretBlinker.Reset
+		  mcaretBlinker.Reset
 		  
-		  dim needsRedraw as Boolean = false
-		  dim valuesChanged as Boolean
+		  var needsRedraw as Boolean = false
+		  var valuesChanged as Boolean
 		  
 		  if horizontal <> ScrollPositionX then
 		    //Cap values
-		    horizontal = max(min(horizontal, lastLongestLinePixels - self.Width + LineNumOffset + RightScrollMargin), 0)
+		    horizontal = max(min(horizontal, mlastLongestLinePixels - self.Width + LineNumberOffset + RightScrollMargin), 0)
 		    
 		    //force a full redraw
 		    if horizontal <> ScrollPositionX then
@@ -798,8 +798,8 @@ Implements MessageReceiver
 		    
 		    //change scrollbars
 		    mScrollPositionX = horizontal
-		    if horizontalSB <> nil then
-		      horizontalSB.Value = horizontal
+		    if mHorizontalScrollBar <> nil then
+		      mHorizontalScrollBar.Value = horizontal
 		    else
 		      needsRedraw = true
 		    end if
@@ -811,7 +811,7 @@ Implements MessageReceiver
 		  if vertical <> ScrollPosition then
 		    //Cap values
 		    if EnableLineFoldings then
-		      dim v2 as Integer = max(min(vertical, lines.Count - lines.invisibleLines - MaxVisibleLines), 0)
+		      var v2 as Integer = max(min(vertical, lines.Count - lines.invisibleLines - MaxVisibleLines), 0)
 		      if vertical <> v2 then
 		        //as of 2023 - no longer a bug per Matthew Combatti
 		        'if lines.invisibleLines > 0 then
@@ -829,8 +829,8 @@ Implements MessageReceiver
 		    
 		    //change scrollbars
 		    mScrollPosition = vertical
-		    if verticalSB <> nil then
-		      verticalSB.Value = vertical
+		    if mVerticalScrollbar <> nil then
+		      mVerticalScrollbar.Value = vertical
 		    else
 		      needsRedraw = true
 		    end if
@@ -849,7 +849,7 @@ Implements MessageReceiver
 		  //changes the current document selection.
 		  
 		  //nothing to change
-		  if selStart = mSelStart and selLength = mSelLength then Return
+		  if selStart = mSelectionStart and selLength = mSelectionLength then Return
 		  
 		  //backwards selections?
 		  if selLength < 0 then
@@ -870,26 +870,26 @@ Implements MessageReceiver
 		  end if
 		  
 		  //find starting line for selection.
-		  dim linenum as Integer = lines.getLineNumberForOffset(SelStart)
-		  dim line as TextLine = lines.getLine(linenum)
+		  var linenum as Integer = lines.getLineNumberForOffset(SelStart)
+		  var line as TextLine = lines.getLine(linenum)
 		  
 		  //deal with invisible lines
 		  if EnableLineFoldings then
-		    dim startLineIdx, endLineIdx as Integer
-		    dim startLine, endLine as TextLine
-		    dim update as Boolean
+		    var startLineIdx, endLineIdx as Integer
+		    var startLine, endLine as TextLine
+		    var update as Boolean
 		    
 		    //check if selstart is in a Visible line, if not, move it to the next or previous visible line.
-		    if SelStart <> mSelStart then
+		    if SelStart <> mSelectionStart then
 		      if linenum <> CaretLine then //only if the new line is different from Previous.
 		        startLineIdx = lines.getLineNumberForOffset(SelStart)
 		        startLine = lines.getLine(startLineIdx)
-		        if startLine <> nil and SelStart > mSelStart then //moving fwd
+		        if startLine <> nil and SelStart > mSelectionStart then //moving fwd
 		          if not startLine.visible then
 		            startLineIdx = lines.nextVisibleLine(startLineIdx)
 		            update = true
 		          end if
-		        elseif startLine <> nil and selstart < mSelStart then //moving bck
+		        elseif startLine <> nil and selstart < mSelectionStart then //moving bck
 		          if not startLine.visible then
 		            startLineIdx = lines.previousVisibleLine(startLineIdx)
 		            update = true
@@ -905,7 +905,7 @@ Implements MessageReceiver
 		            line = startLine
 		            
 		            if SelLength > 0 then
-		              SelLength = mSelStart + mSelLength - SelStart
+		              SelLength = mSelectionStart + mSelectionLength - SelStart
 		            end if
 		            
 		          end if
@@ -913,16 +913,16 @@ Implements MessageReceiver
 		      end if
 		    end if
 		    
-		    if not update and SelLength > 0 and SelLength <> mSelLength then
+		    if not update and SelLength > 0 and SelLength <> mSelectionLength then
 		      endLineIdx = lines.getLineNumberForOffset(SelStart + SelLength)
 		      endLine = lines.getLine(endLineIdx)
 		      
-		      if endLine <> nil and SelLength > mSelLength then //making selection bigger.
+		      if endLine <> nil and SelLength > mSelectionLength then //making selection bigger.
 		        if not endLine.visible then
 		          endLineIdx = lines.nextVisibleLine(endLineIdx)
 		          update = true
 		        end if
-		      elseif endLine <> nil and SelLength < mSelLength then //smaller
+		      elseif endLine <> nil and SelLength < mSelectionLength then //smaller
 		        if not endLine.visible then
 		          endlineIdx = lines.previousVisibleLine(endLineIdx)
 		          update = true
@@ -941,7 +941,7 @@ Implements MessageReceiver
 		  //make sure selection isn't inside a EOL delimiter
 		  if line <> nil then
 		    if SelStart > line.offset + line.length - line.delimiterLength then
-		      if SelStart > mSelStart then
+		      if SelStart > mSelectionStart then
 		        SelStart = line.offset + line.length
 		      else
 		        SelStart = line.offset + line.length - line.delimiterLength
@@ -952,9 +952,9 @@ Implements MessageReceiver
 		  end if
 		  
 		  // update selection if inside a placeholder...
-		  dim selectedPlaceholder as TextPlaceholder = nil
-		  if mSelStart < selStart then //moving start to the Right
-		    dim placeholder as TextPlaceholder = line.PlaceholderForOffset(selStart)
+		  var selectedPlaceholder as TextPlaceholder = nil
+		  if mSelectionStart < selStart then //moving start to the Right
+		    var placeholder as TextPlaceholder = line.PlaceholderForOffset(selStart)
 		    if placeholder <> nil then
 		      if selLength = 0 then
 		        selStart = placeholder.offset + line.offset //sel
@@ -969,12 +969,12 @@ Implements MessageReceiver
 		      end if
 		    end if
 		    
-		  ElseIf mSelStart > selStart then //moving start to the Left
+		  ElseIf mSelectionStart > selStart then //moving start to the Left
 		    
 		    //todo Fix bug...
 		    if selStart = -1 then exit
 		    
-		    dim placeholder as TextPlaceholder = line.PlaceholderForOffset(selStart)
+		    var placeholder as TextPlaceholder = line.PlaceholderForOffset(selStart)
 		    
 		    
 		    if placeholder <> nil then
@@ -991,20 +991,20 @@ Implements MessageReceiver
 		      end if
 		    end if
 		    
-		  ElseIf mSelLength > selLength then //shrinking selection
-		    dim endline as TextLine = lines.getline(lines.getLineNumberForOffset(selStart + selLength))
+		  ElseIf mSelectionLength > selLength then //shrinking selection
+		    var endline as TextLine = lines.getline(lines.getLineNumberForOffset(selStart + selLength))
 		    if endline <> nil then
-		      dim placeholder as TextPlaceholder = endline.PlaceholderForOffset(selStart + selLength)
+		      var placeholder as TextPlaceholder = endline.PlaceholderForOffset(selStart + selLength)
 		      
 		      if placeholder <> nil then
 		        selLength = max(selLength - placeholder.length + 1, 0) //desel
 		      end if
 		    end if
 		    
-		  elseif mSelLength < selLength then //expanding selection
-		    dim endline as TextLine = lines.getline(lines.getLineNumberForOffset(selStart + selLength))
+		  elseif mSelectionLength < selLength then //expanding selection
+		    var endline as TextLine = lines.getline(lines.getLineNumberForOffset(selStart + selLength))
 		    if endline <> nil then
-		      dim placeholder as TextPlaceholder = endline.PlaceholderForOffset(selStart + selLength)
+		      var placeholder as TextPlaceholder = endline.PlaceholderForOffset(selStart + selLength)
 		      
 		      if placeholder <> nil then
 		        selLength = selLength + placeholder.length - 1 //sel
@@ -1014,8 +1014,8 @@ Implements MessageReceiver
 		  
 		  
 		  //change internal values
-		  mSelStart = selStart
-		  mSelLength = selLength
+		  mSelectionStart = selStart
+		  mSelectionLength = selLength
 		  
 		  //if SelLength = 0 or outside selection then update caret
 		  if selLength = 0 or CaretPos < SelStart or CaretPos > SelStart + SelLength then
@@ -1039,7 +1039,7 @@ Implements MessageReceiver
 		    SelChanged(linenum + 1, SelStart - line.offset, SelLength)
 		    
 		    if selectedPlaceholder <> nil then
-		      dim label as String = TextStorage.getText(line.offset + selectedPlaceholder.textRange.offset, selectedPlaceholder.textRange.length)
+		      var label as String = TextStorage.getText(line.offset + selectedPlaceholder.textRange.offset, selectedPlaceholder.textRange.length)
 		      PlaceholderSelected(label, LineNum, lines.getLine(linenum), selectedPlaceholder, viaDoubleClick)
 		    end if
 		  end if
@@ -1060,7 +1060,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Function CharPosAtLineNum(lineNumber as integer) As integer
-		  dim line as TextLine = lines.getLine(lineNumber)
+		  var line as TextLine = lines.getLine(lineNumber)
 		  if line = nil then Return -1
 		  Return line.offset
 		End Function
@@ -1068,7 +1068,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Function CharPosAtXY(X as integer, Y as integer) As integer
-		  dim lineNum as Integer
+		  var lineNum as Integer
 		  
 		  //find the line
 		  if EnableLineFoldings then
@@ -1078,12 +1078,12 @@ Implements MessageReceiver
 		  end if
 		  
 		  //find the char offset.
-		  dim line as TextLine = lines.getLine(lineNum)
+		  var line as TextLine = lines.getLine(lineNum)
 		  
 		  //not found?
 		  if line = nil then Return -1
 		  
-		  dim offset as Integer = leftMarginOffset + LineNumOffset - ScrollPositionX
+		  var offset as Integer = leftMarginOffset + LineNumberOffset - ScrollPositionX
 		  Return offsetForXPos(line, x - offset)
 		End Function
 	#tag EndMethod
@@ -1092,11 +1092,11 @@ Implements MessageReceiver
 		Private Function checkDoubleClick(X as integer, Y as integer) As boolean
 		  //grabbed from RB examples
 		  
-		  dim doubleClickTime, currentClickTicks as Integer
+		  var doubleClickTime, currentClickTicks as Integer
 		  
 		  doubleClickTime = getDoubleClickTimeTicks()
 		  
-		  dim result as Boolean = false
+		  var result as Boolean = false
 		  currentClickTicks = System.Ticks
 		  //if the two clicks happened close enough together in time
 		  if (currentClickTicks - lastClickTicks) <= doubleClickTime then
@@ -1122,11 +1122,11 @@ Implements MessageReceiver
 		  //grabbed from RB examples
 		  
 		  if isDoubleClick = True then
-		    dim doubleClickTime, currentClickTicks as Integer
+		    var doubleClickTime, currentClickTicks as Integer
 		    
 		    doubleClickTime = getDoubleClickTimeTicks()
 		    
-		    dim result as Boolean = false
+		    var result as Boolean = false
 		    currentClickTicks = System.Ticks
 		    //if the three clicks happened close enough together in time
 		    if (currentClickTicks - lastTripleClickTicks) <= doubleClickTime then
@@ -1188,7 +1188,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub ClearLineIcons()
-		  dim line as TextLine
+		  var line as TextLine
 		  for i as Integer = 0 to lines.Count - 1
 		    line = lines.getLine(i)
 		    if line <> nil then line.icon = nil
@@ -1218,10 +1218,10 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub Copy()
-		  if SelLength = 0 then Return
-		  dim c as new Clipboard
+		  if SelectionLength = 0 then Return
+		  var c as new Clipboard
 		  
-		  Dim textToCopy as String
+		  var textToCopy as String
 		  
 		  #if EditFieldGlobals.Replace00With01
 		    textToCopy = me.SelText.ReplaceAll (Chr(1), Chr(0))
@@ -1242,10 +1242,10 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub CreateMouseOverBlockHighlight(lineIndex as integer)
-		  dim line as TextLine = lines.getLine(lineIndex)
+		  var line as TextLine = lines.getLine(lineIndex)
 		  if line = nil then Return
 		  
-		  dim openingLine as integer
+		  var openingLine as integer
 		  if line.isBlockStart then
 		    openingLine = lineIndex
 		  else
@@ -1256,10 +1256,10 @@ Implements MessageReceiver
 		  line = lines.getLine(openingLine)
 		  if line = nil then Return
 		  
-		  dim x, y1, y2 as Double
+		  var x, y1, y2 as Double
 		  XYAtCharPos(line.offset, openingLine, x, y1)
 		  
-		  dim closingLine as Integer = lines.nextBlockEndLine(openingLine)
+		  var closingLine as Integer = lines.nextBlockEndLine(openingLine)
 		  if closingLine < 0 then Return
 		  
 		  line = lines.getLine(closingLine)
@@ -1276,7 +1276,7 @@ Implements MessageReceiver
 		  MouseOverBlock.Value("startLine") = openingLine
 		  MouseOverBlock.Value("x") = LeftMarginOffset - 3
 		  MouseOverBlock.Value("y") = y1 - TextHeight - 2
-		  MouseOverBlock.Value("w") = self.Width - LineNumOffset - LeftMarginOffset
+		  MouseOverBlock.Value("w") = self.Width - LineNumberOffset - LeftMarginOffset
 		  MouseOverBlock.Value("h") = y2 - y1 + TextHeight + 4
 		  Redraw
 		End Sub
@@ -1299,7 +1299,7 @@ Implements MessageReceiver
 		  //gets the current word, where the caret is at.
 		  //a word is anything except whitespaces.
 		  
-		  dim startIndex, endIndex as Integer
+		  var startIndex, endIndex as Integer
 		  startIndex = previousCharInSet(CaretPos + 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
 		  endIndex = nextCharInSet(CaretPos - 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
 		  Return new TextSegment(startIndex, endIndex - startIndex)
@@ -1324,9 +1324,9 @@ Implements MessageReceiver
 		  // handles delete key
 		  
 		  // check if the key would delete a placeholder...
-		  dim line as TextLine = lines.getLine(CaretLine)
+		  var line as TextLine = lines.getLine(CaretLine)
 		  if line <> nil and line.HasPlaceholders then
-		    dim placeholder as TextPlaceholder
+		    var placeholder as TextPlaceholder
 		    if forwardDelete then
 		      Placeholder = line.PlaceholderForOffset(CaretPos + 1)
 		    else
@@ -1338,12 +1338,12 @@ Implements MessageReceiver
 		  end if
 		  
 		  // delete highlighted text
-		  if me.SelLength > 0 then
-		    private_replace(selStart, me.SelLength, "")
+		  if me.SelectionLength > 0 then
+		    private_replace(SelectionStart, me.SelectionLength, "")
 		    Return
 		  end if
 		  
-		  dim length, offset as Integer
+		  var length, offset as Integer
 		  
 		  if forwardDelete then
 		    // forward delete
@@ -1366,7 +1366,7 @@ Implements MessageReceiver
 		    end
 		  end if
 		  
-		  dim updateCaret as Boolean = not forwardDelete
+		  var updateCaret as Boolean = not forwardDelete
 		  if not mIndentVisually and mKeepEntireTextIndented then
 		    //
 		    // Here we may have a special case: If IndentVisually=false, and the user backspaces when the
@@ -1374,13 +1374,13 @@ Implements MessageReceiver
 		    // but the line delimiter to the previous line as well, or the user would not be able to ever join
 		    // the current line with the previous line because it would get re-indented right away again.
 		    //
-		    dim caretCol as Integer = self.CaretColumn
-		    dim lineText as String = self.GetLine(caretLine)
-		    dim textLeftOfCaret as String = lineText.Left(caretCol)
+		    var caretCol as Integer = self.CaretColumn
+		    var lineText as String = self.GetLine(caretLine)
+		    var textLeftOfCaret as String = lineText.Left(caretCol)
 		    if textLeftOfCaret.Trim = "" then
 		      // Cursor is at start of line or inside indentation space
 		      if forwardDelete then
-		        dim rightOfCaret as String = lineText.Middle(caretCol+1,1)
+		        var rightOfCaret as String = lineText.Middle(caretCol+1,1)
 		        if rightOfCaret <> "" and rightOfCaret <> LineDelimiter and rightOfCaret.Trim = "" then
 		          // forward delete in indentation whitespace doesn't work - skip it
 		          System.Beep
@@ -1394,9 +1394,9 @@ Implements MessageReceiver
 		  end
 		  
 		  if forwardDelete then
-		    offset = selStart
+		    offset = SelectionStart
 		  else
-		    offset = selStart - length
+		    offset = SelectionStart - length
 		  end
 		  private_remove(offset, length, updateCaret)
 		  
@@ -1420,10 +1420,10 @@ Implements MessageReceiver
 		  //no symbols
 		  if CurrentDocumentSymbols = nil then Return nil
 		  
-		  dim tmp() as DocumentSymbol
-		  //dim key as String
-		  dim line as TextLine
-		  dim symbol as DocumentSymbol
+		  var tmp() as DocumentSymbol
+		  //var key as String
+		  var line as TextLine
+		  var symbol as DocumentSymbol
 		  
 		  //copy symbols to new Dictionary
 		  for Each line in CurrentDocumentSymbols.keys
@@ -1456,7 +1456,7 @@ Implements MessageReceiver
 		    System.DebugLog "drawContents() start, firstLineToIndent: "+str(lines.FirstLineForIndentation)
 		  #endif
 		  
-		  dim lock as new LinesLock(self) // makes sure we're not updating while LineHighlighter is busy
+		  var lock as new LinesLock(self) // makes sure we're not updating while LineHighlighter is busy
 		  #pragma unused lock
 		  
 		  self.updateIndentation()
@@ -1492,14 +1492,14 @@ Implements MessageReceiver
 		  
 		  // Check our back buffer to make sure we've got
 		  // one that we can draw to
-		  dim realign as Boolean
+		  var realign as Boolean
 		  
 		  // If we don't have a back buffer, then we need to create one
 		  // If our size is different than our
 		  // back buffer, then we need to create a new one
 		  realign = (mBackBuffer = nil) or (gr.Width <> mBackBuffer.Width) or (gr.Height <> mBackBuffer.Height)
 		  
-		  dim createBackBuffers as Boolean = not TargetMacOS
+		  var createBackBuffers as Boolean = not TargetMacOS
 		  
 		  if realign then
 		    if createBackBuffers then
@@ -1523,7 +1523,7 @@ Implements MessageReceiver
 		  end if
 		  
 		  //get a graphics context to draw onto.
-		  dim g as Graphics
+		  var g as Graphics
 		  if mBackBuffer = nil then
 		    // draw directly into the Canvas graphics (required for Retina support)
 		    g = gr
@@ -1550,10 +1550,10 @@ Implements MessageReceiver
 		    redrawTime = System.Microseconds
 		  #endif
 		  
-		  dim sx, sy as Double
+		  var sx, sy as Double
 		  
-		  dim gg as Graphics // for Gutter (left frame showing line numbers)
-		  dim gutterWidth as Integer = LineNumOffset
+		  var gg as Graphics // for Gutter (left frame showing line numbers)
+		  var gutterWidth as Integer = LineNumberOffset
 		  
 		  //Line numbers
 		  if self.displayLineNumbers then
@@ -1586,24 +1586,24 @@ Implements MessageReceiver
 		    // repaint gutter background, if needed
 		    if fullRefresh or lastDrawnTopLine <> ScrollPosition then
 		      gg.DrawingColor = GutterBackgroundColor.lighterColor(10, true)
-		      gg.FillRectangle LineNumOffset - FoldingOffset, 0, FoldingOffset, g.Height
+		      gg.FillRectangle LineNumberOffset - FoldingOffset, 0, FoldingOffset, g.Height
 		      gg.DrawingColor = GutterBackgroundColor
 		      gg.FillRectangle 0, 0, gutterWidth - FoldingOffset, g.Height
 		      gg.DrawingColor = GutterSeparationLineColor
-		      gg.DrawLine LineNumOffset - 1, 0, LineNumOffset - 1, g.Height
+		      gg.DrawLine LineNumberOffset - 1, 0, LineNumberOffset - 1, g.Height
 		      lastDrawnTopLine = ScrollPosition
 		    end if
 		  end if
 		  
 		  //paint selection, and get their range
-		  dim selection as new CharSelection(-1, -1, -1, -1, TextSelectionColor)
-		  dim tmpSelection as CharSelection
+		  var selection as new CharSelection(-1, -1, -1, -1, TextSelectionColor)
+		  var tmpSelection as CharSelection
 		  //get selection range
-		  if SelLength > 0 then
-		    Selection.offset = SelStart
-		    Selection.length = SelLength
-		    selection.StartLine = lines.getLineNumberForOffset(SelStart)
-		    selection.EndLine = Lines.getLineNumberForOffset(SelStart + SelLength)
+		  if SelectionLength > 0 then
+		    Selection.offset = SelectionStart
+		    Selection.length = SelectionLength
+		    selection.StartLine = lines.getLineNumberForOffset(SelectionStart)
+		    selection.EndLine = Lines.getLineNumberForOffset(SelectionStart + SelectionLength)
 		  end if
 		  
 		  //set text properties
@@ -1615,13 +1615,13 @@ Implements MessageReceiver
 		  end if
 		  
 		  //Starting positions
-		  sx = leftMarginOffset + LineNumOffset - ScrollPositionX
+		  sx = leftMarginOffset + LineNumberOffset - ScrollPositionX
 		  sy = g.TextHeight
 		  
-		  dim line as TextLine
-		  dim linesDrawn as Integer
-		  dim firstLine as Integer
-		  dim lastLine as Integer
+		  var line as TextLine
+		  var linesDrawn as Integer
+		  var firstLine as Integer
+		  var lastLine as Integer
 		  
 		  //the lowest possible line to draw is ScrollPosition, so start there.
 		  if EnableLineFoldings then
@@ -1632,7 +1632,7 @@ Implements MessageReceiver
 		    lastLine = min(lines.Count - 1, ScrollPosition + MaxVisibleLines)
 		  end if
 		  
-		  dim linesOnScreen as Integer
+		  var linesOnScreen as Integer
 		  
 		  for lineIdx as Integer = firstLine to lastLine
 		    
@@ -1651,16 +1651,16 @@ Implements MessageReceiver
 		      // This line needs to be repainted (invalid), or is a full refresh, or is part of the previous or current selection
 		      
 		      //clear the background for this line
-		      dim lineBackColor as Color = BackColor
+		      var lineBackColor as Color = BackColor
 		      
 		      if not UseBackgroundColorForLine(lineIdx, lineBackColor) then
 		        lineBackColor = BackColor
 		      end if
 		      g.DrawingColor = lineBackColor
-		      g.FillRectangle LineNumOffset, sy - g.TextHeight, g.Width - LineNumOffset, TextHeight
+		      g.FillRectangle LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset, TextHeight
 		      
 		      //draw highlighted ranges!
-		      dim ranges() as CharSelection = HighlightedRanges.SelectionsForLine(lineIdx) //first, draw the Highlighted ranges
+		      var ranges() as CharSelection = HighlightedRanges.SelectionsForLine(lineIdx) //first, draw the Highlighted ranges
 		      line.AppendHighlightedWords(ranges, lineIdx) //then draw words with a background
 		      ranges.Add(selection) //and finally, draw the selection
 		      
@@ -1668,18 +1668,18 @@ Implements MessageReceiver
 		        ranges.Add(MatchingBlockHighlight)
 		      end if
 		      
-		      dim x,y,w as Double
+		      var x,y,w as Double
 		      for each tmpSelection in ranges
 		        If tmpSelection.IsLineIndexInRange(lineIdx) then //if in selection, Highlight line
 		          
-		          if hasFocus or not tmpSelection.LosesFocus then
+		          if mhasFocus or not tmpSelection.LosesFocus then
 		            g.DrawingColor = tmpSelection.SelectionColor
 		          else
 		            g.DrawingColor = BackColor.darkerColor(30, true)
 		          end if
 		          
 		          if lineIdx > tmpSelection.StartLine and lineIdx < tmpSelection.EndLine then //fully selected line
-		            g.FillRectangle LineNumOffset, sy - g.TextHeight, g.Width - line.VisualIndent(self.IndentVisually), TextHeight
+		            g.FillRectangle LineNumberOffset, sy - g.TextHeight, g.Width - line.VisualIndent(self.IndentVisually), TextHeight
 		            
 		          elseif lineIdx = tmpSelection.StartLine and tmpSelection.EndLine <> tmpSelection.StartLine then //firstLine
 		            XYAtCharPos(tmpSelection.offset, lineIdx, x, y)
@@ -1694,9 +1694,9 @@ Implements MessageReceiver
 		            XYAtCharPos(tmpSelection.offset + tmpSelection.length, lineIdx, x, y)
 		            
 		            if tmpSelection.Rounded then
-		              g.FillRoundRectangle LineNumOffset - 10, sy - g.TextHeight, x - LineNumOffset + 10, TextHeight, 8, 8
+		              g.FillRoundRectangle LineNumberOffset - 10, sy - g.TextHeight, x - LineNumberOffset + 10, TextHeight, 8, 8
 		            else
-		              g.FillRectangle LineNumOffset, sy - g.TextHeight, x - LineNumOffset, TextHeight
+		              g.FillRectangle LineNumberOffset, sy - g.TextHeight, x - LineNumberOffset, TextHeight
 		            end if
 		            
 		          else //small block in line.
@@ -1714,27 +1714,27 @@ Implements MessageReceiver
 		      next
 		      
 		      //paint a line background?
-		      PaintBelowLine(lineIdx, g, LineNumOffset, sy - g.TextHeight, g.Width - LineNumOffset - 1, TextHeight)
+		      PaintBelowLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
 		      
 		      //paint line
-		      line.Paint(TextStorage, g, sx, sy - (g.TextHeight - g.FontAscent), TextColor, DisplayInvisibleCharacters, SelStart, SelLength, true, self.IndentVisually)
+		      line.Paint(TextStorage, g, sx, sy - (g.TextHeight - g.FontAscent), TextColor, DisplayInvisibleCharacters, SelectionStart, SelectionLength, true, self.IndentVisually)
 		      
 		      //a line overlay?
-		      PaintAboveLine(lineIdx, g, LineNumOffset, sy - g.TextHeight, g.Width - LineNumOffset - 1, TextHeight)
+		      PaintAboveLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
 		      
 		      //contents after folded line...
 		      if line.folded then
-		        dim tmp as TextLine = lines.getLine(lines.nextBlockEndLine(lineIdx))
+		        var tmp as TextLine = lines.getLine(lines.nextBlockEndLine(lineIdx))
 		        if tmp <> nil then
 		          //make italic and paint after current line.
 		          tmp.italic = True
-		          tmp.Paint(TextStorage, g, sx + line.TotalWidth + EditFieldGlobals.BlockFoldedTrailImage.Width + 6, sy - (g.TextHeight - g.FontAscent), TextColor, false, SelStart, SelLength, false, self.IndentVisually)
+		          tmp.Paint(TextStorage, g, sx + line.TotalWidth + EditFieldGlobals.BlockFoldedTrailImage.Width + 6, sy - (g.TextHeight - g.FontAscent), TextColor, false, SelectionStart, SelectionLength, false, self.IndentVisually)
 		          tmp.italic = False
 		        end if
 		      end if
 		      
 		      //autocomplete suggestion
-		      if SelLength = 0 and lineIdx = CaretLine and trailingSuggestion <> "" then
+		      if SelectionLength = 0 and lineIdx = CaretLine and trailingSuggestion <> "" then
 		        g.DrawingColor = EditFieldGlobals.AdjustColorForDarkMode (&cAAAAAA)
 		        var c as Color = g.DrawingColor
 		        if Color.isdarkmode then
@@ -1749,11 +1749,11 @@ Implements MessageReceiver
 		        //caret line is slightly darker
 		        if EnableLineFoldings then
 		          gg.DrawingColor = GutterBackgroundColor.lighterColor(10, true)
-		          gg.FillRectangle LineNumOffset - FoldingOffset - 1, sy - g.TextHeight, FoldingOffset, TextHeight
+		          gg.FillRectangle LineNumberOffset - FoldingOffset - 1, sy - g.TextHeight, FoldingOffset, TextHeight
 		        end if
 		        if CaretLine = lineIdx then
 		          gg.DrawingColor = GutterBackgroundColor.darkerColor(20, true)
-		          gg.FillRectangle 0, sy - g.TextHeight, LineNumOffset - 1 - FoldingOffset, TextHeight
+		          gg.FillRectangle 0, sy - g.TextHeight, LineNumberOffset - 1 - FoldingOffset, TextHeight
 		          gg.Bold = true
 		          gg.DrawingColor = EditFieldGlobals.AdjustColorForDarkMode (&c000000)
 		        else
@@ -1762,24 +1762,24 @@ Implements MessageReceiver
 		          #else
 		            gg.DrawingColor =  GutterBackgroundColor
 		          #endif
-		          gg.FillRectangle 0,sy - g.TextHeight,LineNumOffset - 1 - FoldingOffset, TextHeight
+		          gg.FillRectangle 0,sy - g.TextHeight,LineNumberOffset - 1 - FoldingOffset, TextHeight
 		        end if
 		        
 		        if DisplayDirtyLines and line.isDirty then
 		          gg.DrawingColor = DirtyLinesColor
-		          gg.FillRectangle LineNumOffset - 4, sy - g.TextHeight, 3, TextHeight
+		          gg.FillRectangle LineNumberOffset - 4, sy - g.TextHeight, 3, TextHeight
 		        end if
 		        
 		        //bookmarks?
 		        if BookmarkTable.HasKey(lineIdx) then
-		          dim img as Picture = UseBookmarkIconForLine(lineIdx)
+		          var img as Picture = UseBookmarkIconForLine(lineIdx)
 		          if img = nil then img = BookmarkImage
 		          gg.DrawPicture img, 0, sy - g.TextHeight + (g.TextHeight - img.Height)/2
 		        end if
 		        
 		        //row icon available?
 		        if line.icon <> nil then
-		          dim icn as Picture = line.icon
+		          var icn as Picture = line.icon
 		          gg.DrawPicture icn, gutterWidth - icn.Width - 2 - FoldingOffset, sy - g.TextHeight + (g.TextHeight - icn.Height)/2
 		        else
 		          //line number
@@ -1788,7 +1788,7 @@ Implements MessageReceiver
 		            gg.FontName = LineNumbersTextFont
 		            gg.FontSize = LineNumbersFontSize
 		          end if
-		          gg.DrawText str(lineIdx + 1), lineNumOffset - 2 - gg.TextWidth(str(lineIdx + 1)) - FoldingOffset, sy - (TextHeight - gg.FontAscent)/2
+		          gg.DrawText str(lineIdx + 1), LineNumberOffset - 2 - gg.TextWidth(str(lineIdx + 1)) - FoldingOffset, sy - (TextHeight - gg.FontAscent)/2
 		          if gr = gg then
 		            gg.FontSize = FontSize
 		            gg.FontName = TextFont
@@ -1797,12 +1797,12 @@ Implements MessageReceiver
 		        
 		        if EnableLineFoldings and line.isBlockStart then
 		          if line.folded then //draw line folded marker
-		            gg.DrawPicture blockFoldedImage, LineNumOffset - blockFoldedImage.Width - 2, sy - TextHeight + (TextHeight - blockFoldedImage.Height) / 2 + 1
+		            gg.DrawPicture blockFoldedImage, LineNumberOffset - blockFoldedImage.Width - 2, sy - TextHeight + (TextHeight - blockFoldedImage.Height) / 2 + 1
 		          else
-		            gg.DrawPicture blockStartImage, LineNumOffset - blockStartImage.Width - 2, sy - TextHeight + (TextHeight - blockStartImage.Height) / 2 + 1
+		            gg.DrawPicture blockStartImage, LineNumberOffset - blockStartImage.Width - 2, sy - TextHeight + (TextHeight - blockStartImage.Height) / 2 + 1
 		          end if
 		        elseif EnableLineFoldings and line.isBlockEnd then
-		          gg.DrawPicture blockEndImage, LineNumOffset - blockEndImage.Width - 2, sy - TextHeight + (TextHeight - blockEndImage.Height) / 2 + 1
+		          gg.DrawPicture blockEndImage, LineNumberOffset - blockEndImage.Width - 2, sy - TextHeight + (TextHeight - blockEndImage.Height) / 2 + 1
 		        end if
 		        
 		        gg.Bold = false
@@ -1855,7 +1855,7 @@ Implements MessageReceiver
 		  'if MouseOverBlock <> nil then
 		  '//compose editfield + blockHighlight
 		  '
-		  'dim tmpPic as Picture
+		  'var tmpPic as Picture
 		  'if mBackBuffer <> nil then
 		  'tmpPic = New Picture(gr.Width, gr.Height, 32)
 		  'tmpPic.Graphics.AntiAlias = True
@@ -1864,8 +1864,8 @@ Implements MessageReceiver
 		  'g.DrawPicture mBackBuffer, 0, 0, Width, Height, 0, 0, Width, Height
 		  'end
 		  '
-		  'dim blockPicture as Picture = New Picture(self.Width - LineNumOffset, self.Height, 32)
-		  'Dim gb As Graphics = blockPicture.Graphics
+		  'var blockPicture as Picture = New Picture(self.Width - LineNumOffset, self.Height, 32)
+		  'var gb As Graphics = blockPicture.Graphics
 		  'gb.AntiAlias = True
 		  'gb.AntiAliasMode = Graphics.AntiAliasModes.HighQuality
 		  '
@@ -1921,7 +1921,7 @@ Implements MessageReceiver
 		  //right margin
 		  if DisplayRightMarginMarker and RightMarginAtPixel > 0 then
 		    'gr.DrawLine rightMarginMarkerOffset - ScrollPositionX + LeftMarginOffset + LineNumOffset, 0, rightMarginMarkerOffset - ScrollPositionX + LeftMarginOffset + LineNumOffset, g.Height
-		    gr.DrawPicture RightMarginLineImage, RightMarginAtPixel - ScrollPositionX + LeftMarginOffset + LineNumOffset, 0, 1, gr.Height, 0,0,1,1
+		    gr.DrawPicture RightMarginLineImage, RightMarginAtPixel - ScrollPositionX + LeftMarginOffset + LineNumberOffset, 0, 1, gr.Height, 0,0,1,1
 		  end if
 		  
 		  //paint caret
@@ -1936,7 +1936,7 @@ Implements MessageReceiver
 		  '#if TargetMacOS
 		  '// paint visual block feedback
 		  'if MouseOverBlock <> nil then
-		  'dim blockPicture as Picture = New Picture(self.Width - LineNumOffset, self.Height, 32)
+		  'var blockPicture as Picture = New Picture(self.Width - LineNumOffset, self.Height, 32)
 		  'blockPicture.Graphics.DrawingColor = EditFieldGlobals.AdjustColorForDarkMode (&c000000)
 		  'blockPicture.Graphics.FillRectangle 0, 0, blockPicture.Width, blockPicture.Height
 		  '
@@ -1971,19 +1971,19 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h1
 		Protected Sub enableBlinker(value as boolean)
-		  if caretBlinker = nil then Return
+		  if mcaretBlinker = nil then Return
 		  
 		  if value and not ReadOnly then
 		    if DebugBuild and EditFieldGlobals.DebugIndentation then
 		      // prevent repeated drawContent() calls for debugging
-		      caretBlinker.RunMode = timer.RunModes.Off 
+		      mcaretBlinker.RunMode = timer.RunModes.Off 
 		    else
-		      caretBlinker.RunMode = timer.RunModes.Multiple
+		      mcaretBlinker.RunMode = timer.RunModes.Multiple
 		    end if
-		    caretState = true
+		    caretvisible = true
 		  Else
-		    caretBlinker.RunMode = timer.RunModes.Off
-		    caretState = false
+		    mcaretBlinker.RunMode = timer.RunModes.Off
+		    caretvisible = false
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1994,12 +1994,12 @@ Implements MessageReceiver
 		  mCurrentAutocompleteOptions = nil
 		  
 		  //get word where caret is
-		  dim CurrentWordSegment as TextSegment = CurrentWord
+		  var CurrentWordSegment as TextSegment = CurrentWord
 		  if CurrentWordSegment.length = 0 then Return False
 		  if CaretPos = CurrentWordSegment.offset then Return False //return false if cursor at the beginning of word... requested by Scott Fortmann-Roe
 		  
 		  //get the actual word text
-		  dim prefix as String = TextStorage.getText(CurrentWordSegment.offset, CurrentWordSegment.length).Trim
+		  var prefix as String = TextStorage.getText(CurrentWordSegment.offset, CurrentWordSegment.length).Trim
 		  if prefix.Length = 0  or prefix = "." then Return False
 		  
 		  //raise event
@@ -2018,7 +2018,7 @@ Implements MessageReceiver
 		  
 		  //get current path component, what this is is, the last word after the last period in the prefix
 		  //if the prefix is one.two.three then the current component will be "three"
-		  dim tmpPath() as String = prefix.Split(".")
+		  var tmpPath() as String = prefix.Split(".")
 		  CurrentAutocompleteOptions.currentPathComponent = tmpPath(tmpPath.LastIndex)
 		  
 		  Return true
@@ -2029,10 +2029,10 @@ Implements MessageReceiver
 		Function Find(what as string, ignoreCase as boolean, wrap as boolean, redraw as boolean = true, startPos as integer = - 1) As integer
 		  if what = "" then Return -1
 		  
-		  dim tmpTxt as String = TextStorage.getText(0, TextStorage.Length)
+		  var tmpTxt as String = TextStorage.getText(0, TextStorage.Length)
 		  if tmpTxt.Encoding <> nil then tmpTxt = tmpTxt.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		  
-		  if startPos < 0 then startPos = SelStart + SelLength
+		  if startPos < 0 then startPos = SelectionStart + SelectionLength
 		  startPos = tmpTxt.left(startPos).Bytes //in case there are multi-bytes...
 		  
 		  static scanner as new RegEx ' let's make this static to avoid hard crashes on OS X with RB 2012r2.1
@@ -2040,7 +2040,7 @@ Implements MessageReceiver
 		  scanner.SearchPattern = what.ReplaceAll("\","\\").ReplaceAll("(","\(").replaceAll(")","\)").ReplaceAll("[","\[").ReplaceAll("]","\]").ReplaceAll("{","\{").ReplaceAll("}","\}").ReplaceAll("?","\?").ReplaceAll("*","\*").ReplaceAll("+","\+").ReplaceAll("|","\|").ReplaceAll("^","\^").ReplaceAll("$","\$").ReplaceAll(".","\.")
 		  scanner.Options.CaseSensitive = not ignoreCase
 		  
-		  dim match as RegExMatch = scanner.Search(tmpTxt, startPos)
+		  var match as RegExMatch = scanner.Search(tmpTxt, startPos)
 		  
 		  if match = nil then
 		    if wrap then
@@ -2052,17 +2052,17 @@ Implements MessageReceiver
 		  end if
 		  
 		  //reveal line if invisible (folded)
-		  dim offset as integer = tmpTxt.LeftBytes(match.SubExpressionStartB(0)).Length
-		  dim length as integer = match.SubExpressionString(0).Length
-		  dim lineIdx as Integer = lines.getLineNumberForOffset(offset)
+		  var offset as integer = tmpTxt.LeftBytes(match.SubExpressionStartB(0)).Length
+		  var length as integer = match.SubExpressionString(0).Length
+		  var lineIdx as Integer = lines.getLineNumberForOffset(offset)
 		  
-		  dim line as TextLine = lines.getLine(lineIdx)
+		  var line as TextLine = lines.getLine(lineIdx)
 		  if line <> nil and not line.visible then lines.revealLine(lineIdx)
 		  
 		  changeSelection(offset, length)
 		  if redraw then self.Redraw
 		  
-		  Return SelStart
+		  Return SelectionStart
 		  
 		  Exception RegExSearchPatternException
 		    Return -1 //ignore these...
@@ -2084,7 +2084,7 @@ Implements MessageReceiver
 		  //fold the block where the caret is.
 		  if not EnableLineFoldings then Return
 		  
-		  dim idx as Integer = OpeningBlockLineForLine(CaretLine)
+		  var idx as Integer = OpeningBlockLineForLine(CaretLine)
 		  if idx < 0 then Return
 		  
 		  ToggleLineFold(idx)
@@ -2098,22 +2098,15 @@ Implements MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub ForceHonorRepaint()
-		  mIgnoreRepaintCount = 0
-		  
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Function getCurrentModeColor(propertyName as String) As Color
-		  dim result as Variant
+		  var result as Variant
 		  if EditFieldGlobals.IsDarkMode then
 		    result = mDarkModeColors.Lookup (propertyName, nil)
 		    if result = nil then
 		      // We were in Bright Mode before, now we can fetch the correct Dark Mode color
 		      result = mBrightModeColors.Lookup (propertyName, nil)
-		      dim dark as Color = EditFieldGlobals.AdjustColorForDarkMode (result)
+		      var dark as Color = EditFieldGlobals.AdjustColorForDarkMode (result)
 		      mDarkModeColors.Value (propertyName) = dark
 		    elseif result isA ColorReturningProc then
 		      result = ColorReturningProc(result).Invoke ()
@@ -2137,7 +2130,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h21
 		Private Function getDoubleClickTimeTicks() As Integer
-		  dim doubleClickTime as Integer
+		  var doubleClickTime as Integer
 		  
 		  #if targetMacOS then
 		    Declare Function GetDblTime Lib "Carbon" () as Integer
@@ -2158,7 +2151,7 @@ Implements MessageReceiver
 		    if not system.IsFunctionAvailable ("gtk_settings_get_default", libname) then
 		      break
 		    else
-		      dim gtkSettings as Ptr = gtk_settings_get_default()
+		      var gtkSettings as Ptr = gtk_settings_get_default()
 		      g_object_get (gtkSettings, "gtk-double-click-time", doubleClickTime, 0)
 		      // DoubleClickTime now holds the number of milliseconds
 		      doubleClickTime = doubleClickTime / 1000.0 * 60 ' converted to System.Ticks
@@ -2180,7 +2173,7 @@ Implements MessageReceiver
 		  locx=me.Left
 		  locy=me.top
 		  
-		  dim container as DesktopWindow
+		  var container as DesktopWindow
 		  Container=me.Window
 		  
 		  while true
@@ -2199,7 +2192,7 @@ Implements MessageReceiver
 		      #if RBVersion >= 2007.00 and TargetWindows then
 		        for i as integer = 0 to container.ControlCount-1
 		          if container.ControlAt(i) isa DesktopToolbar then
-		            dim tb as DesktopToolbar = DesktopToolbar(container.ControlAt(i))
+		            var tb as DesktopToolbar = DesktopToolbar(container.ControlAt(i))
 		            locy = locy + tb.Height
 		          end if
 		        next
@@ -2214,7 +2207,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h0
 		Function GetLine(index as Integer) As string
 		  //returns the text contained in a line.
-		  dim line as TextLine = lines.getLine(index)
+		  var line as TextLine = lines.getLine(index)
 		  if line = nil then Return ""
 		  
 		  Return TextStorage.getText(line.offset, line.length)
@@ -2238,19 +2231,19 @@ Implements MessageReceiver
 		Protected Sub handleDoubleClick()
 		  //highlight word(s) after a double click
 		  
-		  dim word as new TextSegment
-		  dim char as String = TextStorage.getCharAt(CaretPos)
+		  var word as new TextSegment
+		  var char as String = TextStorage.getCharAt(CaretPos)
 		  if IsWhitespace(char) then char  = TextStorage.getCharAt(max(CaretPos - 1, 0))
 		  
 		  //check if in placeholder..
-		  dim line as TextLine = lines.getLine(CaretLine)
+		  var line as TextLine = lines.getLine(CaretLine)
 		  if line <> nil and line.PlaceholderForOffset(CaretPos + 1) <> nil then
 		    Word.offset = CaretPos + 1
 		    Word.length = 0
 		    
 		  elseif IsBlockChar(char) then
 		    //if is a block char, find the start/end block
-		    dim tmp as String
+		    var tmp as String
 		    
 		    if BLOCK_OPEN_CHARS.IndexOf(char) > -1 then //
 		      Word.offset = CaretPos + 1
@@ -2285,11 +2278,11 @@ Implements MessageReceiver
 		Protected Sub HandleDragOnGutter(X as integer, Y as integer)
 		  //Handle a mouse drag on the gutter.
 		  
-		  dim currPos as Integer = CharPosAtXY(x,y)
-		  if selectedLine >=0 and x < LineNumOffset then
+		  var currPos as Integer = CharPosAtXY(x,y)
+		  if selectedLine >=0 and x < LineNumberOffset then
 		    //drag on the line numbers
-		    dim onLine as Integer = lines.getLineNumberForOffset(currPos)
-		    dim fromLine, toLine as TextLine
+		    var onLine as Integer = lines.getLineNumberForOffset(currPos)
+		    var fromLine, toLine as TextLine
 		    fromLine = lines.getLine(min(selectedLine, onLine))
 		    toLine = lines.getLine(max(selectedLine, onLine))
 		    
@@ -2306,8 +2299,8 @@ Implements MessageReceiver
 	#tag Method, Flags = &h1
 		Protected Sub HandleHorizontalMouseDrag(x as integer, y as integer)
 		  #pragma unused y
-		  if x < LineNumOffset then
-		    changeScrollValues(ScrollPositionX + (x - LineNumOffset), ScrollPosition)
+		  if x < LineNumberOffset then
+		    changeScrollValues(ScrollPositionX + (x - LineNumberOffset), ScrollPosition)
 		    
 		  ElseIf x > Width then
 		    changeScrollValues(ScrollPositionX + (x - Width), ScrollPosition)
@@ -2334,14 +2327,14 @@ Implements MessageReceiver
 		  const ESC_KEY = 27
 		  const TAB_KEY = 9
 		  
-		  dim keyAsc as Integer = asc(key)
+		  var keyAsc as Integer = asc(key)
 		  
 		  #if DebugBuild
 		    keyDownTime = System.Microseconds
 		  #endif
 		  
-		  dim byPage as Boolean = Keyboard.OptionKey
-		  dim toBorder as Boolean
+		  var byPage as Boolean = Keyboard.OptionKey
+		  var toBorder as Boolean
 		  #if TargetMacOS
 		    toBorder = Keyboard.CommandKey
 		  #else
@@ -2435,19 +2428,19 @@ Implements MessageReceiver
 		    typing = true
 		    
 		    //if there's a selection, we indent all selected lines unless if we are in keep indented mode then we replace
-		    if me.SelLength > 0 then
+		    if me.SelectionLength > 0 then
 		      if not me.KeepEntireTextIndented and keyAsc = TAB_KEY then
 		        
-		        Dim startLineNumber as Integer = me.LineNumAtCharPos(SelStart)
-		        Dim endLineNumber as Integer = me.LineNumAtCharPos(SelStart + SelLength)
+		        var startLineNumber as Integer = me.LineNumAtCharPos(SelectionStart)
+		        var endLineNumber as Integer = me.LineNumAtCharPos(SelectionStart + SelectionLength)
 		        
 		        IndentLines(startLineNumber, endLineNumber,not Keyboard.ShiftKey)
 		      else
-		        private_replace(selStart , me.SelLength, key)
+		        private_replace(SelectionStart , me.SelectionLength, key)
 		      end if
 		    else
 		      //see if we need to Autocomplete brackets
-		      dim bracketInserted as Boolean
+		      var bracketInserted as Boolean
 		      if AutoCloseBrackets then
 		        //scan the possible opening block chars...
 		        for i as Integer = 0 to BLOCK_OPEN_CHARS.Length-1
@@ -2459,7 +2452,7 @@ Implements MessageReceiver
 		          end if
 		        next
 		      end if
-		      insert(selStart, key)
+		      insert(SelectionStart, key)
 		      
 		      //if autocompleted, move caret one char to the left
 		      if bracketInserted then CaretPos = CaretPos - 1
@@ -2468,10 +2461,10 @@ Implements MessageReceiver
 		    //autoindent lines?
 		    //check if current (new) entered line needs autoindenting...
 		    If AutoIndentNewLines and not mIndentVisually then
-		      dim thisLine as TextLine = lines.getLine(CaretLine)
+		      var thisLine as TextLine = lines.getLine(CaretLine)
 		      if thisLine <> nil  and (key = chr(13) or key = chr(3) or thisLine.isBlockEnd) then
 		        //indent this new line
-		        dim state as Variant
+		        var state as Variant
 		        if private_indentline (CaretLine, false, state) then
 		          InvalidateLine (CaretLine)
 		        end
@@ -2512,11 +2505,11 @@ Implements MessageReceiver
 		Protected Sub HandleTextDrag(x as integer, y as integer)
 		  //save the selection...
 		  DragTextSelection = new DataRange
-		  DragTextSelection.offset = SelStart
-		  DragTextSelection.length = SelLength
+		  DragTextSelection.offset = SelectionStart
+		  DragTextSelection.length = SelectionLength
 		  
-		  dim drag as Picture = SelectedTextDragImage
-		  dim di as DragItem = New DragItem(self.Window, x,y, drag.Width, drag.Height)
+		  var drag as Picture = SelectedTextDragImage
+		  var di as DragItem = New DragItem(self.Window, x,y, drag.Width, drag.Height)
 		  
 		  //set the drag text
 		  di.Text = me.SelText
@@ -2541,7 +2534,7 @@ Implements MessageReceiver
 		  //if dragging selection outside visible area...
 		  if y < 0 or y > Height then
 		    
-		    dim linesToScroll as Integer
+		    var linesToScroll as Integer
 		    
 		    if y < 0 then
 		      linesToScroll = y / TextHeight
@@ -2586,7 +2579,7 @@ Implements MessageReceiver
 		    length = TextLength - offset
 		  end if
 		  
-		  dim tmp as new CharSelection
+		  var tmp as new CharSelection
 		  
 		  tmp.offset = offset
 		  tmp.length = length
@@ -2608,15 +2601,15 @@ Implements MessageReceiver
 	#tag Method, Flags = &h1
 		Protected Sub HighlightClosingBlock(text as string, offset as integer)
 		  //find the next closing block, starting at offset
-		  dim pos as Integer
-		  dim closeChar as String
+		  var pos as Integer
+		  var closeChar as String
 		  pos = NextBlockChar(text, offset, closeChar)
 		  
 		  if pos >= 0 then
 		    if HighlightMatchingBracketsMode = 0 then //circle
 		      XYAtCharPos(pos, blockBeginPosX, blockBeginPosY)
 		    else
-		      dim line as Integer = LineNumAtCharPos(pos)
+		      var line as Integer = LineNumAtCharPos(pos)
 		      MatchingBlockHighlight = new CharSelection(pos, 1, line, line, BracketHighlightColor)
 		      InvalidateLine(line)
 		    end if
@@ -2662,15 +2655,15 @@ Implements MessageReceiver
 		Protected Sub HighlightOpeningBlock(text as string, offset as integer)
 		  //find the previous opening block, starting at offset
 		  
-		  dim pos as Integer
-		  dim openingChar as string
+		  var pos as Integer
+		  var openingChar as string
 		  pos = PreviousBlockChar(text, offset, openingChar)
 		  
 		  if pos >= 0 then
 		    if HighlightMatchingBracketsMode = 0 then//circle
 		      XYAtCharPos(pos, blockBeginPosX, blockBeginPosY)
 		    else
-		      dim line as Integer = LineNumAtCharPos(pos)
+		      var line as Integer = LineNumAtCharPos(pos)
 		      MatchingBlockHighlight = new CharSelection(pos, 1, line, line, BracketHighlightColor)
 		      InvalidateLine(line)
 		    end if
@@ -2686,11 +2679,11 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h21
 		Private Sub IndentLines(fromLine as Integer, toLine as integer, addIndent as Boolean)
-		  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		  #pragma unused lock
 		  
 		  #if DebugBuild and (EditFieldGlobals.DebugTiming or EditFieldGlobals.DebugIndentation)
-		    dim runtimer as new Debugging.LifeTimer("ReindentText "+str(fromLine)+" to "+str(toLine))
+		    var runtimer as new Debugging.LifeTimer("ReindentText "+str(fromLine)+" to "+str(toLine))
 		  #endif
 		  
 		  if CurrentEventID <= 0 then
@@ -2698,12 +2691,12 @@ Implements MessageReceiver
 		    CurrentEventID = System.Ticks
 		  end if
 		  
-		  dim needsRedraw as Boolean
+		  var needsRedraw as Boolean
 		  
 		  self.IgnoreRepaint = true
-		  //dim state as Variant
+		  //var state as Variant
 		  for i as Integer = fromLine to toLine
-		    dim line as TextLine = lines.getLine (i)
+		    var line as TextLine = lines.getLine (i)
 		    
 		    if line = nil then
 		      Continue
@@ -2752,7 +2745,7 @@ Implements MessageReceiver
 		Private Sub internalReplace(offset as integer, length as integer, text as string)
 		  // This internal function performs no undo, no change notification, nor updating of the caret position
 		  
-		  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		  #pragma unused lock
 		  
 		  if ReadOnly then
@@ -2861,7 +2854,7 @@ Implements MessageReceiver
 		  //called by line manager, when the line number changes.
 		  
 		  //force to recalculate the line number gutter
-		  LineNumOffset = 0
+		  LineNumberOffset = 0
 		  
 		  //raise the linecountchanged event
 		  RaiseEvent LineCountChanged lines.Count
@@ -2891,7 +2884,7 @@ Implements MessageReceiver
 		  //mark for repaint
 		  InvalidateLine(lineIndex)
 		  
-		  dim line as TextLine = lines.getLine(lineIndex)
+		  var line as TextLine = lines.getLine(lineIndex)
 		  if line = nil then Return
 		  
 		  if line.LineSymbols = nil or line.LineSymbols.KeyCount = 0 then Return
@@ -2909,7 +2902,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h0
 		Function LineIcon(index as integer) As picture
 		  //returns the rowicon for the index line
-		  dim line as TextLine = lines.getLine(index)
+		  var line as TextLine = lines.getLine(index)
 		  if line = nil then
 		    Return nil
 		  end if
@@ -2921,7 +2914,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h0
 		Sub LineIcon(index as integer, assigns value as picture)
 		  //sets a rowicon
-		  dim line as TextLine = lines.getLine(index)
+		  var line as TextLine = lines.getLine(index)
 		  if line = nil then
 		    Return
 		  end if
@@ -2942,7 +2935,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h0
 		Function LineOffset(index as Integer) As Integer
 		  //returns the text offset for the given line (lines start at 0)
-		  dim line as TextLine = lines.getLine(index)
+		  var line as TextLine = lines.getLine(index)
 		  if line = nil then return 0
 		  return line.offset
 		End Function
@@ -2951,7 +2944,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h1
 		Protected Sub LineSymbolsRemoved(symbols as dictionary)
 		  //either the symbols have changed, or the line containing them was removed, so remove them from local table.
-		  dim key as TextLine
+		  var key as TextLine
 		  
 		  for each key in symbols.keys
 		    if CurrentDocumentSymbols.HasKey(key) then CurrentDocumentSymbols.Remove(key)
@@ -2962,7 +2955,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h0
 		Sub loseFocus()
 		  CurrentEventID = 0
-		  hasFocus = False
+		  mhasFocus = False
 		  LostFocus
 		  enableBlinker(False)
 		  Redraw
@@ -2971,7 +2964,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h21
 		Private Function LTrimLines(s as String) As String
-		  dim lines() as String = s.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
+		  var lines() as String = s.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
 		  
 		  for i as Integer = 0 to lines.LastIndex
 		    lines(i) = lines(i).TrimLeft
@@ -2991,7 +2984,7 @@ Implements MessageReceiver
 		  
 		  expression = expression.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		  
-		  dim myMatch as RegExMatch = rg.search(expression)
+		  var myMatch as RegExMatch = rg.search(expression)
 		  
 		  Return myMatch <> nil
 		End Function
@@ -3008,22 +3001,22 @@ Implements MessageReceiver
 		  
 		  //oh yes... this can be a lot better, for starters we can get the screen width by reading all the word lengths in this line... I guess I'm just lazy.
 		  if longestLineIndex < 0 then Return
-		  dim maxLine as TextLine = lines.getLine(longestLineIndex)
+		  var maxLine as TextLine = lines.getLine(longestLineIndex)
 		  if maxline = nil or abs(maxLine.length - lastLongestLineLength) < 2 then Return
 		  
 		  //cache length
 		  lastLongestLineLength = maxLine.length
 		  
 		  //measure string in pixels
-		  dim tmp as Picture = tmpPicture
+		  var tmp as Picture = TemporaryPicture
 		  
-		  dim maxLength as single = maxLine.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters)
+		  var maxLength as single = maxLine.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters)
 		  
-		  if maxLength = lastLongestLinePixels then Return
-		  lastLongestLinePixels = maxLength
+		  if maxLength = mlastLongestLinePixels then Return
+		  mlastLongestLinePixels = maxLength
 		  
 		  //raise event
-		  RaiseEvent MaxLineLengthChanged lastLongestLinePixels
+		  RaiseEvent MaxLineLengthChanged mlastLongestLinePixels
 		  
 		  //calculate scrollbar
 		  CalculateMaxHorizontalSB
@@ -3035,22 +3028,22 @@ Implements MessageReceiver
 		  //arrow down...
 		  
 		  //if selection, move Caret to end of selection.
-		  if not Keyboard.ShiftKey and selLength > 0 then
-		    changeSelection(selStart + selLength, 0)
+		  if not Keyboard.ShiftKey and SelectionLength > 0 then
+		    changeSelection(SelectionStart + SelectionLength, 0)
 		    Return
 		  end if
 		  
-		  dim lineNum as Integer
+		  var lineNum as Integer
 		  
 		  //find line number
-		  if selStart < CaretPos then
-		    lineNum = lines.getLineNumberForOffset(selStart)
+		  if SelectionStart < CaretPos then
+		    lineNum = lines.getLineNumberForOffset(SelectionStart)
 		  else
-		    lineNum = lines.getLineNumberForOffset(selStart + selLength)
+		    lineNum = lines.getLineNumberForOffset(SelectionStart + SelectionLength)
 		  end if
 		  
 		  //default the lines to move to 1
-		  dim linesToMove as Integer = 1
+		  var linesToMove as Integer = 1
 		  
 		  if moveToEnd then
 		    // move to end of document
@@ -3060,8 +3053,8 @@ Implements MessageReceiver
 		    linesToMove = MaxVisibleLines - 1
 		  end if
 		  
-		  dim line as TextLine
-		  dim offset as Integer
+		  var line as TextLine
+		  var offset as Integer
 		  //get line to move to
 		  LineNum =LineNum + linesToMove
 		  if LineNum >= lines.Count then //moving down on the last line, jump to the end of that line
@@ -3093,34 +3086,34 @@ Implements MessageReceiver
 		Protected Sub moveCaretLeft(toStartOfLine as Boolean)
 		  //left arrow pressed
 		  
-		  dim pos as Integer
+		  var pos as Integer
 		  
 		  //default the places to move to 1
-		  dim charsToMove as Integer = 1
-		  dim LineNum as Integer
+		  var charsToMove as Integer = 1
+		  var LineNum as Integer
 		  
 		  //if shift pressed, we're changing the current selection.
 		  if Keyboard.ShiftKey then
 		    
 		    //if the end of the selection is after the CaretPos then, shrink selection
-		    if selStart + selLength > CaretPos then
+		    if SelectionStart + SelectionLength > CaretPos then
 		      
 		      //move to start of line.
 		      if toStartOfLine then
 		        
 		        //lineNum = lines.getLineNumberForOffset(selStart+selLength - 1)
-		        lineNum = lines.getLineNumberForOffset(selStart+selLength)
+		        lineNum = lines.getLineNumberForOffset(SelectionStart+SelectionLength)
 		        
-		        if selStart +selLength  > lines.getLine(LineNum).offset then
+		        if SelectionStart +SelectionLength  > lines.getLine(LineNum).offset then
 		          changeSelection(lines.getLine(LineNum).offset, CaretPos -  lines.getLine(LineNum).offset)
-		          pos = selStart
+		          pos = SelectionStart
 		          
 		        end if
-		        ViewToCharPos(LineNum, SelStart + SelLength)
+		        ViewToCharPos(LineNum, SelectionStart + SelectionLength)
 		        
 		        //move to previous word
 		      ElseIf Keyboard.OptionKey then
-		        dim previous as Integer = previousNonAlpha(selStart + selLength)
+		        var previous as Integer = previousNonAlpha(SelectionStart + SelectionLength)
 		        
 		        changeSelection(previous, CaretPos - previous)
 		        pos = previous
@@ -3129,8 +3122,8 @@ Implements MessageReceiver
 		        
 		        //move just by one place
 		      else
-		        changeSelection(selStart, selLength - charsToMove)
-		        pos = selStart + selLength
+		        changeSelection(SelectionStart, SelectionLength - charsToMove)
+		        pos = SelectionStart + SelectionLength
 		        
 		        ViewToCharPos(pos)
 		      end if
@@ -3141,27 +3134,27 @@ Implements MessageReceiver
 		      //move to start of line
 		      if toStartOfLine then
 		        //LineNum = lines.getLineNumberForOffset(max(selStart - 1, 0))
-		        LineNum = lines.getLineNumberForOffset(max(selStart, 0))
+		        LineNum = lines.getLineNumberForOffset(max(SelectionStart, 0))
 		        
-		        if selStart > lines.getLine(LineNum).offset then
+		        if SelectionStart > lines.getLine(LineNum).offset then
 		          changeSelection(lines.getLine(LineNum).offset, CaretPos -  lines.getLine(LineNum).offset)
-		          pos = selStart
+		          pos = SelectionStart
 		          
 		        end if
-		        ViewToCharPos(LineNum, SelStart)
+		        ViewToCharPos(LineNum, SelectionStart)
 		        
 		        //move to previous word
 		      ElseIf Keyboard.OptionKey then
-		        dim previous as Integer = previousNonAlpha(selStart)
+		        var previous as Integer = previousNonAlpha(SelectionStart)
 		        
 		        changeSelection(previous,  CaretPos - previous)
-		        pos = SelStart
+		        pos = SelectionStart
 		        ViewToCharPos(pos)
 		        
 		        //move one place
 		      else
-		        changeSelection(selStart - charsToMove, selLength + charsToMove)
-		        pos = selStart
+		        changeSelection(SelectionStart - charsToMove, SelectionLength + charsToMove)
+		        pos = SelectionStart
 		        ViewToCharPos(pos)
 		        
 		      end if
@@ -3169,9 +3162,9 @@ Implements MessageReceiver
 		    end if
 		    
 		    //no shift, but there's active selction, move CaretPos to start of selection
-		  elseif selLength > 0 then
-		    changeSelection(selStart, 0)
-		    pos = selStart
+		  elseif SelectionLength > 0 then
+		    changeSelection(SelectionStart, 0)
+		    pos = SelectionStart
 		    
 		    //moving the caret
 		  else
@@ -3179,21 +3172,21 @@ Implements MessageReceiver
 		    //move it to the start of the line
 		    if toStartOfLine then
 		      //get the line
-		      LineNum = lines.getLineNumberForOffset(selStart)
-		      charsToMove = selStart - lines.getLine(LineNum).offset
+		      LineNum = lines.getLineNumberForOffset(SelectionStart)
+		      charsToMove = SelectionStart - lines.getLine(LineNum).offset
 		      
 		      //move to previous word boundary
 		    elseif Keyboard.OptionKey then
-		      charsToMove = selStart - previousNonAlpha(selStart)
+		      charsToMove = SelectionStart - previousNonAlpha(SelectionStart)
 		      
 		    end if
 		    //simple move
-		    changeSelection(selStart - charsToMove, 0)
+		    changeSelection(SelectionStart - charsToMove, 0)
 		    pos = CaretPos
 		    ViewToCharPos(CaretLine, pos)
 		    
 		    //did we just "crossed" a block character?
-		    dim char as String = TextStorage.getCharAt(CaretPos)
+		    var char as String = TextStorage.getCharAt(CaretPos)
 		    if IsBlockChar(char) then
 		      //then find the opening/closing char for this block.
 		      if BLOCK_CLOSE_CHARS.IndexOf(char) > -1 then
@@ -3214,33 +3207,33 @@ Implements MessageReceiver
 		Protected Sub moveCaretRight(toEndOfLine as Boolean)
 		  //right arrow pressed
 		  
-		  dim pos as Integer
+		  var pos as Integer
 		  
 		  //default move to 1 char
-		  dim charsToMove as Integer = 1
-		  dim LineNum as Integer
+		  var charsToMove as Integer = 1
+		  var LineNum as Integer
 		  
 		  //shift down, modify selection
 		  if Keyboard.ShiftKey then
 		    
 		    //shrink
-		    if selStart < CaretPos then
+		    if SelectionStart < CaretPos then
 		      
 		      //move to end of line
 		      if toEndOfLine then
-		        LineNum = lines.getLineNumberForOffset(selStart)
+		        LineNum = lines.getLineNumberForOffset(SelectionStart)
 		        
-		        if selStart  < lines.getLine(LineNum).offset + lines.getLine(LineNum).length then
-		          dim line as TextLine = lines.getLine(LineNum)
+		        if SelectionStart  < lines.getLine(LineNum).offset + lines.getLine(LineNum).length then
+		          var line as TextLine = lines.getLine(LineNum)
 		          changeSelection(line.offset + line.length - line.delimiterLength, CaretPos - line.offset - line.length)
 		          //oct 10 changed changeSelection(line.offset + line.length,.... to stop before EOL
-		          pos = selStart
+		          pos = SelectionStart
 		        end if
-		        ViewToCharPos(LineNum, SelStart)
+		        ViewToCharPos(LineNum, SelectionStart)
 		        
 		        //move to next word boundary
 		      ElseIf Keyboard.OptionKey then
-		        dim nextT as Integer = nextNonAlpha(selStart)
+		        var nextT as Integer = nextNonAlpha(SelectionStart)
 		        
 		        changeSelection(nextT, CaretPos - nextT)
 		        pos = nextT
@@ -3248,8 +3241,8 @@ Implements MessageReceiver
 		        
 		        //move one place
 		      else
-		        changeSelection(selStart + charsToMove, selLength - charsToMove)
-		        pos = selStart
+		        changeSelection(SelectionStart + charsToMove, SelectionLength - charsToMove)
+		        pos = SelectionStart
 		        ViewToCharPos(pos)
 		        
 		      end if
@@ -3259,20 +3252,20 @@ Implements MessageReceiver
 		      
 		      //to end of line
 		      if toEndOfLine then
-		        LineNum = lines.getLineNumberForOffset(selStart + selLength)
+		        LineNum = lines.getLineNumberForOffset(SelectionStart + SelectionLength)
 		        
-		        if selStart + selLength  < lines.getLine(LineNum).offset + lines.getLine(LineNum).length then
-		          dim line as TextLine = lines.getLine(LineNum)
-		          changeSelection(selStart, line.offset + line.length - selStart - line.delimiterLength)
+		        if SelectionStart + SelectionLength  < lines.getLine(LineNum).offset + lines.getLine(LineNum).length then
+		          var line as TextLine = lines.getLine(LineNum)
+		          changeSelection(SelectionStart, line.offset + line.length - SelectionStart - line.delimiterLength)
 		          //oct 10 changed ..., line.offset + line.length - selStart - line.delimiterLength) to stop before EOL
-		          pos = selStart + selLength
+		          pos = SelectionStart + SelectionLength
 		          
 		        end if
-		        ViewToCharPos(LineNum, SelStart + SelLength)
+		        ViewToCharPos(LineNum, SelectionStart + SelectionLength)
 		        
 		        //next word
 		      ElseIf Keyboard.OptionKey then
-		        dim nextT as Integer = nextNonAlpha(selStart + SelLength)
+		        var nextT as Integer = nextNonAlpha(SelectionStart + SelectionLength)
 		        
 		        changeSelection(nextT, CaretPos - nextT)
 		        pos = nextT
@@ -3280,8 +3273,8 @@ Implements MessageReceiver
 		        
 		        //single char
 		      else
-		        changeSelection(selStart, selLength + charsToMove)
-		        pos = selStart + selLength
+		        changeSelection(SelectionStart, SelectionLength + charsToMove)
+		        pos = SelectionStart + SelectionLength
 		        ViewToCharPos(pos)
 		        
 		      end if
@@ -3289,24 +3282,24 @@ Implements MessageReceiver
 		    end if
 		    
 		    //no shift, but active selection, move to end of selection
-		  elseif selLength > 0 then
-		    changeSelection(selStart + selLength, 0)
-		    pos = selStart
+		  elseif SelectionLength > 0 then
+		    changeSelection(SelectionStart + SelectionLength, 0)
+		    pos = SelectionStart
 		  else
 		    
 		    //EOL
 		    if toEndOfLine then
-		      LineNum = lines.getLineNumberForOffset(selStart)
+		      LineNum = lines.getLineNumberForOffset(SelectionStart)
 		      
-		      charsToMove = lines.getLine(LineNum).offset + lines.getLine(LineNum).length - selStart - lines.getLine(LineNum).delimiterLength
+		      charsToMove = lines.getLine(LineNum).offset + lines.getLine(LineNum).length - SelectionStart - lines.getLine(LineNum).delimiterLength
 		      
 		      //next word
 		    elseif Keyboard.OptionKey then
-		      charsToMove = nextNonAlpha(selStart) - selStart
+		      charsToMove = nextNonAlpha(SelectionStart) - SelectionStart
 		      
 		    end if
 		    //simple move
-		    dim char as String = TextStorage.getCharAt(CaretPos)
+		    var char as String = TextStorage.getCharAt(CaretPos)
 		    
 		    //check if next char is a block char
 		    if IsBlockChar(char) then
@@ -3320,7 +3313,7 @@ Implements MessageReceiver
 		      end if
 		    end if
 		    
-		    changeSelection(selStart + charsToMove, 0)
+		    changeSelection(SelectionStart + charsToMove, 0)
 		    pos = CaretPos
 		    ViewToCharPos(CaretLine, pos)
 		  end if
@@ -3334,22 +3327,22 @@ Implements MessageReceiver
 		  //arrow up
 		  
 		  //if not shift key and there's a selection, simply move to start of selection
-		  if not Keyboard.ShiftKey and selLength > 0 then
-		    changeSelection(selStart, 0)
+		  if not Keyboard.ShiftKey and SelectionLength > 0 then
+		    changeSelection(SelectionStart, 0)
 		    Return
 		  end if
 		  
-		  dim lineNum as Integer
+		  var lineNum as Integer
 		  
 		  //get starting line number
-		  if selStart < CaretPos then
-		    lineNum = lines.getLineNumberForOffset(selStart)
+		  if SelectionStart < CaretPos then
+		    lineNum = lines.getLineNumberForOffset(SelectionStart)
 		  else
-		    lineNum = lines.getLineNumberForOffset(selStart + selLength)
+		    lineNum = lines.getLineNumberForOffset(SelectionStart + SelectionLength)
 		  end if
 		  
 		  //default move to one place
-		  dim linesToMove as Integer = 1
+		  var linesToMove as Integer = 1
 		  
 		  if moveToStart then
 		    // move to start of document
@@ -3359,8 +3352,8 @@ Implements MessageReceiver
 		    linesToMove = MaxVisibleLines - 1
 		  end if
 		  
-		  dim line as TextLine
-		  dim offset as Integer
+		  var line as TextLine
+		  var offset as Integer
 		  
 		  LineNum = LineNum - linesToMove
 		  if LineNum < 0 then //moving up on the first line, jump to the begining of line
@@ -3390,7 +3383,7 @@ Implements MessageReceiver
 		Protected Function nextAlpha(fromOffset as integer) As integer
 		  //find the next alphanumeric char, starting at fromOffset
 		  for i as Integer = fromOffset + 1 to TextStorage.Length - 1
-		    dim char as String = TextStorage.getCharAt(i)
+		    var char as String = TextStorage.getCharAt(i)
 		    if IsAlpha(char) then Return i
 		  next
 		  Return TextStorage.Length
@@ -3406,7 +3399,7 @@ Implements MessageReceiver
 		  #endif
 		  
 		  //find the next block char, for the given "forChar" char
-		  //dim charToFind as String
+		  //var charToFind as String
 		  charToFind = ""
 		  
 		  //find the char that closes forChar
@@ -3420,21 +3413,21 @@ Implements MessageReceiver
 		  if charToFind = "" then Return -1
 		  
 		  //to handle nested blocks
-		  dim depth as integer
-		  dim char as String
+		  var depth as integer
+		  var char as String
 		  #if DebugBuild
-		    dim maxOffset as Integer = TextStorage.Length
+		    var maxOffset as Integer = TextStorage.Length
 		    #pragma unused maxOffset
 		  #endif
 		  
-		  dim textToSearch as String = TextStorage.getText(offset + 1, TextStorage.Length - (offset + 1))
+		  var textToSearch as String = TextStorage.getText(offset + 1, TextStorage.Length - (offset + 1))
 		  textToSearch = textToSearch.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		  
 		  static scanner as new RegEx ' let's make this static to avoid hard crashes on OS X with RB 2012r2.1
 		  
 		  scanner.SearchPattern = "\"+forChar+"|\"+charToFind
 		  
-		  dim match as RegExMatch = scanner.Search(textToSearch)
+		  var match as RegExMatch = scanner.Search(textToSearch)
 		  
 		  While match <> nil
 		    'for i as Integer = offset + 1 to maxOffset
@@ -3466,7 +3459,7 @@ Implements MessageReceiver
 		Protected Function nextCharInSet(fromOffset as integer, pattern as string = "[^\w\.]") As integer
 		  //find the next char not in the given set, starting at pos "fromOffset"
 		  for i as Integer = fromOffset + 1 to TextStorage.Length - 1
-		    dim char as String = TextStorage.getCharAt(i)
+		    var char as String = TextStorage.getCharAt(i)
 		    if matchesRegex(pattern, char) then Return i
 		  next
 		  Return TextStorage.Length
@@ -3477,7 +3470,7 @@ Implements MessageReceiver
 		Protected Function nextNonAlpha(fromOffset as integer) As integer
 		  //find next non alphanumeric char, starting at fromOffset
 		  for i as Integer = fromOffset + 1 to TextStorage.Length - 1
-		    dim char as String = TextStorage.getCharAt(i)
+		    var char as String = TextStorage.getCharAt(i)
 		    if not IsAlpha(char) then Return i
 		  next
 		  Return TextStorage.Length
@@ -3490,7 +3483,7 @@ Implements MessageReceiver
 		  
 		  //find next non whitespace char, starting at fromOffset
 		  for i as Integer = fromOffset + 1 to maxOffset - 1
-		    dim char as String = TextStorage.getCharAt(i)
+		    var char as String = TextStorage.getCharAt(i)
 		    if not IsWhitespace(char) then Return i
 		  next
 		  Return maxOffset
@@ -3508,18 +3501,18 @@ Implements MessageReceiver
 		  
 		  xPos = xPos - line.VisualIndent(self.IndentVisually)
 		  
-		  dim offset as Integer = line.length
-		  dim lineWidth as Integer
+		  var offset as Integer = line.length
+		  var lineWidth as Integer
 		  xPos = max(0, xPos) //negative numbers would be in the margin
 		  
-		  dim startPos as Integer
-		  dim searchWord as TextSegment = line.LocalSegmentForXPos(xPos)
+		  var startPos as Integer
+		  var searchWord as TextSegment = line.LocalSegmentForXPos(xPos)
 		  if searchWord <> nil then startPos = searchWord.offset
-		  dim tmp as Picture = tmpPicture
+		  var tmp as Picture = TemporaryPicture
 		  
 		  if searchWord isa TextPlaceholder then
 		    lineWidth = line.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters, startPos) //width up to placeholder
-		    dim placeholderWidth as Double = searchWord.width
+		    var placeholderWidth as Double = searchWord.width
 		    
 		    if Dragging then
 		      if xPos >= lineWidth + placeholderWidth / 2 then
@@ -3538,13 +3531,13 @@ Implements MessageReceiver
 		      
 		      lineWidth = line.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters, i)
 		      if lineWidth >= xPos then
-		        dim matchChar as String = line.CharToDisplayAt(TextStorage, max(i - 1, 0), DisplayInvisibleCharacters)
+		        var matchChar as String = line.CharToDisplayAt(TextStorage, max(i - 1, 0), DisplayInvisibleCharacters)
 		        if searchWord <> nil then
 		          tmp.Graphics.Bold = searchWord.bold
 		          tmp.Graphics.Italic = searchWord.italic
 		          tmp.Graphics.Underline = searchWord.underline
 		        end if
-		        dim charw as Integer = tmp.Graphics.TextWidth(matchChar)
+		        var charw as Integer = tmp.Graphics.TextWidth(matchChar)
 		        
 		        if lineWidth - charw / 2 > xPos then
 		          offset = max(i - 1, 0)
@@ -3567,7 +3560,7 @@ Implements MessageReceiver
 	#tag Method, Flags = &h1
 		Protected Function OpeningBlockLineForLine(lineIndex as integer) As integer
 		  // RDS - Did not work if cursor was ON the start line
-		  dim temp_value as integer
+		  var temp_value as integer
 		  temp_value = lines.previousBlockStartLine(LineIndex, true)
 		  
 		  if temp_value <= 0 then
@@ -3598,13 +3591,13 @@ Implements MessageReceiver
 		    
 		  #endif
 		  
-		  if not hasFocus and DragSource = nil then Return
-		  if selLength > 0  and DragTextSelection = nil then Return
+		  if not mhasFocus and DragSource = nil then Return
+		  if SelectionLength > 0  and DragTextSelection = nil then Return
 		  
-		  caretState = not caretState
-		  if caretState then Return
+		  caretvisible = not caretvisible
+		  if caretvisible then Return
 		  
-		  dim xpos, ypos as Double
+		  var xpos, ypos as Double
 		  
 		  if atPos = CaretPos then
 		    XYAtCharPos(atPos, CaretLine, xpos, ypos)
@@ -3638,10 +3631,10 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub Paste()
-		  dim c as new Clipboard
+		  var c as new Clipboard
 		  if not c.TextAvailable then Return
 		  
-		  dim t as String = c.Text
+		  var t as String = c.Text
 		  
 		  if IndentVisually then
 		    // trim lines
@@ -3663,7 +3656,7 @@ Implements MessageReceiver
 		Protected Function previousAlpha(fromOffset as integer) As integer
 		  //find Previous alphanumeric char starting at "fromOffset"
 		  for i as Integer = fromOffset - 1 downto 1
-		    dim char as String = TextStorage.getCharAt(i - 1)
+		    var char as String = TextStorage.getCharAt(i - 1)
 		    if IsAlpha(char) then Return i
 		  next
 		End Function
@@ -3678,7 +3671,7 @@ Implements MessageReceiver
 		  #endif
 		  
 		  //find previous block char
-		  //dim charToFind as String
+		  //var charToFind as String
 		  charToFind = ""
 		  
 		  //select the appropriate one
@@ -3691,10 +3684,10 @@ Implements MessageReceiver
 		  
 		  if charToFind = "" then Return - 1
 		  
-		  dim depth as integer
-		  dim char as String
+		  var depth as integer
+		  var char as String
 		  
-		  dim textToSearch as String = TextStorage.getText(0, offset)
+		  var textToSearch as String = TextStorage.getText(0, offset)
 		  textToSearch = textToSearch.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		  
 		  textToSearch = Reverse(textToSearch)
@@ -3703,7 +3696,7 @@ Implements MessageReceiver
 		  
 		  scanner.SearchPattern = "\"+forChar+"|\"+charToFind
 		  
-		  dim match as RegExMatch = scanner.Search(textToSearch)
+		  var match as RegExMatch = scanner.Search(textToSearch)
 		  
 		  //scan text
 		  'for i as Integer = offset - 1 downto 0
@@ -3734,7 +3727,7 @@ Implements MessageReceiver
 		Protected Function previousCharInSet(fromOffset as integer, pattern as string = "[^\w\.]") As integer
 		  //find character not in the given set
 		  for i as Integer = fromOffset - 1 downto 1
-		    dim char as String = TextStorage.getCharAt(i - 1)
+		    var char as String = TextStorage.getCharAt(i - 1)
 		    if matchesRegex(pattern, char) then Return i
 		  next
 		End Function
@@ -3744,7 +3737,7 @@ Implements MessageReceiver
 		Protected Function previousLineDelimiter(fromOffset as integer) As integer
 		  //find Previous line delimiter char starting at "fromOffset"
 		  for i as Integer = fromOffset - 1 downto 1
-		    dim char as String = TextStorage.getCharAt(i-1)
+		    var char as String = TextStorage.getCharAt(i-1)
 		    if char = LineDelimiter then Return i
 		  next
 		End Function
@@ -3754,7 +3747,7 @@ Implements MessageReceiver
 		Protected Function previousNonAlpha(fromOffset as integer) As integer
 		  //find Previous non alphanumeric char starting at "fromOffset"
 		  for i as Integer = fromOffset - 1 downto 1
-		    dim char as String = TextStorage.getCharAt(i - 1)
+		    var char as String = TextStorage.getCharAt(i - 1)
 		    if not IsAlpha(char) then Return i
 		  next
 		End Function
@@ -3764,7 +3757,7 @@ Implements MessageReceiver
 		Protected Function previousNonWhitespace(fromOffset as integer) As integer
 		  //find Previous non whitespace char starting at "fromOffset"
 		  for i as Integer = fromOffset - 1 downto 1
-		    dim char as String = TextStorage.getCharAt(i - 1)
+		    var char as String = TextStorage.getCharAt(i - 1)
 		    if not IsWhitespace(char) then Return i
 		  next
 		End Function
@@ -3772,7 +3765,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h21
 		Private Function private_indentline(lineIndex as Integer, ltrimLine as Boolean, ByRef indentationState as Variant) As Boolean
-		  dim line as TextLine = lines.getLine (lineIndex)
+		  var line as TextLine = lines.getLine (lineIndex)
 		  
 		  if line = nil then
 		    return true // true because it may just be an empty line, and that doesn't mean we can stop the outer loop, or am I (TT) wrong?
@@ -3787,20 +3780,20 @@ Implements MessageReceiver
 		    'System.DebugLog "indent line "+str(lineIndex)+": "+TextStorage.getText(line.offset, line.length)
 		  #endif
 		  
-		  dim modified as Boolean
-		  dim previousLine as TextLine
-		  dim wasDirty as boolean = line.IsDirty
+		  var modified as Boolean
+		  var previousLine as TextLine
+		  var wasDirty as boolean = line.IsDirty
 		  
 		  // Determine the indentation level
-		  dim currTextUntrimmed as String = TextStorage.getText(line.offset, line.length)
+		  var currTextUntrimmed as String = TextStorage.getText(line.offset, line.length)
 		  // we need to remove the EOL char at the end of the line as it could fool our leading whitespace detection if the entire line is whitespace
-		  dim eol as String = self.LineDelimiter
+		  var eol as String = self.LineDelimiter
 		  if currTextUntrimmed.Right(eol.Length) = eol then
 		    currTextUntrimmed = currTextUntrimmed.Left(currTextUntrimmed.Length-eol.Length)
 		  end if
-		  dim currTextTrimmed as String = currTextUntrimmed.TrimLeft
-		  dim currLeadingSpaces as Integer = currTextUntrimmed.Length - currTextTrimmed.Length
-		  dim origLeadingSpaces as Integer = currLeadingSpaces
+		  var currTextTrimmed as String = currTextUntrimmed.TrimLeft
+		  var currLeadingSpaces as Integer = currTextUntrimmed.Length - currTextTrimmed.Length
+		  var origLeadingSpaces as Integer = currLeadingSpaces
 		  
 		  if ltrimLine and currLeadingSpaces > 0 then
 		    // Discard leading spaces from current line
@@ -3823,7 +3816,7 @@ Implements MessageReceiver
 		    end if
 		  end
 		  
-		  dim indentState as String
+		  var indentState as String
 		  if indentationState = nil then
 		    indentState = line.IndentationStateIn
 		  else
@@ -3838,7 +3831,7 @@ Implements MessageReceiver
 		  if line.isBlockEnd then
 		    // use indentation of previous block start
 		    
-		    dim blockStartIdx as Integer = lines.previousBlockStartLine(lineIndex)
+		    var blockStartIdx as Integer = lines.previousBlockStartLine(lineIndex)
 		    if blockStartIdx < 0 then
 		      // no previous block opening found - use previous line's indent
 		      blockStartIdx = max (0, lineIndex-1)
@@ -3847,7 +3840,7 @@ Implements MessageReceiver
 		    previousLine = lines.getLine(blockStartIdx)
 		    
 		    // reset the indentation
-		    dim newIndent as Integer
+		    var newIndent as Integer
 		    if previousLine <> nil then
 		      // take the block start's indent value
 		      newIndent = previousLine.indent
@@ -3863,12 +3856,12 @@ Implements MessageReceiver
 		  else
 		    // check if the previous line is a block start -> then we increase the indentation in the current line
 		    
-		    dim indentationIncrease as Integer
+		    var indentationIncrease as Integer
 		    
 		    previousLine = lines.getLine(lineIndex - 1)
 		    if previousLine <> nil then
-		      dim prevTxt as String = TextStorage.getText(previousLine.offset, previousLine.length)
-		      dim prevHasContinuation as Integer = SyntaxDefinition.IsLineContinuation(prevTxt)
+		      var prevTxt as String = TextStorage.getText(previousLine.offset, previousLine.length)
+		      var prevHasContinuation as Integer = SyntaxDefinition.IsLineContinuation(prevTxt)
 		      if prevHasContinuation > 0 then
 		        // we're inside a line continuation
 		        if previousLine.isContinuedFromLine < 0 then
@@ -3893,9 +3886,9 @@ Implements MessageReceiver
 		    end
 		    
 		    // increase the indentation
-		    dim newIndent as Integer
+		    var newIndent as Integer
 		    if previousLine <> nil then
-		      dim n as Integer
+		      var n as Integer
 		      if mIndentVisually then
 		        n = IndentPixels
 		      else
@@ -3920,15 +3913,15 @@ Implements MessageReceiver
 		  
 		  // Indent by inserting spaces or tabs at the start of the line
 		  
-		  dim currIndent as String = currTextUntrimmed.Left(currLeadingSpaces)
+		  var currIndent as String = currTextUntrimmed.Left(currLeadingSpaces)
 		  
-		  dim newIndentation as String = indentStr (line.indent)
+		  var newIndentation as String = indentStr (line.indent)
 		  #if DebugBuild
-		    dim newIndentLen as Integer = newIndentation.Length
+		    var newIndentLen as Integer = newIndentation.Length
 		    #pragma unused newIndentLen
 		  #endif
 		  
-		  dim theText as String
+		  var theText as String
 		  if ltrimLine then
 		    // Discard leading spaces from current line
 		    theText = newIndentation
@@ -3965,7 +3958,7 @@ Implements MessageReceiver
 		Sub private_remove(offset as integer, length as integer, updateCaret as boolean = true)
 		  // This method is used internally by the control, and externally by the undo mechanism, you shouldn't use it directly, use instead selstart and seltext.
 		  
-		  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		  #pragma unused lock
 		  
 		  if ReadOnly then
@@ -3976,14 +3969,14 @@ Implements MessageReceiver
 		  
 		  if length = 0 then Return //nothing to delete
 		  
-		  dim undoText as String = TextStorage.getText(max(offset,0), length)
-		  dim undoAttrs() as TextLineAttributes = lines.getAttributesOfLinesInRange(max(offset,0), length)
+		  var undoText as String = TextStorage.getText(max(offset,0), length)
+		  var undoAttrs() as TextLineAttributes = lines.getAttributesOfLinesInRange(max(offset,0), length)
 		  
 		  if TextStorage.remove(offset, length) then
 		    RaiseEvent TextRemoved(offset, undoText)
 		    UndoMgr.Push(new UndoableDelete(self, offset, length, undoText, undoAttrs, CaretPos, CurrentEventID))
 		    lines.remove(offset, length)
-		    if updateCaret then changeSelection(selStart - length, 0)
+		    if updateCaret then changeSelection(SelectionStart - length, 0)
 		    Highlight
 		    HandleTextChanged
 		  end if
@@ -4004,14 +3997,14 @@ Implements MessageReceiver
 		    Return
 		  end if
 		  
-		  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		  
 		  // Use the default line ending from the line manager if the text is just the Return or Enter character.
 		  TheText = TheText.ReplaceLineEndings(lines.lineEnding)
 		  TheText = TheText.ReplaceAll(chr(3), lines.lineEnding)
 		  
-		  dim removedText as String = TextStorage.getText(offset, length)
-		  dim removedAttrs() as TextLineAttributes = lines.getAttributesOfLinesInRange(offset, length)
+		  var removedText as String = TextStorage.getText(offset, length)
+		  var removedAttrs() as TextLineAttributes = lines.getAttributesOfLinesInRange(offset, length)
 		  
 		  if eventID < 0 then eventID = CurrentEventID
 		  UndoMgr.Push(new UndoableReplace(self, offset, length, removedText, TheText, removedAttrs, CaretPos, eventID))
@@ -4026,11 +4019,11 @@ Implements MessageReceiver
 		    // Note: This code has only been tested to work with replacements in a single line
 		    // (i.e. for use by the IndentLine method). It might not work with multi-line replacements!
 		    
-		    dim lengthDiff as Integer = TheText.Length - removedText.Length
+		    var lengthDiff as Integer = TheText.Length - removedText.Length
 		    if lengthDiff <> 0 then
-		      dim minLength as Integer = Min (TheText.Length, removedText.Length)
-		      dim selStart as Integer = mSelStart
-		      dim selEnd as Integer = selStart + mSelLength
+		      var minLength as Integer = Min (TheText.Length, removedText.Length)
+		      var selStart as Integer = mSelectionStart
+		      var selEnd as Integer = selStart + mSelectionLength
 		      if selEnd >= offset + minLength then
 		        selEnd = Max (offset, selEnd + lengthDiff)
 		      end
@@ -4084,18 +4077,18 @@ Implements MessageReceiver
 		  
 		  // Part of the MessageReceiver interface.
 		  
-		  dim type as Integer = theMessage.Info(1) //1 is the msg type in this particular scheme
+		  var type as Integer = theMessage.Info(1) //1 is the msg type in this particular scheme
 		  if theMessage.Sender = lines then
 		    
 		    select case type
 		    case LineManager.LineCountChangedMsg
-		      dim count as Integer = theMessage.Info(2) //2 holds the # of lines
-		      dim invisible as Integer = theMessage.Info(3) //3 holds the # of invisible lines
+		      var count as Integer = theMessage.Info(2) //2 holds the # of lines
+		      var invisible as Integer = theMessage.Info(3) //3 holds the # of invisible lines
 		      self.LineCountChanged(count - invisible)
 		      
 		    case LineManager.LineChangedMsg
-		      dim index as integer = theMessage.Info(2)
-		      dim length as Integer = theMessage.Info(3)
+		      var index as integer = theMessage.Info(2)
+		      var length as Integer = theMessage.Info(3)
 		      
 		      if index = CaretLine and mHighlighter <> nil and mHighlighter.ThreadState <> thread.ThreadStates.NotRunning then
 		        mHighlighter.HighlightLine(index)
@@ -4105,7 +4098,7 @@ Implements MessageReceiver
 		      call modifiedLines.AddRange(index, length)
 		      
 		    case LineManager.MaxLineLengthChangedMsg
-		      dim index as integer = theMessage.Info(2)
+		      var index as integer = theMessage.Info(2)
 		      self.MaxLineLengthChanged(index)
 		      
 		    case LineManager.LineSymbolsRemovedMsg
@@ -4116,18 +4109,18 @@ Implements MessageReceiver
 		    
 		    select case Type
 		    case SuggestionWindow.AutocompleteCancelledMsg
-		      dim requestFocus as Boolean = theMessage.Info(2)
+		      var requestFocus as Boolean = theMessage.Info(2)
 		      AutocompleteCancelled(requestFocus)
 		      
 		    case SuggestionWindow.KeyDownMsg
-		      dim key as String = theMessage.Info(2)
+		      var key as String = theMessage.Info(2)
 		      call HandleKeyDown(key)
 		      
 		    case SuggestionWindow.CurrentAutocompleteOptionsMsg
 		      theMessage.addInfo(3, CurrentAutocompleteOptions)
 		      
 		    case SuggestionWindow.OptionSelectedMsg
-		      dim option as String = theMessage.Info(2)
+		      var option as String = theMessage.Info(2)
 		      AutocompleteOptionSelected(option)
 		      
 		    end select
@@ -4150,16 +4143,16 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub Redo()
-		  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		  #pragma unused lock
 		  
 		  ignoreRepaint = true
 		  UndoMgr.Redo
 		  
 		  //RaiseEvents
-		  dim line as TextLine = lines.getLine(CaretLine)
+		  var line as TextLine = lines.getLine(CaretLine)
 		  if line <> nil then
-		    RaiseEvent SelChanged(CaretLine + 1, SelStart - line.offset, SelLength)
+		    RaiseEvent SelChanged(CaretLine + 1, SelectionStart - line.offset, SelectionLength)
 		  end if
 		  HandleTextChanged
 		  
@@ -4176,7 +4169,7 @@ Implements MessageReceiver
 		  if ignoreRepaint and not forced then Return
 		  
 		  //see if caret is visible
-		  dim ScrollPosition as Integer = self.ScrollPosition
+		  var ScrollPosition as Integer = self.ScrollPosition
 		  if EnableLineFoldings then ScrollPosition = lines.getNumberOfLinesNeededToView(ScrollPosition)
 		  
 		  ignoreRepaint = false
@@ -4198,7 +4191,7 @@ Implements MessageReceiver
 		  '#pragma warning "What is the point of this check? Can it be done another way?"
 		  
 		  //see if caret is visible
-		  dim ScrollPosition as Integer = self.ScrollPosition
+		  var ScrollPosition as Integer = self.ScrollPosition
 		  if EnableLineFoldings then ScrollPosition = lines.getNumberOfLinesNeededToView(ScrollPosition)
 		  if (CaretLine < ScrollPosition or CaretLine > ScrollPosition + VisibleLineRange.length) then Return
 		  
@@ -4288,11 +4281,11 @@ Implements MessageReceiver
 		Sub ReindentText(fromLine as Integer, toLine as integer)
 		  // Removes all leading white space, adding proper indentation (using Tab chars) instead
 		  
-		  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		  #pragma unused lock
 		  
 		  #if DebugBuild and (EditFieldGlobals.DebugTiming or EditFieldGlobals.DebugIndentation)
-		    dim runtimer as new Debugging.LifeTimer("ReindentText "+str(fromLine)+" to "+str(toLine))
+		    var runtimer as new Debugging.LifeTimer("ReindentText "+str(fromLine)+" to "+str(toLine))
 		  #endif
 		  
 		  if CurrentEventID <= 0 then
@@ -4300,10 +4293,10 @@ Implements MessageReceiver
 		    CurrentEventID = System.Ticks
 		  end if
 		  
-		  dim needsRedraw as Boolean
+		  var needsRedraw as Boolean
 		  
 		  self.IgnoreRepaint = true
-		  dim state as Variant
+		  var state as Variant
 		  for i as Integer = fromLine to toLine
 		    if private_indentline (i, true, state) then
 		      InvalidateLine (i)
@@ -4351,11 +4344,11 @@ Implements MessageReceiver
 		    
 		  #endif
 		  
-		  Dim characters() as String = s.Split( "" )
-		  Dim leftIndex as Integer = 0
-		  Dim rightIndex as Integer = characters.LastIndex
+		  var characters() as String = s.Split( "" )
+		  var leftIndex as Integer = 0
+		  var rightIndex as Integer = characters.LastIndex
 		  While leftIndex < rightIndex
-		    Dim temp as String = characters(leftIndex)
+		    var temp as String = characters(leftIndex)
 		    characters(leftIndex) = characters(rightIndex)
 		    characters(rightIndex) = temp
 		    leftIndex = leftIndex + 1
@@ -4371,7 +4364,7 @@ Implements MessageReceiver
 		Function Save(toFile as folderItem, fileType as string = "Text", encoding as textencoding = nil) As boolean
 		  if toFile = nil then Return False
 		  
-		  dim stream as BinaryStream
+		  var stream as BinaryStream
 		  
 		  //Modified by Dr. Gerard Hammond to allow the file to be saved even if it's already open by another app.
 		  if toFile.Exists = false then
@@ -4388,7 +4381,7 @@ Implements MessageReceiver
 		  
 		  if stream = nil then Return False
 		  
-		  dim txt as String = me.Text
+		  var txt as String = me.Text
 		  if Encoding <> nil and not Encoding.Equals(txt.Encoding) then txt = txt.ConvertEncoding(Encoding)
 		  
 		  stream.Write(txt)
@@ -4426,16 +4419,16 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedTextDragImage() As picture
-		  dim text as String = SelText
-		  dim selection as String = text.Left(200) + " "
+		  var text as String = SelText
+		  var selection as String = text.Left(200) + " "
 		  if text.Length > 200 then selection = selection + "..."
 		  
-		  dim w, h as Integer
-		  dim tmp as Picture = tmpPicture
+		  var w, h as Integer
+		  var tmp as Picture = TemporaryPicture
 		  w = min(tmp.Graphics.TextWidth(selection+" "), Width)
 		  h = tmp.Graphics.TextHeight(selection, w)
 		  
-		  dim image as Picture = New Picture(w, h, 32)
+		  var image as Picture = New Picture(w, h, 32)
 		  image.Graphics.FontSize = FontSize
 		  image.Graphics.FontName = TextFont
 		  Image.Graphics.DrawText selection, 0, Image.Graphics.TextHeight - (Image.Graphics.TextHeight - Image.Graphics.FontAscent), w
@@ -4453,7 +4446,7 @@ Implements MessageReceiver
 		    Return
 		  end if
 		  
-		  dim line as TextLine = lines.getLine(lineNumber)
+		  var line as TextLine = lines.getLine(lineNumber)
 		  if not line.visible then lines.revealLine(lineNumber)
 		  changeSelection(line.offset, line.length - line.delimiterLength)
 		  
@@ -4463,14 +4456,14 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub SelectNextPlaceholder()
-		  dim startLine as Integer = CaretLine
-		  dim offset as Integer = CaretPos
+		  var startLine as Integer = CaretLine
+		  var offset as Integer = CaretPos
 		  
 		  for i as Integer = CaretLine to lines.Count - 1
-		    dim line as TextLine = lines.getLine(i)
+		    var line as TextLine = lines.getLine(i)
 		    if line = nil or not line.visible then Continue for
 		    
-		    dim nextPlaceholder as TextPlaceholder = line.NextPlaceholderFromOffset(offset)
+		    var nextPlaceholder as TextPlaceholder = line.NextPlaceholderFromOffset(offset)
 		    if nextPlaceholder = nil then
 		      offset = line.offset + line.length
 		      Continue for
@@ -4483,10 +4476,10 @@ Implements MessageReceiver
 		  
 		  //wrap around... todo make this prettier :P
 		  for i as Integer = 0 to startLine
-		    dim line as TextLine = lines.getLine(i)
+		    var line as TextLine = lines.getLine(i)
 		    if line = nil or not line.visible then Continue for
 		    
-		    dim nextPlaceholder as TextPlaceholder = line.NextPlaceholderFromOffset(offset)
+		    var nextPlaceholder as TextPlaceholder = line.NextPlaceholderFromOffset(offset)
 		    if nextPlaceholder = nil then
 		      offset = line.offset + line.length
 		      Continue for
@@ -4508,7 +4501,7 @@ Implements MessageReceiver
 		    if not EditFieldGlobals.IsDarkMode then
 		      mDarkModeColors.Value (propertyName) = nil // will be set in getter once we are out of Dark Mode
 		    else
-		      dim dark as Color = EditFieldGlobals.AdjustColorForDarkMode (c)
+		      var dark as Color = EditFieldGlobals.AdjustColorForDarkMode (c)
 		      
 		      if propertyName = "CustomEditField.BackColor.Get" then
 		        mDarkModeColors.Value(propertyName) = &C171717
@@ -4531,8 +4524,8 @@ Implements MessageReceiver
 	#tag Method, Flags = &h0
 		Sub SetScrollbars(horizontal as DesktopScrollbar, vertical as DesktopScrollbar)
 		  //sets the scrollbars
-		  horizontalSB = horizontal
-		  verticalSB = vertical
+		  mHorizontalScrollBar = horizontal
+		  mVerticalScrollbar = vertical
 		End Sub
 	#tag EndMethod
 
@@ -4553,8 +4546,8 @@ Implements MessageReceiver
 		  if index < 0 then return nil
 		  
 		  //check line first
-		  dim symbol as DocumentSymbol
-		  dim line as TextLine = lines.getLine(index)
+		  var symbol as DocumentSymbol
+		  var line as TextLine = lines.getLine(index)
 		  if line <> nil and line.LineSymbols <> nil and line.LineSymbols.KeyCount > 0 then
 		    Symbol = line.LineSymbols.value(line.LineSymbols.Key(0))
 		    Return new DocumentSymbol(Symbol.Name, symbol.Offset + line.offset, Symbol.Type)
@@ -4571,7 +4564,7 @@ Implements MessageReceiver
 		  //else... start looking upwards
 		  
 		  //find opening block for this line
-		  dim blockIdx as Integer = OpeningBlockLineForLine(index)
+		  var blockIdx as Integer = OpeningBlockLineForLine(index)
 		  
 		  //no opening block found...
 		  if blockIdx < 0 then Return nil
@@ -4605,6 +4598,37 @@ Implements MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function TemporaryPicture() As picture
+		  //return a temporary picture.
+		  if mTempPicture = nil then
+		    
+		    #if RBVersion < 2013
+		      mTempPicture = New Picture(2,2,32)
+		    #else
+		      // We avoid horrible letter width calculation errors on Windows by creating
+		      // the new style of Picture Object
+		      mTempPicture = New Picture(2,2)
+		    #endif
+		    
+		    #if EditFieldGlobals.UseOldRenderer
+		      mTempPicture.Graphics.UseOldRenderer = true
+		    #endif
+		  end if
+		  
+		  
+		  mTempPicture.Graphics.FontName = TextFont
+		  mTempPicture.Graphics.FontSize = FontSize
+		  
+		  //v1.1 fix, these weren't being cleared.
+		  mTempPicture.Graphics.Bold = False
+		  mTempPicture.Graphics.Italic = False
+		  mTempPicture.Graphics.Underline = False
+		  
+		  Return mTempPicture
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Text(offset as Integer, length as Integer) As String
 		  // Attention: Returned line delimiters will be CR, i.e. chr(13), by default and not CR+LF or LF, even on Windows and Linux!
@@ -4615,45 +4639,14 @@ Implements MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function tmpPicture() As picture
-		  //return a temporary picture.
-		  if sharedTmpPicture = nil then
-		    
-		    #if RBVersion < 2013
-		      sharedTmpPicture = New Picture(2,2,32)
-		    #else
-		      // We avoid horrible letter width calculation errors on Windows by creating
-		      // the new style of Picture Object
-		      sharedTmpPicture = New Picture(2,2)
-		    #endif
-		    
-		    #if EditFieldGlobals.UseOldRenderer
-		      sharedTmpPicture.Graphics.UseOldRenderer = true
-		    #endif
-		  end if
-		  
-		  
-		  sharedTmpPicture.Graphics.FontName = TextFont
-		  sharedTmpPicture.Graphics.FontSize = FontSize
-		  
-		  //v1.1 fix, these weren't being cleared.
-		  sharedTmpPicture.Graphics.Bold = False
-		  sharedTmpPicture.Graphics.Italic = False
-		  sharedTmpPicture.Graphics.Underline = False
-		  
-		  Return sharedTmpPicture
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub ToggleLineFold(lineIndex as integer)
 		  if not EnableLineFoldings then Return
 		  
-		  dim topLine as Integer = lines.toggleLineFolding(lineIndex)
+		  var topLine as Integer = lines.toggleLineFolding(lineIndex)
 		  if topLine > -1 then
 		    //check if caret is in an invisible line
-		    dim line as TextLine = lines.getLine(lines.getLineNumberForOffset(CaretPos))
+		    var line as TextLine = lines.getLine(lines.getLineNumberForOffset(CaretPos))
 		    //if it's invisible, move caret to folded line
 		    if not line.visible then
 		      line = lines.getLine(topLine)
@@ -4668,16 +4661,16 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub Undo()
-		  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		  #pragma unused lock
 		  
 		  ignoreRepaint = true
 		  UndoMgr.Undo
 		  
 		  //RaiseEvents
-		  dim line as TextLine = lines.getLine(CaretLine)
+		  var line as TextLine = lines.getLine(CaretLine)
 		  if line <> nil then
-		    RaiseEvent SelChanged(CaretLine + 1, SelStart - line.offset, SelLength)
+		    RaiseEvent SelChanged(CaretLine + 1, SelectionStart - line.offset, SelectionLength)
 		  end if
 		  HandleTextChanged
 		  
@@ -4710,16 +4703,16 @@ Implements MessageReceiver
 	#tag Method, Flags = &h21
 		Private Sub updateIndentation()
 		  if mKeepEntireTextIndented then
-		    dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+		    var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 		    #pragma unused lock
 		    
-		    dim trimLines as Boolean = not mIndentVisually
-		    dim indentationState as Variant
+		    var trimLines as Boolean = not mIndentVisually
+		    var indentationState as Variant
 		    
-		    dim lineIdx as Integer = lines.FirstLineForIndentation
+		    var lineIdx as Integer = lines.FirstLineForIndentation
 		    
 		    while lineIdx < self.LineCount
-		      dim modified as Boolean = private_indentline (lineIdx, trimLines, indentationState)
+		      var modified as Boolean = private_indentline (lineIdx, trimLines, indentationState)
 		      if not modified then
 		        if lineIdx > lines.LastLineForIndentation then
 		          // we're done
@@ -4747,8 +4740,8 @@ Implements MessageReceiver
 		Protected Sub ViewToCharPos(charLine as integer, charPos as integer)
 		  //move the view to the given char position.
 		  
-		  dim horizontal, vertical as Integer
-		  dim ScrollPosition as Integer = self.ScrollPosition
+		  var horizontal, vertical as Integer
+		  var ScrollPosition as Integer = self.ScrollPosition
 		  if EnableLineFoldings then ScrollPosition = lines.getNumberOfLinesNeededToView(ScrollPosition)
 		  
 		  horizontal = ScrollPositionX
@@ -4758,17 +4751,17 @@ Implements MessageReceiver
 		  if charLine < vertical then
 		    vertical = charLine
 		  else
-		    dim visibleLines as Integer = self.visibleAndHiddenLines - 1
+		    var visibleLines as Integer = self.visibleAndHiddenLines - 1
 		    if visibleLines > 0 and (charLine - visibleLines > vertical) then
 		      vertical = charLine - visibleLines
 		    end if
 		  end if
 		  
 		  //horizontal check
-		  dim x, y as Double
+		  var x, y as Double
 		  XYAtCharPos(charPos, charLine, x, y)
 		  
-		  if x< LineNumOffset or  x >= self.Width then
+		  if x< LineNumberOffset or  x >= self.Width then
 		    horizontal = ScrollPositionX + x - (me.Width - RightScrollMargin)
 		  end if
 		  
@@ -4798,9 +4791,9 @@ Implements MessageReceiver
 		    
 		  #endif
 		  
-		  dim tmp as Picture = tmpPicture
+		  var tmp as Picture = TemporaryPicture
 		  
-		  dim indent as Integer = line.VisualIndent(self.IndentVisually)
+		  var indent as Integer = line.VisualIndent(self.IndentVisually)
 		  
 		  Return line.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters, CharPos - line.offset) + indent
 		End Function
@@ -4808,7 +4801,7 @@ Implements MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub XYAtCharPos(charPos as integer, byref X as Double, byref Y as Double)
-		  dim lineNumber as Integer
+		  var lineNumber as Integer
 		  lineNumber = lines.getLineNumberForOffset(charPos)
 		  XYAtCharPos(CharPos, LineNumber, x, y)
 		End Sub
@@ -4819,7 +4812,7 @@ Implements MessageReceiver
 		  //find the screenx and screeny for the given CharPos
 		  
 		  //y
-		  dim ypos as Integer
+		  var ypos as Integer
 		  if EnableLineFoldings then
 		    ypos = (lines.getNumberOfVisibleLinesUpToLine(lineNumber) - ScrollPosition) * TextHeight
 		  else
@@ -4827,12 +4820,12 @@ Implements MessageReceiver
 		  end if
 		  
 		  //find the char offset.
-		  dim line as TextLine = lines.getLine(lineNumber)
+		  var line as TextLine = lines.getLine(lineNumber)
 		  if line = nil then Return
 		  
-		  dim sx as Integer = leftMarginOffset + LineNumOffset - ScrollPositionX
+		  var sx as Integer = leftMarginOffset + LineNumberOffset - ScrollPositionX
 		  
-		  dim xpos as integer = sx + XposForOffset(line, charPos)
+		  var xpos as integer = sx + XposForOffset(line, charPos)
 		  
 		  x = xpos
 		  y = ypos + TextHeight
@@ -5269,10 +5262,6 @@ Implements MessageReceiver
 		BracketHighlightColor As Color
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h1
-		Protected caretBlinker As CaretBlinker
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -5291,8 +5280,8 @@ Implements MessageReceiver
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  dim x, y as Double
-			  dim calcPos as Integer = desiredColumnCharPos
+			  var x, y as Double
+			  var calcPos as Integer = desiredColumnCharPos
 			  
 			  //or the caretpos
 			  if desiredColumnCharPos < 0 then calcPos = CaretPos
@@ -5300,7 +5289,7 @@ Implements MessageReceiver
 			  //find screenpos
 			  XYatCharPos(calcPos, x, y)
 			  
-			  return x - LineNumOffset - LeftMarginOffset + ScrollPositionX
+			  return x - LineNumberOffset - LeftMarginOffset + ScrollPositionX
 			End Get
 		#tag EndGetter
 		Protected caretDesiredColumn As Integer
@@ -5331,7 +5320,7 @@ Implements MessageReceiver
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private CaretState As boolean
+		Private caretvisible As boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -5486,7 +5475,7 @@ Implements MessageReceiver
 			Set
 			  if mEnablelinefoldings and not value then lines.unfoldAll
 			  mEnablelinefoldings = value
-			  LineNumOffset = 0
+			  LineNumberOffset = 0
 			  updateDesiredColumn
 			  InvalidateAllLines
 			  redraw
@@ -5512,7 +5501,7 @@ Implements MessageReceiver
 			  TextHeight = 0
 			  
 			  lastLongestLineLength = 0
-			  lastLongestLinePixels = 0
+			  mlastLongestLinePixels = 0
 			  MaxLineLengthChanged(lines.LongestLineIdx)
 			  
 			  CalculateMaxHorizontalSB
@@ -5592,7 +5581,7 @@ Implements MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return LineNumOffset
+			  Return LineNumberOffset
 			End Get
 		#tag EndGetter
 		GutterWidth As Integer
@@ -5600,10 +5589,6 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private Shared gWeakCEFs As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected hasFocus As boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -5633,10 +5618,6 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h0
 		HighlightMatchingBracketsMode As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected horizontalSB As DesktopScrollbar
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5753,10 +5734,6 @@ Implements MessageReceiver
 		Protected lastLongestLineLength As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected lastLongestLinePixels As single
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private lastMouseDownX As Integer
 	#tag EndProperty
@@ -5797,6 +5774,35 @@ Implements MessageReceiver
 		LeftMarginOffset As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  if not displayLineNumbers then Return 0
+			  
+			  if mlineNumOffset = 0 then
+			    var tmp as Picture = TemporaryPicture
+			    tmp.graphics.FontName = LineNumbersTextFont
+			    tmp.graphics.FontSize = LineNumbersFontSize
+			    tmp.Graphics.Bold = true
+			    mlineNumOffset = tmp.graphics.TextWidth(str(lines.Count)) + 10
+			    
+			    if EnableLineFoldings then
+			      mlineNumOffset = LineNumberOffset + blockStartImage.Width + 2
+			    end if
+			  end if
+			  
+			  return mlineNumOffset
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  #pragma unused value
+			  mlineNumOffset = 0
+			End Set
+		#tag EndSetter
+		Protected LineNumberOffset As Integer
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -5822,7 +5828,7 @@ Implements MessageReceiver
 		#tag Setter
 			Set
 			  mLinenumbersFontSize = min(value, max(FontSize, value))
-			  LineNumOffset = 0
+			  LineNumberOffset = 0
 			  InvalidateAllLines
 			  Redraw
 			End Set
@@ -5839,41 +5845,12 @@ Implements MessageReceiver
 		#tag Setter
 			Set
 			  mLinenumberstextfont = value
-			  LineNumOffset = 0
+			  LineNumberOffset = 0
 			  InvalidateAllLines
 			  Redraw
 			End Set
 		#tag EndSetter
 		LineNumbersTextFont As string
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  if not displayLineNumbers then Return 0
-			  
-			  if mlineNumOffset = 0 then
-			    dim tmp as Picture = tmpPicture
-			    tmp.graphics.FontName = LineNumbersTextFont
-			    tmp.graphics.FontSize = LineNumbersFontSize
-			    tmp.Graphics.Bold = true
-			    mlineNumOffset = tmp.graphics.TextWidth(str(lines.Count)) + 10
-			    
-			    if EnableLineFoldings then
-			      mlineNumOffset = LineNumOffset + blockStartImage.Width + 2
-			    end if
-			  end if
-			  
-			  return mlineNumOffset
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  #pragma unused value
-			  mlineNumOffset = 0
-			End Set
-		#tag EndSetter
-		Protected LineNumOffset As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -5937,6 +5914,10 @@ Implements MessageReceiver
 		Private mBrightModeColors As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mCaretBlinker As CaretBlinker
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mCaretline As Integer
 	#tag EndProperty
@@ -5981,6 +5962,10 @@ Implements MessageReceiver
 		Private mFontSize As Integer = 0
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mhasFocus As boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mHighlightedranges As CharSelectionManager
 	#tag EndProperty
@@ -5991,6 +5976,10 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mHighlightTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mHorizontalScrollbar As DesktopScrollbar
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6011,6 +6000,10 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mKeepEntireTextIndented As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mlastLongestLinePixels As single
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6093,11 +6086,11 @@ Implements MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelLength As Integer
+		Private mSelectionLength As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelStart As Integer
+		Private mSelectionStart As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6106,6 +6099,10 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mTabwidth As Integer = 4
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTempPicture As picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6126,6 +6123,10 @@ Implements MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mUndomgr As undomanager
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mVerticalScrollbar As DesktopScrollbar
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6173,7 +6174,7 @@ Implements MessageReceiver
 			Get
 			  if mRightmargin = 0 then
 			    //get default printer area from printer.
-			    dim tmpPrinter as new PrinterSetup
+			    var tmpPrinter as new PrinterSetup
 			    mRightmargin = tmpPrinter.Width
 			  end if
 			  return mRightmargin
@@ -6244,22 +6245,22 @@ Implements MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  return mSelLength
+			  return mSelectionLength
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  changeSelection(SelStart, value)
+			  changeSelection(SelectionStart, value)
 			  Redraw
 			End Set
 		#tag EndSetter
-		SelLength As Integer
+		SelectionLength As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  return mSelStart
+			  return mSelectionStart
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -6268,7 +6269,7 @@ Implements MessageReceiver
 			  Redraw
 			End Set
 		#tag EndSetter
-		SelStart As Integer
+		SelectionStart As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -6276,21 +6277,17 @@ Implements MessageReceiver
 			Get
 			  // Attention: Returned line delimiters will be CR, i.e. chr(13), by default and not CR+LF or LF, even on Windows and Linux!
 			  
-			  Return TextStorage.getText(selStart, selLength)
+			  Return TextStorage.getText(SelectionStart, SelectionLength)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  CurrentEventID = System.Ticks
-			  private_replace(selStart, selLength, value, true)
+			  private_replace(SelectionStart, SelectionLength, value, true)
 			End Set
 		#tag EndSetter
 		SelText As string
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private sharedTmpPicture As picture
-	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -6358,12 +6355,12 @@ Implements MessageReceiver
 		#tag Setter
 			Set
 			  #if DebugBuild and EditFieldGlobals.DebugTiming
-			    dim runtimer as new Debugging.LifeTimer (CurrentMethodName)
+			    var runtimer as new Debugging.LifeTimer (CurrentMethodName)
 			  #endif
 			  
 			  StopHighlighter
 			  
-			  dim lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
+			  var lock as new LinesLock(self) // prevents LineHighlighter from interfering while we're modifying the lines
 			  #pragma unused lock
 			  
 			  loadingDocument = true
@@ -6376,7 +6373,7 @@ Implements MessageReceiver
 			  if not disableReset then
 			    UndoMgr.Reset
 			  else
-			    dim lineAttrs() as TextLineAttributes
+			    var lineAttrs() as TextLineAttributes
 			    UndoMgr.Push(new UndoableReplace(self, 0, self.text.Length, self.text, value, lineAttrs, CaretPos, CurrentEventID))
 			    ' Reset the 'disableReset' property
 			    disableReset = False
@@ -6450,7 +6447,7 @@ Implements MessageReceiver
 		#tag Getter
 			Get
 			  if mTextHeight = 0 then
-			    dim tmp as Picture = tmpPicture
+			    var tmp as Picture = TemporaryPicture
 			    mTextHeight = tmp.Graphics.TextHeight
 			  end if
 			  return mTextHeight + 1
@@ -6501,7 +6498,7 @@ Implements MessageReceiver
 			    mTextstorage = new GapBuffer
 			    
 			    //and blinker timer.
-			    caretBlinker = new CaretBlinker(self)
+			    mCaretBlinker = new CaretBlinker(self)
 			  end if
 			  
 			  return mTextstorage
@@ -6553,10 +6550,6 @@ Implements MessageReceiver
 		#tag EndSetter
 		UndoMgr As undomanager
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h1
-		Protected verticalSB As DesktopScrollbar
-	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -7091,7 +7084,7 @@ Implements MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="selLength"
+			Name="SelectionLength"
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"
@@ -7099,7 +7092,7 @@ Implements MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="selStart"
+			Name="SelectionStart"
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"

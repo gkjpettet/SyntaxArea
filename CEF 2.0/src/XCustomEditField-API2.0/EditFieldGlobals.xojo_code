@@ -52,7 +52,7 @@ Protected Module EditFieldGlobals
 		        c = &c000000
 		      else
 		        // This brightness inversion is based on trial-and-error
-		        dim lum as Double = luminence (c)
+		        var lum as Double = luminence (c)
 		        if lum > 0.6 then
 		          c = lerpColor (c, Color.RGB(0,0,0), lum * 0.7)
 		        else
@@ -69,7 +69,7 @@ Protected Module EditFieldGlobals
 	#tag Method, Flags = &h1
 		Protected Function IsDarkMode() As Boolean
 		  // Issue #37 - support for Dark Mode
-		  dim isDark as Boolean
+		  var isDark as Boolean
 		  #if RBVersion >= 2019.02
 		    #if AppSupportsDarkMode
 		      isDark = Color.IsDarkMode
@@ -81,8 +81,8 @@ Protected Module EditFieldGlobals
 
 	#tag Method, Flags = &h21
 		Private Function lerp(start as Double, ende as Double, amt as Double) As Double
-		  dim diff as Double = ende - start
-		  dim adj as Double = diff * amt
+		  var diff as Double = ende - start
+		  var adj as Double = diff * amt
 		  return start + adj
 		End Function
 	#tag EndMethod
@@ -90,12 +90,12 @@ Protected Module EditFieldGlobals
 	#tag Method, Flags = &h21
 		Private Function lerpColor(fromCol as Color, toCol as Color, amount as Double) As Color
 		  // https://stackoverflow.com/a/2690026/43615
-		  dim sr as Double = fromCol.Red
-		  dim sg as Double = fromCol.Green
-		  dim sb as Double = fromCol.Blue
-		  dim er as Double = toCol.Red
-		  dim eg as Double = toCol.Green
-		  dim eb as Double = toCol.Blue
+		  var sr as Double = fromCol.Red
+		  var sg as Double = fromCol.Green
+		  var sb as Double = fromCol.Blue
+		  var er as Double = toCol.Red
+		  var eg as Double = toCol.Green
+		  var eb as Double = toCol.Blue
 		  return Color.RGB (lerp (sr, er, amount), lerp (sg, eg, amount), lerp (sb, eb, amount))
 		End Function
 	#tag EndMethod
@@ -115,7 +115,7 @@ Protected Module EditFieldGlobals
 		Protected Function loadMaskedPicture(image as picture) As picture
 		  if Image = nil then Return nil
 		  
-		  dim newpic as Picture = New Picture(image.Width/2, Image.Height)
+		  var newpic as Picture = New Picture(image.Width/2, Image.Height)
 		  NewPic.Graphics.DrawPicture Image, 0,0
 		  
 		  //NewPic.Mask.Graphics.DrawPicture Image, 0, 0, NewPic.Width, NewPic.Height, Image.Width/2, 0
@@ -131,8 +131,8 @@ Protected Module EditFieldGlobals
 		  #pragma DisableBackgroundTasks
 		  #pragma DisableBoundsChecking
 		  
-		  dim n as Integer = min(source.Length, Target.Length)
-		  dim i as Integer
+		  var n as Integer = min(source.Length, Target.Length)
+		  var i as Integer
 		  for i = 0 to n -1
 		    var mainSource as String = source.Middle(i,1)
 		    var mainTarget as String = Target.Middle(i,1)
@@ -144,9 +144,9 @@ Protected Module EditFieldGlobals
 
 	#tag Method, Flags = &h21
 		Private Function luminence(c as Color) As Double
-		  dim r as Double = c.Red
-		  dim g as Double = c.Green
-		  dim b as Double = c.Blue
+		  var r as Double = c.Red
+		  var g as Double = c.Green
+		  var b as Double = c.Blue
 		  
 		  return (r+r+b+g+g+g) / 6 / 255 // https://stackoverflow.com/a/596241/43615
 		  

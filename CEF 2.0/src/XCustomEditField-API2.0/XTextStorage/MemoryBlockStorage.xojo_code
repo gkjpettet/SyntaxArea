@@ -25,7 +25,7 @@ Implements IBufferStorage
 		  #endif
 		  
 		  if from.size = 0 or length = 0 then Return //nuthin' to copy
-		  dim src as MemoryBlockStorage = MemoryBlockStorage(from)
+		  var src as MemoryBlockStorage = MemoryBlockStorage(from)
 		  
 		  me.Storage.StringValue(localIndex, min(length, storage.Size - localIndex)) = src.Storage.StringValue(fromIndex, min(length, src.Size - fromIndex))
 		  me.mSingleByteEncoding = src.mSingleByteEncoding
@@ -51,7 +51,7 @@ Implements IBufferStorage
 		  if length = 0 then Return ""
 		  if index >= Size then Return ""
 		  
-		  dim res as String = me.Storage.StringValue(index, min(length, storage.Size - index)).DefineEncoding(mSingleByteEncoding)
+		  var res as String = me.Storage.StringValue(index, min(length, storage.Size - index)).DefineEncoding(mSingleByteEncoding)
 		  
 		  Return res.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		End Function

@@ -9,18 +9,18 @@ Module modGTK3
 		    declare function g_strdup_value_contents lib "libgobject-2" (obj as ptr) as CString
 		    Soft Declare Sub g_object_getv Lib "libgobject-2" (obj As ptr,count As UInt32,ByRef value As cstring, res As ptr, term As ptr=Nil)
 		    Declare Sub free Lib "libgobject-2" (obj As ptr)
-		    Dim ptrSize As Integer=4
+		    var ptrSize As Integer=4
 		    If Target64Bit Then ptrSize=8
 		    
-		    dim ret() as String
+		    var ret() as String
 		    If System.isFunctionAvailable("g_object_getv","libgobject-2") Then
-		      dim count As UInt32
-		      dim list as ptr=g_object_class_list_properties(obj.ptr(0),count)
+		      var count As UInt32
+		      var list as ptr=g_object_class_list_properties(obj.ptr(0),count)
 		      
 		      for i as integer=0 to count-1
-		        Dim name As CString=g_param_spec_get_name(list.Ptr(i*ptrSize))
-		        dim value as new MemoryBlock(20) //not sure how big a value can be but this seems safe
-		        dim pvalue as ptr=value
+		        var name As CString=g_param_spec_get_name(list.Ptr(i*ptrSize))
+		        var value as new MemoryBlock(20) //not sure how big a value can be but this seems safe
+		        var pvalue as ptr=value
 		        g_object_getv(obj,1,name,pvalue)
 		        ret.Add name + " = " + g_strdup_value_contents(pvalue)
 		      next
@@ -67,7 +67,7 @@ Module modGTK3
 		Protected Sub init_Linux_OS_Description()
 		  #if TargetLinux then
 		    //get the Current Desktop
-		    dim shl as new Shell
+		    var shl as new Shell
 		    shl.Execute "echo $XDG_CURRENT_DESKTOP"
 		    Desktop = trim(shl.Result)
 		    
@@ -104,32 +104,32 @@ Module modGTK3
 		  //#END IF
 		  
 		  
-		  dim lines() as String=css.Split(EndOfLine.UNIX)
-		  dim r As new RegEx
+		  var lines() as String=css.Split(EndOfLine.UNIX)
+		  var r As new RegEx
 		  r.SearchPattern="(\w+)([\!\<=\>]+)(\S+)"
 		  
-		  dim i as integer
+		  var i as integer
 		  while i < lines.LastIndex
 		    
-		    dim pass As Boolean = true
-		    dim logic as string="AND"
+		    var pass As Boolean = true
+		    var logic as string="AND"
 		    
 		    if Lines(i).Left(3)="#IF" then
 		      
-		      dim chunks() as string=lines(i).Split
+		      var chunks() as string=lines(i).Split
 		      for c as integer=1 to chunks.LastIndex
 		        
 		        select case chunks(c)
 		        case "AND","OR","NOR"
 		          logic=chunks(c)
 		        else //condition
-		          dim condition_pass as Boolean=true
-		          dim m As RegExMatch=r.Search(chunks(c)) //better be a condition
+		          var condition_pass as Boolean=true
+		          var m As RegExMatch=r.Search(chunks(c)) //better be a condition
 		          if m<>nil and m.SubExpressionCount=4 then //match,comparison,value
 		            
-		            dim type as String=m.SubExpressionString(1)
-		            dim cmp as String=m.SubExpressionString(2)
-		            dim value as String=m.SubExpressionString(3)
+		            var type as String=m.SubExpressionString(1)
+		            var cmp as String=m.SubExpressionString(2)
+		            var value as String=m.SubExpressionString(3)
 		            
 		            select case type
 		            case "OS"
@@ -228,13 +228,13 @@ Module modGTK3
 		      
 		      Const GTK_STYLE_PROVIDER_PRIORITY_APPLICATION = 600
 		      
-		      Dim Screen As Ptr = gdk_screen_get_default
+		      var Screen As Ptr = gdk_screen_get_default
 		      Static provider As Ptr //we'll keep a single provider around instead of creating a new one each time
 		      if provider = nil then provider = gtk_css_provider_new
 		      If provider = Nil Then Break
 		      
-		      dim res as uint32= g_signal_connect_data(provider,"parsing-error",AddressOf modGtk3.GtkCssParsingErrorInfo.Gtk_parsing_error,nil,nil,0)
-		      dim success as Boolean
+		      var res as uint32= g_signal_connect_data(provider,"parsing-error",AddressOf modGtk3.GtkCssParsingErrorInfo.Gtk_parsing_error,nil,nil,0)
+		      var success as Boolean
 		      
 		      call gtk_css_provider_load_from_data(provider, psCSSData, psCSSData.Len, Nil) 
 		      

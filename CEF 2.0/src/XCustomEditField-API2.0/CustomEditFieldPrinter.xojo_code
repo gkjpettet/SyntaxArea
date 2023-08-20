@@ -15,7 +15,7 @@ Protected Class CustomEditFieldPrinter
 		Function DrawBlock(x as integer, y as integer, width as integer, height as integer, lineRange as dataRange, wrap as boolean = false, lineNumbers as boolean = false) As integer
 		  if g = nil then Return -1
 		  
-		  dim minLine, maxLine as Integer
+		  var minLine, maxLine as Integer
 		  if lineRange = nil then //paint all
 		    minLine = 0
 		    maxLine = lines.Count - 1
@@ -24,8 +24,8 @@ Protected Class CustomEditFieldPrinter
 		    maxLine = lineRange.offset + lineRange.length
 		  end if
 		  
-		  dim currentLine as TextLine
-		  dim sx, sy, lineNumOffset as Integer
+		  var currentLine as TextLine
+		  var sx, sy, lineNumOffset as Integer
 		  
 		  sx = x
 		  sy = y + g.TextHeight - (g.TextHeight - g.FontAscent)
@@ -34,7 +34,7 @@ Protected Class CustomEditFieldPrinter
 		    lineNumOffset = g.TextWidth(str(maxLine)+".") + 4
 		  end if
 		  
-		  dim linesUsed as Integer
+		  var linesUsed as Integer
 		  
 		  for i as Integer = minLine to maxLine
 		    currentLine = lines.getLine(i)

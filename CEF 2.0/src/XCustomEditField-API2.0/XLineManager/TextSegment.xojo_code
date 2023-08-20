@@ -3,7 +3,7 @@ Protected Class TextSegment
 Inherits DataRange
 	#tag Method, Flags = &h0
 		Function Clone() As textsegment
-		  dim tmp as new TextSegment
+		  var tmp as new TextSegment
 		  tmp.backgroundColor = backgroundColor
 		  tmp.bold = bold
 		  tmp.hasBackgroundColor = hasBackgroundColor
@@ -43,7 +43,7 @@ Inherits DataRange
 
 	#tag Method, Flags = &h0
 		Function SplitAtLength(length as integer) As textsegment
-		  dim tmp as TextSegment = clone
+		  var tmp as TextSegment = clone
 		  tmp.offset = tmp.offset + length
 		  tmp.length = self.length - length
 		  tmp.width = -1

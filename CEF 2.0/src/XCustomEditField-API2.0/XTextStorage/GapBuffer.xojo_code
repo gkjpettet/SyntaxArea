@@ -5,7 +5,7 @@ Class GapBuffer
 		  //checks if index is within bounds...
 		  
 		  if index < 0 or index > Length then
-		    dim ex as new OutOfBoundsException
+		    var ex as new OutOfBoundsException
 		    ex.Message = "Tried to access the buffer at invalid index."+EndOfLine+"Logic length = "+str(Length)+", index = "+str(index)
 		    Raise ex
 		  end if
@@ -30,9 +30,9 @@ Class GapBuffer
 		    
 		  #endif
 		  
-		  dim newbuffer as IBufferStorage
+		  var newbuffer as IBufferStorage
 		  
-		  dim delta as Integer
+		  var delta as Integer
 		  
 		  //gap too small
 		  if GapLength < minRequiredLength or GapLength < minGapSize then
@@ -97,7 +97,7 @@ Class GapBuffer
 		  
 		  checkBounds(index)
 		  
-		  dim delta as Integer = index + Length
+		  var delta as Integer = index + Length
 		  
 		  //all text before gap?
 		  if delta < gapStart then
@@ -110,7 +110,7 @@ Class GapBuffer
 		  end if
 		  
 		  //text before and after gap
-		  dim result as IBufferStorage = getBufferStorage(length)
+		  var result as IBufferStorage = getBufferStorage(length)
 		  result.Copy(buffer, index, 0, gapStart - index)
 		  result.Copy(buffer, gapEnd, gapStart - index, delta - gapStart)
 		  
@@ -135,14 +135,14 @@ Class GapBuffer
 		  
 		  if index = gapStart and GapLength>0 then Return
 		  
-		  dim newbuffer as IBufferStorage = buffer
+		  var newbuffer as IBufferStorage = buffer
 		  
 		  //empty?
 		  if buffer.Size = 0 then Return
 		  
 		  //moving before current gap
 		  if index < gapStart then
-		    dim count as Integer = gapStart - index //items to move
+		    var count as Integer = gapStart - index //items to move
 		    newbuffer.StringValue(index + GapLength, Count) = buffer.StringValue(index, Count) //move items
 		    
 		    gapStart = gapStart - Count
@@ -150,7 +150,7 @@ Class GapBuffer
 		    
 		    //moving after current gap start
 		  else
-		    dim count as Integer = index - gapStart //items to move
+		    var count as Integer = index - gapStart //items to move
 		    if count > 0 then
 		      newbuffer.StringValue(gapStart, Count) = buffer.StringValue(gapEnd, Count) //move items
 		      
@@ -177,7 +177,7 @@ Class GapBuffer
 		  checkBounds(index)
 		  
 		  placeGap(index)
-		  dim minLengthRequired as Integer = text.Length
+		  var minLengthRequired as Integer = text.Length
 		  ensureBufferSize(minLengthRequired)
 		  
 		  //replace chars by moving them INTO the gap

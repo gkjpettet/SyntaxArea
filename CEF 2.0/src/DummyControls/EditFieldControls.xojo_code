@@ -21,7 +21,7 @@ Inherits DesktopCanvas
 
 	#tag Method, Flags = &h1
 		Protected Function ImageForSymbol(type as string) As picture
-		  dim tmp as Picture = New Picture (11,11)
+		  var tmp as Picture = New Picture (11,11)
 		  
 		  select case type
 		  case "class"
@@ -53,8 +53,8 @@ Inherits DesktopCanvas
 		  g.FontName = "System"
 		  g.FontSize = 10
 		  
-		  dim col1 as Color = EditFieldGlobals.AdjustColorForDarkMode (&c444444)
-		  dim col2 as Color = EditFieldGlobals.AdjustColorForDarkMode (&cCCCCCC)
+		  var col1 as Color = EditFieldGlobals.AdjustColorForDarkMode (&c444444)
+		  var col2 as Color = EditFieldGlobals.AdjustColorForDarkMode (&cCCCCCC)
 		  
 		  g.DrawingColor = col1
 		  g.DrawText TextSelectionInfo, 5, (g.Height + g.FontAscent)/2 - 1
@@ -64,7 +64,7 @@ Inherits DesktopCanvas
 		  if mKnobPict = nil then mKnobPict = EditFieldGlobals.LoadMaskedPicture(knobImage)
 		  SymbolsWidth = g.TextWidth(text) + 10 + mKnobPict.width + 5
 		  
-		  dim symbolPict as Picture
+		  var symbolPict as Picture
 		  if currentSymbol <> nil then
 		    SymbolPict = ImageForSymbol(currentSymbol.Type)
 		    SymbolsWidth = SymbolsWidth + SymbolPict.width + 2
@@ -81,31 +81,31 @@ Inherits DesktopCanvas
 		  
 		  g.DrawingColor = col1
 		  g.DrawRectangle 0,-1,g.Width,g.Height + 2
-		  dim txt as String = "CEF Version: "+EditFieldGlobals.CEF_VERSION
+		  var txt as String = "CEF Version: "+EditFieldGlobals.CEF_VERSION
 		  g.DrawText txt, g.Width - g.TextWidth(txt) - 2, (g.Height + g.FontAscent)/2 - 1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function showSymbolMenu() As boolean
-		  dim symbols() as DocumentSymbol = GetSymbols
+		  var symbols() as DocumentSymbol = GetSymbols
 		  if symbols is nil or symbols.LastIndex < 0 then Return False
 		  
-		  dim SymbolOffsets() as Integer
+		  var SymbolOffsets() as Integer
 		  
-		  dim symbol as DocumentSymbol
+		  var symbol as DocumentSymbol
 		  
 		  for each symbol in symbols
 		    SymbolOffsets.Add Symbol.Offset
 		  next
 		  
-		  dim menu as new DesktopMenuItem
+		  var menu as new DesktopMenuItem
 		  
 		  //sort by offset
 		  SymbolOffsets.SortWith(Symbols)
 		  
-		  dim entry as DesktopMenuItem
-		  dim indent as String
+		  var entry as DesktopMenuItem
+		  var indent as String
 		  for each Symbol in Symbols
 		    if Symbol.Type = "Method" then
 		      indent = "    "
@@ -123,8 +123,8 @@ Inherits DesktopCanvas
 		    menu.AddMenu(entry)
 		  next
 		  
-		  dim container as DesktopWindow
-		  dim locx, locy as integer
+		  var container as DesktopWindow
+		  var locx, locy as integer
 		  
 		  //find the window where this control is...
 		  //since the control can be deeeeeeep whithin container controls...

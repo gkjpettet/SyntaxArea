@@ -2039,7 +2039,7 @@ End
 
 	#tag MenuHandler
 		Function FilePageSetup() As Boolean Handles FilePageSetup.Action
-		  dim ps as new PrinterSetup
+		  var ps as new PrinterSetup
 		  if PrinterSetupString <> "" then ps.Settings = PrinterSetupString
 		  
 		  if ps.ShowPageSetupDialog then
@@ -2062,7 +2062,7 @@ End
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
-		  dim file as FolderItem
+		  var file as FolderItem
 		  file = FolderItem.ShowSaveFileDialog("Text", "MyFile.txt")
 		  if file = nil then Return true
 		  
@@ -2125,16 +2125,16 @@ End
 		  
 		  static isBigEndian, endianChecked As Boolean
 		  if not endianChecked then
-		    Dim temp As String = Encodings.UTF16.Chr( &hFEFF )
+		    var temp As String = Encodings.UTF16.Chr( &hFEFF )
 		    isBigEndian = (( temp.MiddleBytes( 0, 1 ).AscByte ) = &hFE)
 		    endianChecked = true
 		  end if
 		  
 		  // check for a BOM
-		  Dim b0 As Integer = s.MiddleBytes( 0, 1 ).AscByte
-		  Dim b1 As Integer =  s.MiddleBytes( 1, 1 ) .AscByte
-		  Dim b2 As Integer =  s.MiddleBytes( 2, 1 ) .AscByte
-		  Dim b3 As Integer =  s.MiddleBytes( 3, 1 ) .AscByte
+		  var b0 As Integer = s.MiddleBytes( 0, 1 ).AscByte
+		  var b1 As Integer =  s.MiddleBytes( 1, 1 ) .AscByte
+		  var b2 As Integer =  s.MiddleBytes( 2, 1 ) .AscByte
+		  var b3 As Integer =  s.MiddleBytes( 3, 1 ) .AscByte
 		  if b0=0 and b1=0 and b2=&hFE and b3=&hFF then
 		    // UTF-32, big-endian
 		    if isBigEndian then
@@ -2177,8 +2177,8 @@ End
 		  end if
 		  
 		  // no BOM; see if it's entirely ASCII.
-		  Dim m As MemoryBlock = s
-		  Dim i, maxi As Integer = s.Bytes - 1
+		  var m As MemoryBlock = s
+		  var i, maxi As Integer = s.Bytes - 1
 		  for i = 0 to maxi
 		    if m.Byte(i) > 127 then exit
 		  next
@@ -2186,7 +2186,7 @@ End
 		  
 		  // Not ASCII; check for a high incidence of nulls every other byte,
 		  // which suggests UTF-16 (at least in Roman text).
-		  Dim nulls(1) As Integer  // null count in even (0) and odd (1) bytes
+		  var nulls(1) As Integer  // null count in even (0) and odd (1) bytes
 		  for i = 0 to maxi
 		    if m.Byte(i) = 0 then
 		      nulls(i mod 2) = nulls(i mod 2) + 1
@@ -2211,7 +2211,7 @@ End
 		  // it's not ASCII; check for illegal UTF-8 characters.
 		  // See Table 3.1B, "Legal UTF-8 Byte Sequences",
 		  // at <http://unicode.org/versions/corrigendum1.html>
-		  Dim b As Byte
+		  var b As Byte
 		  for i = 0 to maxi
 		    select case m.Byte(i)
 		    case &h00 to &h7F
@@ -2281,37 +2281,37 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub print()
-		  dim ps as new PrinterSetup
+		  var ps as new PrinterSetup
 		  
 		  //if the user changed the settings using page setup, set those.
 		  if PrinterSetupString <> "" then _
 		  ps.Settings = PrinterSetupString
 		  
 		  //get graphics context
-		  dim g as Graphics = ps.ShowPrinterDialog
+		  var g as Graphics = ps.ShowPrinterDialog
 		  if g = nil then Return
 		  
 		  //now, get printer object from editfield.
-		  dim fieldPrinter as CustomEditFieldPrinter = TestField.CustomEditFieldPrinter(g)
+		  var fieldPrinter as CustomEditFieldPrinter = TestField.CustomEditFieldPrinter(g)
 		  
 		  //range to print.
-		  dim maxLine as Integer = TestField.LineCount - 1
-		  dim range as DataRange = new DataRange(0, maxLine)
+		  var maxLine as Integer = TestField.LineCount - 1
+		  var range as DataRange = new DataRange(0, maxLine)
 		  
 		  //change these if you want to play with different block sizes...
-		  dim left, top, maxw, maxh as Integer
+		  var left, top, maxw, maxh as Integer
 		  left = ps.Left
 		  top = ps.Top
 		  maxw = ps.Width
 		  maxh = ps.Height
 		  
-		  dim wrap as Boolean = true //wrap text?
+		  var wrap as Boolean = true //wrap text?
 		  
 		  //print...
 		  //drawBlock returns the last printed line, so you can recalculate the next lines to print.
 		  g.DrawingColor = &ccccccc
 		  g.DrawRectangle left, top, maxw, maxh
-		  dim lastPrintedLine as Integer = fieldPrinter.DrawBlock(left, top, maxw, maxh, range, wrap, TestField.DisplayLineNumbers)
+		  var lastPrintedLine as Integer = fieldPrinter.DrawBlock(left, top, maxw, maxh, range, wrap, TestField.DisplayLineNumbers)
 		  while lastPrintedLine < maxLine
 		    //recalculate range...
 		    range.offset = lastPrintedLine + 1
@@ -2375,9 +2375,9 @@ End
 		  
 		  #if RBVersion < 2013.0 then
 		    
-		    dim w as Window=self
-		    Dim osErr As Integer
-		    dim v as variant
+		    var w as Window=self
+		    var osErr As Integer
+		    var v as variant
 		    
 		    #if TargetMacOS then
 		      #if TargetCarbon or TargetCocoa then
@@ -2455,7 +2455,7 @@ End
 	#tag Constant, Name = defaultTextMD, Type = String, Dynamic = False, Default = \"normal __bold__ end", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = defaultTextRB, Type = String, Dynamic = False, Default = \"module m1\rclass c1\rsub s1\r\'if x then\rend \' <- should be indented one more level\rend sub\rend class\rend module\r\rPrivate Interface Sorter\rFunction Compare(left as Integer\x2C right as Integer) As Integer\r Sub Swap(idx1 as Integer\x2C idx2 as Integer)\r\tEnd Interface\r\rsub test\rselect case x\rcase 1\rfoo()\relse\rbar()\rend select\r\r  dim line as TextLine \x3D lines.getLine (lineIndex)\rif line \x3D \"\xF0\x9F\x94\x8D\" then break\r  if line \x3D nil then\r    return true // true because it may just be an empty line\x2C and that doesn\'t mean we can stop the outer loop\x2C or am I (TT) wrong\?\r  end\r\rsharedfunction\rpropertyCount \x3D propertyCount + 1\r\r  if true then beep\r\rif true then \' just a comment\relse\r  if a then\r  elseif b then\r  else\r  end\rend\r\rselectWord \' should not be confused with \"select\"\r\r  if true and _\r    not false _\r    then\r  #if true\r    beep\r  #elseif true\r    beep\r  #else\r    beep\r  #endif\r  end\r  if SyntaxDefinition \x3D nil then\r    line.indent \x3D 0\r    Return false\r  end\r  \r  dim modified as Boolean\r  dim previousLine as TextLine\x2C addIndentation as String\r  \r  // Determine the indentation level\r  dim currTextUntrimmed as String \x3D TextStorage.getText(line.offset\x2C line.length)\r  // we need to remove the EOL char at the end of the line as it could fool our leading whitespace detection if the entire line is whitespace\r  dim eol as String \x3D self.LineDelimiter\r  if currTextUntrimmed.Right(eol.Len) \x3D eol then\r    currTextUntrimmed \x3D currTextUntrimmed.Left(currTextUntrimmed.Len-eol.Len)\r  end if\r  dim currTextTrimmed as String \x3D currTextUntrimmed.LTrim\r  dim currLeadingSpaces as Integer \x3D currTextUntrimmed.Len - currTextTrimmed.Len\r  dim origLeadingSpaces as Integer \x3D currLeadingSpaces\r  \r  if ltrimLine and currLeadingSpaces > 0 then\r    // Discard leading spaces from current line\r    if mIndentVisually then\r      // remove now because we\'ll not add new spaces\r      \r      if CurrentEventID <\x3D 0 then\r        // This must not happen - the caller must ensure that the EventID is set to System.Ticks\r        // before he starts any modification that invokes this method\r        break\r        CurrentEventID \x3D System.Ticks\r      end if\r      \r      // now remove the leading spaces\r      Replace_private (line.offset\x2C origLeadingSpaces\x2C \"\"\x2C CurrentEventID\x2C true\x2C true)\r      line \x3D lines.getLine(lineIndex)\r      currLeadingSpaces \x3D 0\r      currTextUntrimmed \x3D currTextTrimmed\r      modified \x3D true\r    end if\r  end\r  \r  // The block end test needs to be performed first because the block start test would give wrong results for block ends\r  if SyntaxDefinition.isBlockEnd(currTextTrimmed) then\r    // use indentation of previous block start\r    \r    dim blockStartIdx as Integer \x3D lines.previousBlockStartLine(lineIndex)\r    previousLine \x3D lines.getLine(blockStartIdx)\r    if mIndentVisually then\r      // Indent by drawing the lines at a further offset\x2C based on the TextLine.indent property\r      dim newIndent as Integer\r      if previousLine <> nil then\r        // take the block start\'s indent value\r        newIndent \x3D previousLine.indent\r      else\r        // if there\'s no block start to find\x2C let\'s zero the indent level\r        newIndent \x3D 0\r      end if\r      if newIndent <> line.indent then\r        line.indent \x3D newIndent\r        modified \x3D true\r      end\r      return modified\r    else\r      // Indent by spaces/tabs in the line\x2C which we\'ll handle below\r    end\r    \r  else\r    // check if the previous line is a block start -> then we increase the indentation in the current line\r    \r    dim indentationIncrease as Integer\x2C prevTxt as String\r    \r    previousLine \x3D lines.getLine(lineIndex - 1)\r    if previousLine <> nil then\r      prevTxt \x3D TextStorage.getText(previousLine.offset\x2C previousLine.length)\r      indentationIncrease \x3D SyntaxDefinition.isBlockStart (prevTxt)\r    end\r    \r    if mIndentVisually then\r      // Indent by drawing the lines at a further offset\x2C based on the TextLine.indent property\r      dim newIndent as Integer\r      if previousLine <> nil then\r        newIndent \x3D previousLine.indent + indentationIncrease * IndentPixels\r      else\r        newIndent \x3D 0\r      end\r      if newIndent <> line.indent then\r        line.indent \x3D newIndent\r        modified \x3D true\r      end\r      return modified\r    else\r      // Indent by inserting spaces into the line\r      addIndentation \x3D indentStr (indentationIncrease)\r    end\r  end\r  \r  // Indent by inserting spaces into the line (which are now in \'addIndentation\')\r  \r  line.indent \x3D 0 // reset this value to avoid effects we\'re not prepared for\r  \r  dim currIndent as String \x3D currTextUntrimmed.Left(currLeadingSpaces)\r  \r  dim prevIdentation as String\r  if previousLine <> nil then\r    // get leading non-whitespace chars from previous line\r    dim firstCharPos as Integer \x3D nextNonWhitespace(previousLine.offset - 1\x2C _\r    previousLine.offset + previousLine.length - previousLine.delimiterLength)\r    prevIdentation \x3D TextStorage.getText(previousLine.offset\x2C firstCharPos - previousLine.offset)\r  end if\r  \r  dim newIndentation as String \x3D prevIdentation + addIndentation\r  dim newIndentLen as Integer \x3D newIndentation.Len\r  \r  dim theText as String\x2C moveCaret as Integer\r  if ltrimLine then\r    // Discard leading spaces from current line\r    theText \x3D newIndentation\r  else\r    // Keep leading spaces in current line\r    theText \x3D newIndentation + currIndent\r  end if\r  \r  if theText <> currIndent then\r    \r    if CurrentEventID <\x3D 0 then\r      // This must not happen - the caller must ensure that the EventID is set to Ticks\r      // before he starts any modification that invokes this method\r      break\r      CurrentEventID \x3D Ticks\r    end if\r    \r    Replace_private (line.offset\x2C origLeadingSpaces\x2C theText\x2C CurrentEventID\x2C true\x2C true)\r    modified \x3D true\r  end\r  \r  return modified\rend test", Scope = Private
+	#tag Constant, Name = defaultTextRB, Type = String, Dynamic = False, Default = \"module m1\nclass c1\nsub s1\n\'if x then\nend \' <- should be indented one more level\nend sub\nend class\nend module\n\nPrivate Interface Sorter\nFunction Compare(left as Integer\x2C right as Integer) As Integer\n Sub Swap(idx1 as Integer\x2C idx2 as Integer)\n\tEnd Interface\n\nsub test\nselect case x\ncase 1\nfoo()\nelse\nbar()\nend select\n\n  var line as TextLine \x3D lines.getLine (lineIndex)\nif line \x3D \"\xF0\x9F\x94\x8D\" then break\n  if line \x3D nil then\n\treturn true // true because it may just be an empty line\x2C and that doesn\'t mean we can stop the outer loop\x2C or am I (TT) wrong\?\n  end\n\nsharedfunction\npropertyCount \x3D propertyCount + 1\n\n  if true then beep\n\nif true then \' just a comment\nelse\n  if a then\n  elseif b then\n  else\n  end\nend\n\nselectWord \' should not be confused with \"select\"\n\n  if true and _\n\tnot false _\n\tthen\n  #if true\n\tbeep\n  #elseif true\n\tbeep\n  #else\n\tbeep\n  #endif\n  end\n  if SyntaxDefinition \x3D nil then\n\tline.indent \x3D 0\n\tReturn false\n  end\n  \n  var modified as Boolean\n  var previousLine as TextLine\x2C addIndentation as String\n  \n  // Determine the indentation level\n  var currTextUntrimmed as String \x3D TextStorage.getText(line.offset\x2C line.length)\n  // we need to remove the EOL char at the end of the line as it could fool our leading whitespace detection if the entire line is whitespace\n  var eol as String \x3D self.LineDelimiter\n  if currTextUntrimmed.Right(eol.Len) \x3D eol then\n\tcurrTextUntrimmed \x3D currTextUntrimmed.Left(currTextUntrimmed.Len-eol.Len)\n  end if\n  var currTextTrimmed as String \x3D currTextUntrimmed.LTrim\n  var currLeadingSpaces as Integer \x3D currTextUntrimmed.Len - currTextTrimmed.Len\n  var origLeadingSpaces as Integer \x3D currLeadingSpaces\n  \n  if ltrimLine and currLeadingSpaces > 0 then\n\t// Discard leading spaces from current line\n\tif mIndentVisually then\n\t  // remove now because we\'ll not add new spaces\n\t  \n\t  if CurrentEventID <\x3D 0 then\n\t\t// This must not happen - the caller must ensure that the EventID is set to System.Ticks\n\t\t// before he starts any modification that invokes this method\n\t\tbreak\n\t\tCurrentEventID \x3D System.Ticks\n\t  end if\n\t  \n\t  // now remove the leading spaces\n\t  Replace_private (line.offset\x2C origLeadingSpaces\x2C \"\"\x2C CurrentEventID\x2C true\x2C true)\n\t  line \x3D lines.getLine(lineIndex)\n\t  currLeadingSpaces \x3D 0\n\t  currTextUntrimmed \x3D currTextTrimmed\n\t  modified \x3D true\n\tend if\n  end\n  \n  // The block end test needs to be performed first because the block start test would give wrong results for block ends\n  if SyntaxDefinition.isBlockEnd(currTextTrimmed) then\n\t// use indentation of previous block start\n\t\n\tvar blockStartIdx as Integer \x3D lines.previousBlockStartLine(lineIndex)\n\tpreviousLine \x3D lines.getLine(blockStartIdx)\n\tif mIndentVisually then\n\t  // Indent by drawing the lines at a further offset\x2C based on the TextLine.indent property\n\t  var newIndent as Integer\n\t  if previousLine <> nil then\n\t\t// take the block start\'s indent value\n\t\tnewIndent \x3D previousLine.indent\n\t  else\n\t\t// if there\'s no block start to find\x2C let\'s zero the indent level\n\t\tnewIndent \x3D 0\n\t  end if\n\t  if newIndent <> line.indent then\n\t\tline.indent \x3D newIndent\n\t\tmodified \x3D true\n\t  end\n\t  return modified\n\telse\n\t  // Indent by spaces/tabs in the line\x2C which we\'ll handle below\n\tend\n\t\n  else\n\t// check if the previous line is a block start -> then we increase the indentation in the current line\n\t\n\tvar indentationIncrease as Integer\x2C prevTxt as String\n\t\n\tpreviousLine \x3D lines.getLine(lineIndex - 1)\n\tif previousLine <> nil then\n\t  prevTxt \x3D TextStorage.getText(previousLine.offset\x2C previousLine.length)\n\t  indentationIncrease \x3D SyntaxDefinition.isBlockStart (prevTxt)\n\tend\n\t\n\tif mIndentVisually then\n\t  // Indent by drawing the lines at a further offset\x2C based on the TextLine.indent property\n\t  var newIndent as Integer\n\t  if previousLine <> nil then\n\t\tnewIndent \x3D previousLine.indent + indentationIncrease * IndentPixels\n\t  else\n\t\tnewIndent \x3D 0\n\t  end\n\t  if newIndent <> line.indent then\n\t\tline.indent \x3D newIndent\n\t\tmodified \x3D true\n\t  end\n\t  return modified\n\telse\n\t  // Indent by inserting spaces into the line\n\t  addIndentation \x3D indentStr (indentationIncrease)\n\tend\n  end\n  \n  // Indent by inserting spaces into the line (which are now in \'addIndentation\')\n  \n  line.indent \x3D 0 // reset this value to avoid effects we\'re not prepared for\n  \n  var currIndent as String \x3D currTextUntrimmed.Left(currLeadingSpaces)\n  \n  var prevIdentation as String\n  if previousLine <> nil then\n\t// get leading non-whitespace chars from previous line\n\tvar firstCharPos as Integer \x3D nextNonWhitespace(previousLine.offset - 1\x2C _\n\tpreviousLine.offset + previousLine.length - previousLine.delimiterLength)\n\tprevIdentation \x3D TextStorage.getText(previousLine.offset\x2C firstCharPos - previousLine.offset)\n  end if\n  \n  var newIndentation as String \x3D prevIdentation + addIndentation\n  var newIndentLen as Integer \x3D newIndentation.Len\n  \n  var theText as String\x2C moveCaret as Integer\n  if ltrimLine then\n\t// Discard leading spaces from current line\n\ttheText \x3D newIndentation\n  else\n\t// Keep leading spaces in current line\n\ttheText \x3D newIndentation + currIndent\n  end if\n  \n  if theText <> currIndent then\n\t\n\tif CurrentEventID <\x3D 0 then\n\t  // This must not happen - the caller must ensure that the EventID is set to Ticks\n\t  // before he starts any modification that invokes this method\n\t  break\n\t  CurrentEventID \x3D Ticks\n\tend if\n\t\n\tReplace_private (line.offset\x2C origLeadingSpaces\x2C theText\x2C CurrentEventID\x2C true\x2C true)\n\tmodified \x3D true\n  end\n  \n  return modified\nend test", Scope = Private
 	#tag EndConstant
 
 
@@ -2482,13 +2482,13 @@ End
 		  me.setScrollbars(horizontalSB, verticalSB)
 		  
 		  //add a set of dummy autocomplete words.
-		  dim tmp() as String = autocompleteWords.Split
-		  dim word as String
+		  var tmp() as String = autocompleteWords.Split
+		  var word as String
 		  
 		  MyAutocomplete = new PaTrie
-		  dim Words as new Dictionary
+		  var Words as new Dictionary
 		  
-		  dim trimmed as String
+		  var trimmed as String
 		  for each word in tmp
 		    trimmed = word.Trim
 		    if words.HasKey(trimmed) then
@@ -2506,8 +2506,8 @@ End
 	#tag Event
 		Function AutocompleteOptionsForPrefix(prefix as string) As AutocompleteOptions
 		  //you can replace this with your own Autocomplete engine...
-		  dim options as new AutocompleteOptions
-		  dim commonPrefix as String
+		  var options as new AutocompleteOptions
+		  var commonPrefix as String
 		  
 		  //prefix is the word that triggered these Autocomplete options
 		  options.Prefix = prefix
@@ -2531,7 +2531,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SelChanged(line as integer, column as integer, length as integer)
-		  dim tmp as String = str(line)+":"+str(column)
+		  var tmp as String = str(line)+":"+str(column)
 		  if length > 0 then tmp = tmp + " ("+str(length)+")"
 		  
 		  fieldInfo.TextSelectionInfo = tmp
@@ -2659,10 +2659,10 @@ End
 	#tag Event
 		Function KeyDown(key As String) As Boolean
 		  if key = chr(13) or key = chr(3) then
-		    dim line as Integer = val(me.Text) - 1
+		    var line as Integer = val(me.Text) - 1
 		    #if true
 		      // Move cursor to start of that line:
-		      testField.SelStart = testField.LineOffset (line)
+		      testField.SelectionStart = testField.LineOffset (line)
 		    #else
 		      // This selects the entire line:
 		      testField.SelectLine(line)
@@ -2773,12 +2773,12 @@ End
 		  me.AddRow "None"
 		  me.RowTagAt(me.LastAddedRowIndex) = nil
 		  
-		  dim defsFolder as FolderItem = SpecialFolder.Resource("definitions")
+		  var defsFolder as FolderItem = SpecialFolder.Resource("definitions")
 		  
 		  for i as Integer = 0 to defsFolder.Count - 1
-		    dim f as FolderItem = defsFolder.ChildAt(i)
+		    var f as FolderItem = defsFolder.ChildAt(i)
 		    if f <> nil and f.Name.Right(4) = ".xml" then
-		      dim def as new HighlightDefinition
+		      var def as new HighlightDefinition
 		      if def.loadFromXml(f) then
 		        if def.Name = "java" then
 		          javaSyntaxIdx = me.RowCount
@@ -2801,7 +2801,7 @@ End
 		  
 		  if me.SelectedRowIndex < 0 then Return
 		  
-		  dim SyntaxDefinition as HighlightDefinition = me.RowTagAt(me.SelectedRowIndex)
+		  var SyntaxDefinition as HighlightDefinition = me.RowTagAt(me.SelectedRowIndex)
 		  
 		  btnSyntaxColors.Enabled = SyntaxDefinition <> nil
 		  
@@ -2890,7 +2890,7 @@ End
 #tag Events btnSyntaxColors
 	#tag Event
 		Sub Pressed()
-		  dim sc as new SyntaxColors
+		  var sc as new SyntaxColors
 		  if sc.Show(TestField.SyntaxDefinition) then TestField.ReHighlight
 		End Sub
 	#tag EndEvent
@@ -3016,19 +3016,19 @@ End
 		    
 		  case "TimeRefresh"
 		    // Test the performance of setting and indenting the text
-		    dim txt as String = TestField.Text
+		    var txt as String = TestField.Text
 		    TestField.Text = ""
 		    Debugging.AccumulationClear
-		    dim startTime as Double = System.Microseconds
+		    var startTime as Double = System.Microseconds
 		    TestField.Text = txt
-		    dim mid1Time as Double = System.Microseconds
+		    var mid1Time as Double = System.Microseconds
 		    TestField.ReindentText()
-		    dim mid2Time as Double = System.Microseconds
+		    var mid2Time as Double = System.Microseconds
 		    while TestField.HighLighterTaskBusy
 		      ' wait
 		    wend
-		    dim endTime as Double = System.Microseconds
-		    dim msg as String = "This took "+Format((endTime-startTime)/1000, "#")+"ms" + EndOfLine + EndOfLine + _
+		    var endTime as Double = System.Microseconds
+		    var msg as String = "This took "+Format((endTime-startTime)/1000, "#")+"ms" + EndOfLine + EndOfLine + _
 		    "(SetText took "+Format((mid1Time-startTime)/1000, "#")+"ms"+")"+ EndOfLine + _
 		    "(Indent took "+Format((mid2Time-mid1Time)/1000, "#")+"ms"+")"
 		    Debugging.DebugLog Debugging.AccumulationResult
@@ -3116,7 +3116,7 @@ End
 		    return
 		  #endif
 		  
-		  dim focusCtrl as DesktopUIControl = self.Focus
+		  var focusCtrl as DesktopUIControl = self.Focus
 		  if focusCtrl isA DesktopCheckBox or focusCtrl isA DesktopButton or focusCtrl isA DesktopListbox then
 		    // set the focus back to the textField
 		    TestField.SetFocus

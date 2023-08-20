@@ -105,7 +105,7 @@ End
 		  if optionSubmitted then Return
 		  optionSubmitted = true
 		  
-		  dim msg as new Message(self, self)
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, AutocompleteCancelledMsg)
 		  msg.addInfo(2, requestFocus)
 		  MessageCenter.sendMessage(msg)
@@ -118,9 +118,9 @@ End
 		Private Sub ChangeWindowStyle(w as DesktopWindow, flag as Integer, set as Boolean)
 		  #pragma unused set
 		  #if TargetWin32
-		    Dim oldFlags as Integer
-		    Dim newFlags as Integer
-		    Dim styleFlags As Integer
+		    var oldFlags as Integer
+		    var newFlags as Integer
+		    var styleFlags As Integer
 		    
 		    Const SWP_NOSIZE = &H1
 		    Const SWP_NOMOVE = &H2
@@ -160,11 +160,11 @@ End
 		  //load options
 		  optionList.RemoveAllRows()
 		  
-		  dim option as String
+		  var option as String
 		  for each option in options
 		    optionList.AddRow option
 		    static p as new Picture(1, 1, 32)
-		    dim neededWidth as integer = p.Graphics.TextWidth(option)
+		    var neededWidth as integer = p.Graphics.TextWidth(option)
 		    if neededWidth > self.Width then  //auto-expand to fit the options. Thanks to Dr Gerard Hammond
 		      self.Width = neededWidth + 10
 		    end
@@ -179,8 +179,8 @@ End
 	#tag Method, Flags = &h0
 		Sub show(left as integer, top as integer)
 		  //get options
-		  dim options as AutocompleteOptions
-		  dim msg as new Message(self, self)
+		  var options as AutocompleteOptions
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, CurrentAutocompleteOptionsMsg)
 		  MessageCenter.sendMessage(msg)
 		  options = msg.Info(3)
@@ -216,14 +216,14 @@ End
 		  if optionSubmitted then Return
 		  optionSubmitted = true
 		  
-		  dim option as String
+		  var option as String
 		  if what ="" then
 		    option = optionList.SelectedRowValue
 		  else
 		    option = what
 		  end if
 		  
-		  dim msg as new Message(self, self)
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, OptionSelectedMsg)
 		  msg.addInfo(2, Option)
 		  MessageCenter.sendMessage(msg)
@@ -276,9 +276,9 @@ End
 		    Return False
 		    
 		  else
-		    dim options as AutocompleteOptions
+		    var options as AutocompleteOptions
 		    
-		    dim msg as new Message(self, self)
+		    var msg as new Message(self, self)
 		    Msg.addInfo(1, KeyDownMsg)
 		    msg.addInfo(2, key)
 		    MessageCenter.sendMessage(Msg)

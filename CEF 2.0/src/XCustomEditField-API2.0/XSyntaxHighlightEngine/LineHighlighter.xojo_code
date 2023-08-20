@@ -3,20 +3,20 @@ Class LineHighlighter
 Inherits Thread
 	#tag Event
 		Sub Run()
-		  dim owner as CustomEditField = self.owner
+		  var owner as CustomEditField = self.owner
 		  if owner = nil then Return
 		  
 		  #if DebugBuild and EditFieldGlobals.DebugIndentation
 		    System.DebugLog "LineHighlighter.Run..."
 		  #endif
 		  
-		  dim lock as LinesLock
+		  var lock as LinesLock
 		  if not owner.IndentVisually then
 		    lock = new LinesLock(owner)
 		  end if
 		  
 		  #if DebugBuild and EditFieldGlobals.DebugTiming
-		    dim runtimer as new Debugging.LifeTimer(CurrentMethodName)
+		    var runtimer as new Debugging.LifeTimer(CurrentMethodName)
 		  #endif
 		  
 		  do
@@ -55,7 +55,7 @@ Inherits Thread
 	#tag Method, Flags = &h21
 		Private Sub DoneWithScreenLines()
 		  if not MessageCenter.isMessageInQueue (self, 1, ScreenLinesHighlightedMsg) then
-		    dim msg as new Message(self, self)
+		    var msg as new Message(self, self)
 		    msg.addInfo(1, ScreenLinesHighlightedMsg)
 		    MessageCenter.sendMessage(msg)
 		  end if
@@ -65,7 +65,7 @@ Inherits Thread
 	#tag Method, Flags = &h21
 		Private Sub HighlightingDone()
 		  if not MessageCenter.isMessageInQueue (self, 1, HighlightDoneMsg) then
-		    dim msg as new Message(self, self)
+		    var msg as new Message(self, self)
 		    msg.addInfo(1, HighlightDoneMsg)
 		    MessageCenter.queueMessage(msg)
 		  end if
@@ -76,16 +76,16 @@ Inherits Thread
 		Sub HighlightLine(index as integer)
 		  #pragma DisableBackgroundTasks
 		  
-		  dim lock as new LinesLock(owner)
+		  var lock as new LinesLock(owner)
 		  #pragma unused lock
 		  
-		  dim line, previous, nextLine as TextLine
-		  dim context, previousContext as HighlightContext
-		  dim processed as Integer
+		  var line, previous, nextLine as TextLine
+		  var context, previousContext as HighlightContext
+		  var processed as Integer
 		  
-		  dim lineFoldingsEnabled as Boolean = owner.EnableLineFoldings
+		  var lineFoldingsEnabled as Boolean = owner.EnableLineFoldings
 		  
-		  dim lines as LineManager = LineManager(mLines.Value)
+		  var lines as LineManager = LineManager(mLines.Value)
 		  
 		  //get line
 		  line = lines.getLine(index)
@@ -157,7 +157,7 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub LineHighlighted(index as integer)
-		  dim msg as new Message(self, self)
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, LineHighlightedMsg)
 		  msg.addInfo(2, index)
 		  MessageCenter.sendMessage(msg)
@@ -167,16 +167,16 @@ Inherits Thread
 	#tag Method, Flags = &h21
 		Private Sub ProcessDirtyLines()
 		  do
-		    dim lock as LinesLock
+		    var lock as LinesLock
 		    
 		    try
 		      lock = new LinesLock(owner)
 		      
 		      #if DebugBuild and EditFieldGlobals.DebugTiming
-		        dim runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
+		        var runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
 		      #endif
 		      
-		      dim lineIdx as Integer
+		      var lineIdx as Integer
 		      if not changedLines.RemoveNextLine (lineIdx) then
 		        exit do
 		      end if
@@ -194,17 +194,17 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub ProcessVisibleLines()
-		  dim lock as new LinesLock(owner)
+		  var lock as new LinesLock(owner)
 		  
 		  #if DebugBuild and EditFieldGlobals.DebugTiming
-		    dim runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
+		    var runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
 		  #endif
 		  
 		  try
-		    dim needsRefresh as Boolean
+		    var needsRefresh as Boolean
 		    
-		    dim startLine as Integer = owner.VisibleLineRange.offset
-		    dim endLine as Integer = Max(owner.MaxVisibleLines,owner.VisibleLineRange.length) - startLine + 1
+		    var startLine as Integer = owner.VisibleLineRange.offset
+		    var endLine as Integer = Max(owner.MaxVisibleLines,owner.VisibleLineRange.length) - startLine + 1
 		    
 		    for lineIdx as Integer = startLine to endLine
 		      

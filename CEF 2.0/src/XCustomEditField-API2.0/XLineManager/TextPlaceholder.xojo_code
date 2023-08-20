@@ -3,7 +3,7 @@ Protected Class TextPlaceholder
 Inherits TextSegment
 	#tag Method, Flags = &h0
 		Function Clone() As textsegment
-		  dim tmp as new TextPlaceholder(offset, length, textRange.offset, textRange.length, self.textColor, backgroundColor, bold, italic, underline)
+		  var tmp as new TextPlaceholder(offset, length, textRange.offset, textRange.length, self.textColor, backgroundColor, bold, italic, underline)
 		  tmp.lastFont = lastFont
 		  tmp.lastSize = lastSize
 		  tmp.Type = TYPE

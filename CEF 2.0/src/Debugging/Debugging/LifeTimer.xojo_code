@@ -14,7 +14,7 @@ Protected Class LifeTimer
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  if DebugBuild or LogToFile then
-		    dim t as Double = System.Microseconds - mTime
+		    var t as Double = System.Microseconds - mTime
 		    Debugging.Depth = Debugging.Depth - 1
 		    Debugging.DebugLog "<"+mName+"> "+Str(t/1000,"#.####")+"ms"+EndOfLine
 		  end if

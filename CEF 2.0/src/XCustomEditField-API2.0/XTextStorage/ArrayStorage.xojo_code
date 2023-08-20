@@ -3,7 +3,7 @@ Protected Class ArrayStorage
 Implements IBufferStorage
 	#tag Method, Flags = &h0
 		Sub Constructor(size as integer)
-		  ReDim Storage(size - 1)
+		  redim Storage(size - 1)
 		End Sub
 	#tag EndMethod
 
@@ -16,9 +16,9 @@ Implements IBufferStorage
 		  #endif
 		  
 		  if length = 0 then Return
-		  dim src as ArrayStorage = ArrayStorage(from)
+		  var src as ArrayStorage = ArrayStorage(from)
 		  
-		  dim maxLocal, maxSrc as Integer
+		  var maxLocal, maxSrc as Integer
 		  maxLocal = Storage.LastIndex
 		  maxSrc = src.Storage.LastIndex
 		  
@@ -38,7 +38,7 @@ Implements IBufferStorage
 	#tag Method, Flags = &h0
 		Sub Size(assigns length as integer)
 		  // Part of the IBufferStorage interface.
-		  ReDim Storage(length - 1)
+		  redim Storage(length - 1)
 		End Sub
 	#tag EndMethod
 
@@ -54,14 +54,14 @@ Implements IBufferStorage
 		  if index >= Size then Return ""
 		  
 		  //create a copy of the right size
-		  dim tmp() as String
-		  ReDim tmp(length - 1)
+		  var tmp() as String
+		  redim tmp(length - 1)
 		  
 		  for i as Integer = 0 to length - 1
 		    tmp(i) = Storage(i + index)
 		  next
 		  
-		  dim ret as String = String.FromArray(tmp, "")
+		  var ret as String = String.FromArray(tmp, "")
 		  
 		  if ret.Encoding = nil then
 		    break ' must never happen
@@ -82,7 +82,7 @@ Implements IBufferStorage
 		  if length = 0 then Return
 		  if value.Length = 0 then Return
 		  
-		  dim encoding as TextEncoding = value.Encoding
+		  var encoding as TextEncoding = value.Encoding
 		  if encoding = nil then
 		    // we should never get here - it would probably lead to incorreclty encoded text when it's not pure ASCII
 		    break
@@ -96,7 +96,7 @@ Implements IBufferStorage
 		  end if
 		  
 		  //split data into a tmp array
-		  dim chars() as String = value.Split("")
+		  var chars() as String = value.Split("")
 		  
 		  //and copy it
 		  for i as Integer = 0 to length - 1

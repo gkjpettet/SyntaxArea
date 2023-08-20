@@ -31,7 +31,7 @@ Class LineManager
 		  if visibleCache <> nil then visibleCache.RemoveAll
 		  
 		  //returns what is the logical pos of the given lineNumber
-		  dim invisibleLines as Integer
+		  var invisibleLines as Integer
 		  
 		  for i as Integer = 0 to Count - 1
 		    if not lines(i).visible then invisibleLines = invisibleLines + 1
@@ -45,7 +45,7 @@ Class LineManager
 		Sub clear()
 		  //clear lines and vars
 		  RemoveLineSymbols(0, Count - 1)
-		  ReDim lines(-1)
+		  redim lines(-1)
 		  longestLineIndex = -1
 		  longestLineLength = 0
 		  lineEnding = chr(13)
@@ -57,7 +57,7 @@ Class LineManager
 
 	#tag Method, Flags = &h0
 		Sub clearDirtyLines()
-		  dim line as TextLine
+		  var line as TextLine
 		  for each line in lines
 		    line.isDirty = False
 		  next
@@ -89,18 +89,18 @@ Class LineManager
 		    
 		  #endif
 		  
-		  dim TheText as String = TextStorage.getText(offset, length)
-		  dim insertedLines as integer
-		  dim startSearchIndex as integer
-		  dim ariLineLen() as integer
-		  dim ariLineDelimeter() as integer
+		  var TheText as String = TextStorage.getText(offset, length)
+		  var insertedLines as integer
+		  var startSearchIndex as integer
+		  var ariLineLen() as integer
+		  var ariLineDelimeter() as integer
 		  
 		  FindLineLengths( TheText, ariLineLen, ariLineDelimeter )
 		  
-		  dim lastDirtyLine as TextLine, wasLastDirtyBefore as Boolean
+		  var lastDirtyLine as TextLine, wasLastDirtyBefore as Boolean
 		  
 		  for i as integer = 0 to ariLineLen.LastIndex - 1
-		    dim segment as TextLine
+		    var segment as TextLine
 		    segment = new TextLine(offset+startSearchIndex, ariLineLen(i), ariLineDelimeter(i), TabWidth, indent, lineContIdx)
 		    startSearchIndex = startSearchIndex + ariLineLen(i)
 		    
@@ -123,7 +123,7 @@ Class LineManager
 		  //trailing text
 		  if startSearchIndex <= TheText.Length then
 		    if lineInsertPoint + insertedLines > lines.LastIndex then
-		      dim line as TextLine = new TextLine(offset + startSearchIndex, TheText.Length - startSearchIndex, 0, TabWidth, indent, lineContIdx)
+		      var line as TextLine = new TextLine(offset + startSearchIndex, TheText.Length - startSearchIndex, 0, TabWidth, indent, lineContIdx)
 		      if markDirty then
 		        lastDirtyLine = line
 		        wasLastDirtyBefore = lastDirtyLine.isDirty
@@ -155,7 +155,7 @@ Class LineManager
 		    
 		  #endif
 		  
-		  dim prevLineEnding as String = lineEnding
+		  var prevLineEnding as String = lineEnding
 		  lineEnding = "" // will be set below, by the first line delimiter that's encountered
 		  
 		  if sText <> "" then
@@ -166,21 +166,21 @@ Class LineManager
 		      sText = sText.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		    end
 		    
-		    dim sTextCanonical as string = sText.ReplaceLineEndings( EndOfLine.UNIX )
-		    dim ars() as string = sTextCanonical.Split( EndOfLine.UNIX )
-		    dim iOffsetB as integer = 0
+		    var sTextCanonical as string = sText.ReplaceLineEndings( EndOfLine.UNIX )
+		    var ars() as string = sTextCanonical.Split( EndOfLine.UNIX )
+		    var iOffsetB as integer = 0
 		    
-		    dim currentEncoding as TextEncoding = sText.Encoding
+		    var currentEncoding as TextEncoding = sText.Encoding
 		    if currentEncoding = nil then currentEncoding = Encodings.ASCII
 		    
 		    //get the byte length for an EOL char... it could be > 1, e.g. in UTF-16
-		    dim EOLlen as Integer = currentEncoding.Chr(13).Bytes
+		    var EOLlen as Integer = currentEncoding.Chr(13).Bytes
 		    
 		    for each sLine as string in ars
-		      dim iLineLen as integer = sLine.Length
+		      var iLineLen as integer = sLine.Length
 		      iOffsetB = iOffsetB + sLine.Bytes
 		      
-		      dim c as integer = sText.MiddleBytes( iOffsetB, EOLlen ).Asc
+		      var c as integer = sText.MiddleBytes( iOffsetB, EOLlen ).Asc
 		      
 		      if c = 13 then
 		        iOffsetB = iOffsetB + EOLlen //move the offset by the already found marker
@@ -247,13 +247,13 @@ Class LineManager
 		  
 		  if Count = 0 then Return -1
 		  
-		  dim leftIndex as Integer
-		  dim rightIndex as Integer = Count - 1
+		  var leftIndex as Integer
+		  var rightIndex as Integer = Count - 1
 		  
-		  dim currLine as TextLine
+		  var currLine as TextLine
 		  
 		  while leftIndex < rightIndex
-		    dim pivot as Integer = (leftIndex + rightIndex) / 2
+		    var pivot as Integer = (leftIndex + rightIndex) / 2
 		    
 		    currLine = lines(pivot)
 		    if offset < currLine.offset then
@@ -277,8 +277,8 @@ Class LineManager
 		  
 		  #pragma DisableBackgroundTasks
 		  
-		  dim maxIndex as Integer = lines.LastIndex
-		  dim line as TextLine
+		  var maxIndex as Integer = lines.LastIndex
+		  var line as TextLine
 		  
 		  for i as Integer = lineNumber to maxIndex
 		    line = lines(i)
@@ -306,7 +306,7 @@ Class LineManager
 
 	#tag Method, Flags = &h0
 		Function getAttributesOfLinesInRange(offset as Integer, length as Integer) As TextLineAttributes()
-		  dim attrs() as TextLineAttributes
+		  var attrs() as TextLineAttributes
 		  for each line as TextLine in linesInRange (offset, length)
 		    attrs.Add line.getAttributes
 		  next
@@ -333,7 +333,7 @@ Class LineManager
 		    if Count = 0 then Return 0
 		    
 		    //last line?
-		    dim last as TextLine = lines(lines.LastIndex)
+		    var last as TextLine = lines(lines.LastIndex)
 		    if last.delimiterLength > 0 then Return Count
 		    Return Count - 1
 		  end if
@@ -354,9 +354,9 @@ Class LineManager
 		Protected Function getNumberOfAffectedLines(startLine as integer, offset as integer, length as integer) As integer
 		  if length = 0 then Return 1 //same line
 		  
-		  dim target as Integer = offset + length
+		  var target as Integer = offset + length
 		  
-		  dim line as TextLine = lines(startLine)
+		  var line as TextLine = lines(startLine)
 		  if line.delimiterLength = 0 then
 		    //last line
 		    Return 1
@@ -390,7 +390,7 @@ Class LineManager
 		  if neededCache.HasKey(linesNeeded) then Return neededCache.Value(linesNeeded)
 		  
 		  //returns the number of lines needed to display "lineNumber" visible lines.
-		  dim visibleLines as Integer
+		  var visibleLines as Integer
 		  
 		  for i as Integer = 0 to Count - 1
 		    if lines(i).visible then visibleLines = visibleLines + 1
@@ -421,7 +421,7 @@ Class LineManager
 		  if visibleCache.HasKey(lineNumber) then Return visibleCache.Value(lineNumber)
 		  
 		  //returns the number of visible lines up to "lineNumber"
-		  dim invisibleLines as Integer
+		  var invisibleLines as Integer
 		  
 		  for i as Integer = 0 to lineNumber
 		    if not lines(i).visible then invisibleLines = invisibleLines + 1
@@ -474,7 +474,7 @@ Class LineManager
 
 	#tag Method, Flags = &h0
 		Sub LineNeedsIndentation(lineIdx as Integer)
-		  dim line as TextLine = getLine(lineIdx)
+		  var line as TextLine = getLine(lineIdx)
 		  if line <> nil then
 		    if lineIdx < mFirstLineForIndentation then
 		      mFirstLineForIndentation = lineIdx
@@ -492,11 +492,11 @@ Class LineManager
 
 	#tag Method, Flags = &h21
 		Private Function linesInRange(offset as Integer, length as Integer) As TextLine()
-		  dim result() as TextLine
+		  var result() as TextLine
 		  
-		  dim idx as Integer = getLineNumberForOffset(offset, length)
+		  var idx as Integer = getLineNumberForOffset(offset, length)
 		  if idx >= 0 and idx <= lines.LastIndex then
-		    dim line as TextLine = lines(idx)
+		    var line as TextLine = lines(idx)
 		    length = length + (offset - line.Offset) // so that we cover the range from the start of the line
 		    while length >= 0
 		      result.Add line
@@ -535,17 +535,17 @@ Class LineManager
 		    #pragma DisableBoundsChecking
 		  #endif
 		  
-		  dim testLine as TextLine
+		  var testLine as TextLine
 		  testLine = getLine (forLine)
 		  if testLine = nil then Return -1
 		  if not ignoreIfLineIsBlockStart and not testLine.isBlockStart then
 		    Return -1
 		  end if
 		  
-		  dim forRule as Object = testLine.BlockStartRule
+		  var forRule as Object = testLine.BlockStartRule
 		  
-		  dim depth as integer
-		  dim idx, match, lastLine as Integer
+		  var depth as integer
+		  var idx, match, lastLine as Integer
 		  
 		  //search down
 		  lastLine = lines.LastIndex
@@ -554,14 +554,14 @@ Class LineManager
 		    testLine = getLine(idx)
 		    if testLine = nil then Continue for
 		    
-		    dim isBlkEnd as Boolean = testLine.isBlockEnd (forRule)
+		    var isBlkEnd as Boolean = testLine.isBlockEnd (forRule)
 		    if depth = 0 and isBlkEnd then
 		      //found it
 		      match = idx
 		      exit for
 		    else
 		      //nested
-		      dim isBlkStart as Boolean = testLine.isBlockStart (forRule)
+		      var isBlkStart as Boolean = testLine.isBlockStart (forRule)
 		      if isBlkStart and not isBlkEnd then
 		        depth = depth + 1
 		      elseif isBlkEnd and not isBlkStart then //nested out
@@ -599,7 +599,7 @@ Class LineManager
 		    'System.DebugLog "NotifyLineChangedRange("+Str(startIndex,"-#")+", "+Str(length,"-#")+")"
 		  #endif
 		  
-		  dim msg as new Message(self, self)
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, LineChangedMsg)
 		  msg.addInfo(2, startIndex)
 		  msg.addInfo(3, length)
@@ -611,7 +611,7 @@ Class LineManager
 	#tag Method, Flags = &h1
 		Protected Sub NotifyLineCountChanged()
 		  //notify changes
-		  dim msg as new Message(self, self)
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, LineCountChangedMsg)
 		  msg.addInfo(2, count)
 		  MessageCenter.sendMessage(msg)
@@ -622,7 +622,7 @@ Class LineManager
 	#tag Method, Flags = &h1
 		Protected Sub NotifyMaxLineLengthChanged(longestLineIndex as integer)
 		  //notify changes
-		  dim msg as new Message(self, self)
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, MaxLineLengthChangedMsg)
 		  msg.addInfo(2, longestLineIndex)
 		  MessageCenter.sendMessage(msg)
@@ -639,31 +639,31 @@ Class LineManager
 		    #pragma DisableBoundsChecking
 		  #endif
 		  
-		  dim testLine as TextLine
+		  var testLine as TextLine
 		  testLine = getLine (forLine)
 		  if testLine = nil then Return - 1
 		  if not ignoreIfLineIsBlockEnd and not testLine.isBlockEnd then
 		    Return -1
 		  end if
 		  
-		  dim forRule as Object = testLine.BlockEndRule
+		  var forRule as Object = testLine.BlockEndRule
 		  
-		  dim depth as integer
-		  dim idx, match as Integer
+		  var depth as integer
+		  var idx, match as Integer
 		  
 		  match = -1
 		  for idx = forLine - 1 DownTo 0
 		    testLine = getLine(idx)
 		    if testLine = nil then Continue for
 		    
-		    dim isBlkStart as Boolean = testLine.isBlockStart (forRule)
+		    var isBlkStart as Boolean = testLine.isBlockStart (forRule)
 		    if depth = 0 and isBlkStart then
 		      //found it
 		      match = idx
 		      exit for
 		    else
 		      //nested
-		      dim isBlkEnd as Boolean = testLine.isBlockEnd (forRule)
+		      var isBlkEnd as Boolean = testLine.isBlockEnd (forRule)
 		      if isBlkEnd and not isBlkStart then
 		        depth = depth + 1
 		      elseif isBlkStart and not isBlkEnd then //out of inner block
@@ -723,7 +723,7 @@ Class LineManager
 		  // taken from Joe Strout's open source Array Utilities
 		  // http://www.verex.com/opensource/
 		  
-		  Dim ub As Integer = arr.LastIndex
+		  var ub As Integer = arr.LastIndex
 		  if fromIndex < 0 then fromIndex = ub + 1 + fromIndex
 		  if toIndex <= 0 then toIndex = ub + 1 + toIndex
 		  
@@ -733,7 +733,7 @@ Class LineManager
 		  
 		  // easy case: deleting the end of the array, we can just redim and be done
 		  if toIndex - 1 = ub then
-		    Redim arr( fromIndex - 1 )
+		    redim arr( fromIndex - 1 )
 		    return
 		  end if
 		  
@@ -744,13 +744,13 @@ Class LineManager
 		  end if
 		  
 		  // harder case: copy the data down, and THEN redim
-		  Dim dest, src As Integer
+		  var dest, src As Integer
 		  dest = fromIndex
 		  for src = toIndex to ub
 		    arr(dest) = arr(src)
 		    dest = dest + 1
 		  next
-		  Redim arr( dest - 1 )
+		  redim arr( dest - 1 )
 		  return
 		  
 		End Sub
@@ -765,9 +765,9 @@ Class LineManager
 		  #endif
 		  
 		  //look for symbols in the lines that are being removed. if found, signal the editfield to remove such symbols from its symbol table.
-		  dim tmp as new Dictionary
+		  var tmp as new Dictionary
 		  
-		  dim line as TextLine
+		  var line as TextLine
 		  for i as integer = fromIndex to toIndex
 		    line = getLine(i)
 		    if line = nil or line.LineSymbols = nil or line.LineSymbols.KeyCount = 0 then Continue for
@@ -779,7 +779,7 @@ Class LineManager
 		  
 		  if tmp.KeyCount = 0 then Return
 		  
-		  dim msg as new Message(self, self)
+		  var msg as new Message(self, self)
 		  msg.addInfo(1, LineSymbolsRemovedMsg)
 		  msg.addInfo(2, tmp)
 		  
@@ -806,7 +806,7 @@ Class LineManager
 		    
 		  #endif
 		  
-		  dim lineNumber as Integer = getLineNumberForOffset(offset, length)
+		  var lineNumber as Integer = getLineNumberForOffset(offset, length)
 		  
 		  if alwaysMarkDirty then
 		    // mark line for needing indendation
@@ -814,21 +814,21 @@ Class LineManager
 		  end if
 		  
 		  //save original index as it may change
-		  dim originalLine as Integer = lineNumber
+		  var originalLine as Integer = lineNumber
 		  
 		  //old highlight context, in case the modified line has one
-		  dim oldContext as HighlightContext
+		  var oldContext as HighlightContext
 		  
-		  dim lineCount as Integer = self.Count
+		  var lineCount as Integer = self.Count
 		  
-		  dim line as TextLine
+		  var line as TextLine
 		  if lineNumber <= lines.LastIndex then
 		    line = lines(lineNumber)
 		  end if
 		  
 		  if length > 0 and line <> nil then //merge affected lines...
-		    dim numberOfAffectedLines as Integer = getNumberOfAffectedLines(lineNumber, offset, length)
-		    dim endLine as TextLine = lines(lineNumber + numberOfAffectedLines - 1)
+		    var numberOfAffectedLines as Integer = getNumberOfAffectedLines(lineNumber, offset, length)
+		    var endLine as TextLine = lines(lineNumber + numberOfAffectedLines - 1)
 		    
 		    if numberOfAffectedLines > 1 and invisibleLines > 0 then
 		      currentInvisibleLines = -1
@@ -880,11 +880,11 @@ Class LineManager
 		    end if
 		    
 		    //Line now contains a merged line composing all affected lines.
-		    dim delta as Integer = line.length - length + TheText.Length
+		    var delta as Integer = line.length - length + TheText.Length
 		    
 		    //remove merged line, and start parsing/inserting.
 		    removeLine(lineNumber)
-		    dim insertedLines as Integer = createLines(lineNumber, line.offset, delta, line.indent, line.isContinuedFromLine, alwaysMarkDirty)
+		    var insertedLines as Integer = createLines(lineNumber, line.offset, delta, line.indent, line.isContinuedFromLine, alwaysMarkDirty)
 		    lines(lineNumber).AdoptLine line
 		    lineNumber = lineNumber + insertedLines
 		    
@@ -918,8 +918,8 @@ Class LineManager
 		  
 		  #pragma DisableBackgroundTasks
 		  
-		  dim line as TextLine
-		  dim idx as Integer
+		  var line as TextLine
+		  var idx as Integer
 		  
 		  for Each line in lines
 		    if line.length > longestLineLength then
@@ -938,7 +938,7 @@ Class LineManager
 	#tag Method, Flags = &h0
 		Sub revealLine(lineNumber as integer)
 		  //expand all invisible lines starting at linenumber, up
-		  dim current as TextLine
+		  var current as TextLine
 		  for i as Integer = lineNumber DownTo 0
 		    current = lines(i)
 		    if current.folded then call toggleLineFolding(i)
@@ -949,7 +949,7 @@ Class LineManager
 
 	#tag Method, Flags = &h0
 		Sub setAttributesOfLinesInRange(offset as Integer, length as Integer, attrs() as TextLineAttributes)
-		  dim lineCount as Integer
+		  var lineCount as Integer
 		  for each line as TextLine in linesInRange (offset, length)
 		    line.setAttributes attrs(lineCount)
 		    lineCount = lineCount + 1
@@ -968,7 +968,7 @@ Class LineManager
 
 	#tag Method, Flags = &h0
 		Function toggleLineFolding(lineNumber as integer) As integer
-		  dim line as TextLine = getLine(lineNumber)
+		  var line as TextLine = getLine(lineNumber)
 		  if line = nil then Return -1
 		  
 		  //check if line is a block end/start
@@ -977,9 +977,9 @@ Class LineManager
 		  end if
 		  
 		  //now, find the range...
-		  dim testLine as TextLine
-		  dim idx, match as Integer
-		  dim forRule as Object
+		  var testLine as TextLine
+		  var idx, match as Integer
+		  var forRule as Object
 		  
 		  match = -1
 		  if line.isBlockStart then
@@ -1004,16 +1004,16 @@ Class LineManager
 		    
 		    //toggle lines' visibility
 		    line = getLine(match)
-		    dim tmp as Integer
+		    var tmp as Integer
 		    tmp = match
 		    match = lineNumber
 		    lineNumber = tmp
 		  end if
 		  
 		  line.folded = not line.folded
-		  dim targetState as Boolean = not line.folded
+		  var targetState as Boolean = not line.folded
 		  
-		  dim lineStack() as Boolean
+		  var lineStack() as Boolean
 		  lineStack.Add not line.folded
 		  
 		  for idx = lineNumber + 1 to match
@@ -1024,8 +1024,8 @@ Class LineManager
 		      //we have to check for parentStates!
 		      testLine.visible = lineStack(lineStack.LastIndex)
 		      
-		      dim isBlkStart as Boolean = testLine.isBlockStart (forRule)
-		      dim isBlkEnd as Boolean = testLine.isBlockEnd (forRule)
+		      var isBlkStart as Boolean = testLine.isBlockStart (forRule)
+		      var isBlkEnd as Boolean = testLine.isBlockEnd (forRule)
 		      
 		      if isBlkStart and not isBlkEnd then
 		        lineStack.Add(not testLine.folded and lineStack(lineStack.LastIndex))
@@ -1053,7 +1053,7 @@ Class LineManager
 		  #endif
 		  
 		  //expand all foldings
-		  dim lines as Integer = Count - invisibleLines
+		  var lines as Integer = Count - invisibleLines
 		  
 		  //make everything visible
 		  for i as Integer = 0 to Count - 1
@@ -1160,7 +1160,7 @@ Class LineManager
 			Set
 			  mTabwidth = value
 			  
-			  dim line as TextLine
+			  var line as TextLine
 			  for each line in lines
 			    line.TabWidth = value
 			  next

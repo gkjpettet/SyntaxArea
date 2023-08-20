@@ -48,8 +48,8 @@ Inherits Dictionary
 
 	#tag Method, Flags = &h0
 		Function ToString() As string
-		  dim tmp as String
-		  dim key as String
+		  var tmp as String
+		  var key as String
 		  
 		  tmp="Type: "+messageType+EndOfLine
 		  for Each key in Keys

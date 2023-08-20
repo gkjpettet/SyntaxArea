@@ -46,7 +46,7 @@ Protected Class UndoManager
 	#tag Method, Flags = &h0
 		Sub Redo()
 		  if not CanRedo then Return
-		  dim ID as Integer = RedoStack(RedoStack.LastIndex).EventID
+		  var ID as Integer = RedoStack(RedoStack.LastIndex).EventID
 		  redo(ID)
 		End Sub
 	#tag EndMethod
@@ -55,13 +55,13 @@ Protected Class UndoManager
 		Sub Redo(id as integer)
 		  if not CanRedo then Return
 		  
-		  dim match as Boolean
+		  var match as Boolean
 		  do
 		    match = false
 		    undoing = true
 		    
 		    if id = RedoStack(RedoStack.LastIndex).EventID then
-		      dim action as UndoableAction = RedoStack.Pop
+		      var action as UndoableAction = RedoStack.Pop
 		      addActionToUndoStack(action)
 		      
 		      action.Redo
@@ -77,8 +77,8 @@ Protected Class UndoManager
 
 	#tag Method, Flags = &h0
 		Sub Reset()
-		  ReDim UndoStack(-1)
-		  ReDim RedoStack(-1)
+		  redim UndoStack(-1)
+		  redim RedoStack(-1)
 		  undoStackIndex = 0
 		  undoing = False
 		  App.RefreshMenuBar()
@@ -94,7 +94,7 @@ Protected Class UndoManager
 	#tag Method, Flags = &h0
 		Sub Undo()
 		  if not CanUndo then Return
-		  dim ID as Integer = UndoStack(UndoStack.LastIndex).EventID
+		  var ID as Integer = UndoStack(UndoStack.LastIndex).EventID
 		  Undo(ID)
 		End Sub
 	#tag EndMethod
@@ -103,13 +103,13 @@ Protected Class UndoManager
 		Sub Undo(ID as integer)
 		  if not CanUndo then Return
 		  
-		  dim match as Boolean
+		  var match as Boolean
 		  do
 		    match = false
 		    undoing = true
 		    
 		    if id = UndoStack(UndoStack.LastIndex).EventID then
-		      dim action as UndoableAction = UndoStack.Pop
+		      var action as UndoableAction = UndoStack.Pop
 		      addActionToRedoStack(action)
 		      
 		      action.Undo

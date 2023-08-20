@@ -4,21 +4,21 @@ Protected Class CharSelectionManager
 		Function AddSelection(selection as CharSelection) As charSelection
 		  if Selection.length = 0 then Return nil
 		  
-		  dim tmpSelection as CharSelection
-		  dim overlapResult as Integer
+		  var tmpSelection as CharSelection
+		  var overlapResult as Integer
 		  
 		  for i as Integer = 0 to Selections.LastIndex
 		    tmpSelection = Selections(i)
 		    overlapResult = tmpSelection.OverlapsSelection(Selection)
 		    
 		    if overlapResult <> CharSelection.OVERLAP_NONE then
-		      dim newOffset as Integer
+		      var newOffset as Integer
 		      
 		      if tmpSelection.SelectionColor = selection.SelectionColor then
 		        
-		        dim newLength as Integer
-		        dim newStartLine as Integer
-		        dim newEndLine as Integer
+		        var newLength as Integer
+		        var newStartLine as Integer
+		        var newEndLine as Integer
 		        
 		        //merge selections if colors are the same
 		        newOffset = min(tmpSelection.offset, Selection.offset)
@@ -38,7 +38,7 @@ Protected Class CharSelectionManager
 		        select case overlapResult
 		        case CharSelection.OVERLAP_END, CharSelection.OVERLAP_CONTAINS
 		          //add the remaining range to the range arrays for further sub-splitting or merging down the line...
-		          dim tmp as new CharSelection(Selection.offset, tmpSelection.offset + tmpSelection.length - Selection.offset, Selection.StartLine, tmpSelection.EndLine, tmpSelection.SelectionColor)
+		          var tmp as new CharSelection(Selection.offset, tmpSelection.offset + tmpSelection.length - Selection.offset, Selection.StartLine, tmpSelection.EndLine, tmpSelection.SelectionColor)
 		          tmp.LosesFocus = tmpSelection.LosesFocus
 		          tmp.Rounded = tmpSelection.Rounded
 		          selections.Add(tmp)
@@ -75,16 +75,16 @@ Protected Class CharSelectionManager
 
 	#tag Method, Flags = &h0
 		Sub Clear()
-		  ReDim Selections(-1)
+		  redim Selections(-1)
 		  mSelectioncount = 0
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function SelectionsForLine(lineIndex as integer) As charSelection()
-		  dim result() as CharSelection
+		  var result() as CharSelection
 		  
-		  dim Selection as CharSelection
+		  var Selection as CharSelection
 		  for each Selection in Selections
 		    if Selection.IsLineIndexInRange(lineIndex) then
 		      result.Add Selection

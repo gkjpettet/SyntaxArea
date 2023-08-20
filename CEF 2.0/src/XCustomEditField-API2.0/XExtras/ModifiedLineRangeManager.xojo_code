@@ -8,12 +8,12 @@ Protected Class ModifiedLineRangeManager
 		  
 		  mLock.Enter
 		  
-		  dim newEnd as Integer = newStart + newLength
+		  var newEnd as Integer = newStart + newLength
 		  
 		  // cut the new range down to the space that's not already occupied by the existing ranges
-		  dim i as Integer
+		  var i as Integer
 		  for i = 0 to mRanges.LastIndex
-		    dim thisRange as DataRange = mRanges(i)
+		    var thisRange as DataRange = mRanges(i)
 		    
 		    if thisRange.offset > newEnd then
 		      // there are no ranges before the new one -> add new range to end of array
@@ -29,8 +29,8 @@ Protected Class ModifiedLineRangeManager
 		    // newStart <= this range's end
 		    
 		    // find more ranges that touch the new range
-		    dim nextRange as DataRange
-		    dim k as Integer = i
+		    var nextRange as DataRange
+		    var k as Integer = i
 		    while k < mRanges.LastIndex
 		      nextRange = mRanges(k+1)
 		      if nextRange.endOffset <= newEnd then
@@ -63,7 +63,7 @@ Protected Class ModifiedLineRangeManager
 		      end if
 		    else // thisRange.offset > newStart
 		      // adjust the start of thisRange
-		      dim added as Integer = thisRange.offset - newStart
+		      var added as Integer = thisRange.offset - newStart
 		      thisRange.offset = thisRange.offset - added
 		      thisRange.length = thisRange.length + added
 		      // adjust the end of thisRange
@@ -91,7 +91,7 @@ Protected Class ModifiedLineRangeManager
 
 	#tag Method, Flags = &h0
 		Sub Clear()
-		  ReDim mRanges(-1)
+		  redim mRanges(-1)
 		End Sub
 	#tag EndMethod
 
@@ -106,7 +106,7 @@ Protected Class ModifiedLineRangeManager
 		  mLock.Enter
 		  
 		  for i as Integer = 0 to mRanges.LastIndex
-		    dim thisRange as DataRange = mRanges(i)
+		    var thisRange as DataRange = mRanges(i)
 		    
 		    if thisRange.offset > offset then
 		      // not found
@@ -156,7 +156,7 @@ Protected Class ModifiedLineRangeManager
 		  
 		  mLock.Enter
 		  
-		  dim firstRange as DataRange = mRanges(0)
+		  var firstRange as DataRange = mRanges(0)
 		  lineIdx = firstRange.offset
 		  if not RemoveLine (lineIdx) then
 		    break // internal error!

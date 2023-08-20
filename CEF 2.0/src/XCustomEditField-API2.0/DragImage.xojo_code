@@ -8,11 +8,11 @@ Protected Module DragImage
 		    if p is nil then
 		      return nil
 		    end if
-		    dim g as Graphics = p.Graphics
+		    var g as Graphics = p.Graphics
 		    
 		    if g is nil then //copy into new picture
-		      dim pCopy as new Picture(p.Width, p.Height, 32)
-		      dim gCopy as Graphics = pCopy.Graphics
+		      var pCopy as new Picture(p.Width, p.Height, 32)
+		      var gCopy as Graphics = pCopy.Graphics
 		      if gCopy is nil then
 		        return nil
 		      end if
@@ -24,15 +24,15 @@ Protected Module DragImage
 		      return nil
 		    end if
 		    
-		    dim gworldData as Ptr = Ptr(g.Handle(Graphics.HandleTypeCGrafPtr))
+		    var gworldData as Ptr = Ptr(g.Handle(Graphics.HandleTypeCGrafPtr))
 		    if gworldData = nil then
 		      return nil
 		    end if
 		    
 		    declare function QDBeginCGContext lib CarbonFramework (port as Ptr, ByRef contextPtr as Ptr) as Integer
 		    
-		    dim c as Ptr
-		    dim OSError as Integer = QDBeginCGContext(gworldData, c)
+		    var c as Ptr
+		    var OSError as Integer = QDBeginCGContext(gworldData, c)
 		    if OSError <> 0 or c = nil then
 		      return nil
 		    end if
@@ -40,7 +40,7 @@ Protected Module DragImage
 		    
 		    declare function CGBitmapContextCreateImage lib CarbonFramework (c as Ptr) as Ptr
 		    
-		    dim image as Ptr = CGBitmapContextCreateImage(c)
+		    var image as Ptr = CGBitmapContextCreateImage(c)
 		    
 		    declare function QDEndCGContext lib CarbonFramework (port as Ptr, ByRef context as Ptr) as Integer
 		    
@@ -54,7 +54,7 @@ Protected Module DragImage
 	#tag Method, Flags = &h0
 		Sub SetImage(extends d as Dragitem, p as Picture)
 		  #if targetMacOS and not Target64Bit and RBVersion < 2019.02
-		    dim theImage as Ptr = NewCGImage(p)
+		    var theImage as Ptr = NewCGImage(p)
 		    if theImage = nil then
 		      return
 		    end if
@@ -65,7 +65,7 @@ Protected Module DragImage
 		    declare function CGImageGetWidth lib CarbonFramework (image as Ptr) as UInt32
 		    
 		    const sizeOfHIPoint = 8
-		    dim offset as new MemoryBlock(sizeOfHIPoint)
+		    var offset as new MemoryBlock(sizeOfHIPoint)
 		    offset.SingleValue(0) = -CGImageGetWidth(theImage)/2
 		    offset.SingleValue(4) = -CGImageGetHeight(theImage)/2
 		    
@@ -77,7 +77,7 @@ Protected Module DragImage
 		    'kDragDarkerTranslucency = 2, 25%
 		    'kDragOpaqueTranslucency = 3 0%
 		    
-		    dim OSError as Integer = SetDragImageWithCGImage(d.Handle, theImage, offset, kDragStandardTranslucency)
+		    var OSError as Integer = SetDragImageWithCGImage(d.Handle, theImage, offset, kDragStandardTranslucency)
 		    #pragma unused OSError
 		    
 		  #else

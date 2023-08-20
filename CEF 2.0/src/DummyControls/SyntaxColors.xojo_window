@@ -163,12 +163,12 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub ShowContexts(contexts() as highlightcontext, showPlaceholders as Boolean)
-		  dim subContext as HighlightContext
+		  var subContext as HighlightContext
 		  
 		  for each subContext in Contexts
 		    if subContext.isPlaceholder and not showPlaceholders then Continue for
 		    
-		    dim subContexts() as HighlightContext = subContext.contexts
+		    var subContexts() as HighlightContext = subContext.contexts
 		    if subContexts.LastIndex > - 1 and not subContexts(0).isPlaceholder then
 		      definitionColors.AddExpandableRow subContext.Name
 		      
@@ -209,7 +209,7 @@ End
 #tag Events definitionColors
 	#tag Event
 		Sub RowExpanded(row As Integer)
-		  dim selectedContext as HighlightContext
+		  var selectedContext as HighlightContext
 		  
 		  selectedContext = me.CellTagAt(row, 0)
 		  ShowContexts(selectedContext.Contexts, false)
@@ -226,7 +226,7 @@ End
 		Function PaintCellBackground(g As Graphics, row As Integer, column As Integer) As Boolean
 		  if row >= me.RowCount then Return False
 		  
-		  dim context as HighlightContext = me.CellTagAt(row, 0)
+		  var context as HighlightContext = me.CellTagAt(row, 0)
 		  
 		  select case column
 		  case 1
@@ -253,7 +253,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  dim context as HighlightContext = me.CellTagAt(row, 0)
+		  var context as HighlightContext = me.CellTagAt(row, 0)
 		  
 		  if Context = nil then Return
 		  select case column
@@ -273,10 +273,10 @@ End
 		  #pragma unused y
 		  #pragma unused row
 		  
-		  dim context as HighlightContext = me.CellTagAt(row, 0)
+		  var context as HighlightContext = me.CellTagAt(row, 0)
 		  if context = nil then Return true
 		  
-		  dim newColor as color
+		  var newColor as color
 		  select case column
 		  case 1 'fore
 		    newColor = context.HighlightColor
@@ -318,7 +318,7 @@ End
 #tag Events btnSave
 	#tag Event
 		Sub Pressed()
-		  dim file as FolderItem = FolderItem.ShowSaveFileDialog("Text", definition.Name+"_sdef.xml")
+		  var file as FolderItem = FolderItem.ShowSaveFileDialog("Text", definition.Name+"_sdef.xml")
 		  if file = nil then Return
 		  
 		  if not definition.saveAsXml(file) Then

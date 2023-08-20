@@ -6,18 +6,18 @@ Begin DesktopContainer CustomScrollableEditField
    AllowTabs       =   False
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   Composite       =   False
+   Composite       =   "False"
    Composited      =   False
-   DefaultLocation =   2
+   DefaultLocation =   "2"
    Enabled         =   True
-   FullScreen      =   False
+   FullScreen      =   "False"
    HasBackgroundColor=   False
-   HasCloseButton  =   True
-   HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
+   HasCloseButton  =   "True"
+   HasFullScreenButton=   "False"
+   HasMaximizeButton=   "True"
+   HasMinimizeButton=   "True"
    Height          =   118
-   ImplicitInstance=   True
+   ImplicitInstance=   "True"
    Index           =   -2147483648
    InitialParent   =   ""
    Left            =   32
@@ -25,14 +25,14 @@ Begin DesktopContainer CustomScrollableEditField
    LockLeft        =   False
    LockRight       =   False
    LockTop         =   False
-   MacProcID       =   0
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
+   MacProcID       =   "0"
+   MaximumHeight   =   "32000"
+   MaximumWidth    =   "32000"
    MenuBar         =   ""
-   MenuBarVisible  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   Resizeable      =   True
+   MenuBarVisible  =   "False"
+   MinimumHeight   =   "64"
+   MinimumWidth    =   "64"
+   Resizeable      =   "True"
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   False
@@ -40,7 +40,7 @@ Begin DesktopContainer CustomScrollableEditField
    Tooltip         =   ""
    Top             =   32
    Transparent     =   True
-   Type            =   0
+   Type            =   "0"
    Visible         =   True
    Width           =   208
    Begin CustomEditField contentField
@@ -471,13 +471,13 @@ End
 		    declare sub CGContextSynchronize lib "Carbon" (context as Int32)
 		    declare function QDEndCGContext lib "Carbon" (port as Int32, ByRef context as Int32) as Integer
 		    
-		    dim context, grafPort as Int32
-		    dim res as Integer
+		    var context, grafPort as Int32
+		    var res as Integer
 		    
-		    dim meTop, meLeft as Integer
+		    var meTop, meLeft as Integer
 		    meTop = me.Top
 		    meLeft = me.Left
-		    dim container as DesktopUIControl = me.Parent
+		    var container as DesktopUIControl = me.Parent
 		    while container <> nil
 		      meTop = meTop + container.Top
 		      meLeft = meLeft + container.Left
@@ -486,7 +486,7 @@ End
 		    
 		    // We have to open a new drawing context because otherwise we might get our drawings clipped
 		    // or we might draw into the wrong window
-		    dim w as Window = me.Window
+		    var w as Window = me.Window
 		    while w isA DesktopContainer
 		      w = DesktopContainer(w).Window
 		    wend
@@ -495,7 +495,7 @@ End
 		    if res = 0 then
 		      // Now draw the ring
 		      declare function DrawThemeFocusRect lib "Carbon" (inRect as Ptr, DrawRing as Boolean) as Integer
-		      dim mb as new MemoryBlock(8)
+		      var mb as new MemoryBlock(8)
 		      mb.Short(0) = meTop
 		      mb.Short(2) = meLeft
 		      mb.Short(4) = meTop+me.Height
@@ -748,8 +748,8 @@ End
 		Function TopInWindow() As Integer
 		  // Helper function in place of "Top". Useful when this is embedded inside a DesktopContainer
 		  
-		  dim n as Integer = self.Top
-		  dim w as DesktopWindow
+		  var n as Integer = self.Top
+		  var w as DesktopWindow
 		  w = me.Window
 		  while w isA DesktopContainer
 		    n = n + w.Top
@@ -785,7 +785,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function VerticalOffset(line_0 as Integer, findTop as Boolean) As Integer
-		  dim x, y, charPos as Double
+		  var x, y, charPos as Double
 		  if line_0 >= 0 then
 		    charPos = contentField.CharPosAtLineNum (line_0)
 		    if charPos < 0 then
@@ -1424,13 +1424,13 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  return contentField.SelLength
+			  return contentField.SelectionLength
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  mSettingSelection = true // necessary to avoid
-			  contentField.SelLength = value
+			  contentField.SelectionLength = value
 			  mSettingSelection = false
 			End Set
 		#tag EndSetter
@@ -1440,13 +1440,13 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  return contentField.SelStart
+			  return contentField.SelectionStart
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  mSettingSelection = true
-			  contentField.SelStart = value
+			  contentField.SelectionStart = value
 			  mSettingSelection = false
 			End Set
 		#tag EndSetter

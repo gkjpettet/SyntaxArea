@@ -3,7 +3,7 @@ Protected Class HighlightDefinition
 	#tag Method, Flags = &h21
 		Private Sub addBlankSpaceContext()
 		  // Add a blank space context, this will tokenize strings.
-		  dim blankSpaceContext as new HighlightContext(false)
+		  var blankSpaceContext as new HighlightContext(false)
 		  blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))" // instead of: "([\s])"
 		  blankSpaceContext.Name = "fieldwhitespace"
 		  addContext(blankSpaceContext)
@@ -57,7 +57,7 @@ Protected Class HighlightDefinition
 
 	#tag Method, Flags = &h0
 		Shared Function ColorToText(c as Color) As String
-		  dim v as Variant = c
+		  var v as Variant = c
 		  
 		  var cc as String = "0000000" + Hex(v.IntegerValue)
 		  
@@ -121,7 +121,7 @@ Protected Class HighlightDefinition
 
 	#tag Method, Flags = &h0
 		Function Contexts() As highlightcontext()
-		  dim tmp() as HighlightContext
+		  var tmp() as HighlightContext
 		  
 		  for each current as HighlightContext in subContexts
 		    if current.Name <> "fieldwhitespace" and current.Enabled then tmp.Add current
@@ -136,7 +136,7 @@ Protected Class HighlightDefinition
 		  // determine subexpression count
 		  // This method is original from Nick Lockwood: http://www.charcoaldesign.co.uk/oss#tokenizer
 		  // It speeds up the matching of the matched regex.
-		  dim escaped, inCharClass, prevBracket as Boolean = false
+		  var escaped, inCharClass, prevBracket as Boolean = false
 		  escaped = false
 		  for i as integer = 0 to pattern.Length -1
 		    select case pattern.Middle(i,1)
@@ -144,7 +144,7 @@ Protected Class HighlightDefinition
 		      escaped = true
 		      prevBracket = false
 		    case "("
-		      dim nextChar as String = pattern.Middle(i+1,1)
+		      var nextChar as String = pattern.Middle(i+1,1)
 		      if not inCharClass and not escaped and nextChar <> "?" then self.subExpressionCount = self.subExpressionCount + 1
 		      prevBracket = false
 		      escaped = false
@@ -172,7 +172,7 @@ Protected Class HighlightDefinition
 		  // determine subexpression count
 		  // This method is original from Nick Lockwood: http://www.charcoaldesign.co.uk/oss#tokenizer
 		  // It speeds up the matching of the matched regex.
-		  dim escaped, inCharClass, prevBracket as Boolean = false
+		  var escaped, inCharClass, prevBracket as Boolean = false
 		  escaped = false
 		  for i as integer = 0 to pattern.Length -1
 		    select case pattern.Middle(i,1)
@@ -180,7 +180,7 @@ Protected Class HighlightDefinition
 		      escaped = true
 		      prevBracket = false
 		    case "("
-		      dim nextChar as String = pattern.Middle(i+1,1)
+		      var nextChar as String = pattern.Middle(i+1,1)
 		      if not inCharClass and not escaped and nextChar <> "?" then symbolCount = symbolCount + 1
 		      prevBracket = false
 		      escaped = false
@@ -209,14 +209,14 @@ Protected Class HighlightDefinition
 		  
 		  
 		  #if DebugBuild and EditFieldGlobals.DebugTiming
-		    dim runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
+		    var runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
 		  #endif
 		  
-		  dim match as RegExMatch
-		  dim subExpression as String
-		  dim context as HighlightContext
-		  dim startPos, startPosB as Integer
-		  dim openContext as HighlightContext
+		  var match as RegExMatch
+		  var subExpression as String
+		  var context as HighlightContext
+		  var startPos, startPosB as Integer
+		  var openContext as HighlightContext
 		  
 		  if TheText.Encoding <> nil then TheText = TheText.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		  
@@ -225,7 +225,7 @@ Protected Class HighlightDefinition
 		    match = mContextRegex.Search(TheText)
 		  end if
 		  
-		  dim charPos, charPosB as Integer
+		  var charPos, charPosB as Integer
 		  while forceMatch <> nil or match<>nil
 		    if match = nil Then
 		      subExpression = ""
@@ -238,7 +238,7 @@ Protected Class HighlightDefinition
 		      context = forceMatch
 		      forceMatch = nil
 		    else
-		      dim tknIndex as integer = -1
+		      var tknIndex as integer = -1
 		      for i as integer = 1 to match.SubExpressionCount - 1
 		        if match.SubExpressionString(i) = subExpression then
 		          tknIndex = subExpressionIndex.IndexOf(i)
@@ -283,9 +283,9 @@ Protected Class HighlightDefinition
 		      startPosB = mContextRegex.SearchStartPosition
 		      
 		    ElseIf context <> nil and context.isPlaceholder then
-		      dim label as String = match.SubExpressionString(match.SubExpressionCount - 1)
-		      dim tmp as Integer = TheText.LeftBytes(match.SubExpressionStartB(match.SubExpressionCount - 1)).Length
-		      dim placeholder as new TextPlaceholder(startPos, subExpression.Length, tmp, label.Length, context.HighlightColor, context.BackgroundColor, context.Bold, context.Italic, context.Underline)
+		      var label as String = match.SubExpressionString(match.SubExpressionCount - 1)
+		      var tmp as Integer = TheText.LeftBytes(match.SubExpressionStartB(match.SubExpressionCount - 1)).Length
+		      var placeholder as new TextPlaceholder(startPos, subExpression.Length, tmp, label.Length, context.HighlightColor, context.BackgroundColor, context.Bold, context.Italic, context.Underline)
 		      tokens.Add(placeholder)
 		      placeholders.Add(placeholder)
 		      
@@ -315,7 +315,7 @@ Protected Class HighlightDefinition
 		      ss = ss + Chr(9) // Tab
 		    Next
 		  end if
-		  dim s as String = ss.Left(level+1)
+		  var s as String = ss.Left(level+1)
 		  node.Parent.Insert(node.OwnerDocument.CreateTextNode(s), node)
 		  If indentCloseTag Then
 		    node.AppendChild(node.OwnerDocument.CreateTextNode(s))
@@ -330,18 +330,18 @@ Protected Class HighlightDefinition
 		  stateOut = stateIn
 		  
 		  #if DebugBuild and EditFieldGlobals.DebugTiming
-		    dim runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
+		    var runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
 		  #endif
 		  
-		  dim v as Variant = blockEndDef.Lookup (stateIn, nil)
+		  var v as Variant = blockEndDef.Lookup (stateIn, nil)
 		  if v.IsArray then
-		    dim ps() as Pair = v
+		    var ps() as Pair = v
 		    for each p as Pair in ps
 		      if p <> nil then
-		        dim scanner as RegEx = p.Left
+		        var scanner as RegEx = p.Left
 		        if scanner.Search(lineText) <> nil then
-		          dim ruleAndState as Pair = p.Right
-		          dim state as Pair = ruleAndState.Right
+		          var ruleAndState as Pair = p.Right
+		          var state as Pair = ruleAndState.Right
 		          if state.Left.BooleanValue then
 		            // change state
 		            stateOut = state.Right
@@ -360,20 +360,20 @@ Protected Class HighlightDefinition
 		  // returns indent value, new state and the matched rule (opaque, only useful for matching with IsBlockEnd's returned value)
 		  
 		  #if DebugBuild and EditFieldGlobals.DebugTiming
-		    dim runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
+		    var runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
 		  #endif
 		  
 		  stateOut = stateIn
 		  
-		  dim v as Variant = blockStartDef.Lookup (stateIn, nil)
+		  var v as Variant = blockStartDef.Lookup (stateIn, nil)
 		  if v.IsArray then
-		    dim ps() as Pair = v
+		    var ps() as Pair = v
 		    for each p as Pair in ps
 		      if p <> nil then
-		        dim scanner as RegEx = p.Left
+		        var scanner as RegEx = p.Left
 		        if scanner.Search(lineText) <> nil then
-		          dim indentAndState as Pair = p.Right
-		          dim state as Pair = indentAndState.Right
+		          var indentAndState as Pair = p.Right
+		          var state as Pair = indentAndState.Right
 		          if state.Left.BooleanValue then
 		            // change state
 		            stateOut = state.Right
@@ -392,12 +392,12 @@ Protected Class HighlightDefinition
 		  // returns indent value
 		  
 		  #if DebugBuild and EditFieldGlobals.DebugTiming
-		    dim runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
+		    var runtimer as new Debugging.AccumulationTimer(CurrentMethodName)
 		  #endif
 		  
 		  if lineContinuationDef.KeyCount = 0 then Return 0
 		  
-		  dim scanner as RegEx = lineContinuationDef.Key(0)
+		  var scanner as RegEx = lineContinuationDef.Key(0)
 		  
 		  if scanner.Search(lineText) <> nil then
 		    Return lineContinuationDef.Value(scanner)
@@ -408,7 +408,7 @@ Protected Class HighlightDefinition
 	#tag Method, Flags = &h21
 		Private Function Keywords() As string()
 		  //get all the keyword strings in this definition.
-		  dim tmp() as String
+		  var tmp() as String
 		  for i as Integer = 0 to subContexts.LastIndex
 		    subContexts(i).ListKeywords(tmp)
 		  next
@@ -422,10 +422,10 @@ Protected Class HighlightDefinition
 		Function LineContinuationIndent() As Integer
 		  // returns the block indentation of the first default state
 		  
-		  dim ps() as Pair = blockStartDef.Lookup ("", nil)
+		  var ps() as Pair = blockStartDef.Lookup ("", nil)
 		  if not (ps is nil) then
-		    dim p as Pair = ps(0)
-		    dim indentAndState as Pair = p.Right
+		    var p as Pair = ps(0)
+		    var indentAndState as Pair = p.Right
 		    return indentAndState.Left
 		  end
 		End Function
@@ -436,10 +436,10 @@ Protected Class HighlightDefinition
 		  if data=nil then Return False
 		  
 		  //read a file...
-		  dim tis as TextInputStream=TextInputStream.Open(data)
+		  var tis as TextInputStream=TextInputStream.Open(data)
 		  if tis=nil then Return False
 		  
-		  dim xml as String=tis.ReadAll(Encodings.UTF8)
+		  var xml as String=tis.ReadAll(Encodings.UTF8)
 		  tis.Close
 		  
 		  Return loadFromXml(xml)
@@ -449,11 +449,11 @@ Protected Class HighlightDefinition
 
 	#tag Method, Flags = &h0
 		Function LoadFromXml(data as string) As boolean
-		  dim xml as XmlDocument
-		  Dim root, node as XMLNode
-		  Dim context as HighlightContext
-		  dim Symbol as SymbolsDefinition
-		  Dim i, j as Integer
+		  var xml as XmlDocument
+		  var root, node as XMLNode
+		  var context as HighlightContext
+		  var Symbol as SymbolsDefinition
+		  var i, j as Integer
 		  
 		  //load a xml syntax definition.
 		  try
@@ -471,7 +471,7 @@ Protected Class HighlightDefinition
 		      Return False
 		    end if
 		    
-		    dim lastStartRule as Object
+		    var lastStartRule as Object
 		    
 		    for i=0 to root.ChildCount-1
 		      node=root.Child(i)
@@ -486,18 +486,18 @@ Protected Class HighlightDefinition
 		          break
 		          return false
 		        end
-		        dim newstate as XmlAttribute = node.GetAttributeNode("newstate")
-		        dim newstateValue as String
+		        var newstate as XmlAttribute = node.GetAttributeNode("newstate")
+		        var newstateValue as String
 		        if newstate <> nil then newstateValue = newstate.Value
-		        dim cond as String = node.GetAttribute("condition")
-		        dim values() as Pair
-		        dim v as Variant = blockStartDef.Lookup(cond, nil)
+		        var cond as String = node.GetAttribute("condition")
+		        var values() as Pair
+		        var v as Variant = blockStartDef.Lookup(cond, nil)
 		        if not v.IsArray then
 		          blockStartDef.Value(cond) = values
 		        else
 		          values = v
 		        end if
-		        dim re as new RegEx
+		        var re as new RegEx
 		        re.SearchPattern = node.FirstChild.Value
 		        values.Add re : (node.GetAttribute("indent").Val : (newstate <> nil : newstateValue))
 		        lastStartRule = re
@@ -508,31 +508,31 @@ Protected Class HighlightDefinition
 		          break
 		          return false
 		        end
-		        dim newstate as XmlAttribute = node.GetAttributeNode("newstate")
-		        dim newstateValue as String
+		        var newstate as XmlAttribute = node.GetAttributeNode("newstate")
+		        var newstateValue as String
 		        if newstate <> nil then newstateValue = newstate.Value
-		        dim cond as String = node.GetAttribute("condition")
-		        dim values() as Pair
-		        dim v as Variant = blockEndDef.Lookup(cond, nil)
+		        var cond as String = node.GetAttribute("condition")
+		        var values() as Pair
+		        var v as Variant = blockEndDef.Lookup(cond, nil)
 		        if not v.IsArray then
 		          blockEndDef.Value(cond) = values
 		        else
 		          values = v
 		        end if
-		        dim re as new RegEx
+		        var re as new RegEx
 		        re.SearchPattern = node.FirstChild.Value
 		        values.Add re : (lastStartRule : (newstate <> nil : newstateValue))
 		        lastStartRule = nil
 		        
 		      case "lineContinuationMarker"
 		        //indent is the number of indentations.
-		        dim re as new RegEx
+		        var re as new RegEx
 		        re.SearchPattern = node.FirstChild.Value
 		        lineContinuationDef.Value(re) = val(node.GetAttribute("indent"))
 		        
 		      case "symbols"
 		        for j = 0 to node.ChildCount - 1
-		          dim child as XmlNode = node.Child(j)
+		          var child as XmlNode = node.Child(j)
 		          if child.Name = "symbol" then
 		            Symbol = new SymbolsDefinition
 		            Symbol.loadFromXmlNode(child)
@@ -546,7 +546,7 @@ Protected Class HighlightDefinition
 		        placeholderContextDef.isPlaceholder = true
 		        placeholderContextDef.Name = "Placeholders"
 		        
-		        dim tmpObj as Variant
+		        var tmpObj as Variant
 		        if node.GetAttribute("highlightColor") <> "" then
 		          tmpObj = "&h" + node.GetAttribute("highlightColor").Middle(0)
 		          PlaceholderContextDef.HighlightColor = tmpObj.ColorValue
@@ -557,7 +557,7 @@ Protected Class HighlightDefinition
 		          PlaceholderContextDef.BackgroundColor = tmpObj.ColorValue
 		        end if
 		        
-		        dim tmp as String
+		        var tmp as String
 		        
 		        //Bold
 		        tmp = node.GetAttribute("bold")
@@ -579,7 +579,7 @@ Protected Class HighlightDefinition
 		        
 		      case "contexts"
 		        //contexts
-		        dim tmpObj as Variant
+		        var tmpObj as Variant
 		        tmpObj = "&h" + node.GetAttribute("defaultColor").Middle(0)
 		        defaultColor=tmpObj.ColorValue
 		        caseSensitive = YN2Bool(node.GetAttribute("caseSensitive"))
@@ -609,7 +609,7 @@ Protected Class HighlightDefinition
 		Private Sub refreshSearchString()
 		  // build search string from all contexts
 		  
-		  dim patterns() as String
+		  var patterns() as String
 		  for each c as HighlightContext in subContexts
 		    if c.Enabled then
 		      patterns.Add "(" + c.ContextSearchPattern + ")"
@@ -626,7 +626,7 @@ Protected Class HighlightDefinition
 		  
 		  //save definition as an xml
 		  try
-		    dim tos as TextOutputStream = TextOutputStream.Create(file)
+		    var tos as TextOutputStream = TextOutputStream.Create(file)
 		    tos.Write(toXml)
 		    tos.Close
 		    
@@ -648,12 +648,12 @@ Protected Class HighlightDefinition
 		  
 		  if forText.Encoding <> nil then forText = forText.ConvertEncoding(Encodings.UTF8)
 		  
-		  dim match as RegExMatch
-		  dim symbol as String
-		  dim pos as integer
-		  dim local as new Dictionary
-		  dim tknIndex as integer
-		  dim symbolDef as SymbolsDefinition
+		  var match as RegExMatch
+		  var symbol as String
+		  var pos as integer
+		  var local as new Dictionary
+		  var tknIndex as integer
+		  var symbolDef as SymbolsDefinition
 		  
 		  match = mSymbolRegex.Search(forText)
 		  while match <> nil
@@ -694,10 +694,10 @@ Protected Class HighlightDefinition
 
 	#tag Method, Flags = &h0
 		Function ToXML() As string
-		  Dim xml as XmlDocument
-		  Dim root, node as XMLNode
-		  Dim context as HighlightContext
-		  dim Symbol as SymbolsDefinition
+		  var xml as XmlDocument
+		  var root, node as XMLNode
+		  var context as HighlightContext
+		  var Symbol as SymbolsDefinition
 		  
 		  xml = New XmlDocument
 		  
@@ -712,7 +712,7 @@ Protected Class HighlightDefinition
 		  
 		  //block markers
 		  for each cond as String in blockStartDef.Keys
-		    dim ps() as Pair = blockStartDef.Value(cond)
+		    var ps() as Pair = blockStartDef.Value(cond)
 		    for each p as Pair in ps
 		      // p.Left: RegEx with SearchPattern
 		      // p.Right: Pair of indent and state
@@ -721,9 +721,9 @@ Protected Class HighlightDefinition
 		      if cond <> "" then
 		        node.SetAttribute("condition", cond)
 		      end if
-		      dim indentAndState as Pair = p.Right
+		      var indentAndState as Pair = p.Right
 		      node.SetAttribute("indent", Str(indentAndState.Left, "#"))
-		      dim state as Pair = indentAndState.Right
+		      var state as Pair = indentAndState.Right
 		      if state.Left.BooleanValue then
 		        node.SetAttribute("newstate", state.Right)
 		      end if
@@ -731,7 +731,7 @@ Protected Class HighlightDefinition
 		    next
 		  next
 		  for each cond as String in blockEndDef.Keys
-		    dim ps() as Pair = blockEndDef.Value(cond)
+		    var ps() as Pair = blockEndDef.Value(cond)
 		    for each p as Pair in ps
 		      // p.Left: RegEx with SearchPattern
 		      // p.Right: Pair of (rule_ref, Pair of (indent, state))
@@ -740,7 +740,7 @@ Protected Class HighlightDefinition
 		      if cond <> "" then
 		        node.SetAttribute("condition", cond)
 		      end if
-		      dim state as Pair = Pair(p.Right).Right
+		      var state as Pair = Pair(p.Right).Right
 		      if state.Left.BooleanValue then
 		        node.SetAttribute("newstate", state.Right)
 		      end if

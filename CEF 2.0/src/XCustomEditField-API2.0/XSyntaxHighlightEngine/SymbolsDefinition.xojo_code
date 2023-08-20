@@ -5,8 +5,8 @@ Protected Class SymbolsDefinition
 		  //appends this context to the parent xml node
 		  //this is done to export the syntax definition as an xml file.
 		  
-		  dim xdoc as XmlDocument
-		  dim node, context as XmlNode
+		  var xdoc as XmlDocument
+		  var node, context as XmlNode
 		  
 		  xdoc = parent.OwnerDocument
 		  context=parent.AppendChild(xdoc.CreateElement("symbol"))
@@ -27,8 +27,8 @@ Protected Class SymbolsDefinition
 
 	#tag Method, Flags = &h21
 		Private Sub IndentNode(node As XmlNode, level As Integer, indentCloseTag As Boolean = False)
-		  Dim i As Integer
-		  Dim s As String
+		  var i As Integer
+		  var s As String
 		  s = EndOfLine
 		  For i = 1 To level
 		    s = s + Chr(9) // Tab
@@ -47,8 +47,8 @@ Protected Class SymbolsDefinition
 		  //type
 		  type = node.GetAttribute("type")
 		  
-		  dim i as Integer
-		  dim subNode as XmlNode
+		  var i as Integer
+		  var subNode as XmlNode
 		  
 		  for i=0 to node.ChildCount-1
 		    subNode=node.Child(i)

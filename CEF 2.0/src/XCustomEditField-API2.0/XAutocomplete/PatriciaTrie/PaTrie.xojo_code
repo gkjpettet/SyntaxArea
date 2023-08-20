@@ -8,8 +8,8 @@ Protected Class PaTrie
 		    key = key.DefineEncoding(Encodings.UTF8)
 		  end if
 		  
-		  dim tmpNode as PaTrieNode
-		  dim index as Integer = key.IndexOf(".")
+		  var tmpNode as PaTrieNode
+		  var index as Integer = key.IndexOf(".")
 		  
 		  //if there's no path component to the key...
 		  if index = -1 then
@@ -17,8 +17,8 @@ Protected Class PaTrie
 		  end if
 		  
 		  //now, if there is, find the parent node
-		  dim keyPath as String = key.Left(index)
-		  dim searchPath as String
+		  var keyPath as String = key.Left(index)
+		  var searchPath as String
 		  
 		  tmpNode = root.findNode(keyPath, searchPath)
 		  if tmpNode = nil then
@@ -43,10 +43,10 @@ Protected Class PaTrie
 		  'key = key.DefineEncoding(Encodings.UTF8)
 		  'end if
 		  '
-		  'dim tmpNode as PaTrieNode
-		  'dim index as Integer = key.InStr(".")
+		  'var tmpNode as PaTrieNode
+		  'var index as Integer = key.InStr(".")
 		  '
-		  '//dim index as Integer = key.IndexOf(".")
+		  '//var index as Integer = key.IndexOf(".")
 		  '
 		  '//if there's no path component to the key...
 		  'if index = 0 then
@@ -54,8 +54,8 @@ Protected Class PaTrie
 		  'end if
 		  '
 		  '//now, if there is, find the parent node
-		  'dim keyPath as String = key.Left(index - 1)
-		  'dim searchPath as String
+		  'var keyPath as String = key.Left(index - 1)
+		  'var searchPath as String
 		  '
 		  'tmpNode = root.findNode(keyPath, searchPath)
 		  'if tmpNode = nil then
@@ -80,11 +80,11 @@ Protected Class PaTrie
 		  #pragma DisableBackgroundTasks
 		  #pragma DisableBoundsChecking
 		  
-		  dim result() as String
+		  var result() as String
 		  
-		  dim searchPath as String
-		  dim node as PaTrieNode
-		  dim index as Integer = key.IndexOf(".")
+		  var searchPath as String
+		  var node as PaTrieNode
+		  var index as Integer = key.IndexOf(".")
 		  
 		  //no path
 		  if index = -1 then
@@ -98,7 +98,7 @@ Protected Class PaTrie
 		  end if
 		  
 		  //extract path and continue search.
-		  dim keyPath as String = key.Left(index)
+		  var keyPath as String = key.Left(index)
 		  node = root.findNode(keyPath, searchPath)
 		  if node = nil then Return result
 		  
@@ -116,11 +116,11 @@ Protected Class PaTrie
 		  '#pragma DisableBackgroundTasks
 		  '#pragma DisableBoundsChecking
 		  '
-		  'dim result() as String
+		  'var result() as String
 		  '
-		  'dim searchPath as String
-		  'dim node as PaTrieNode
-		  'dim index as Integer = key.InStr(".")
+		  'var searchPath as String
+		  'var node as PaTrieNode
+		  'var index as Integer = key.InStr(".")
 		  '
 		  '//no path
 		  'if index = 0 then
@@ -134,7 +134,7 @@ Protected Class PaTrie
 		  'end if
 		  '
 		  '//extract path and continue search.
-		  'dim keyPath as String = key.Left(index - 1)
+		  'var keyPath as String = key.Left(index - 1)
 		  'node = root.findNode(keyPath, searchPath)
 		  'if node = nil then Return result
 		  '

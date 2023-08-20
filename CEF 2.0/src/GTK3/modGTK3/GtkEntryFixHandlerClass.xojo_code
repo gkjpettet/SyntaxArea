@@ -10,8 +10,8 @@ Private Class GtkEntryFixHandlerClass
 		    Declare Function gtk_widget_get_type Lib "libgtk-3" () As uint32
 		    Declare Function gtk_entry_get_type Lib "libgtk-3" () As uint32
 		    
-		    dim type as uint32=gtk_entry_get_type
-		    dim wtype as uint32=gtk_widget_get_type
+		    var type as uint32=gtk_entry_get_type
+		    var wtype as uint32=gtk_widget_get_type
 		    GtkEntryCallBackID=g_signal_add_emission_hook(g_signal_lookup("map",type),0,AddressOf GtkEntryFixCallback,nil)
 		    
 		  #endif
@@ -26,7 +26,7 @@ Private Class GtkEntryFixHandlerClass
 		    declare function g_signal_lookup lib "libgobject-2" (   name as CString, type as uint32)  as uint32
 		    Declare Function gtk_entry_get_type Lib "libgtk-3" () As uint32
 		    
-		    dim type as uint32=gtk_entry_get_type
+		    var type as uint32=gtk_entry_get_type
 		    g_signal_remove_emission_hook(g_signal_lookup("map",type),GtkEntryCallBackID)
 		    
 		  #endif
@@ -41,11 +41,11 @@ Private Class GtkEntryFixHandlerClass
 		    declare function g_object_class_find_property lib "libgtk-3" ( cls as ptr, prop as cstring)as ptr
 		    Declare Sub g_object_set Lib "libgtk-3" (obj As ptr, name As CString, value As Int32,term As ptr=Nil)
 		    
-		    dim widget as ptr=g_value_get_object(params)
+		    var widget as ptr=g_value_get_object(params)
 		    
 		    if FoundEntries.HasKey(widget) then Return true
 		    
-		    dim prop as ptr=g_object_class_find_property(widget.ptr(0),"width-chars")
+		    var prop as ptr=g_object_class_find_property(widget.ptr(0),"width-chars")
 		    if prop<>nil then  
 		      g_object_set(widget, "width-chars", 0)
 		    end if

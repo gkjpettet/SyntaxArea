@@ -21,7 +21,7 @@ Implements IBufferStorage
 		  length = length * BytesPerChar
 		  
 		  if from.size = 0 or length = 0 then Return //nuthin' to copy
-		  dim src as MemoryBlockStorageWide = MemoryBlockStorageWide(from)
+		  var src as MemoryBlockStorageWide = MemoryBlockStorageWide(from)
 		  
 		  Storage.StringValue(localIndex, min(length, storage.Size - localIndex)) = src.Storage.StringValue(fromIndex, min(length, src.Size * BytesPerChar - fromIndex))
 		End Sub
@@ -49,7 +49,7 @@ Implements IBufferStorage
 		  index = index * BytesPerChar
 		  length = length * BytesPerChar
 		  
-		  dim res as String = Storage.StringValue(index, min(length, storage.Size - index)).DefineEncoding(Encodings.UTF32)
+		  var res as String = Storage.StringValue(index, min(length, storage.Size - index)).DefineEncoding(Encodings.UTF32)
 		  
 		  return res.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		End Function
@@ -66,7 +66,7 @@ Implements IBufferStorage
 		  #endif
 		  
 		  // We need to store the data in UTF-32 format
-		  dim newVal as String = value
+		  var newVal as String = value
 		  if newVal.Encoding <> Encodings.UTF32 then
 		    #if TargetCarbon
 		      // Oddly, Carbon can't convert from UTF-8 directly to UTF-32, so we go with UTF-16 in between
@@ -80,7 +80,7 @@ Implements IBufferStorage
 		  length = length * BytesPerChar
 		  
 		  if newVal.Bytes <> length then
-		    dim d as MemoryBlock = newVal
+		    var d as MemoryBlock = newVal
 		    if d.UInt32Value(0) = &h0000FEFF or d.UInt32Value(0) = &hFFFE0000 then
 		      // remove BOM
 		      newVal = d.StringValue(4, d.Size-4)

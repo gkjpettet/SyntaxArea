@@ -22,8 +22,8 @@ Protected Class PaTrieNode
 		  
 		  //there's at least one subnode
 		  //find the best match for the key
-		  dim bestIndex as Integer = -1
-		  dim bestLength, currentLength as Integer
+		  var bestIndex as Integer = -1
+		  var bestLength, currentLength as Integer
 		  for i as Integer = 0 to SubNodes.LastIndex
 		    currentLength = SubNodes(i).Key.longestCommonPrefixIndex(key)
 		    if currentLength > bestLength then
@@ -38,7 +38,7 @@ Protected Class PaTrieNode
 		    
 		  end if
 		  
-		  dim matchNode as PaTrieNode = SubNodes(bestIndex)
+		  var matchNode as PaTrieNode = SubNodes(bestIndex)
 		  
 		  if bestLength = matchNode.Key.Length then
 		    //current node is a perfect prefix for the key
@@ -56,7 +56,7 @@ Protected Class PaTrieNode
 
 	#tag Method, Flags = &h21
 		Private Function appendNewNode(withKey as string, andData as variant) As PaTrieNode
-		  dim newNode as new PaTrieNode
+		  var newNode as new PaTrieNode
 		  newNode.Key = withKey
 		  newNode.Data = andData
 		  SubNodes.Add newNode
@@ -74,9 +74,9 @@ Protected Class PaTrieNode
 		  if key = "" then Return self
 		  if SubNodes.LastIndex < 0 then Return Nil
 		  
-		  dim prefixLength as Integer
-		  dim bestMatch as Integer = -1
-		  dim bestLength as Integer
+		  var prefixLength as Integer
+		  var bestMatch as Integer = -1
+		  var bestLength as Integer
 		  
 		  //find the best match
 		  for i as Integer = 0 to SubNodes.LastIndex
@@ -91,7 +91,7 @@ Protected Class PaTrieNode
 		  if bestMatch < 0 then Return nil
 		  
 		  //check if key is contained in SubNode's key, if not, it can't be a match!
-		  dim compareLength as Integer = min(key.Length, SubNodes(bestMatch).key.Length)
+		  var compareLength as Integer = min(key.Length, SubNodes(bestMatch).key.Length)
 		  if key.left(compareLength) <> SubNodes(bestMatch).Key.left(compareLength) then Return nil
 		  
 		  //continue search among subnodes
@@ -104,21 +104,21 @@ Protected Class PaTrieNode
 
 	#tag Method, Flags = &h0
 		Function splitNode(key as string, data as variant, prefixLength as integer) As PaTrieNode
-		  dim common as String = self.Key.Middle(0, prefixLength)
+		  var common as String = self.Key.Middle(0, prefixLength)
 		  
 		  '//copy trailing key from current node to a new one
-		  dim SubNodesCopy() as PaTrieNode
-		  dim keysCopy() as String
-		  ReDim SubNodesCopy(self.SubNodes.LastIndex)
-		  ReDim keysCopy(self.SubNodes.LastIndex)
+		  var SubNodesCopy() as PaTrieNode
+		  var keysCopy() as String
+		  redim SubNodesCopy(self.SubNodes.LastIndex)
+		  redim keysCopy(self.SubNodes.LastIndex)
 		  for i as Integer = 0 to self.SubNodes.LastIndex
 		    SubNodesCopy(i) = self.SubNodes(i)
 		    keysCopy(i) = keys(i)
 		  next
-		  ReDim SubNodes(-1)
-		  ReDim keys(-1)
+		  redim SubNodes(-1)
+		  redim keys(-1)
 		  
-		  dim node1 as PaTrieNode = AppendNewNode(self.Key.Middle(prefixLength, self.Key.Length - prefixLength), self.Data)
+		  var node1 as PaTrieNode = AppendNewNode(self.Key.Middle(prefixLength, self.Key.Length - prefixLength), self.Data)
 		  node1.SubNodes = SubNodesCopy
 		  node1.keys = keysCopy
 		  node1.intermediateNode = self.intermediateNode
@@ -126,7 +126,7 @@ Protected Class PaTrieNode
 		  self.KeyMembers = nil
 		  
 		  //trailing key from new key to new node
-		  dim node2 as PaTrieNode = AppendNewNode(key.Middle(prefixLength , key.Length - prefixLength), data)
+		  var node2 as PaTrieNode = AppendNewNode(key.Middle(prefixLength , key.Length - prefixLength), data)
 		  
 		  self.Key = common
 		  self.Data = nil

@@ -10,7 +10,7 @@ Private Class GtkWidgetHeightFixHandlerClass
 		    Declare Function gtk_widget_get_type Lib "libgtk-3" () As uint32
 		    Declare Function gtk_button_get_type Lib "libgtk-3" () As uint32
 		    
-		    dim type as uint32=gtk_widget_get_type
+		    var type as uint32=gtk_widget_get_type
 		    GtkWidgetCallBackID=g_signal_add_emission_hook(g_signal_lookup("map",type),0,AddressOf GtkWidgetHeightFixCallback,nil)
 		    GtkWidgetStyleCallBackID=g_signal_add_emission_hook(g_signal_lookup("style-updated",type),0,AddressOf GtkWidgetHeightFixCallback,nil)
 		    
@@ -26,7 +26,7 @@ Private Class GtkWidgetHeightFixHandlerClass
 		    declare function g_signal_lookup lib "libgobject-2" (   name as CString, type as uint32)  as uint32
 		    Declare Function gtk_button_get_type Lib "libgtk-3" () As uint32
 		    
-		    dim type as uint32=gtk_button_get_type
+		    var type as uint32=gtk_button_get_type
 		    g_signal_remove_emission_hook(g_signal_lookup("map",type),GtkWidgetCallBackID)
 		    g_signal_remove_emission_hook(g_signal_lookup("style-updated",type),GtkWidgetStyleCallBackID)
 		    
@@ -42,20 +42,20 @@ Private Class GtkWidgetHeightFixHandlerClass
 		    Declare sub gtk_widget_get_preferred_height Lib "libgtk-3" (obj as ptr,byref minh as int32, byref nath as int32 ) 
 		    Declare Function gtk_widget_get_toplevel Lib "libgtk-3" (obj as ptr) as ptr 
 		    
-		    dim widget as ptr=g_value_get_object(params)
-		    dim widgetwindow as ptr=gtk_widget_get_toplevel(widget)
+		    var widget as ptr=g_value_get_object(params)
+		    var widgetwindow as ptr=gtk_widget_get_toplevel(widget)
 		    
 		    for w as integer=0 to WindowCount-1
 		      if ptr(window(w).Handle)=widgetwindow then
 		        for c as integer=0 to window(w).ControlCount -1
 		          
-		          dim ctrl as control= window(w).control(c) 
+		          var ctrl as control= window(w).control(c) 
 		          if ctrl isA RectControl and ptr(RectControl(ctrl).handle)=widget then
 		            
 		            If ctrl IsA EmbeddedWindowControl Then Continue
-		            dim minh,nath as int32
+		            var minh,nath as int32
 		            gtk_widget_get_preferred_height(widget,minh,nath)
-		            dim r As RectControl=RectControl(ctrl)
+		            var r As RectControl=RectControl(ctrl)
 		            r.Height=max(r.Height,nath)
 		            exit
 		            

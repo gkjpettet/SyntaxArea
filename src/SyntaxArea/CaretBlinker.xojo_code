@@ -1,58 +1,42 @@
 #tag Class
-Protected Class MessageQueue
+Protected Class CaretBlinker
 Inherits Timer
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Action()
-		  // Timer tick... send the next queued msg
-		  if queue.LastIndex < 0 then return
-		  
-		  var msg as Message
-		  msg = queue(0)
-		  queue.RemoveAt(0)
-		  
-		  MessageCenter.sendMessage(msg)
-		  
-		  // if queue not empty, keep timer running
-		  if queue.LastIndex >= 0 then
-		    me.RunMode = Timer.RunModes.Single
-		  else
-		    me.RunMode = Timer.RunModes.Off ' necessary for RB 2012r2.1 in Cocoa - fixed in Xojo
-		  end
+		  If mOwner = Nil Then Return
+		  mOwner.RedrawCaret
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub addMessage(theMessage as Message)
-		  queue.Add theMessage
-		  
-		  if me.RunMode = Timer.RunModes.Off then
-		    me.RunMode = Timer.RunModes.Single
-		  end if
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1000
-		Sub Constructor()
-		  me.RunMode = Timer.RunModes.Off
-		  me.Period = 0 // -> delivers as soon as possible, after the current event
+		Sub Constructor(owner As SyntaxArea.Editor)
+		  mReference = New WeakRef(owner)
+		  Me.Period = 500
+		  Me.RunMode = Timer.RunModes.Multiple
+		  Me.Enabled = True
 		  
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function findMessageInQueue(type as variant, matchInfoKey as Variant, matchInfoValue as Variant) As Message
-		  for each m as Message in queue
-		    if m.MessageType = type and m.Info(matchInfoKey) = matchInfoValue then
-		      return m
-		    end
-		  next
-		End Function
-	#tag EndMethod
 
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  If mReference <> Nil Then
+			    Return SyntaxArea.Editor(mReference.Value)
+			  Else
+			    Return Nil
+			  End If
+			  
+			End Get
+		#tag EndGetter
+		Private mOwner As SyntaxArea.Editor
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private queue(-1) As Message
+		Private mReference As WeakRef
 	#tag EndProperty
 
 

@@ -40,11 +40,11 @@ Inherits TextSegment
 
 	#tag Method, Flags = &h0
 		Sub AppendHighlightedWords(storage() as charSelection, lineIndex as integer)
-		  dim word as TextSegment
+		  var word as TextSegment
 		  
 		  for each Word in words
 		    if Word.hasBackgroundColor then
-		      dim tmp as new CharSelection(self.offset + word.offset, word.length, lineIndex, lineIndex, word.backgroundColor)
+		      var tmp as new CharSelection(self.offset + word.offset, word.length, lineIndex, lineIndex, word.backgroundColor)
 		      storage.Add(tmp)
 		    end if
 		  next
@@ -65,7 +65,7 @@ Inherits TextSegment
 
 	#tag Method, Flags = &h0
 		Function ChangedIndentStateAndReset() As Boolean
-		  dim b as Boolean = mChangedIndentState
+		  var b as Boolean = mChangedIndentState
 		  mChangedIndentState = false
 		  return b
 		End Function
@@ -73,7 +73,7 @@ Inherits TextSegment
 
 	#tag Method, Flags = &h0
 		Function CharToDisplayAt(buffer as gapbuffer, index as integer, displayInvisible as boolean) As string
-		  dim theChar as String = buffer.getCharAt(self.offset + index)
+		  var theChar as String = buffer.getCharAt(self.offset + index)
 		  
 		  select case theChar
 		  case " "
@@ -123,8 +123,8 @@ Inherits TextSegment
 		  #pragma DisableBackgroundTasks
 		  
 		  
-		  ReDim Words(-1)
-		  ReDim placeholders(-1)
+		  redim Words(-1)
+		  redim placeholders(-1)
 		  LineSymbols = nil
 		  highlighted = False
 		  
@@ -137,7 +137,7 @@ Inherits TextSegment
 		    Return nil
 		  end if
 		  
-		  dim myText as String = storage.getText(offset, length)
+		  var myText as String = storage.getText(offset, length)
 		  
 		  //run the highlighter, using this line as input and adding an extra EOL to make sure the definition matches EOLs
 		  Context = definition.highlight(myText+chr(13), words, placeholders, forcedContext)
@@ -180,8 +180,8 @@ Inherits TextSegment
 		    
 		  #endif
 		  
-		  dim word as TextSegment
-		  dim sum as Single
+		  var word as TextSegment
+		  var sum as Single
 		  
 		  for Each Word in words
 		    if xpos >= sum and xpos <= sum + Word.width then
@@ -227,17 +227,17 @@ Inherits TextSegment
 		  end if
 		  
 		  width = 0
-		  dim TheText as String
-		  dim word as TextSegment
-		  dim wordFound as Boolean
-		  dim darkerHilightColor as Color = Color.HighlightColor.darkerColor(50, true)
+		  var TheText as String
+		  var word as TextSegment
+		  var wordFound as Boolean
+		  var darkerHilightColor as Color = Color.HighlightColor.darkerColor(50, true)
 		  
 		  //paint tokens
 		  for i as Integer = 0 to words.LastIndex
 		    Word = words(i)
 		    g.DrawingColor = darkerHilightColor
 		    
-		    dim selfWordOfs as Integer = word.Offset + self.Offset
+		    var selfWordOfs as Integer = word.Offset + self.Offset
 		    
 		    if word.TYPE = TYPE_SPACE then
 		      TheText = " "
@@ -306,8 +306,8 @@ Inherits TextSegment
 		      end if
 		      
 		      if word.TYPE = TYPE_PLACEHOLDER then
-		        dim oldc as color = g.DrawingColor
-		        dim colorOffset as Integer = 0
+		        var oldc as color = g.DrawingColor
+		        var colorOffset as Integer = 0
 		        
 		        //make darker if placeholder is in selection...
 		        if selfWordOfs >= selStart and selfWordOfs + Word.length <= selStart + selLength then
@@ -315,7 +315,7 @@ Inherits TextSegment
 		          oldc = oldc.invertColor
 		        end if
 		        
-		        dim baseCol as Color = TextPlaceholder(word).placeholderBackgroundColor
+		        var baseCol as Color = TextPlaceholder(word).placeholderBackgroundColor
 		        g.DrawingColor = baseCol.darkerColor(colorOffset, true)
 		        g.FillRoundRectangle x, y - g.FontAscent, word.width, g.TextHeight + 1, g.TextHeight, g.TextHeight
 		        
@@ -340,8 +340,8 @@ Inherits TextSegment
 		          // if part of the text is selected, we need to split it up into the selected and unselected part,
 		          // and draw them in different colors
 		          
-		          dim l1, l2, l3 as Integer, t1, t2, t3 as String, w as Double
-		          dim normalColor as Color = g.DrawingColor
+		          var l1, l2, l3 as Integer, t1, t2, t3 as String, w as Double
+		          var normalColor as Color = g.DrawingColor
 		          
 		          // part before selection
 		          l1 = Max (0, selStart - selfWordOfs)
@@ -381,7 +381,7 @@ Inherits TextSegment
 		  
 		  //ellipsis image.
 		  if folded then
-		    dim img as Picture = EditFieldGlobals.BlockFoldedTrailImage
+		    var img as Picture = EditFieldGlobals.BlockFoldedTrailImage
 		    g.DrawPicture img, x + 3, y - g.FontAscent + (g.TextHeight - img.Height) / 2 + 1
 		  end if
 		  showInvisible = displayInvisible
@@ -394,20 +394,20 @@ Inherits TextSegment
 		  //quick parses a line, splitting it using spaces and tabs
 		  // http://support.realsoftware.com/listarchives/gettingstarted/2005-05/msg00157.html
 		  
-		  ReDim Words(-1)
-		  dim TheText as String = buffer.getText(offset, length)
+		  redim Words(-1)
+		  var TheText as String = buffer.getText(offset, length)
 		  if TheText.Encoding <> nil then TheText = TheText.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		  
 		  static scanner as new RegEx ' let's make this static to avoid hard crashes on OS X with RB 2012r2.1
 		  
 		  scanner.SearchPattern = "[ ]|\t|\x0A|(?:\x0D\x0A?)"
 		  
-		  dim match as RegExMatch
-		  dim offset, length, subStart as Integer
-		  dim char as String
+		  var match as RegExMatch
+		  var offset, length, subStart as Integer
+		  var char as String
 		  
 		  #if DebugBuild
-		    dim tmp as String
+		    var tmp as String
 		  #endif
 		  
 		  match = scanner.Search(TheText)
@@ -469,7 +469,7 @@ Inherits TextSegment
 		    
 		  #endif
 		  
-		  dim ox, lines as Integer
+		  var ox, lines as Integer
 		  ox = x
 		  lines = 1
 		  
@@ -478,11 +478,11 @@ Inherits TextSegment
 		    ParseLine(storage, defaultColor)
 		  end if
 		  
-		  dim words() as TextSegment
+		  var words() as TextSegment
 		  
 		  width = 0
-		  dim text as String
-		  dim word as TextSegment
+		  var text as String
+		  var word as TextSegment
 		  
 		  //make copies of tokens, in case we need to split
 		  for each word in self.words
@@ -542,12 +542,12 @@ Inherits TextSegment
 		    if x + word.width > ox + w then
 		      //split word?
 		      if Word.width > w then
-		        dim idx as Integer
+		        var idx as Integer
 		        for idx = 1 to word.length
 		          if g.TextWidth(storage.getText(word.offset + offset, idx)) >= w then exit for
 		        next
 		        idx = idx - 1
-		        dim tmp as TextSegment = word.SplitAtLength(idx)
+		        var tmp as TextSegment = word.SplitAtLength(idx)
 		        if wrap then words.AddAt i + 1, tmp
 		        i = i - 1
 		        Continue for
@@ -562,7 +562,7 @@ Inherits TextSegment
 		    
 		    //draw background, if any
 		    if word.hasBackgroundColor and word.Type <> word.TYPE_EOL then
-		      dim oc as Color = g.DrawingColor
+		      var oc as Color = g.DrawingColor
 		      g.DrawingColor = word.backgroundColor
 		      g.FillRectangle Ceiling(x), y - g.FontAscent, Ceiling(word.width), g.TextHeight + 1
 		      g.DrawingColor = oc
@@ -577,7 +577,7 @@ Inherits TextSegment
 		      end if
 		      
 		      if word.TYPE = TYPE_PLACEHOLDER then
-		        dim oldc as color = g.DrawingColor
+		        var oldc as color = g.DrawingColor
 		        g.DrawingColor = TextPlaceholder(word).placeholderBackgroundColor
 		        g.FillRoundRectangle x, y - g.FontAscent, word.width, g.TextHeight + 1, g.TextHeight, g.TextHeight
 		        
@@ -586,7 +586,7 @@ Inherits TextSegment
 		        g.DrawingColor = oldc
 		      end if
 		      
-		      dim x2 as Integer = x
+		      var x2 as Integer = x
 		      if indentVisually then
 		        x2 = self.indent + x2
 		      end if
@@ -617,7 +617,7 @@ Inherits TextSegment
 		    TABCHAR = TABCHAR + " "
 		  next
 		  
-		  dim word as TextSegment
+		  var word as TextSegment
 		  for each Word in words
 		    word.width = -1
 		  next
@@ -652,11 +652,11 @@ Inherits TextSegment
 		    end if
 		  end if
 		  
-		  dim ret as Single
-		  dim word as TextSegment
-		  dim charsToRead as Integer
-		  dim text as String
-		  dim u as Integer = words.LastIndex
+		  var ret as Single
+		  var word as TextSegment
+		  var charsToRead as Integer
+		  var text as String
+		  var u as Integer = words.LastIndex
 		  
 		  for i as integer = 0 to u
 		    Word = words(i)
@@ -742,7 +742,7 @@ Inherits TextSegment
 		    Return
 		  end
 		  
-		  dim newState as String
+		  var newState as String
 		  mBlockIndent = definition.isBlockStart(myText, mIndentationStateIn, newState, mBlockStartRule)
 		  if newState <> mIndentationStateOut then
 		    mIndentationStateOut = newState
