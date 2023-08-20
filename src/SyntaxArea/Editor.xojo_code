@@ -162,6 +162,17 @@ Inherits SyntaxArea.NSScrollViewCanvas
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52656472617773207468652063617265742E
+		Sub RedrawCaret()
+		  /// Redraws the caret.
+		  ///
+		  /// Called by `CaretBlinker`.
+		  
+		  #Pragma Warning "TODO: Implement!"
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 52657475726E7320612074656D706F726172792070696374757265206F626A6563742077697468207468652063757272656E742054657874466F6E7420616E6420466F6E7453697A6520746861742063616E206265207573656420666F722067726170686963616C2063616C63756C6174696F6E732E
 		Private Function TemporaryPicture() As Picture
 		  /// Returns a temporary picture object with the current TextFont and FontSize that can be used for graphical calculations.

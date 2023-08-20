@@ -194,7 +194,7 @@ Protected Class GapBuffer
 		Sub Replace(index As Integer, length As Integer, s As String)
 		  /// Replaces `length` characters beginning at `index` with `s`.
 		  
-		  s = s.ConvertEncoding(EditFieldGlobals.InternalEncoding) ' make sure it's not in UTF-16
+		  s = s.ConvertEncoding(SyntaxArea.InternalEncoding) ' make sure it's not in UTF-16
 		  
 		  CheckBounds(index)
 		  
