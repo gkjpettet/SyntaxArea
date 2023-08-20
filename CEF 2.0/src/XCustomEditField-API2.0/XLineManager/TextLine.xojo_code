@@ -398,7 +398,8 @@ Inherits TextSegment
 		  var TheText as String = buffer.getText(offset, length)
 		  if TheText.Encoding <> nil then TheText = TheText.ConvertEncoding(EditFieldGlobals.InternalEncoding)
 		  
-		  static scanner as new RegEx ' let's make this static to avoid hard crashes on OS X with RB 2012r2.1
+		  // static scanner as new RegEx ' let's make this static to avoid hard crashes on OS X with RB 2012r2.1
+		  Var scanner as new RegEx
 		  
 		  scanner.SearchPattern = "[ ]|\t|\x0A|(?:\x0D\x0A?)"
 		  

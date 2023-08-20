@@ -1,7 +1,7 @@
 #tag Class
 Protected Class TextLine
 Inherits SyntaxArea.TextSegment
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub LengthChanged()
 		  IsDirty = true
@@ -128,7 +128,7 @@ Inherits SyntaxArea.TextSegment
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Highlight(definition As SyntaxArea.Highlightdefinition, storage As SyntaxArea.GapBuffer, forcedContext As SyntaxArea.Highlightcontext = Nil, defaultColor As Color = &c0) As SyntaxArea.Highlightcontext
+		Function Highlight(definition As SyntaxArea.HighlightDefinition, storage As SyntaxArea.GapBuffer, forcedContext As SyntaxArea.HighlightContext = Nil, defaultColor As Color = &c0) As SyntaxArea.HighlightContext
 		  #Pragma DisableBackgroundTasks
 		  
 		  Words.ResizeTo(-1)
@@ -288,12 +288,8 @@ Inherits SyntaxArea.TextSegment
 		      End If
 		      TheText = storage.GetText(selfWordOfs, word.Length)
 		      
-		      #If SyntaxArea.Replace00With01
-		        // Convert Chr(1), which we use for original NUL chars, to a "NUL" character for display.
-		        TheText = TheText.ReplaceAll(Chr(1), "␀")
-		      #else
-		        TheText = TheText.ReplaceAll(Chr(0), "␀")
-		      #EndIf
+		      // Convert Chr(1), which we use for original NUL chars, to a "NUL" character for display.
+		      TheText = TheText.ReplaceAll(Chr(1), "␀")
 		    End If
 		    
 		    g.Bold = Word.Bold Or bold
@@ -408,381 +404,388 @@ Inherits SyntaxArea.TextSegment
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub ParseLine(buffer as gapBuffer, defaultColor as color)
-		  //quick parses a line, splitting it using spaces and tabs
-		  // http://support.realsoftware.com/listarchives/gettingstarted/2005-05/msg00157.html
+	#tag Method, Flags = &h1, Description = 517569636B6C79207061727365732061206C696E652C2073706C697474696E67206974207573696E672073706163657320616E6420746162732E
+		Protected Sub ParseLine(buffer As SyntaxArea.GapBuffer, defaultColor As Color)
+		  /// Quickly parses a line, splitting it using spaces and tabs.
+		  ///
+		  /// http://support.realsoftware.com/listarchives/gettingstarted/2005-05/msg00157.html
 		  
-		  redim Words(-1)
-		  var TheText as String = buffer.getText(offset, length)
-		  if TheText.Encoding <> nil then TheText = TheText.ConvertEncoding(EditFieldGlobals.InternalEncoding)
+		  Words.ResizeTo(-1)
 		  
-		  static scanner as new RegEx ' let's make this static to avoid hard crashes on OS X with RB 2012r2.1
+		  Var theText As String = buffer.GetText(Offset, Length)
+		  If theText.Encoding <> Nil Then theText = theText.ConvertEncoding(SyntaxArea.InternalEncoding)
 		  
+		  Var scanner As New RegEx
 		  scanner.SearchPattern = "[ ]|\t|\x0A|(?:\x0D\x0A?)"
 		  
-		  var match as RegExMatch
-		  var offset, length, subStart as Integer
-		  var char as String
+		  Var match As RegExMatch
+		  Var offset, length, subStart As Integer
+		  Var char As String
 		  
-		  #if DebugBuild
-		    var tmp as String
-		  #endif
-		  
-		  match = scanner.Search(TheText)
-		  while match <> nil
-		    subStart = TheText.LeftBytes(match.SubExpressionStartB(0)).Length
+		  match = scanner.Search(theText)
+		  While match <> Nil
+		    subStart = theText.LeftBytes(match.SubExpressionStartB(0)).Length
 		    
 		    length = substart - offset
-		    //everything from last position up to this whitespace
-		    addWord new TextSegment(offset, length, TextSegment.TYPE_WORD, defaultColor)
-		    #if DebugBuild
-		      tmp = buffer.getText(offset + self.offset, length)
-		    #endif
+		    
+		    // Everything from last position up to this whitespace.
+		    AddWord(New SyntaxArea.TextSegment(offset, length, SyntaxArea.TextSegment.TYPE_WORD, defaultColor))
+		    
 		    offset = substart + match.SubExpressionString(0).Length
 		    
-		    //sort out the whitespace
+		    // Sort out the whitespace.
 		    char = match.SubExpressionString(0)
-		    #if DebugBuild
-		      tmp = char
-		      tmp = buffer.getText(substart + self.offset, match.SubExpressionString(0).Length)
-		    #endif
 		    
-		    select case char
-		    case chr(9) //tab
-		      addWord new TextSegment(substart, match.SubExpressionString(0).Length, TextSegment.TYPE_TAB, defaultColor)
-		    case " "//space
-		      addWord new TextSegment(substart, match.SubExpressionString(0).Length, TextSegment.TYPE_SPACE, defaultColor)
-		    case chr(10), chr(13), chr(13) + chr(10)//eol
-		      addWord new TextSegment(substart, match.SubExpressionString(0).Length, TextSegment.TYPE_EOL, defaultColor)
-		    end select
+		    Select Case char
+		    Case Chr(9) // Tab.
+		      AddWord(New SyntaxArea.TextSegment(substart, match.SubExpressionString(0).Length, SyntaxArea.TextSegment.TYPE_TAB, defaultColor))
+		      
+		    Case " "
+		      AddWord(New SyntaxArea.TextSegment(substart, match.SubExpressionString(0).Length, SyntaxArea.TextSegment.TYPE_SPACE, defaultColor))
+		      
+		    Case Chr(10), Chr(13), Chr(13) + Chr(10) // EOLs.
+		      AddWord(New SyntaxArea.TextSegment(substart, match.SubExpressionString(0).Length, SyntaxArea.TextSegment.TYPE_EOL, defaultColor))
+		    End Select
 		    
 		    match = scanner.Search
-		  wend
+		  Wend
 		  
-		  //add any trailing text
-		  if offset<  TheText.Length then
-		    addWord new TextSegment(offset, TheText.Length - offset, TextSegment.TYPE_WORD, defaultColor)
-		    #if DebugBuild
-		      tmp = TheText.Middle(offset)
-		    #endif
-		  end if
+		  // Add any trailing text.
+		  If offset < theText.Length Then
+		    AddWord(New SyntaxArea.TextSegment(offset, theText.Length - offset, SyntaxArea.TextSegment.TYPE_WORD, defaultColor))
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PlaceholderForOffset(offset as Integer) As TextPlaceholder
-		  for each placeholder as TextPlaceholder in Placeholders
-		    if Placeholder.inRange(offset - self.offset) then Return Placeholder
-		  next
-		  Return nil
+		Function PlaceholderForOffset(offset As Integer) As SyntaxArea.TextPlaceholder
+		  For Each placeholder As SyntaxArea.TextPlaceholder In Placeholders
+		    If Placeholder.InRange(offset - Self.Offset) Then Return placeholder
+		  Next placeholder
+		  
+		  Return Nil
+		  
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function PrinterPaint(storage as gapBuffer, g as graphics, x as double, y as double, w as integer, defaultColor as color, displayInvisible as boolean, wrap as boolean, indentVisually as Boolean) As integer
-		  //draws this line
-		  #if not DebugBuild
-		    #pragma DisableBackgroundTasks
-		    #pragma DisableBoundsChecking
-		    
-		  #endif
+	#tag Method, Flags = &h0, Description = 55736564207768656E207072696E74696E672066726F6D2074686520656469746F722E2044726177732074686973206C696E652E
+		Function PrinterPaint(storage As SyntaxArea.GapBuffer, g As Graphics, x As Double, y As Double, w As Integer, defaultColor As Color, displayInvisible As Boolean, wrap As Boolean, indentVisually As Boolean) As Integer
+		  /// Used when printing from the editor.
+		  /// Draws this line.
 		  
-		  var ox, lines as Integer
-		  ox = x
-		  lines = 1
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
 		  
-		  //if there are no words in this line, we need to at least quick-parse it so we can display it.
-		  if Words.LastIndex < 0 and length > 0 then
+		  Var ox As Integer = x
+		  Var lines As Integer = 1
+		  
+		  // If there are no words in this line, we need to at least quickly parse it so we can display it.
+		  If Words.LastIndex < 0 And length > 0 Then
 		    ParseLine(storage, defaultColor)
-		  end if
+		  End If
 		  
-		  var words() as TextSegment
+		  Var words() As SyntaxArea.TextSegment
 		  
 		  width = 0
-		  var text as String
-		  var word as TextSegment
+		  Var s As String
+		  Var word As SyntaxArea.TextSegment
 		  
-		  //make copies of tokens, in case we need to split
-		  for each word in self.words
-		    words.Add word.Clone
-		  next
+		  // Make copies of tokens, in case we need to split.
+		  For Each word In Self.Words
+		    words.Add(word.Clone)
+		  Next word
 		  
-		  //paint tokens
-		  for i as Integer = 0 to words.LastIndex
-		    Word = words(i)
-		    g.DrawingColor = Color.HighlightColor.darkerColor(50, false)
+		  // Paint the tokens.
+		  Var iLimit As Integer = words.LastIndex
+		  For i As Integer = 0 To iLimit
+		    word = words(i)
+		    g.DrawingColor = Color.HighlightColor.DarkerColor(50, False)
 		    
-		    if word.TYPE = TYPE_SPACE then
-		      text = " "
+		    If word.Type = TYPE_SPACE Then
+		      s = " "
 		      
-		    ElseIf Word.TYPE = TYPE_TAB then
-		      text = TABCHAR
+		    ElseIf word.Type = TYPE_TAB Then
+		      s = TABCHAR
 		      
-		    elseif Word.TYPE = TYPE_EOL then
-		      if displayInvisible then
-		        text = VISIBLEEOLCHAR
-		      else
-		        text = ""
-		      end if
+		    ElseIf word.Type = TYPE_EOL Then
+		      If displayInvisible Then
+		        s = VISIBLE_EOL_CHAR
+		      Else
+		        s = ""
+		      End If
 		      
-		    elseif word.TYPE = TYPE_PLACEHOLDER then
-		      //Highlight color
-		      if highlighted then
-		        g.DrawingColor = word.textColor
-		      else
+		    ElseIf word.Type = TYPE_PLACEHOLDER Then
+		      // Determine the highlight colour.
+		      If highlighted Then
+		        g.DrawingColor = word.TextColor
+		      Else
 		        g.DrawingColor = defaultColor
-		      end if
-		      text = PlaceholderPaddingString + storage.getText(TextPlaceholder(word).textRange.offset + offset, TextPlaceholder(word).textRange.length) + PlaceholderPaddingString
+		      End If
+		      s = PLACEHOLDER_PADDING_STRING + storage.GetText(SyntaxArea.TextPlaceholder(word).TextRange.Offset + Offset, _
+		      SyntaxArea.TextPlaceholder(word).TextRange.Length) + PLACEHOLDER_PADDING_STRING
 		      
-		    else
-		      //Highlight color
-		      if highlighted then
-		        g.DrawingColor = word.textColor
-		      else
+		    Else
+		      // Determine the highlight colour.
+		      If highlighted Then
+		        g.DrawingColor = word.TextColor
+		      Else
 		        g.DrawingColor = defaultColor
-		      end if
-		      text = storage.getText(word.offset + offset, word.length)
-		    end if
+		      End If
+		      s = storage.GetText(word.Offset + Offset, word.Length)
+		    End If
 		    
-		    g.Bold = Word.bold or bold
-		    g.Underline = Word.underline or underline
-		    g.Italic = word.italic or italic
+		    g.Bold = word.Bold Or Bold
+		    g.Underline = word.Underline Or Underline
+		    g.Italic = word.Italic Or Italic
 		    
-		    //cache width
-		    if word.lastFont <> g.FontName or word.lastSize <> g.FontSize or showInvisible <> displayInvisible then
-		      word.width = -1
-		    end if
-		    if word.width < 0 then
-		      word.width = g.TextWidth(text)
-		    end if
+		    // Cache the width.
+		    If word.LastFont <> g.FontName Or word.LastSize <> g.FontSize Or showInvisible <> displayInvisible Then
+		      word.Width = -1
+		    End If
+		    If word.Width < 0 Then
+		      word.Width = g.TextWidth(s)
+		    End If
 		    
-		    //text wrap
-		    if x + word.width > ox + w then
-		      //split word?
-		      if Word.width > w then
-		        var idx as Integer
-		        for idx = 1 to word.length
-		          if g.TextWidth(storage.getText(word.offset + offset, idx)) >= w then exit for
-		        next
+		    // Text wrap.
+		    If x + word.Width > ox + w Then
+		      // split the word?
+		      If word.Width > w Then
+		        Var idx As Integer
+		        For idx = 1 To word.Length
+		          If g.TextWidth(storage.GetText(word.Offset + Offset, idx)) >= w Then Exit For
+		        Next idx
+		        
 		        idx = idx - 1
-		        var tmp as TextSegment = word.SplitAtLength(idx)
-		        if wrap then words.AddAt i + 1, tmp
+		        Var tmp As SyntaxArea.TextSegment = word.SplitAtLength(idx)
+		        If wrap Then words.AddAt(i + 1, tmp)
 		        i = i - 1
-		        Continue for
-		      elseif wrap then
+		        Continue For
+		        
+		      ElseIf wrap Then
 		        y = y + g.TextHeight
 		        x = ox
 		        lines = lines + 1
-		      else //just clip
-		        Return lines
-		      end if
-		    end if
-		    
-		    //draw background, if any
-		    if word.hasBackgroundColor and word.Type <> word.TYPE_EOL then
-		      var oc as Color = g.DrawingColor
-		      g.DrawingColor = word.backgroundColor
-		      g.FillRectangle Ceiling(x), y - g.FontAscent, Ceiling(word.width), g.TextHeight + 1
-		      g.DrawingColor = oc
-		    end if
-		    
-		    //draw txt
-		    if (word.Type = TYPE_WORD or word.Type = TYPE_PLACEHOLDER or displayInvisible) and x + word.width >= 0 and  x < g.Width and y >= 0 and y <= g.Height + g.TextHeight  then
-		      if Word.TYPE = TYPE_TAB then
-		        Text = VISIBLETABCHAR //a small hack to make the visible char the same width as the tab
-		      ElseIf Word.TYPE = TYPE_SPACE then
-		        text = VISIBLESPACECHAR
-		      end if
-		      
-		      if word.TYPE = TYPE_PLACEHOLDER then
-		        var oldc as color = g.DrawingColor
-		        g.DrawingColor = TextPlaceholder(word).placeholderBackgroundColor
-		        g.FillRoundRectangle x, y - g.FontAscent, word.width, g.TextHeight + 1, g.TextHeight, g.TextHeight
 		        
-		        g.DrawingColor = TextPlaceholder(word).placeholderBackgroundColor.darkerColor(30, false)
-		        g.DrawRoundRectangle x, y - g.FontAscent, word.width, g.TextHeight + 1, g.TextHeight, g.TextHeight
-		        g.DrawingColor = oldc
-		      end if
+		      Else
+		        // Just clip.
+		        Return lines
+		      End If
+		    End If
+		    
+		    // Draw the background, if any.
+		    If word.HasBackgroundColor And word.Type <> word.TYPE_EOL Then
+		      Var oc As Color = g.DrawingColor
+		      g.DrawingColor = word.BackgroundColor
+		      g.FillRectangle(Ceiling(x), y - g.FontAscent, Ceiling(word.Width), g.TextHeight + 1)
+		      g.DrawingColor = oc
+		    End If
+		    
+		    // Draw the text.
+		    If(word.Type = TYPE_WORD Or word.Type = TYPE_PLACEHOLDER Or displayInvisible) And _
+		      x + word.Width >= 0 And x < g.Width And y >= 0 And y <= g.Height + g.TextHeight Then
+		      If word.Type = TYPE_TAB Then
+		         // A small hack to make the visible chaacterr the same width as the tab
+		        s = VISIBLE_TAB_CHAR
+		      ElseIf word.Type = TYPE_SPACE Then
+		        s = VISIBLE_SPACE_CHAR
+		      End If
 		      
-		      var x2 as Integer = x
-		      if indentVisually then
-		        x2 = self.indent + x2
-		      end if
-		      g.DrawText text, x2, y
-		    end if
+		      If word.Type = TYPE_PLACEHOLDER Then
+		        Var oldc As Color = g.DrawingColor
+		        g.DrawingColor = SyntaxArea.TextPlaceholder(word).PlaceholderBackgroundColor
+		        g.FillRoundRectangle(x, y - g.FontAscent, word.Width, g.TextHeight + 1, g.TextHeight, g.TextHeight)
+		        
+		        g.DrawingColor = SyntaxArea.TextPlaceholder(word).PlaceholderBackgroundColor.DarkerColor(30, False)
+		        g.DrawRoundRectangle(x, y - g.FontAscent, word.Width, g.TextHeight + 1, g.TextHeight, g.TextHeight)
+		        g.DrawingColor = oldc
+		      End If
+		      
+		      Var x2 As Integer = x
+		      If indentVisually Then x2 = Self.indent + x2
+		      
+		      g.DrawText(s, x2, y)
+		    End If
 		    
 		    x = x + word.Width
-		    width = width + Word.width
-		    word.lastFont = g.FontName
-		    word.lastSize = g.FontSize
-		  next
+		    width = Width + word.Width
+		    word.LastFont = g.FontName
+		    word.LastSize = g.FontSize
+		  Next i
 		  
 		  showInvisible = displayInvisible
+		  
 		  Return lines
+		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub setAttributes(attr as TextLineAttributes)
+		Sub SetAttributes(attr As SyntaxArea.TextLineAttributes)
 		  mLineAttributes = attr
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub TabWidth(assigns value as integer)
-		  TABCHAR = ""
-		  for i as Integer = 1 to value
-		    TABCHAR = TABCHAR + " "
-		  next
+	#tag Method, Flags = &h0, Description = 557064617465732060544142434841526020746F206D6174636820746865207061737365642077696474682E20416C736F207365747320746865207769647468206F6620657665727920776F7264206F6E20746865206C696E6520746F202D312E
+		Sub TabWidth(Assigns value As Integer)
+		  /// Updates `TABCHAR` to match the passed width.
+		  /// Also sets the width of every word on the line to -1.
 		  
-		  var word as TextSegment
-		  for each Word in words
-		    word.width = -1
-		  next
+		  TABCHAR = ""
+		  
+		  For i As Integer = 1 To value
+		    TABCHAR = TABCHAR + " "
+		  Next i
+		  
+		  For Each word As SyntaxArea.TextSegment In Words
+		    word.Width = -1
+		  Next word
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextWidth(buffer as gapBuffer, g as graphics, displayInvisible as boolean, length as integer = - 1) As Single
-		  #if not DebugBuild
-		    #pragma DisableBackgroundTasks
-		    #pragma DisableBoundsChecking
-		    
-		  #endif
+		Function TextWidth(buffer As SyntaxArea.GapBuffer, g As Graphics, displayInvisible As Boolean, length As Integer = -1) As Single
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
 		  
-		  //gets the text to be displayed by this line.
-		  if length = 0 then Return 0
-		  if length < 0 then
-		    length = self.length
-		    
-		    if self.lastFont <> g.FontName or self.lastSize <> g.FontSize then width = 0
-		    if TotalWidth > 0 then Return TotalWidth
-		  end if
+		  If length = 0 Then Return 0
+		  If length < 0 Then
+		    length = Self.Length
+		    If Self.LastFont <> g.FontName Or Self.LastSize <> g.FontSize Then width = 0
+		    If TotalWidth > 0 Then Return TotalWidth
+		  End If
 		  
-		  self.lastFont = g.FontName
-		  self.lastSize = g.FontSize
+		  Self.LastFont = g.FontName
+		  Self.LastSize = g.FontSize
 		  
-		  //unparsed? return the raw text
-		  if words.LastIndex < 0 then
+		  // Unparsed? We'll return the raw text.
+		  If words.LastIndex < 0 Then
 		    ParseLine(buffer, &c00)
-		    if words.LastIndex < 0 then
-		      Return g.TextWidth(buffer.getText(self.offset, self.length).ConvertEncoding(Encodings.UTF8)) ' StringWidth can't handle UTF-32 (on OSX, at least)
-		    end if
-		  end if
+		    If words.LastIndex < 0 Then
+		      // `Graphics. StringWidt()`h can't handle UTF-32 (on OSX, at least.)
+		      Return g.TextWidth(buffer.GetText(Self.Offset, Self.Length).ConvertEncoding(Encodings.UTF8))
+		    End If
+		  End If
 		  
-		  var ret as Single
-		  var word as TextSegment
-		  var charsToRead as Integer
-		  var text as String
-		  var u as Integer = words.LastIndex
+		  Var ret As Single
+		  Var word As SyntaxArea.TextSegment
+		  Var charsToRead As Integer
+		  Var s As String
+		  Var u As Integer = words.LastIndex
 		  
-		  for i as integer = 0 to u
-		    Word = words(i)
+		  For i As Integer = 0 To u
+		    word = Words(i)
+		    charsToRead = word.Length
 		    
-		    charsToRead = word.length
-		    select case word.TYPE
-		    case TextSegment.TYPE_SPACE
-		      text = " "
+		    Select Case word.Type
+		    Case SyntaxArea.TextSegment.TYPE_SPACE
+		      s = " "
 		      
-		    case TextSegment.TYPE_TAB
-		      text = TABCHAR
+		    Case SyntaxArea.TextSegment.TYPE_TAB
+		      s = TABCHAR
 		      
-		    case TextSegment.TYPE_EOL
-		      if displayInvisible then
-		        text = " "
-		      else
-		        text = ""
-		      end if
+		    Case SyntaxArea.TextSegment.TYPE_EOL
+		      If displayInvisible Then
+		        s = " "
+		      Else
+		        s = ""
+		      End If
 		      
-		    case TextSegment.TYPE_PLACEHOLDER
-		      text = PlaceholderPaddingString + buffer.getText(TextPlaceholder(word).textRange.offset + offset, TextPlaceholder(word).textRange.length) + PlaceholderPaddingString
+		    Case SyntaxArea.TextSegment.TYPE_PLACEHOLDER
+		      s = PLACEHOLDER_PADDING_STRING + buffer.GetText(SyntaxArea.TextPlaceholder(word).TextRange.Offset + Offset, _
+		      SyntaxArea.TextPlaceholder(word).TextRange.Length) + PLACEHOLDER_PADDING_STRING
 		      
-		    else
-		      //find out the number of chars to read in the current token
-		      if word.offset + word.length > length then
-		        'charsToRead = word.length
-		        'else
-		        charsToRead = length - word.offset
-		      end if
+		    Else
+		      // Determine the number of characters to read in the current token.
+		      If word.Offset + word.Length > length Then
+		        charsToRead = length - word.Offset
+		      End If
 		      
-		      text = buffer.getText(word.offset + self.offset, charsToRead)
-		    end select
+		      s = buffer.GetText(word.Offset + Self.Offset, charsToRead)
+		    End Select
 		    
-		    if word.lastFont <> g.FontName or word.lastSize <> g.FontSize then
-		      word.width = -1
-		    end if
+		    If word.LastFont <> g.FontName Or word.LastSize <> g.FontSize Then
+		      word.Width = -1
+		    End If
 		    
-		    if word.width < 0 or charsToRead < word.length then
-		      //measure
-		      g.Bold = word.bold
-		      g.Italic = Word.italic
-		      g.Underline = Word.underline
-		      ret = ret + g.TextWidth(text.ConvertEncoding(Encodings.UTF8)) ' StringWidth can't handle UTF-32 (on OSX, at least)
-		    else
-		      ret = ret + word.width
-		    end if
+		    If word.Width < 0 Or charsToRead < word.Length Then
+		      g.Bold = word.Bold
+		      g.Italic = word.Italic
+		      g.Underline = word.Underline
+		      // `Graphics.StringWidth()` can't handle UTF-32 (on OSX, at least)
+		      ret = ret + g.TextWidth(s.ConvertEncoding(Encodings.UTF8))
+		    Else
+		      ret = ret + word.Width
+		    End If
 		    
-		    word.lastFont = g.FontName
-		    word.lastSize = g.FontSize
-		    if word.offset + Word.length >= length then exit for
-		  next
+		    word.LastFont = g.FontName
+		    word.LastSize = g.FontSize
+		    If word.Offset + word.Length >= length Then Exit For
+		  Next i
 		  
 		  Return ret
+		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TotalWidth() As integer
-		  Return width
+		Function TotalWidth() As Integer
+		  Return Width
+		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateIndentationState(definition as highlightdefinition, prevIndentationState as String, myText as String)
+		Sub UpdateIndentationState(definition As SyntaxArea.HighlightDefinition, prevIndentationState As String, myText As String)
 		  // TODO: Maybe optimize this so that it doesn't need to perform the Regex checks
 		  // every time. E.g, if neither the mIndentationState nor the text changed, then
 		  // there's no need to update.
 		  // However, how to I tell if the text has changed? I shouldn't buffer each line here, that might
 		  // be wasteful.
 		  
-		  if mIndentationStateIn <> prevIndentationState then
+		  If mIndentationStateIn <> prevIndentationState Then
 		    mIndentationStateIn = prevIndentationState
 		    mIndentationStateOut = prevIndentationState
-		    mChangedIndentState = true
-		  end
+		    mChangedIndentState = True
+		  End If
 		  
-		  if me.length = 0 then
+		  If Me.Length = 0 Then
 		    mBlockIndent = 0
-		    mIsBlkStart = false
-		    mIsBlkEnd = false
-		    mBlockStartRule = nil
-		    mBlockEndRule = nil
+		    mIsBlkStart = False
+		    mIsBlkEnd = False
+		    mBlockStartRule = Nil
+		    mBlockEndRule = Nil
 		    Return
-		  end
+		  End If
 		  
-		  var newState as String
-		  mBlockIndent = definition.isBlockStart(myText, mIndentationStateIn, newState, mBlockStartRule)
-		  if newState <> mIndentationStateOut then
+		  Var newState As String
+		  mBlockIndent = definition.IsBlockStart(myText, mIndentationStateIn, newState, mBlockStartRule)
+		  If newState <> mIndentationStateOut Then
 		    mIndentationStateOut = newState
-		    mChangedIndentState = true
-		  end
+		    mChangedIndentState = True
+		  End If
 		  
-		  mIsBlkEnd = definition.isBlockEnd(myText, newState, newState, mBlockEndRule)
-		  if newState <> mIndentationStateOut then
+		  mIsBlkEnd = definition.IsBlockEnd(myText, newState, newState, mBlockEndRule)
+		  If newState <> mIndentationStateOut Then
 		    mIndentationStateOut = newState
-		    mChangedIndentState = true
-		  end
+		    mChangedIndentState = True
+		  End If
 		  
 		  mIsBlkStart = mBlockIndent <> 0
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function VisualIndent(isIndentedVisually as Boolean) As Integer
-		  if isIndentedVisually then
-		    return self.indent
-		  end if
+		Function VisualIndent(isIndentedVisually As Boolean) As Integer
+		  If isIndentedVisually Then
+		    Return Self.Indent
+		  End If
+		  
 		End Function
 	#tag EndMethod
 
@@ -978,6 +981,110 @@ Inherits SyntaxArea.TextSegment
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="DebugDescription"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EndOffset"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="length"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="offset"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BackgroundColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&h000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bold"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBackgroundColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ID"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Italic"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&h000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Type"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Underline"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Width"
+			Visible=false
+			Group="Behavior"
+			InitialValue="0"
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="BlockIndentation"
 			Visible=false
 			Group="Behavior"
@@ -998,7 +1105,7 @@ Inherits SyntaxArea.TextSegment
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -1054,7 +1161,7 @@ Inherits SyntaxArea.TextSegment
 			Visible=false
 			Group="Behavior"
 			InitialValue="false"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -1110,7 +1217,7 @@ Inherits SyntaxArea.TextSegment
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
 		Sub Opening()
 		  mBlockBeginPosX = -1
