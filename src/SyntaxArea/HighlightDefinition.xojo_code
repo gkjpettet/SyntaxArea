@@ -98,7 +98,7 @@ Protected Class HighlightDefinition
 		  Next current
 		  
 		  // Not found. This shouldn't happen.
-		  Raise New InvalidArgumentException("Could not find a context named `" + name "` in " + _
+		  Raise New InvalidArgumentException("Could not find a context named `" + name + "` in " + _
 		  "highlight definition.")
 		  
 		End Function
@@ -118,7 +118,7 @@ Protected Class HighlightDefinition
 		  Next current
 		  
 		  // Not found. This shouldn't happen.
-		  Raise New InvalidArgumentException("Could not find a context named `" + name "` in " + _
+		  Raise New InvalidArgumentException("Could not find a context named `" + name + "` in " + _
 		  "highlight definition.")
 		  
 		End Sub

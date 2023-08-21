@@ -31,6 +31,7 @@ Class=MessageQueue;SyntaxArea/MessageCentre/MessageQueue.xojo_code;&h000000006CA
 MultiImage=blockStartMarker;Required Images/blockStartMarker.xojo_image;&h0000000009E7F7FF;&h00000000570667FF;false
 Class=HighlightDefinition;SyntaxArea/HighlightDefinition.xojo_code;&h000000002E595C6B;&h00000000435ADFFF;false
 Class=SymbolsDefinition;SyntaxArea/SymbolsDefinition.xojo_code;&h00000000697137F6;&h00000000435ADFFF;false
+Class=HighlightContext;SyntaxArea/HighlightContext.xojo_code;&h000000006CC2CE38;&h00000000435ADFFF;false
 DefaultWindow=Window1
 AppMenuBar=MainMenuBar
 MajorVersion=1
