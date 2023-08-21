@@ -5,6 +5,8 @@ Protected Module SyntaxArea
 		  /// Returns a dark mode equivalent color for `c` if we're in dark mode.
 		  /// Assumes a light mode colour is passed.
 		  
+		  #Pragma Warning "REFACTOR: Remove this when we have migrated to ColorGroups"
+		  
 		  #If RBVersion >= 2019.02
 		    #If AppSupportsDarkMode
 		      If Color.IsDarkMode Then
@@ -126,6 +128,21 @@ Protected Module SyntaxArea
 		  Var b As Double = c.Blue
 		  
 		  Return (r + r + b + g + g + g) / 6 / 255 // https://stackoverflow.com/a/596241/43615
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 52657475726E732054727565206966207765206E65656420746F20737570706F7274206461726B206D6F64652E
+		Protected Function SupportsDarkMode() As Boolean
+		  /// Returns True if we need to support dark mode.
+		  
+		  #If RBVersion >= 2019.02
+		    #If AppSupportsDarkMode
+		      Return True
+		    #EndIf
+		  #EndIf
+		  
+		  Return False
 		  
 		End Function
 	#tag EndMethod

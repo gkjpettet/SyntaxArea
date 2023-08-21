@@ -851,7 +851,7 @@ Protected Class HighlightContext
 			Visible=false
 			Group="Behavior"
 			InitialValue="&h000000"
-			Type="color"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -859,7 +859,7 @@ Protected Class HighlightContext
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -875,7 +875,7 @@ Protected Class HighlightContext
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="string"
+			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -891,7 +891,7 @@ Protected Class HighlightContext
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -899,7 +899,7 @@ Protected Class HighlightContext
 			Visible=false
 			Group="Behavior"
 			InitialValue="&h000000"
-			Type="color"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -923,7 +923,7 @@ Protected Class HighlightContext
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"
-			Type="boolean"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

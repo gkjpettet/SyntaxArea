@@ -3,6 +3,278 @@ Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
+		Sub Opening()
+		  BlockBeginPosX = -1
+		  
+		  IgnoreRepaint = True
+		  
+		  RaiseEvent Opening
+		  
+		  If TextFont = "" Then TextFont = DEFAULT_FONT
+		  If FontSize = 0 Then FontSize = DEFAULT_FONTSIZE
+		  
+		  Me.MouseCursor = System.Cursors.IBeam
+		  CursorIsIbeam = True
+		  
+		  CalculateMaxVerticalSB
+		  CalculateMaxHorizontalSB
+		  
+		  Me.AcceptTextDrop
+		  Me.AcceptRawDataDrop("objectID")
+		  
+		  EnableBlinker(mHasFocus And SelectionLength = 0)
+		  IgnoreRepaint = False
+		  
+		  If TextSelectionColor = Color.Black Then
+		    TextSelectionColor = Color.HighlightColor
+		  End If
+		  
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h1, Description = 436F6D707574657320746865206D6178696D756D20686F72697A6F6E74616C207363726F6C6C6261722076616C75652E
+		Protected Sub CalculateMaxHorizontalSB()
+		  /// Computes the maximum horizontal scrollbar value.
+		  
+		  If mHorizontalScrollBar <> Nil Then
+		    Var contentWidth As Integer = mLastLongestLinePixels + LineNumberOffset + RightScrollMargin
+		    
+		    Var n As Integer = Self.Width
+		    Var max As Integer = contentWidth - n
+		    If max <= 0 Then
+		      max = 0
+		      n = 0
+		    End If
+		    
+		    mHorizontalScrollBar.Enabled = max > 0
+		    mHorizontalScrollBar.MaximumValue = max
+		    mHorizontalScrollBar.PageStep = n
+		    mHorizontalScrollBar.LineStep = 8
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 436F6D707574657320746865206D6178696D756D20766572746963616C207363726F6C6C6261722076616C75652E
+		Protected Sub CalculateMaxVerticalSB()
+		  /// Computes the maximum vertical scrollbar value.
+		  
+		  If mVerticalScrollbar <> Nil Then
+		    If EnableLineFoldings Then
+		      mVerticalScrollbar.MaximumValue = Lines.Count - Lines.invisibleLines - MaxVisibleLines
+		    Else
+		      mVerticalScrollbar.MaximumValue = Lines.Count - MaxVisibleLines
+		    End If
+		    
+		    // Update the pageStep so a page jump is always the number of visible lines, or a page.
+		    mVerticalScrollbar.PageStep = MaxVisibleLines - 1
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Function ColorReturningProc() As Color
+	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h1
+		Protected Sub EnableBlinker(value As Boolean)
+		  If mCaretBlinker = Nil Then Return
+		  
+		  If value And Not ReadOnly Then
+		    mCaretBlinker.RunMode = Timer.RunModes.Multiple
+		    CaretVisible = True
+		  Else
+		    mCaretBlinker.RunMode = Timer.RunModes.Off
+		    CaretVisible = False
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetCurrentModeColor(propertyName As String) As Color
+		  #Pragma Warning "REFACTOR: This should be removed in favour of ColorGroups"
+		  
+		  Var result As Variant
+		  If Color.IsDarkMode Then
+		    result = mDarkModeColors.Lookup(propertyName, Nil)
+		    If result = Nil Then
+		      // We were in light mode before, now we can fetch the correct dark mode colour.
+		      result = mBrightModeColors.Lookup(propertyName, Nil)
+		      Var dark As Color = SyntaxArea.AdjustColorForDarkMode(result)
+		      mDarkModeColors.Value(propertyName) = dark
+		      
+		    ElseIf result IsA ColorReturningProc Then
+		      result = ColorReturningProc(result).Invoke
+		      mDarkModeColors.Value(propertyName) = result
+		    End If
+		    
+		  Else
+		    result = mBrightModeColors.Lookup(propertyName, Nil)
+		    If result Is Nil Then
+		      Break // This should not happen...
+		      result = mDarkModeColors.Lookup(propertyName, Nil)
+		      result = SyntaxArea.InvertedModeColor(result)
+		      mBrightModeColors.Value(propertyName) = result
+		      
+		    ElseIf result IsA ColorReturningProc Then
+		      result = ColorReturningProc(result).Invoke
+		      mBrightModeColors.Value(propertyName) = result
+		    End If
+		  End If
+		  
+		  Return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4D61726B7320616C6C206C696E657320666F7220726564726177696E672E
+		Sub InvalidateAllLines()
+		  /// Marks all lines for redrawing.
+		  
+		  InvalidateLine(-1)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 496E76616C6964617465732074686520676976656E206C696E6520286D61726B7320697420666F722072652D64726177696E67292E2049662060696E64657860203C2030207468656E20612066756C6C20726566726573682077696C6C206F636375722E
+		Sub InvalidateLine(index As Integer)
+		  /// Invalidates the given line (marks it for re-drawing).
+		  /// If `index` < 0 then a full refresh will occur.
+		  
+		  mFullRefresh = index < 0 Or mFullRefresh
+		  
+		  InvalidLines.Value(index) = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 50617274206F6620746865204D65737361676543656E7472652E4D657373616765526563656976657220696E746572666163652E
+		Protected Sub ReceiveMessage(theMessage As MessageCentre.Message)
+		  /// Part of the MessageCentre.MessageReceiver interface.
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  // 1 is the message type in this particular scheme.
+		  Var type As Integer = theMessage.Info(1)
+		  
+		  If theMessage.Sender = lines Then
+		    Select Case type
+		    Case LineManager.LINE_COUNT_CHANGED_MESSAGE
+		      Var count As Integer = theMessage.Info(2) // 2 holds the number of lines.
+		      Var invisible As Integer = theMessage.Info(3) // 3 holds the number of invisible lines.
+		      Self.LineCountChanged(count - invisible)
+		      
+		    Case LineManager.LINE_CHANGED_MESSAGE
+		      Var index As Integer = theMessage.Info(2)
+		      Var length As Integer = theMessage.Info(3)
+		      
+		      If index = CaretLine And mHighlighter <> Nil And _
+		        mHighlighter.ThreadState <> Thread.ThreadStates.NotRunning Then
+		        mHighlighter.HighlightLine(index)
+		      End If
+		      
+		      If SyntaxDefinition = Nil And LoadingDocument Then Return
+		      
+		      Call ModifiedLines.AddRange(index, length)
+		      
+		    Case LineManager.MAX_LINE_LENGTH_CHANGED_MESSAGE
+		      Var index As Integer = theMessage.Info(2)
+		      Self.MaxLineLengthChanged(index)
+		      
+		    Case LineManager.LINE_SYMBOLS_REMOVED_MESSAGE
+		      LineSymbolsRemoved(theMessage.Info(2))
+		    End Select
+		    
+		  ElseIf theMessage.Sender = CurrentSuggestionWindow Then
+		    
+		    Select Case Type
+		    Case SuggestionWindow.AutocompleteCancelledMsg
+		      Var requestFocus As Boolean = theMessage.Info(2)
+		      AutocompleteCancelled(requestFocus)
+		      
+		    Case SuggestionWindow.KeyDownMsg
+		      Var key As String = theMessage.Info(2)
+		      Call HandleKeyDown(key)
+		      
+		    Case SuggestionWindow.CurrentAutocompleteOptionsMsg
+		      theMessage.AddInfo(3, CurrentAutocompleteOptions)
+		      
+		    Case SuggestionWindow.OptionSelectedMsg
+		      Var option As String = theMessage.Info(2)
+		      AutocompleteOptionSelected(option)
+		    End Select
+		    
+		  ElseIf theMessage.Sender = mHighlighter Then
+		    Select Case type
+		    Case LineHighlighter.HighlightDoneMsg
+		      RaiseEvent HighlightingComplete
+		      
+		    Case LineHighlighter.LineHighlightedMsg
+		      LineHighlighted(theMessage.Info(2))
+		      
+		    Case LineHighlighter.ScreenLinesHighlightedMsg
+		      Redraw
+		    End Select
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetBrightModeColor(c As Color, propertyName As String)
+		  #Pragma Warning "REFACTOR: Remove this once we have migrated to ColorGroups"
+		  
+		  propertyName = propertyName.Replace(".Set", ".Get")
+		  
+		  mBrightModeColors.Value(propertyName) = c
+		  
+		  If SyntaxArea.SupportsDarkMode Then
+		    If Not Color.IsDarkMode Then
+		      // Will be set in the getter once we are out of dark mode.
+		      mDarkModeColors.Value(propertyName) = Nil
+		    Else
+		      Var dark As Color = SyntaxArea.AdjustColorForDarkMode(c)
+		      
+		      If propertyName = "SyntaxArea.Editor.BackColor.Get" Then // Was "CustomEditField.BackColor.Get".
+		        mDarkModeColors.Value(propertyName) = &C171717
+		      Else
+		        mDarkModeColors.Value(propertyName) = dark
+		      End If
+		    End If
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetColorProvider(providerFunction As ColorReturningProc, propertyName As String)
+		  #Pragma Warning "REFACTOR: Remove this once we have migrated to ColorGroups"
+		  
+		  propertyName = propertyName.Replace (".Set", ".Get")
+		  mBrightModeColors.Value (propertyName) = providerFunction
+		  mDarkModeColors.Value (propertyName) = providerFunction
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206F70656E696E672E
+		Event Opening()
+	#tag EndHook
+
+
+	#tag Note, Name = ColorReturningProc
+		This delegate I think is used to support dark mode colours.
+		We should look to refactor to remove this and simply use ColorGroups.
+		
+	#tag EndNote
+
+
 	#tag Property, Flags = &h0
 		AutoCloseBrackets As Boolean
 	#tag EndProperty
@@ -1056,7 +1328,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUndoMgr As SyntaxArea.UndoManager
+		Private mUndoMgr As UndoKit.UndoManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -1109,7 +1381,7 @@ Implements MessageCentre.MessageReceiver
 			Get
 			  If mRightMargin = 0 Then
 			    // Get default printer area from printer.
-			    Var tmpPrinter As New SyntaxArea.PrinterSetup
+			    Var tmpPrinter As New PrinterSetup
 			    mRightMargin = tmpPrinter.Width
 			  End If
 			  
@@ -1488,7 +1760,7 @@ Implements MessageCentre.MessageReceiver
 		#tag Getter
 			Get
 			  If mUndoMgr = Nil Then
-			    mUndoMgr = New SyntaxArea.UndoManager
+			    mUndoMgr = New UndoKit.UndoManager
 			  End If
 			  
 			  Return mUndoMgr
@@ -1500,7 +1772,7 @@ Implements MessageCentre.MessageReceiver
 			  mUndoMgr = value
 			End Set
 		#tag EndSetter
-		UndoMgr As SyntaxArea.UndoManager
+		UndoMgr As UndoKit.UndoManager
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
