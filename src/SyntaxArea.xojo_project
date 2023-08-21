@@ -9,6 +9,7 @@ Folder=Required Images;Required Images;&h00000000570667FF;&h0000000000000000;fal
 MultiImage=blockFoldedTrailMarker;Required Images/blockFoldedTrailMarker.xojo_image;&h000000001AF707FF;&h00000000570667FF;false
 BuildSteps=Build Automation;Build Automation.xojo_code;&h000000004D81DFFF;&h0000000000000000;false
 Module=SyntaxArea;SyntaxArea.xojo_code;&h00000000435ADFFF;&h0000000000000000;false
+Class=DocumentSymbol;SyntaxArea/DocumentSymbol.xojo_code;&h0000000008116F35;&h00000000435ADFFF;false
 Class=LineManager;SyntaxArea/LineManager.xojo_code;&h000000001B8F7340;&h00000000435ADFFF;false
 Class=TextLine;SyntaxArea/TextLine.xojo_code;&h000000005E1E491D;&h00000000435ADFFF;false
 Class=NSScrollViewCanvas;SyntaxArea/NSScrollViewCanvas.xojo_code;&h0000000005FF5FFF;&h00000000435ADFFF;false
