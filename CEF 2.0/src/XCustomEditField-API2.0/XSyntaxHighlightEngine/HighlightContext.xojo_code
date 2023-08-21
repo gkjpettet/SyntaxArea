@@ -500,19 +500,34 @@ Protected Class HighlightContext
 		A little experiment on SyntaxHighlighting
 		Contains the rules of how to Highlight a Context within a HighlightDefinition
 		A context is composed of ONE of the following:
-		- a start and end regexes, everything inside the start and end regexes is part of the context, this is a full match regex (subexpression 0)
-		- an EntryRegEx, specifies the regular expression to match the whole context (ie: an html tag), the first subexpression of the expression is used (subexpression 1)
-		- keywords, one or more keywords that need to be Highlighted, you can have multiple keyword contexts with different highlight colors. (array of strings)
-		- regexes, one or more regular expressions that define variations of the same context (ie: in java #include or #package), subexpression 1 is used for each entry.
+		- a start and end regexes, everything inside the start and end regexes is part of the context, 
+		  this is a full match regex (subexpression 0)
+		- an EntryRegEx, specifies the regular expression to match the whole context (ie: an html tag), the first subexpression 
+		  of the expression is used (subexpression 1)
+		- keywords, one or more keywords that need to be Highlighted, you can have multiple keyword contexts with different 
+		  highlight colors. (array of strings)
+		- regexes, one or more regular expressions that define variations of the same context (ie: in java #include or #package), 
+		  subexpression 1 is used for each entry.
 		
 		Methods:
 		addKeyword(keyword as String): adds the keyword to the keywords array
+		
 		addRegEx(newRegEx as String): adds the newRegEx to the regexes array
-		addSubContext(context as HighlightContext): adds the context as a subcontext of this one, for example: properties within xml tags
-		appendToXMLNode(parent as xmlNode, depth as integer = 2): appends this context to the parent xml node as an xml node, this is done when exporting the parent definition as an xml.
+		
+		addSubContext(context as HighlightContext): adds the context as a subcontext of this one, for example: properties within 
+		xml tags
+		
+		appendToXMLNode(parent as xmlNode, depth as integer = 2): appends this context to the parent xml node as an xml node, 
+		this is done when exporting the parent definition as an xml.
+		
 		Constructor(caseSensitive as Boolean): the constructor sets the case sensitiviness of the context.
-		contextRegEx as string: returns the composed regular expression with all the contents of the context, if the context has StartRegEx and EndRegEx, the contextRegEx is the StartRegEx
-		Highlight(text as string, style as styledText, subExpression as string, position as integer, scanner as regex): Highlights the subexpression, text is the text of the parent context, position is the position of the first character of the subexpression in the context.
+		
+		contextRegEx as string: returns the composed regular expression with all the contents of the context, if the context 
+		has StartRegEx and EndRegEx, the contextRegEx is the StartRegEx
+		
+		Highlight(text as string, style as styledText, subExpression as string, position as integer, scanner as regex): Highlights the 
+		subexpression, text is the text of the parent context, position is the position of the first character of the subexpression in the context.
+		
 		loadFromXmlNode(node as XmlNode): loads the context from the xmlNode.
 		
 		Properties:
