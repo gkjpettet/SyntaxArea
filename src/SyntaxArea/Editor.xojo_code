@@ -3,11 +3,6 @@ Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206F70656E696E672E
-		Event Opening()
-	#tag EndHook
-
-
 	#tag Property, Flags = &h0
 		AutoCloseBrackets As Boolean
 	#tag EndProperty
@@ -60,16 +55,61 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Remove this dependency on a bundled image"
+			  #Pragma Warning "TODO: Replace this bundled image with something else?"
 			  
-			  If gBlockstartimage = Nil Then
-			    gBlockstartimage = SyntaxArea.LoadMaskedPicture(blockStartMarker)
+			  If gBlockEndImage = Nil Then
+			    gBlockEndImage = SyntaxArea.LoadMaskedPicture(blockEndMarker)
 			  End If
 			  
-			  Return gBlockstartimage
+			  Return gBlockEndImage
+			  
+			End Get
+		#tag EndGetter
+		Protected Shared BlockEndImage As Picture
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  #Pragma Warning "TODO: Replace this bundled image with something else?"
+			  If gBlockFoldedImage = Nil Then
+			    gBlockFoldedImage = SyntaxArea.LoadMaskedPicture(blockFoldedMarker)
+			  End If
+			  
+			  Return gBlockFoldedImage
+			End Get
+		#tag EndGetter
+		Protected Shared BlockFoldedImage As Picture
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  #Pragma Warning "TODO: Replace this bundled image with something else?"
+			  
+			  If gBlockStartImage = Nil Then
+			    gBlockStartSmage = SyntaxArea.LoadMaskedPicture(blockStartMarker)
+			  End If
+			  
+			  Return gBlockStartImage
 			End Get
 		#tag EndGetter
 		Protected Shared BlockStartImage As Picture
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  #Pragma Warning "TODO: Replace this bundled image with something else?"
+			  
+			  If gBookmarkImage = Nil Then
+			    gBookmarkImage = SyntaxArea.LoadMaskedPicture(bookmarksimg)
+			  End If
+			  
+			  Return gBookmarkImage
+			End Get
+		#tag EndGetter
+		Protected Shared BookmarkImage As Picture
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -217,6 +257,15 @@ Implements MessageCentre.MessageReceiver
 		Protected CurrentEventID As Integer
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return gCurrentFocusedField
+			End Get
+		#tag EndGetter
+		Shared CurrentFocusedField As SyntaxArea.Editor
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h1
 		Protected CurrentSuggestionWindow As SyntaxArea.SuggestionWindow
 	#tag EndProperty
@@ -319,6 +368,10 @@ Implements MessageCentre.MessageReceiver
 		Private Dragging As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private Shared DragSource As SyntaxArea.Editor
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected DragTextOnDrag As Boolean
 	#tag EndProperty
@@ -386,7 +439,27 @@ Implements MessageCentre.MessageReceiver
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private Shared gBlockEndImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared gBlockFoldedImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Shared gBlockStartImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared gBookmarkImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared gCurrentFocusedField As SyntaxArea.Editor
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared gRightMargInlineImage As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -435,6 +508,10 @@ Implements MessageCentre.MessageReceiver
 		#tag EndGetter
 		GutterWidth As Integer
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private Shared gWeakCEFs As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		HighlightBlocksOnMouseOverGutter As Boolean
@@ -1050,6 +1127,21 @@ Implements MessageCentre.MessageReceiver
 		RightMarginAtPixel As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  If gRightMargInlineImage = Nil Then
+			    gRightMargInlineImage = New Picture(1, 1, 32)
+			    gRightMargInlineImage.RGBSurface.Pixel(0, 0) = &cff
+			  End If
+			  
+			  Return gRightMargInlineImage
+			  
+			End Get
+		#tag EndGetter
+		Protected Shared RightMarginLineImage As Picture
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h0
 		RightScrollMargin As Integer = 150
 	#tag EndProperty
@@ -1602,6 +1694,430 @@ Implements MessageCentre.MessageReceiver
 			InitialValue=""
 			Type="Integer"
 			EditorType="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoCloseBrackets"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutocompleteAppliesStandardCase"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoCompleteDone"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoIndentNewLines"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BackColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Border"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BorderColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BracketHighlightColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CaretColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CaretLine"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CaretPos"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ClearHighlightedRangesOnTextChange"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DirtyLinesColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisableReset"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayDirtyLines"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayInvisibleCharacters"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayLineNumbers"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayRightMarginMarker"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EnableAutocomplete"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EnableLineFoldings"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EnableLineFoldingSetting"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontSize"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GutterBackgroundColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GutterSeparationLineColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GutterWidth"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HighlightBlocksOnMouseOverGutter"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HighlightMatchingBrackets"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HighlightMatchingBracketsMode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IgnoreRepaint"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IndentPixels"
+			Visible=false
+			Group="Behavior"
+			InitialValue="16"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IndentVisually"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="KeepEntireTextIndented"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LeftMarginOffset"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersFontSize"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersTextFont"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaxVisibleLines"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ReadOnly"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RightMarginAtPixel"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RightScrollMargin"
+			Visible=false
+			Group="Behavior"
+			InitialValue="150"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollPosition"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollPositionX"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SelectionLength"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SelectionStart"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SelText"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabWidth"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Text"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextFont"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextLength"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextSelectionColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ThickInsertionPoint"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
