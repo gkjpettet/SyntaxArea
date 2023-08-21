@@ -2,225 +2,60 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
-	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
-	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
-		Sub Opening()
-		  mBlockBeginPosX = -1
-		  
-		  IgnoreRepaint = True
-		  RaiseEvent Opening
-		  
-		  If TextFont = "" Then TextFont = DEFAULT_FONT
-		  If LineNumbersTextFont = "" Then LineNumbersTextFont = DEFAULT_FONT
-		  If FontSize = 0 Then FontSize = DEFAULT_FONTSIZE
-		  
-		  Me.MouseCursor = System.Cursors.IBeam
-		  mCursorIsIBeam = True
-		  
-		  CalculateMaxVerticalSB
-		  CalculateMaxHorizontalSB
-		  
-		  Me.AcceptTextDrop
-		  Me.AcceptRawDataDrop("objectID")
-		  
-		  EnableBlinker(mHasFocus And SelectionLength = 0)
-		  ignoreRepaint = False
-		  
-		  If TextSelectionColor = Nil Then TextSelectionColor = Color.HighlightColor
-		  
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h21, Description = 43616C63756C6174657320746865206D6178696D756D20686F72697A6F6E74616C207363726F6C6C6261722076616C75652E
-		Private Sub CalculateMaxHorizontalSB()
-		  /// Calculates the maximum horizontal scrollbar value.
-		  
-		  If mHorizontalScrollbar = Nil Then Return
-		  
-		  Var contentWidth As Integer = mLastLongestLinePixels + LineNumberOffset + RightScrollMargin
-		  Var n As Integer = Self.Width
-		  Var max As Integer = contentWidth - n
-		  If max <= 0 Then
-		    max = 0
-		    n = 0
-		  End
-		  
-		  mHorizontalScrollBar.Enabled = max > 0
-		  mHorizontalScrollBar.MaximumValue = max
-		  mHorizontalScrollBar.PageStep = n
-		  mHorizontalScrollBar.LineStep = 8
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, Description = 43616C63756C6174657320746865206D6178696D756D20766572746963616C207363726F6C6C6261722076616C75652E
-		Private Sub CalculateMaxVerticalSB()
-		  /// Calculates the maximum vertical scrollbar value.
-		  
-		  If mVerticalScrollbar = Nil Then Return
-		  
-		  If EnableLineFoldings Then
-		    mVerticalScrollbar.MaximumValue = Lines.Count - Lines.invisibleLines - MaxVisibleLines
-		  Else
-		    mVerticalScrollbar.MaximumValue = Lines.Count - MaxVisibleLines
-		  End If
-		  
-		  // Update the pageStep so a page jump is always the number of visible lines or a page.
-		  mVerticalScrollbar.PageStep = MaxVisibleLines - 1
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, Description = 4368616E676573207468652063757272656E742073656C656374696F6E2E
-		Private Sub ChangeSelection(selStart As Integer, selLength As Integer, viaDoubleClick As Boolean = False)
-		  /// Changes the current selection.
-		  
-		  #Pragma Warning "TODO: Implement!"
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, Description = 456E61626C6573206F722064697361626C65732074686520636172657420626C696E6B65722E
-		Private Sub EnableBlinker(value As Boolean)
-		  /// Enables or disables the caret blinker.
-		  
-		  If mCaretBlinker = Nil Then Return
-		  
-		  If value And Not ReadOnly Then
-		    If DebugBuild And SyntaxArea.DebugIndentation Then
-		      // Prevent repeated `DrawContents()` calls when debugging.
-		      mCaretBlinker.RunMode = Timer.RunModes.Off
-		    Else
-		      mCaretBlinker.RunMode = Timer.RunModes.Multiple
-		    End If
-		    mCaretVisible = True
-		  Else
-		    mCaretBlinker.RunMode = Timer.RunModes.Off
-		    mCaretVisible = False
-		  End If
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 4D61726B7320616C6C206C696E657320666F7220726564726177696E672E
-		Sub InvalidateAllLines()
-		  /// Marks all lines for redrawing.
-		  
-		  InvalidateLine(-1)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 496E76616C69646174657320286D61726B7320666F7220726564726177696E67292074686520676976656E206C696E652E20496620696E646578203C2030207468656E20696E76616C69646174657320616C6C206C696E65732E
-		Sub InvalidateLine(index As Integer)
-		  /// Invalidates (marks for redrawing) the given line.
-		  /// If index < 0 then invalidates all lines.
-		  
-		  mFullRefresh = index < 0 or mFullRefresh
-		  InvalidLines.Value(index) = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865726527732061206E6577206C696E652074686174277320746865206C6F6E67657374206C696E652E
-		Private Sub MaxLineLengthChanged(longestLineIndex As Integer)
-		  /// Called by the line manager, when there's a new line that's the longest line.
-		  
-		  #If Not DebugBuild
-		    #Pragma DisableBackgroundTasks
-		    #Pragma DisableBoundsChecking
-		  #EndIf
-		  
-		  If longestLineIndex < 0 Then Return
-		  
-		  // OPTIMISE: Consider getting the screen width by reading all the word lengths in this line.
-		  Var maxLine As SyntaxArea.TextLine = Lines.GetLine(longestLineIndex)
-		  If maxline = Nil Or Abs(maxLine.length - mLastLongestLineLength) < 2 Then Return
-		  
-		  // Cache the length.
-		  mLastLongestLineLength = maxLine.length
-		  
-		  // Measure the string in pixels.
-		  Var tmp As Picture = TemporaryPicture
-		  Var maxLength As Single = maxLine.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters)
-		  If maxLength = mLastLongestLinePixels Then Return
-		  
-		  mLastLongestLinePixels = maxLength
-		  
-		  // Raise our custom event.
-		  RaiseEvent MaxLineLengthChanged(mLastLongestLinePixels)
-		  
-		  // Handle the horizontal scrollbar.
-		  CalculateMaxHorizontalSB
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ReceiveMessage(theMessage As MessageCentre.Message)
-		  /// Part of the MessageCentre.MessageReceiver interface.
-		  
-		  #Pragma Warning "TODO: Implement!"
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 526564726177732074686520656E746972652063616E7661732E
-		Sub Redraw(forced as Boolean = False)
-		  /// Redraws the entire canvas.
-		  
-		  #Pragma Warning "TODO: Implement!"
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 52656472617773207468652063617265742E
-		Sub RedrawCaret()
-		  /// Redraws the caret.
-		  ///
-		  /// Called by `CaretBlinker`.
-		  
-		  #Pragma Warning "TODO: Implement!"
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, Description = 52657475726E7320612074656D706F726172792070696374757265206F626A6563742077697468207468652063757272656E742054657874466F6E7420616E6420466F6E7453697A6520746861742063616E206265207573656420666F722067726170686963616C2063616C63756C6174696F6E732E
-		Private Function TemporaryPicture() As Picture
-		  /// Returns a temporary picture object with the current TextFont and FontSize that can be used for graphical calculations.
-		  
-		  If mTempPicture = Nil Then mTempPicture = New Picture(2, 2)
-		  
-		  mTempPicture.Graphics.FontName = TextFont
-		  mTempPicture.Graphics.FontSize = FontSize
-		  
-		  mTempPicture.Graphics.Bold = False
-		  mTempPicture.Graphics.Italic = False
-		  mTempPicture.Graphics.Underline = False
-		  
-		  Return mTempPicture
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateDesiredColumn(pos As Integer = -1)
-		  // Saves the screen position of the given character offset.
-		  
-		  If Lines.Count = 0 Then Return
-		  
-		  If pos < 0 Then pos = CaretPos
-		  
-		  mDesiredColumnCharPos = pos
-		End Sub
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0, Description = 546865206C656E677468206F6620746865206C6F6E67657374206C696E6520686173206368616E6765642E
-		Event MaxLineLengthChanged(maxLineLengthInPixels As Single)
-	#tag EndHook
-
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206F70656E696E672E
 		Event Opening()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h0
+		AutoCloseBrackets As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		AutocompleteAppliesStandardCase As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		AutoCompleteDone As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected AutocompleteSuggestionInsertionX As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		AutoIndentNewLines As Boolean = True
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor(value, CurrentMethodName)
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		BackColor As Color
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h1
+		Protected BlockBeginPosX As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected BlockBeginPosY As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private BlockCharsPattern As String
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
@@ -237,7 +72,121 @@ Implements MessageCentre.MessageReceiver
 		Protected Shared BlockStartImage As Picture
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 54686520706F736974696F6E206F66207468652063617265742E
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  If mBookmarkTable = Nil Then
+			    mBookmarkTable = New Dictionary
+			  End If
+			  
+			  Return mBookmarkTable
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mBookmarkTable = value
+			End Set
+		#tag EndSetter
+		Protected BookmarkTable As Dictionary
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mDrawFrame
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mDrawFrame = value
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		Border As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return getCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor(value, CurrentMethodName)
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		BorderColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value = &c00000000 Then
+			    // If it's not explicitly assigned, we use a default (yellow)
+			    value = Color.Yellow
+			  End If
+			  
+			  SetBrightModeColor(value, CurrentMethodName)
+			  
+			End Set
+		#tag EndSetter
+		BracketHighlightColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor(value, CurrentMethodName)
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		CaretColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Var x, y As Double
+			  Var calcPos As Integer = mDesiredColumnCharPos
+			  
+			  // Or the caretpos.
+			  If mDesiredColumnCharPos < 0 Then calcPos = CaretPos
+			  
+			  // Find screen position.
+			  XYAtCharPos(calcPos, x, y)
+			  
+			  Return x - LineNumberOffset - LeftMarginOffset + ScrollPositionX
+			  
+			End Get
+		#tag EndGetter
+		Protected CaretDesiredColumn As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mCaretLine
+			End Get
+		#tag EndGetter
+		CaretLine As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mCaretPos
@@ -246,15 +195,75 @@ Implements MessageCentre.MessageReceiver
 		#tag Setter
 			Set
 			  If value = mCaretPos Then Return
-			  
 			  ChangeSelection(value, 0)
-			  
 			End Set
 		#tag EndSetter
 		CaretPos As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E20696E76697369626C6520636861726163746572732028652E672E207370616365732C2072657475726E732C20657463292077696C6C20626520647261776E2E
+	#tag Property, Flags = &h21
+		Private CaretVisible As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ClearHighlightedRangesOnTextChange As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected CurrentDocumentSymbols As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected CurrentEventID As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected CurrentSuggestionWindow As SyntaxArea.SuggestionWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected CursorIsIbeam As Boolean = True
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor(value, CurrentMethodName)
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		DirtyLinesColor As Color
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		DisableReset As Boolean = False
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mDisplayDirtyLines
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mDisplayDirtyLines = value
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		DisplayDirtyLines As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mDisplayInvisibleCharacters
@@ -272,7 +281,7 @@ Implements MessageCentre.MessageReceiver
 		DisplayInvisibleCharacters As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E206C696E65206E756D626572732077696C6C20626520646973706C617965642E
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mDisplayLineNumbers
@@ -284,6 +293,7 @@ Implements MessageCentre.MessageReceiver
 			  UpdateDesiredColumn
 			  InvalidateAllLines
 			  Redraw
+			  
 			End Set
 		#tag EndSetter
 		DisplayLineNumbers As Boolean
@@ -292,14 +302,50 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  return mEnablelinefoldings
+			  Return mDisplayRightMarginMarker
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If mEnablelinefoldings And Not value Then Lines.UnfoldAll
+			  mDisplayRightMarginMarker = value
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		DisplayRightMarginMarker As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private Dragging As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected DragTextOnDrag As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected DragTextPos As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected DragTextSelection As SyntaxArea.DataRange
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		EnableAutocomplete As Boolean = False
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mEnableLineFoldings
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If mEnableLineFoldings And Not value Then Lines.UnfoldAll
 			  mEnableLineFoldings = value
-			  mLineNumberOffset = 0
+			  LineNumberOffset = 0
 			  UpdateDesiredColumn
 			  InvalidateAllLines
 			  Redraw
@@ -309,7 +355,11 @@ Implements MessageCentre.MessageReceiver
 		EnableLineFoldings As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 5468652063757272656E7420666F6E742073697A652E
+	#tag Property, Flags = &h0
+		EnableLineFoldingSetting As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mFontSize
@@ -318,11 +368,10 @@ Implements MessageCentre.MessageReceiver
 		#tag Setter
 			Set
 			  If Value = mFontSize Then Return
-			  
 			  mFontSize = value
 			  TextHeight = 0
 			  
-			  mlastLongestLineLength = 0
+			  mLastLongestLineLength = 0
 			  mLastLongestLinePixels = 0
 			  MaxLineLengthChanged(Lines.LongestLineIdx)
 			  
@@ -337,14 +386,89 @@ Implements MessageCentre.MessageReceiver
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private FullRefresh As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private Shared gBlockStartImage As Picture
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C2069676E6F726520746865206E6578742063616C6C20746F207265647261772E
+	#tag Property, Flags = &h1
+		Protected Gutter As Picture
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor(value, CurrentMethodName)
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		GutterBackgroundColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor(value, CurrentMethodName)
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		GutterSeparationLineColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return LineNumberOffset
+			End Get
+		#tag EndGetter
+		GutterWidth As Integer
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		HighlightBlocksOnMouseOverGutter As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  If mHighlightedRanges = Nil Then
+			    mHighlightedRanges = New SyntaxArea.CharSelectionManager
+			  End If
+			  
+			  Return mHighlightedRanges
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mHighlightedRanges = value
+			  
+			End Set
+		#tag EndSetter
+		Protected HighlightedRanges As SyntaxArea.CharSelectionManager
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		HighlightMatchingBrackets As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		HighlightMatchingBracketsMode As Integer
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mIgnoreRepaintCount > 0
@@ -352,10 +476,10 @@ Implements MessageCentre.MessageReceiver
 		#tag EndGetter
 		#tag Setter
 			Set
-			  // Sets a counter so every True is balanced with a False.
-			  
 			  // Make sure it's never negative.
-			  If mIgnoreRepaintCount < 0 Then mIgnoreRepaintCount = 0
+			  If mIgnoreRepaintCount < 0 Then
+			    mIgnoreRepaintCount = 0
+			  End If
 			  
 			  If value Then
 			    mIgnoreRepaintCount = mIgnoreRepaintCount + 1
@@ -368,24 +492,127 @@ Implements MessageCentre.MessageReceiver
 		IgnoreRepaint As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h21, Description = 4B6579203D206C696E6520696E6465782C2056616C7565203D20426F6F6C65616E
+	#tag Property, Flags = &h0
+		IndentPixels As Integer = 16
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If mInvalidlines = Nil Then mInvalidlines = New Dictionary
+			  Return mIndentVisually
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If mIndentVisually <> value Then
+			    mIndentVisually = value
+			    Self.ReindentText
+			  End If
 			  
-			  Return mInvalidlines
+			End Set
+		#tag EndSetter
+		IndentVisually As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  If mInvalidLines = Nil Then
+			    mInvalidLines = New Dictionary
+			  End If
+			  
+			  Return mInvalidLines
 			  
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mInvalidlines = value
+			  mInvalidLines = value
 			End Set
 		#tag EndSetter
-		Private InvalidLines As Dictionary
+		Protected InvalidLines As Dictionary
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h21
+		Private IsDoubleClick As Boolean = False
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mKeepEntireTextIndented
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If mKeepEntireTextIndented <> value Then
+			    mKeepEntireTextIndented = value
+			    Self.ReindentText
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		KeepEntireTextIndented As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h1
+		Protected KeyDownTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected LastClickTicks As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected LastDragTicks As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected LastDrawnTopLine As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LastMouseDownX As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LastMouseDownY As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LastMouseUpX As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LastMouseUpY As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private LastRedrawTicks As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected LastTripleClickTicks As Integer
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mLeftMarginOffset
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mLeftMarginOffset = value
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		LeftMarginOffset As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  If Not DisplayLineNumbers Then Return 0
@@ -395,18 +622,42 @@ Implements MessageCentre.MessageReceiver
 			    tmp.Graphics.FontName = LineNumbersTextFont
 			    tmp.Graphics.FontSize = LineNumbersFontSize
 			    tmp.Graphics.Bold = True
-			    mLineNumberOffset = tmp.Graphics.TextWidth(str(Lines.Count)) + 10
+			    mLineNumberOffset = tmp.Graphics.TextWidth(Lines.Count.ToString) + 10
 			    
 			    If EnableLineFoldings Then
-			      mLineNumberOffset = LineNumberOffset + blockStartImage.Width + 2
+			      mLineNumberOffset = LineNumberOffset + BlockStartImage.Width + 2
 			    End If
 			  End If
 			  
-			  Return mlineNumberOffset
+			  Return mLineNumberOffset
 			  
 			End Get
 		#tag EndGetter
-		LineNumberOffset As Integer
+		#tag Setter
+			Set
+			  #Pragma Unused value
+			  
+			  mLineNumberOffset = 0
+			End Set
+		#tag EndSetter
+		Protected LineNumberOffset As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor(value, CurrentMethodName)
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		LineNumbersColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -418,33 +669,34 @@ Implements MessageCentre.MessageReceiver
 		#tag Setter
 			Set
 			  mLineNumbersFontSize = Min(value, Max(FontSize, value))
-			  mLineNumberOffset = 0
+			  LineNumberOffset = 0
 			  InvalidateAllLines
 			  Redraw
+			  
 			End Set
 		#tag EndSetter
 		LineNumbersFontSize As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 546865206C696E65206E756D626572207465787420666F6E742E
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mLineNumbersTextFont
-			  
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  mLineNumbersTextFont = value
-			  mLineNumberOffset = 0
+			  LineNumberOffset = 0
 			  InvalidateAllLines
 			  Redraw
+			  
 			End Set
 		#tag EndSetter
 		LineNumbersTextFont As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1, Description = 54686520656469746F722773206C696E65206D616E616765722E
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  If mLines = Nil Then
@@ -466,16 +718,24 @@ Implements MessageCentre.MessageReceiver
 		Protected Lines As SyntaxArea.LineManager
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 546865206E756D626572206F66206C696E657320746861742063616E20666974206F6E746F207468652063616E7661732E
+	#tag Property, Flags = &h21
+		Private LoadingDocument As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected MatchingBlockHighlight As SyntaxArea.CharSelection
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Note
 			Careful:
 			This returns just the number of rows that fit into the Canvas.
 			This is not the same as the number of text lines that may be appearing in
-			the Canvas if line folding is used! Get that value from `Self.VisibleAndHiddenLines()`.
+			the Canvas if line folding is used! (Get that value from `Self.VisibleAndHiddenLines`).
 		#tag EndNote
 		#tag Getter
 			Get
-			  // Check to prevent a `ThreadAccessingUIException` when called from a thread.
+			  // This check prevents `ThreadAccessingUIException` when called from a thread.
 			  If Thread.Current = Nil Then
 			    mMaxVisibleLines = Min(Me.Height / TextHeight, Lines.Count)
 			  End
@@ -488,11 +748,23 @@ Implements MessageCentre.MessageReceiver
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBlockBeginPosX As Double = -1
+		Private mBackBuffer As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCaretBlinker As CaretBlinker
+		Private mBookmarkTable As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBrightModeColors As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mCaretBlinker As SyntaxArea.CaretBlinker
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCaretLine As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -500,15 +772,19 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCaretVisible As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21, Description = 5472756520696620746865206D6F75736520637572736F722069732074686520494265616D2E
-		Private mCursorIsIBeam As Boolean = True
+		Private mCurrentAutocompleteOptions As SyntaxArea.AutocompleteOptions
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDesiredColumnCharPos As Integer
+		Private mDarkModeColors As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mDesiredColumnCharPos As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDisplayDirtyLines As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -520,23 +796,43 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDisplayRightMarginMarker As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDrawFrame As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mEnableLineFoldings As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFontSize As Integer
+		Private mFontSize As Integer = 0
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mFullRefresh As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mHasFocus As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFullRefresh As Boolean
+		Private mHighlightedRanges As SyntaxArea.CharSelectionManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHasFocus As Boolean
+		Private mHighlighter As SyntaxArea.LineHighlighter
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHorizontalScrollbar As DesktopScrollbar
+		Private mHighlightTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mHorizontalScrollbar As DesktopScrollbar
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -547,16 +843,28 @@ Implements MessageCentre.MessageReceiver
 		Private mIndentString As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21, Description = 4B6579203D206C696E6520696E6465782C2056616C7565203D20426F6F6C65616E
-		Private mInvalidlines As Dictionary
+	#tag Property, Flags = &h21
+		Private mIndentVisually As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInvalidLines As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mKeepEntireTextIndented As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLastLongestLineLength As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mLastLongestLinePixels As Single
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
-		Private mLastLongestLinePixels As Single
+		Private mLeftMarginOffset As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -568,7 +876,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLineNumbersTextFont As String
+		Private mLineNumbersTextFont As String = "System"
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -580,7 +888,58 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModifiedLines As SyntaxArea.ModifiedLineRangeManager
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  If mModifiedLines = Nil Then
+			    mModifiedLines = New SyntaxArea.ModifiedLineRangeManager
+			  End If
+			  
+			  Return mModifiedLines
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mModifiedLines = value
+			End Set
+		#tag EndSetter
+		Protected ModifiedLines As SyntaxArea.ModifiedLineRangeManager
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		MouseOverBlock As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mReadOnly As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRedrawCaret As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRedrawEverything As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRedrawTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRightMargin As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollPosition As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollPositionX As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -592,10 +951,14 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTabWidth As Integer = 4
+		Private mSyntaxDefinition As SyntaxArea.HighlightDefinition
 	#tag EndProperty
 
-	#tag Property, Flags = &h21, Description = 41206361636865642074656D706F7261727920706963747572652074686174206973207573656420696E7465726E616C6C7920666F722067726170686963732063616C63756C6174696F6E732E
+	#tag Property, Flags = &h21
+		Private mTabwidth As Integer = 4
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTempPicture As Picture
 	#tag EndProperty
 
@@ -612,10 +975,38 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mVerticalScrollbar As DesktopScrollbar
+		Private mThickInsertionPoint As Boolean = True
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 57686574686572206F72206E6F742074686520656469746F722069732072656164206F6E6C792E
+	#tag Property, Flags = &h21
+		Private mUndoMgr As SyntaxArea.UndoManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mVerticalScrollbar As DesktopScrollbar
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mVisibleLineRange As SyntaxArea.DataRange
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWeakSelf As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWindowIsClosing As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private OptionForTrailingSuggestion As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected PreviouslyDrawnSelection As SyntaxArea.CharSelection
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mReadOnly
@@ -626,16 +1017,80 @@ Implements MessageCentre.MessageReceiver
 			  mReadOnly = value
 			  
 			  If Not value Then EnableBlinker(False)
+			  
 			End Set
 		#tag EndSetter
 		ReadOnly As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private RedrawTime As Double
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mRightMargin = 0 Then
+			    // Get default printer area from printer.
+			    Var tmpPrinter As New SyntaxArea.PrinterSetup
+			    mRightMargin = tmpPrinter.Width
+			  End If
+			  
+			  Return mRightMargin
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mRightMargin = value
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		RightMarginAtPixel As Integer
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		RightScrollMargin As Integer = 150
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 546865206E756D626572206F662073656C656374656420636861726163746572732E
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mScrollPosition
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  ChangeScrollValues(ScrollPositionX, value)
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		ScrollPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mScrollPositionX
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  ChangeScrollValues(value, ScrollPosition)
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		ScrollPositionX As Integer
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private SelectedLine As Integer
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mSelectionLength
@@ -645,12 +1100,13 @@ Implements MessageCentre.MessageReceiver
 			Set
 			  ChangeSelection(SelectionStart, value)
 			  Redraw
+			  
 			End Set
 		#tag EndSetter
 		SelectionLength As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 54686520706F736974696F6E206F662074686520696E73657274696F6E20706F696E742E
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mSelectionStart
@@ -660,12 +1116,67 @@ Implements MessageCentre.MessageReceiver
 			Set
 			  ChangeSelection(value, 0)
 			  Redraw
+			  
 			End Set
 		#tag EndSetter
 		SelectionStart As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 5468652077696474682028696E20636F6C756D6E7329206F662061207461622E
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  // Returned line delimiters will be CR, i.e. Chr(13), by default and not CR+LF or LF, 
+			  /// even on Windows and Linux.
+			  
+			  Return TextStorage.GetText(SelectionStart, SelectionLength)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  CurrentEventID = System.Ticks
+			  Private_replace(SelectionStart, SelectionLength, value, True)
+			  
+			End Set
+		#tag EndSetter
+		SelText As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mSyntaxDefinition
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If mSyntaxDefinition <> value Then
+			    mSyntaxDefinition = value
+			    Lines.UnfoldAll
+			    InvalidateAllLines
+			    
+			    If CurrentDocumentSymbols <> Nil Then CurrentDocumentSymbols.RemoveAll
+			    ModifiedLines.Clear
+			    
+			    If mHighlighter <> Nil Then
+			      // Stop the highlighter.
+			      StopHighlighter
+			      
+			      mHighlighter.Definition = value
+			      Lines.MarkAllLinesAsChanged
+			      VisibleLineRange.Length = -1
+			      
+			      Highlight
+			    End If
+			    
+			    If value = Nil Then HighlightingComplete
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		SyntaxDefinition As SyntaxArea.HighlightDefinition
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mTabwidth
@@ -676,17 +1187,97 @@ Implements MessageCentre.MessageReceiver
 			  If value <= 0 Then value = 1
 			  
 			  mIndentString = ""
-			  mTabWidth = value
+			  mTabwidth = value
 			  Lines.TabWidth = value
 			  UpdateDesiredColumn
 			  InvalidateAllLines
 			  Redraw
+			  
 			End Set
 		#tag EndSetter
 		TabWidth As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 5468652063757272656E7420656469746F7220666F6E742E
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  // Returned line delimiters will be CR, i.e. Chr(13), by default and not CR+LF or LF, 
+			  // even on Windows and Linux.
+			  
+			  Return TextStorage.GetText(0, TextStorage.Length)
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  StopHighlighter
+			  
+			  // Prevent the LineHighlighter from interfering while we're modifying the lines.
+			  Var lock As New SyntaxArea.LinesLock(Self)
+			  #Pragma Unused lock
+			  
+			  LoadingDocument = True
+			  IgnoreRepaint = True
+			  mCaretLine = 0
+			  ChangeSelection(0, 0)
+			  
+			  // Flag so the undo is not reset, needed for a custom "replace all"
+			  // where it is faster to do a replace in the text and replace the whole text by 
+			  // the replaced text
+			  If Not DisableReset Then
+			    UndoMgr.Reset
+			  Else
+			    Var lineAttrs() As SyntaxArea.TextLineAttributes
+			    UndoMgr.Push(New SyntaxArea.UndoableReplace(Self, 0, Self.Text.Length, Self.Text, value, lineAttrs, CaretPos, CurrentEventID))
+			    disableReset = False
+			  End If
+			  
+			  ModifiedLines.Clear
+			  
+			  TextStorage.SetText(value)
+			  Lines.SetText(value.Length)
+			  
+			  // Add disable linefoldings for text bigger than 15000 lines otherwise it's slow.
+			  If lines.Count > 15000 Then
+			    If Me.EnableLineFoldings Then
+			      EnableLineFoldingSetting = True
+			    End If
+			    Me.EnableLineFoldings = False
+			  ElseIf EnableLineFoldingSetting Then
+			    Me.EnableLineFoldings = True
+			  End If
+			  
+			  TextChanged
+			  
+			  Highlight
+			  InvalidateAllLines
+			  IgnoreRepaint = False
+			  LoadingDocument = False
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		Text As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  SetBrightModeColor (value, CurrentMethodName)
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		TextColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  Return mTextFont
@@ -694,14 +1285,14 @@ Implements MessageCentre.MessageReceiver
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If value = mTextFont Then Return
-			  
+			  If Value = mTextFont Then Return
 			  mTextFont = value
 			  TextHeight = 0
 			  InvalidateAllLines
 			  CalculateMaxHorizontalSB
 			  CalculateMaxVerticalSB
 			  Redraw
+			  
 			End Set
 		#tag EndSetter
 		TextFont As String
@@ -711,7 +1302,8 @@ Implements MessageCentre.MessageReceiver
 		#tag Getter
 			Get
 			  If mTextHeight = 0 Then
-			    mTextHeight = TemporaryPicture.Graphics.TextHeight
+			    Var tmp As Picture = TemporaryPicture
+			    mTextHeight = tmp.Graphics.TextHeight
 			  End If
 			  
 			  Return mTextHeight + 1
@@ -726,19 +1318,44 @@ Implements MessageCentre.MessageReceiver
 		TextHeight As Double
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0, Description = 54686520746578742073656C656374696F6E20636F6C6F75722E
-		TextSelectionColor As ColorGroup
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return TextStorage.Length
+			End Get
+		#tag EndGetter
+		TextLength As Integer
+	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1, Description = 54686520746578742073746F7261676520666F72207468697320656469746F722E
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return GetCurrentModeColor(CurrentMethodName)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  // Set default selection colour to the system default if none specified.
+			  If value = &c000000 Then
+			    SetBrightModeColor(Color.HighlightColor, CurrentMethodName)
+			  Else
+			    SetBrightModeColor(value, CurrentMethodName)
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		TextSelectionColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  If mTextStorage = Nil Then
-			    // Create a new gap buffer...
-			    mTextStorage = New SyntaxArea.GapBuffer
+			    // Create a new text buffer.
+			    mTextStorage = New GapBuffer
 			    
 			    // and blinker timer.
-			    mCaretBlinker = New CaretBlinker(Self)
+			    mCaretBlinker = New SyntaxArea.CaretBlinker(Self)
 			  End If
 			  
 			  Return mTextStorage
@@ -747,10 +1364,71 @@ Implements MessageCentre.MessageReceiver
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mTextstorage = value
+			  mTextStorage = value
 			End Set
 		#tag EndSetter
 		Protected TextStorage As SyntaxArea.GapBuffer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mThickInsertionPoint
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mThickInsertionPoint = value
+			End Set
+		#tag EndSetter
+		ThickInsertionPoint As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h1
+		Protected TrailingSuggestion As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected Typing As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mUndoMgr = Nil Then
+			    mUndoMgr = New SyntaxArea.UndoManager
+			  End If
+			  
+			  Return mUndoMgr
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mUndoMgr = value
+			End Set
+		#tag EndSetter
+		UndoMgr As SyntaxArea.UndoManager
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mVisibleLineRange = Nil Then
+			    mVisibleLineRange = New SyntaxArea.DataRange
+			  End If
+			  
+			  Return mVisibleLineRange
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mVisibleLineRange = value
+			  
+			End Set
+		#tag EndSetter
+		VisibleLineRange As SyntaxArea.DataRange
 	#tag EndComputedProperty
 
 
@@ -924,150 +1602,6 @@ Implements MessageCentre.MessageReceiver
 			InitialValue=""
 			Type="Integer"
 			EditorType="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="IgnoreRepaint"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextFont"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextHeight"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontSize"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ReadOnly"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SelectionLength"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SelectionStart"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextSelectionColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumberOffset"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DisplayLineNumbers"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersTextFont"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RightScrollMargin"
-			Visible=false
-			Group="Behavior"
-			InitialValue="150"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MaxVisibleLines"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EnableLineFoldings"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DisplayInvisibleCharacters"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="CaretPos"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabWidth"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersFontSize"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
