@@ -119,6 +119,26 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 46696E647320746865206C6F6E6765737420636F6D6D6F6E20707265666978206265747765656E2074776F20737472696E67732E
+		Function LongestCommonPrefixIndex(Extends source As String, target As String) As Integer
+		  /// Finds the longest common prefix between two strings.
+		  
+		  #Pragma DisableBackgroundTasks
+		  #Pragma DisableBoundsChecking
+		  
+		  Var n As Integer = Min(source.Length, target.Length)
+		  Var i As Integer
+		  For i = 0 To n -1
+		    Var mainSource As String = source.Middle(i, 1)
+		    Var mainTarget As String = target.Middle(i, 1)
+		    If mainSource <> mainTarget Then Exit For
+		  Next i
+		  
+		  Return i
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 52657475726E7320746865206C756D696E656E6365206F66206120636F6C6F75722E
 		Private Function Luminence(c As Color) As Double
 		  /// Returns the luminence of a colour.

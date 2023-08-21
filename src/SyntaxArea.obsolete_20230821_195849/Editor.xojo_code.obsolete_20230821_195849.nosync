@@ -34,6 +34,62 @@ Implements MessageCentre.MessageReceiver
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h1
+		Protected Sub AutocompleteCancelled(requestFocus As Boolean)
+		  If requestFocus Then SetFocus
+		  
+		  AutoCompleteDone = True
+		  
+		  // Stop listening messages from SuggestionWindow.
+		  Self.UnregisterForMessage(CurrentSuggestionWindow)
+		  
+		  currentSuggestionWindow = Nil
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 54686520737472696E6720606F7074696F6E60207761732073656C656374656420696E207468652073756767657374696F6E732077696E646F772E
+		Protected Sub AutocompleteOptionSelected(option As String)
+		  /// The string `option` was selected in the suggestions window.
+		  
+		  If option <> "" Then
+		    If SelectionLength > 0 Then
+		      // Replace the highlighted text.
+		      SelText = option
+		      
+		    Else
+		      // Add option to current word, removing common prefix.
+		      If AutocompleteAppliesStandardCase Then
+		        // We need to replace the whole word with the Autocomplete option.
+		        PrivateReplace(CaretPos - CurrentAutocompleteOptions.CurrentPathComponent.Length, CurrentAutocompleteOptions.CurrentPathComponent.Length, option)
+		      Else
+		        SelText = option.Middle(option.LongestCommonPrefixIndex(CurrentAutocompleteOptions.CurrentPathComponent) + 1)
+		      End If
+		    End If
+		  End If
+		  
+		  // Stop listening messages from SuggestionWindow.
+		  Self.UnregisterForMessage(CurrentSuggestionWindow)
+		  CurrentSuggestionWindow = Nil
+		  
+		  // Check indentations.
+		  If AutoIndentNewLines And Not mIndentVisually Then
+		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		    If thisLine <> Nil And thisLine.IsBlockEnd Then
+		      Var state As Variant
+		      If PrivateIndentLine(CaretLine, False, state) Then
+		        InvalidateLine(CaretLine)
+		      End
+		    End If
+		  End If
+		  
+		  SetFocus
+		  Redraw
+		  AutoCompleteDone = True
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 436F6D707574657320746865206D6178696D756D20686F72697A6F6E74616C207363726F6C6C6261722076616C75652E
 		Protected Sub CalculateMaxHorizontalSB()
 		  /// Computes the maximum horizontal scrollbar value.
@@ -78,6 +134,13 @@ Implements MessageCentre.MessageReceiver
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Function ColorReturningProc() As Color
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h1
+		Protected Function CurrentAutocompleteOptions() As SyntaxArea.AutocompleteOptions
+		  Return mCurrentAutocompleteOptions
+		  
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub EnableBlinker(value As Boolean)
@@ -147,6 +210,93 @@ Implements MessageCentre.MessageReceiver
 		  mFullRefresh = index < 0 Or mFullRefresh
 		  
 		  InvalidLines.Value(index) = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865206C696E65206E756D626572206368616E6765732E
+		Protected Sub LineCountChanged(newLineCount As Integer)
+		  /// Called by the line manager, when the line number changes.
+		  
+		  #Pragma Unused newLineCount
+		  
+		  // Force recalculation of the line number gutter.
+		  LineNumberOffset = 0
+		  
+		  // Raise the LineCountChanged event.
+		  RaiseEvent LineCountChanged(Lines.Count)
+		  
+		  // Calculate the maximum scrollbar values.
+		  CalculateMaxVerticalSB
+		  
+		  InvalidateAllLines
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub LineHighlighted(lineIndex As Integer)
+		  // Mark for repaint.
+		  InvalidateLine(lineIndex)
+		  
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineIndex)
+		  If line = Nil Then Return
+		  
+		  If line.LineSymbols = Nil Or line.LineSymbols.KeyCount = 0 Then Return
+		  
+		  // Extract the symbols and add them to local table.
+		  If CurrentDocumentSymbols = Nil Then CurrentDocumentSymbols = New Dictionary
+		  
+		  For i As Integer = 0 To line.LineSymbols.KeyCount - 1
+		    CurrentDocumentSymbols.Value(line) = Nil
+		  Next i
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 456974686572207468652073796D626F6C732068617665206368616E6765642C206F7220746865206C696E6520636F6E7461696E696E67207468656D207761732072656D6F7665642C20736F2072656D6F7665207468656D2066726F6D20746865206C6F63616C207461626C652E
+		Protected Sub LineSymbolsRemoved(symbols As Dictionary)
+		  /// Either the symbols have changed, or the line containing them was removed,
+		  /// so remove them from the local table.
+		  
+		  For Each key As SyntaxArea.TextLine In symbols.Keys
+		    If CurrentDocumentSymbols.HasKey(key) Then CurrentDocumentSymbols.Remove(key)
+		  Next key
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865726527732061206E6577206C696E652074686174277320746865206C6F6E67657374206C696E652E
+		Protected Sub MaxLineLengthChanged(longestLineIndex As Integer)
+		  /// Called by the line manager, when there's a new line that's the longest line.
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  // OPTIMISE: For starters we can get the screen width by reading all the word lengths 
+		  // in this line.
+		  If longestLineIndex < 0 Then Return
+		  Var maxLine As SyntaxArea.TextLine = Lines.GetLine(longestLineIndex)
+		  If maxline = Nil Or abs(maxLine.length - mlastLongestLineLength) < 2 Then Return
+		  
+		  // Cache the length.
+		  mLastLongestLineLength = maxLine.Length
+		  
+		  // Measure the string in pixels.
+		  Var tmp As Picture = TemporaryPicture
+		  
+		  Var maxLength As Single = _
+		  maxLine.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters)
+		  
+		  If maxLength = mLastLongestLinePixels Then Return
+		  mLastLongestLinePixels = maxLength
+		  
+		  RaiseEvent MaxLineLengthChanged(mLastLongestLinePixels)
+		  
+		  // Calculate scrollbar.
+		  CalculateMaxHorizontalSB
+		  
 		End Sub
 	#tag EndMethod
 
@@ -262,6 +412,36 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 52657475726E20612074656D706F72617279207069637475726520746861742063616E206265207573656420666F722067726170686963732063616C63756C6174696F6E732C206574632E
+		Protected Function TemporaryPicture() As Picture
+		  /// Return a temporary picture that can be used for graphics calculations, etc.
+		  
+		  If mTempPicture = Nil Then mTempPicture = New Picture(2, 2)
+		  
+		  mTempPicture.Graphics.FontName = TextFont
+		  mTempPicture.Graphics.FontSize = FontSize
+		  
+		  mTempPicture.Graphics.Bold = False
+		  mTempPicture.Graphics.Italic = False
+		  mTempPicture.Graphics.Underline = False
+		  
+		  Return mTempPicture
+		  
+		End Function
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event HighlightingComplete()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event LineCountChanged(newLineCount As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MaxLineLengthChanged(maxLineLengthInPixels As Single)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206F70656E696E672E
 		Event Opening()
