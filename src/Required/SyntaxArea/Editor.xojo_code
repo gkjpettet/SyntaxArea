@@ -32,8 +32,6 @@ Implements MessageCentre.MessageReceiver
 		  
 		  mWindowIsClosing = True
 		  
-		  Close
-		  
 		End Sub
 	#tag EndEvent
 
@@ -51,6 +49,12 @@ Implements MessageCentre.MessageReceiver
 		  base.AddMenu(EditSelectAll.Clone)
 		  
 		  Return True
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function DoCommand(command As String) As Boolean
 		  
 		End Function
 	#tag EndEvent
@@ -985,6 +989,23 @@ Implements MessageCentre.MessageReceiver
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  // Remember all opened editor objects so we can update them if dark mode is invoked.
+		  mWeakSelf = New WeakRef(Self)
+		  If gWeakCEFs = Nil Then gWeakCEFs = New Dictionary
+		  gWeakCEFs.Value(mWeakSelf) = True
+		  
+		  Super.Constructor
+		  
+		  IgnoreRepaint = True
+		  
+		  mBrightModeColors = New Dictionary
+		  mDarkModeColors = New Dictionary
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Copy()
 		  If SelectionLength = 0 Then Return
 		  Var c As New Clipboard
@@ -1700,6 +1721,14 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function HandleKeyDown(key As String) As Boolean
+		  #Pragma Warning "REMOVE if possible now we're using TextInputCanvas"
+		  Raise New UnsupportedOperationException("The HandleKeyDown method is not implemented.")
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
