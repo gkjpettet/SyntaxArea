@@ -137,6 +137,236 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub FocusLost()
+		  CurrentEventID = 0
+		  mHasFocus = False
+		  RaiseEvent FocusLost
+		  EnableBlinker(False)
+		  Redraw
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub FocusReceived()
+		  mhasFocus = True
+		  RaiseEvent FocusReceived
+		  EnableBlinker(SelectionLength = 0)
+		  Redraw
+		  
+		  gCurrentFocusedField = Self
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function MouseDown(x As Integer, y As Integer) As Boolean
+		  CurrentEventID = 0
+		  Dragging = False
+		  
+		  If Not mHasFocus Then Self.SetFocus
+		  DragTextOnDrag = False
+		  
+		  If MouseDown(X, Y) Then Return True
+		  If IsContextualClick Then Return False
+		  
+		  IgnoreRepaint = True
+		  Var selstart As Integer
+		  
+		  selStart = CharPosAtXY(x, y)
+		  
+		  If Keyboard.ShiftKey Then
+		    ChangeSelection(Min(selStart, CaretPos), Abs(selStart - CaretPos))
+		    
+		  ElseIf x < LineNumberOffset Then
+		    SelectedLine = Lines.GetLineNumberForOffset(selStart)
+		    
+		    If EnableLineFoldings And x >= LineNumberOffset - BlockStartImage.Width - 2 Then
+		      // Toggle foldings.
+		      ToggleLineFold(SelectedLine)
+		      CreateMouseOverBlockHighlight(SelectedLine)
+		      
+		    Else
+		      // Line header clicked.
+		      SelectLine(SelectedLine, False)
+		      RaiseEvent GutterClicked(SelectedLine, x, y)
+		    End If
+		    
+		  ElseIf SelectionLength > 0 And SelStart >= Self.SelectionStart And SelStart <= Self.SelectionStart + SelectionLength Then
+		    // Drag.
+		    DragTextOnDrag = True
+		    
+		  Else
+		    SelectedLine = -1
+		    ChangeSelection(selStart, 0)
+		  End If
+		  
+		  UpdateDesiredColumn
+		  LastMouseDownX = x
+		  LastMouseDownY = y
+		  IgnoreRepaint = False
+		  Redraw
+		  
+		  Return True
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseDrag(x As Integer, y As Integer)
+		  // If the mouse doesn't move, don't do anything until it does.
+		  If Abs(LastMouseDownX - X) < 4 And Abs(LastMouseDownY - Y) < 4 Then Return
+		  
+		  Dragging = True
+		  
+		  // If dragging selected text.
+		  If DragTextOnDrag Then
+		    HandleTextDrag(x, y)
+		    Return
+		  End If
+		  
+		  IgnoreRepaint = True
+		  
+		  HandleDragOnGutter(x, y)
+		  HandleVerticalMouseDrag(x, y)
+		  HandleHorizontalMouseDrag(x, y)
+		  
+		  IgnoreRepaint = False
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseExit()
+		  If MouseOverBlock <> Nil Then
+		    MouseOverBlock = Nil
+		    Redraw
+		  End If
+		  
+		  RaiseEvent MouseExit
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseMove(x As Integer, y As Integer)
+		  Var selstart As Integer
+		  Var s As String
+		  Var word As String
+		  
+		  // In a code sense to obtain individual words lets separate EndOfLines, (, ), =, and ".
+		  s = Me.Text.ReplaceAll(EndOfLine, " ")
+		  s = s.ReplaceAll("(", " ")
+		  s = s.ReplaceAll(")", " ")
+		  s = s.ReplaceAll(chr(34), " ")
+		  s = s.ReplaceLineEndings(" ")
+		  s = s.ReplaceAll(chr(9), " ")
+		  s = s.ReplaceAll("=", " ")
+		  s = s.ReplaceAll("/", " ")
+		  
+		  selstart = Me.CharPosAtXY(x, y)
+		  
+		  word = GetWord(selstart, s)
+		  
+		  If IsURL(word) = True Then
+		    Me.MouseCursor = System.Cursors.FingerPointer
+		  Else
+		    Me.MouseCursor = System.Cursors.StandardPointer
+		  End If
+		  
+		  RaiseEvent WordUnderMouse(word)
+		  
+		  MouseMove(x, y)
+		  
+		  // Change the mouse cursor.
+		  If x > LineNumberOffset Then
+		    // Enter field.
+		    If cursorIsIbeam Then Return
+		    Me.MouseCursor = System.Cursors.IBeam
+		    CursorIsIbeam = True
+		    
+		    If MouseOverBlock <> Nil Then
+		      MouseOverBlock = Nil
+		      Redraw
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  // Enter gutter.
+		  Me.MouseCursor = System.Cursors.StandardPointer
+		  CursorIsIbeam = False
+		  
+		  // Visual block feedback.
+		  If Not EnableLineFoldings Or Not HighlightBlocksOnMouseOverGutter Then
+		    If MouseOverBlock <> Nil Then
+		      MouseOverBlock = Nil
+		      Redraw
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  If x < LineNumberOffset - BlockStartImage.Width - 2 Then
+		    If MouseOverBlock <> Nil Then
+		      MouseOverBlock = Nil
+		      Redraw
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  CreateMouseOverBlockHighlight(Lines.GetLineNumberForOffset(CharPosAtXY(x, y)))
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseUp(x As Integer, y As Integer)
+		  Dragging = False
+		  
+		  // Check for triple click.
+		  If x > LineNumberOffset And Not CheckTripleClick(x, y) Then
+		    // Check for double click.
+		    If x > LineNumberOffset And Not CheckDoubleClick(x, y) Then
+		      RaiseEvent MouseUp(x, y)
+		      IsDoubleClick = False
+		      
+		      // Reset drag variables.
+		      If DragTextOnDrag Then
+		        DragTextOnDrag = False
+		        
+		        // Clicked on the selected text, but it never got dragged so clear the selection.
+		        If DragTextSelection = Nil Then
+		          ChangeSelection(CharPosAtXY(x, y), 0)
+		        End If
+		        
+		        DragSource = Nil
+		        DragTextSelection = Nil
+		        InvalidateAllLines
+		        Redraw
+		      End If
+		    End If
+		  End If
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function MouseWheel(x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
+		  #Pragma Unused x
+		  #Pragma Unused y
+		  
+		  If MouseOverBlock <> Nil Then MouseOverBlock = Nil
+		  
+		  ChangeScrollValues(ScrollPositionX + (deltaX * 5), ScrollPosition + deltaY)
+		  
+		End Function
+	#tag EndEvent
+
 	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
 		Sub Opening()
 		  BlockBeginPosX = -1
@@ -163,6 +393,15 @@ Implements MessageCentre.MessageReceiver
 		  If TextSelectionColor = Color.Black Then
 		    TextSelectionColor = Color.HighlightColor
 		  End If
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Paint(g As Graphics, areas() As Xojo.Rect)
+		  #Pragma Unused areas
+		  
+		  DrawContents(g, Me.Window)
 		  
 		End Sub
 	#tag EndEvent
@@ -666,6 +905,67 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function checkDoubleClick(x As Integer, y As Integer) As Boolean
+		  Var doubleClickTime, currentClickTicks As Integer
+		  
+		  doubleClickTime = GetDoubleClickTimeTicks
+		  
+		  Var result As Boolean = False
+		  
+		  currentClickTicks = System.Ticks
+		  
+		  // If the two clicks happened close enough together in time...
+		  If(currentClickTicks - LastClickTicks) <= doubleClickTime Then
+		    // If the two clicks occured close enough together in space...
+		    If Abs(x - LastMouseUpX) <= 4 And Abs(y - LastMouseUpY) <= 4 Then
+		      IsDoubleClick = True
+		      HandleDoubleClick
+		      result = True
+		    Else
+		      IsDoubleClick = False
+		    End If
+		  End If
+		  LastClickTicks = currentClickTicks
+		  LastMouseUpX = x
+		  LastMouseUpY = y
+		  
+		  Return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckTripleClick(x As Integer, y As Integer) As Boolean
+		  If IsDoubleClick = True Then
+		    Var doubleClickTime, currentClickTicks As Integer
+		    
+		    doubleClickTime = GetDoubleClickTimeTicks
+		    
+		    Var result As Boolean = False
+		    currentClickTicks = System.Ticks
+		    
+		    // If the three clicks happened close enough together in time...
+		    If(currentClickTicks - LastTripleClickTicks) <= doubleClickTime Then
+		      // If the three clicks occured close enough together in space...
+		      If Abs(x - LastMouseUpX) <= 4 And Abs(y - LastMouseUpY) <= 4 Then
+		        HandleTripleClick
+		        result = True
+		      End If
+		    End If
+		    LastTripleClickTicks = currentClickTicks
+		    LastMouseUpX = x
+		    LastMouseUpY = y
+		    IsDoubleClick = False
+		    Return result
+		  Else
+		    IsDoubleClick = False
+		    Return False
+		  End If
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 436C6561727320686967686C6967687465642072616E67657320616E6420726564726177732E
 		Sub ClearHighlightedCharacterRanges()
 		  /// Clears highlighted ranges and redraws.
@@ -706,6 +1006,52 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub CreateMouseOverBlockHighlight(lineIndex As Integer)
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineIndex)
+		  If line = Nil Then Return
+		  
+		  Var openingLine As Integer
+		  If line.IsBlockStart Then
+		    openingLine = lineIndex
+		  Else
+		    openingLine = OpeningBlockLineForLine(lineIndex)
+		  End If
+		  If openingLine < 0 Then Return
+		  
+		  line = Lines.GetLine(openingLine)
+		  If line = Nil Then Return
+		  
+		  Var x, y1, y2 As Double
+		  XYAtCharPos(line.Offset, openingLine, x, y1)
+		  
+		  Var closingLine As Integer = Lines.NextBlockEndLine(openingLine)
+		  If closingLine < 0 Then Return
+		  
+		  line = lines.GetLine(closingLine)
+		  If line = Nil Then Return
+		  
+		  XYAtCharPos(line.Offset, closingLine, x, y2)
+		  
+		  If MouseOverBlock <> Nil Then
+		    // Avoid a redraw if we can.
+		    If MouseOverBlock.Value("y") = _
+		    y1 - TextHeight - 2 And MouseOverBlock.Value("h") = y2 - y1 + TextHeight + 4 Then Return
+		  End If
+		  
+		  MouseOverBlock = Nil
+		  MouseOverBlock = New Dictionary
+		  MouseOverBlock.Value("startLine") = openingLine
+		  MouseOverBlock.Value("x") = LeftMarginOffset - 3
+		  MouseOverBlock.Value("y") = y1 - TextHeight - 2
+		  MouseOverBlock.Value("w") = Self.Width - LineNumberOffset - LeftMarginOffset
+		  MouseOverBlock.Value("h") = y2 - y1 + TextHeight + 4
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function CurrentAutocompleteOptions() As SyntaxArea.AutocompleteOptions
 		  Return mCurrentAutocompleteOptions
@@ -726,6 +1072,400 @@ Implements MessageCentre.MessageReceiver
 		  Return New SyntaxArea.TextSegment(startIndex, endIndex - startIndex)
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DrawContents(gr As Graphics, parentWindow As DesktopWindow)
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		  #EndIf
+		  
+		  // Make sure we're not updating while the LineHighlighter is busy.
+		  Var lock As New SyntaxArea.LinesLock(Self)
+		  #Pragma Unused lock
+		  
+		  Self.UpdateIndentation
+		  
+		  If Not mRedrawEverything And Not mRedrawCaret Then
+		    mRedrawEverything = True
+		  End If
+		  
+		  If gr.Height <= 0 Or gr.Width <= 0 Then
+		    // There is nothing to draw.
+		    Return
+		  End If
+		  
+		  // Check our back buffer to make sure we've got one that we can draw to.
+		  // If we don't have a back buffer, then we need to create one.
+		  // If our size is different than our back buffer, then we need to create a new one.
+		  Var realign As Boolean
+		  realign = (mBackBuffer = Nil) Or (gr.Width <> mBackBuffer.Width) Or _
+		  (gr.Height <> mBackBuffer.Height)
+		  
+		  // macOS already double buffers for us so we don't need a back buffer.
+		  Var createBackBuffers As Boolean = Not TargetMacOS
+		  
+		  If realign Then
+		    If createBackBuffers Then
+		      // Create double buffer.
+		      mBackBuffer = parentWindow.BitmapForCaching(gr.Width, gr.Height)
+		    End If
+		    CalculateMaxHorizontalSB
+		    CalculateMaxVerticalSB
+		    InvalidateAllLines
+		    mRedrawEverything = True
+		  End If
+		  
+		  // Get a graphics context to draw onto.
+		  Var g As Graphics
+		  If mBackBuffer = Nil Then
+		    // Draw directly into the Canvas graphics (required for Retina support)
+		    g = gr
+		  Else
+		    // Draw first into a separate graphics buffer which is then painted into the 
+		    // Canvas at the end.
+		    g = mBackBuffer.Graphics
+		  End If
+		  
+		  If mRedrawCaret And Not mRedrawEverything Then
+		    mRedrawEverything = True
+		  End If
+		  
+		  #If DebugBuild
+		    RedrawTime = System.Microseconds
+		  #EndIf
+		  
+		  Var sx, sy As Double
+		  Var gg As Graphics // For the gutter (left frame showing line numbers).
+		  Var gutterWidth As Integer = LineNumberOffset
+		  
+		  // Line numbers.
+		  If Self.displayLineNumbers Then
+		    // Create the line numbers picture if needed.
+		    If Not createBackBuffers Then
+		      // Draw the gutter directly into the canvas graphics object (Retina requirement).
+		      gg = gr
+		    Else
+		      // Use a separate graphics buffer for the gutter.
+		      If Gutter = Nil Or Gutter.Height <> g.Height Or gutter.Width <> gutterWidth Then
+		        Gutter = parentWindow.BitmapForCaching(gutterWidth, g.Height)
+		        gg = gutter.Graphics
+		        gg.FontName = LineNumbersTextFont
+		        gg.FontSize = LineNumbersFontSize
+		      Else
+		        gg = gutter.Graphics
+		      End If
+		    End If
+		    
+		    // Repaint the gutter background if needed.
+		    If mfullRefresh Or LastDrawnTopLine <> ScrollPosition Then
+		      gg.DrawingColor = GutterBackgroundColor.LighterColor(10, True)
+		      gg.FillRectangle LineNumberOffset - FoldingOffset, 0, FoldingOffset, g.Height
+		      gg.DrawingColor = GutterBackgroundColor
+		      gg.FillRectangle 0, 0, gutterWidth - FoldingOffset, g.Height
+		      gg.DrawingColor = GutterSeparationLineColor
+		      gg.DrawLine(LineNumberOffset - 1, 0, LineNumberOffset - 1, g.Height)
+		      LastDrawnTopLine = ScrollPosition
+		    End If
+		  End If
+		  
+		  // Paint the selection and get its range.
+		  Var selection As New SyntaxArea.CharSelection(-1, -1, -1, -1, TextSelectionColor)
+		  Var tmpSelection As SyntaxArea.CharSelection
+		  
+		  // Get the selection range.
+		  If SelectionLength > 0 Then
+		    selection.offset = SelectionStart
+		    selection.length = SelectionLength
+		    selection.StartLine = Lines.GetLineNumberForOffset(SelectionStart)
+		    selection.EndLine = Lines.GetLineNumberForOffset(SelectionStart + SelectionLength)
+		  End If
+		  
+		  // Set the text properties.
+		  g.FontSize = FontSize
+		  g.FontName = TextFont
+		  If g <> gr Then
+		    gr.FontSize = FontSize
+		    gr.FontName = TextFont
+		  End If
+		  
+		  // Starting positions.
+		  sx = LeftMarginOffset + LineNumberOffset - ScrollPositionX
+		  sy = g.TextHeight
+		  
+		  Var line As TextLine
+		  Var linesDrawn As Integer
+		  Var firstLine As Integer
+		  Var lastLine As Integer
+		  
+		  // The lowest possible line to draw is ScrollPosition, so start there.
+		  If EnableLineFoldings Then
+		    firstline = Lines.GetNumberOfLinesNeededToView(ScrollPosition)
+		    lastLine = Lines.Count - 1
+		  Else
+		    firstLine = ScrollPosition
+		    lastLine = Min(Lines.Count - 1, ScrollPosition + MaxVisibleLines)
+		  End If
+		  
+		  Var linesOnScreen As Integer
+		  
+		  For lineIdx As Integer = firstLine To lastLine
+		    linesOnScreen = linesOnScreen + 1
+		    
+		    // Get the current line.
+		    line = Lines.GetLine(lineIdx)
+		    If Not line.Visible Then Continue For
+		    
+		    If _
+		      InvalidLines.HasKey(lineIdx) Or _
+		      mFullRefresh Or _
+		      selection.IsLineIndexInRange(lineIdx) Or _
+		      (PreviouslyDrawnSelection <> Nil And PreviouslyDrawnSelection.IsLineIndexInRange(lineIdx)) Then
+		      
+		      // This line needs to be repainted (invalid), or is a full refresh, or is
+		      // part of the previous or current selection.
+		      
+		      // Clear the background for this line.
+		      Var lineBackColor As Color = BackColor
+		      
+		      If Not UseBackgroundColorForLine(lineIdx, lineBackColor) Then
+		        lineBackColor = BackColor
+		      End If
+		      g.DrawingColor = lineBackColor
+		      g.FillRectangle(LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset, TextHeight)
+		      
+		      // Draw highlighted ranges.
+		      // First draw the highlighted ranges.
+		      Var ranges() As SyntaxArea.CharSelection = _
+		      HighlightedRanges.SelectionsForLine(lineIdx)
+		      
+		      // Then draw words with a background.
+		      line.AppendHighlightedWords(ranges, lineIdx)
+		      
+		      // Finally draw the selection.
+		      ranges.Add(selection)
+		      
+		      If matchingBlockHighlight <> Nil Then
+		        ranges.Add(MatchingBlockHighlight)
+		      End If
+		      
+		      Var x, y, w As Double
+		      For Each tmpSelection In ranges
+		        If tmpSelection.IsLineIndexInRange(lineIdx) Then
+		          // If in selection, highlight the line.
+		          If mHasFocus Or Not tmpSelection.LosesFocus Then
+		            g.DrawingColor = tmpSelection.SelectionColor
+		          Else
+		            g.DrawingColor = BackColor.DarkerColor(30, True)
+		          End If
+		          
+		          If lineIdx > tmpSelection.StartLine And lineIdx < tmpSelection.EndLine Then
+		            // A fully selected line.
+		            g.FillRectangle(LineNumberOffset, sy - g.TextHeight, g.Width - line.VisualIndent(Self.IndentVisually), TextHeight)
+		            
+		          ElseIf lineIdx = tmpSelection.StartLine And tmpSelection.EndLine <> tmpSelection.StartLine Then
+		             // First line.
+		            XYAtCharPos(tmpSelection.Offset, lineIdx, x, y)
+		            
+		            If tmpSelection.Rounded Then
+		              g.FillRoundRectangle(x, sy - g.TextHeight, g.Width - x + 10, TextHeight, 8, 8)
+		            Else
+		              g.FillRectangle(x, sy - g.TextHeight, g.Width - x, TextHeight)
+		            End If
+		            
+		          ElseIf lineIdx = tmpSelection.EndLine And tmpSelection.EndLine <> tmpSelection.StartLine Then
+		            // Last line.
+		            XYAtCharPos(tmpSelection.Offset + tmpSelection.Length, lineIdx, x, y)
+		            
+		            If tmpSelection.Rounded Then
+		              g.FillRoundRectangle(LineNumberOffset - 10, sy - g.TextHeight, x - LineNumberOffset + 10, TextHeight, 8, 8)
+		            Else
+		              g.FillRectangle(LineNumberOffset, sy - g.TextHeight, x - LineNumberOffset, TextHeight)
+		            End If
+		            
+		          Else
+		            // Small block in line.
+		            XYAtCharPos(tmpSelection.Offset, lineIdx, x, y)
+		            XYAtCharPos(tmpSelection.Offset + tmpSelection.Length, lineIdx, w, y)
+		            
+		            If tmpSelection.Rounded Then
+		              g.FillRoundRectangle(x, sy - g.TextHeight, w - x, TextHeight, 8, 8)
+		            Else
+		              g.FillRectangle(x, sy - g.TextHeight, w - x, TextHeight)
+		            End If
+		          End If
+		        End If
+		      Next tmpSelection
+		      
+		      // Paint a line background?
+		      PaintBelowLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
+		      
+		      // Paint the line.
+		      line.Paint(TextStorage, g, sx, sy - (g.TextHeight - g.FontAscent), TextColor, DisplayInvisibleCharacters, SelectionStart, SelectionLength, True, Self.IndentVisually)
+		      
+		      // Line overlay?
+		      PaintAboveLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
+		      
+		      // Contents after folded line...
+		      If line.Folded Then
+		        Var tmp As SyntaxArea.TextLine = Lines.GetLine(Lines.NextBlockEndLine(lineIdx))
+		        If tmp <> Nil Then
+		          // Make italic and paint after the current line.
+		          tmp.Italic = True
+		          tmp.Paint(TextStorage, g, sx + line.TotalWidth + SyntaxArea.BlockFoldedTrailImage.Width + 6, sy - (g.TextHeight - g.FontAscent), TextColor, False, SelectionStart, SelectionLength, False, Self.IndentVisually)
+		          tmp.Italic = False
+		        End If
+		      End If
+		      
+		      // Autocomplete suggestion.
+		      If SelectionLength = 0 And lineIdx = CaretLine And TrailingSuggestion <> "" Then
+		        g.DrawingColor = SyntaxArea.AdjustColorForDarkMode(&cAAAAAA)
+		        Var c As Color = g.DrawingColor
+		        If Color.IsDarkMode Then
+		          g.DrawingColor = Color.RGB(c.Red + 75, c.Green + 75, c.Blue + 75)
+		        End If
+		        g.DrawText(trailingSuggestion, AutocompleteSuggestionInsertionX, sy - (g.TextHeight - g.FontAscent))
+		      End If
+		      
+		      // Draw the gutter last so that it overwrites text that was drawn 
+		      // into the gutter area when it's horizontally scrolled.
+		      If displayLineNumbers Then
+		        // The caret line is slightly darker.
+		        If EnableLineFoldings Then
+		          gg.DrawingColor = GutterBackgroundColor.LighterColor(10, True)
+		          gg.FillRectangle(LineNumberOffset - FoldingOffset - 1, sy - g.TextHeight, FoldingOffset, TextHeight)
+		        End If
+		        If CaretLine = lineIdx Then
+		          gg.DrawingColor = GutterBackgroundColor.DarkerColor(20, True)
+		          gg.FillRectangle(0, sy - g.TextHeight, LineNumberOffset - 1 - FoldingOffset, TextHeight)
+		          gg.Bold = True
+		          gg.DrawingColor = SyntaxArea.AdjustColorForDarkMode(Color.Black)
+		        Else
+		          gg.DrawingColor = GutterBackgroundColor
+		          gg.FillRectangle(0, sy - g.TextHeight, LineNumberOffset - 1 - FoldingOffset, TextHeight)
+		        End If
+		        
+		        If DisplayDirtyLines And line.IsDirty Then
+		          gg.DrawingColor = DirtyLinesColor
+		          gg.FillRectangle(LineNumberOffset - 4, sy - g.TextHeight, 3, TextHeight)
+		        End If
+		        
+		        // Bookmarks?
+		        If BookmarkTable.HasKey(lineIdx) Then
+		          Var img As Picture = UseBookmarkIconForLine(lineIdx)
+		          If img = Nil Then img = BookmarkImage
+		          gg.DrawPicture(img, 0, sy - g.TextHeight + (g.TextHeight - img.Height) / 2)
+		        End If
+		        
+		        // Row icon available?
+		        If line.Icon <> Nil Then
+		          Var icn As Picture = line.Icon
+		          gg.DrawPicture(icn, gutterWidth - icn.Width - 2 - FoldingOffset, sy - g.TextHeight + (g.TextHeight - icn.Height) / 2)
+		        Else
+		          // Line number.
+		          gg.DrawingColor = LineNumbersColor
+		          If gr = gg Then
+		            gg.FontName = LineNumbersTextFont
+		            gg.FontSize = LineNumbersFontSize
+		          End If
+		          gg.DrawText(Str(lineIdx + 1), LineNumberOffset - 2 - gg.TextWidth(Str(lineIdx + 1)) - FoldingOffset, sy - (TextHeight - gg.FontAscent) / 2)
+		          If gr = gg Then
+		            gg.FontSize = FontSize
+		            gg.FontName = TextFont
+		          End If
+		        End If
+		        
+		        If EnableLineFoldings And line.IsBlockStart Then
+		          If line.Folded Then
+		            // Draw a line folded marker.
+		            gg.DrawPicture(BlockFoldedImage, LineNumberOffset - BlockFoldedImage.Width - 2, sy - TextHeight + (TextHeight - BlockFoldedImage.Height) / 2 + 1)
+		          Else
+		            gg.DrawPicture(BlockStartImage, LineNumberOffset - BlockStartImage.Width - 2, sy - TextHeight + (TextHeight - BlockStartImage.Height) / 2 + 1)
+		          End If
+		        ElseIf EnableLineFoldings And line.IsBlockEnd Then
+		          gg.DrawPicture(BlockEndImage, LineNumberOffset - BlockEndImage.Width - 2, sy - TextHeight + (TextHeight - BlockEndImage.Height) / 2 + 1)
+		        End If
+		        
+		        gg.Bold = False
+		      End If
+		      
+		      linesDrawn = linesDrawn + 1
+		    End If
+		    
+		    // Go to the next line.
+		    If TextHeight = 0 Then Break
+		    sy = sy + TextHeight
+		    If sy - g.TextHeight > g.Height Then
+		      // Or bail out if we've reached the end of the canvas.
+		      Exit For
+		    End If
+		  Next lineIdx
+		  
+		  VisibleLineRange.Offset = firstLine
+		  VisibleLineRange.Length = linesOnScreen
+		  
+		  // Clear the rest of the buffer if necessary.
+		  sy = sy - g.TextHeight
+		  If sy < g.Height Then
+		    g.DrawingColor = BackColor
+		    g.FillRectangle(gutterWidth, sy, g.Width - gutterWidth, g.Height - sy)
+		  End If
+		  
+		  // Invalid lines are no longer invalid.
+		  InvalidLines.RemoveAll
+		  mFullRefresh = False
+		  PreviouslyDrawnSelection = selection
+		  
+		  If MatchingBlockHighlight <> Nil Then
+		    InvalidateLine(MatchingBlockHighlight.StartLine)
+		    MatchingBlockHighlight = Nil
+		  End If
+		  
+		  // Draw the line numbers.
+		  If DisplayLineNumbers And gg <> gr Then
+		    g.DrawPicture(Gutter, 0, 0)
+		  End If
+		  
+		  // And their frame.
+		  If Border Then
+		    g.DrawingColor = BorderColor
+		    g.DrawRectangle(0, 0, g.Width, g.Height)
+		  End If
+		  
+		  // Now we can draw the back buffer to the screen
+		  If mBackBuffer <> Nil Then
+		    gr.DrawPicture(mBackBuffer, 0, 0, gr.Width, gr.Height, 0, 0, mBackBuffer.Width, mBackBuffer.Height)
+		  End If
+		  
+		  // Paint the location of the previous/next block character.
+		  If BlockBeginPosX >= 0 Then
+		    PaintHighlightedBlock(gr)
+		    BlockBeginPosX = -1
+		    BlockBeginPosY = -1
+		  End If
+		  
+		  // Right margin marker.
+		  If DisplayRightMarginMarker And RightMarginAtPixel > 0 Then
+		    gr.DrawPicture(RightMarginLineImage, RightMarginAtPixel - ScrollPositionX + LeftMarginOffset + LineNumberOffset, 0, 1, gr.Height, 0, 0, 1, 1)
+		  End If
+		  
+		  // Paint the caret.
+		  If DragSource = Nil Then
+		    PaintCaret(CaretPos, gr, gutterWidth)
+		  Else
+		    PaintCaret(DragTextPos, gr, gutterWidth)
+		  End If
+		  
+		  PaintOver(gr, gutterWidth)
+		  
+		  #If DebugBuild
+		    redrawTime = System.Microseconds - redrawTime
+		  #EndIf
+		  
+		  mRedrawEverything = False
+		  mRedrawCaret = False
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -783,6 +1523,15 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function FoldingOffset() As Integer
+		  If Not EnableLineFoldings Then Return 0
+		  
+		  Return BlockStartImage.Width + 2
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetCurrentModeColor(propertyName As String) As Color
 		  #Pragma Warning "REFACTOR: This should be removed in favour of ColorGroups"
@@ -820,6 +1569,139 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function GetDoubleClickTimeTicks() As Integer
+		  Var doubleClickTime As Integer
+		  
+		  #If TargetMacOS Then
+		    Declare Function GetDblTime Lib "Carbon"() As Integer
+		    doubleClickTime = GetDblTime()
+		  #EndIf
+		  
+		  #If TargetWin32 Then
+		    Declare Function GetDoubleClickTime Lib "User32.DLL"() As Integer
+		    doubleClickTime = GetDoubleClickTime()
+		    // doubleClickTime now holds the number of milliseconds. Convert to ticks.
+		    doubleClickTime = doubleClickTime / 1000.0 * 60
+		  #EndIf
+		  
+		  #If TargetLinux Then
+		    Const libname = "libgtk-3"
+		    Soft Declare Function gtk_settings_get_default Lib libname() As Ptr
+		    Soft Declare Sub g_object_get Lib libname(Obj As Ptr, first_property_name As CString, ByRef doubleClicktime As Integer, Null As Integer)
+		    If Not System.IsFunctionAvailable("gtk_settings_get_default", libname) Then
+		      Break
+		    Else
+		      Var gtkSettings As Ptr = gtk_settings_get_default()
+		      g_object_get(gtkSettings, "gtk-double-click-time", doubleClickTime, 0)
+		      // doubleClickTime now holds the number of milliseconds. Convert to ticks.
+		      doubleClickTime = doubleClickTime / 1000.0 * 60
+		    End If
+		  #EndIf
+		  
+		  If doubleClickTime <= 0 Then
+		    doubleClickTime = 20 // 20 System.Ticks = 1/3s = 330ms
+		  End
+		  
+		  Return doubleClickTime
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetWord(start As Integer, source As String) As String
+		  Var s As String
+		  s = source
+		  s = s + " "
+		  s = s.Middle(0, s.IndexOf(start, " "))
+		  s = s.NthField(" ", s.CountFields(" ") -1)
+		  Return s.ReplaceLineEndings(EndOfLine).NthField(EndOfLine, 1)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HandleDoubleClick()
+		  // Highlight word(s) after a double click.
+		  
+		  Var word As New SyntaxArea.TextSegment
+		  Var char As String = TextStorage.GetCharAt(CaretPos)
+		  If IsWhitespace(char) Then char = TextStorage.GetCharAt(Max(CaretPos - 1, 0))
+		  
+		  // Check if it's in a placeholder.
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		  If line <> Nil And line.PlaceholderForOffset(CaretPos + 1) <> Nil Then
+		    Word.Offset = CaretPos + 1
+		    Word.Length = 0
+		    
+		  ElseIf IsBlockChar(char) Then
+		    // If it's a block character, find the start/end block.
+		    Var tmp As String
+		    
+		    If BLOCK_OPEN_CHARS.IndexOf(char) > -1 Then
+		      word.Offset = CaretPos + 1
+		      word.Length = NextBlockChar(char, CaretPos, tmp) - CaretPos - 1
+		      
+		    Else
+		      word.Offset = PreviousBlockChar(char, CaretPos, tmp) + 1
+		      word.Length = CaretPos - word.Offset
+		    End If
+		    
+		  ElseIf IsWhitespace(char) Then
+		    word.Offset = PreviousNonWhitespace(CaretPos)
+		    word.Length = NextNonWhitespace(CaretPos) - word.Offset
+		    
+		  ElseIf IsAlpha(char) Then
+		    word.Offset = previousNonAlpha(CaretPos)
+		    word.Length = NextNonAlpha(CaretPos) - word.Offset
+		    
+		  Else
+		    word.Offset = PreviousAlpha(CaretPos)
+		    word.Length = NextAlpha(CaretPos) - word.Offset
+		  End If
+		  
+		  ChangeSelection(word.Offset, word.Length, True)
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 48616E646C65732061206D6F7573652064726167206F6E20746865206775747465722E
+		Protected Sub HandleDragOnGutter(X as integer, Y as integer)
+		  /// Handles a mouse drag on the gutter.
+		  
+		  Var currPos As Integer = CharPosAtXY(x, y)
+		  If selectedLine >= 0 And x < LineNumberOffset Then
+		    // Drag on the line numbers.
+		    Var onLine As Integer = Lines.GetLineNumberForOffset(currPos)
+		    Var fromLine, toLine As SyntaxArea.TextLine
+		    fromLine = Lines.GetLine(Min(SelectedLine, onLine))
+		    toLine = Lines.GetLine(Max(SelectedLine, onLine))
+		    
+		    ChangeSelection(fromLine.Offset, toLine.Offset + toLine.Length - fromLine.Offset - toline.DelimiterLength)
+		    
+		  Else
+		    ChangeSelection(Min(currPos, CaretPos), Abs(currPos - CaretPos))
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HandleHorizontalMouseDrag(x As Integer, y As Integer)
+		  #Pragma Unused y
+		  
+		  If x < LineNumberOffset Then
+		    ChangeScrollValues(ScrollPositionX + (x - LineNumberOffset), ScrollPosition)
+		    
+		  ElseIf x > Width Then
+		    ChangeScrollValues(ScrollPositionX + (x - Width), ScrollPosition)
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
 		Protected Sub HandleTextChanged()
 		  /// Optionally clears highlighted ranges and raises the `TextChanged` event.
@@ -829,6 +1711,61 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		  RaiseEvent TextChanged
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HandleTextDrag(x As Integer, y As Integer)
+		  // Save the selection.
+		  DragTextSelection = New SyntaxArea.DataRange
+		  DragTextSelection.Offset = SelectionStart
+		  DragTextSelection.Length = SelectionLength
+		  
+		  Var drag As Picture = SelectedTextDragImage
+		  Var di As DragItem = New DragItem(Self.Window, x, y, drag.Width, drag.Height)
+		  
+		  di.Text = Me.SelText
+		  
+		  // Set the dragging source.
+		  DragSource = Self
+		  di.Drag
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 53656C6563746564207468652063757272656E74206C696E652E
+		Protected Sub HandleTripleClick()
+		  /// Selected the current line.
+		  
+		  Me.SelectLine(CaretLine, True)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HandleVerticalMouseDrag(x As Integer, y As Integer)
+		  #Pragma Unused x
+		  
+		  // If dragging selection outside visible area.
+		  If y < 0 Or y > Height Then
+		    
+		    Var linesToScroll As Integer
+		    
+		    If y < 0 Then
+		      linesToScroll = y / TextHeight
+		      
+		    Else
+		      linesToScroll = (y - Height) / TextHeight
+		    End If
+		    
+		    // Cap the number of times this method gets called per second (here is 
+		    // max 12 calls per second).
+		    If System.Ticks > lastDragTicks + 5 Then
+		      ChangeScrollValues(ScrollPositionX, ScrollPosition + linesToScroll)
+		      LastDragTicks = System.Ticks
+		    End If
+		  End If
+		  
 		End Sub
 	#tag EndMethod
 
@@ -949,6 +1886,14 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 52657475726E7320547275652069662060736020697320616C7068616E756D657269633F
+		Protected Function IsAlpha(s As String) As Boolean
+		  /// Returns True if `s` is alphanumeric?
+		  
+		  Return MatchesRegex("\w", s)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 52657475726E73205472756520696620606368617260206973206120626C6F636B206368617261637465722E
 		Protected Function IsBlockChar(char As String) As Boolean
 		  /// Returns True if `char` is a block character.
@@ -962,6 +1907,49 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		  Return MatchesRegex(BlockCharsPattern, char)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsURL(input As String) As Boolean
+		  #Pragma BreakOnExceptions False
+		  
+		  Var search As New RegEx
+		  Var matches As New RegExMatch
+		  
+		  search.SearchPattern = RegEXURL
+		  matches = Search.Search(input)
+		  
+		  If matches = Nil Then Exit Function
+		  
+		  If matches.SubExpressionCount = 0 Then
+		    Return False
+		  Else
+		    Return True
+		  End If
+		  
+		  Exception err As NilObjectException
+		    Return False
+		    
+		  Exception err As RegExSearchPatternException
+		    Return False
+		    
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 52657475726E7320547275652069662060736020697320636F6E7369646572656420746F20626520776869746573706163652E
+		Protected Function IsWhitespace(s As String) As Boolean
+		  /// Returns True if `s` is considered to be whitespace.
+		  
+		  Return MatchesRegex("\s", s)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LineCount() As Integer
+		  Return Lines.Count
 		  
 		End Function
 	#tag EndMethod
@@ -1097,6 +2085,20 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420616C7068616E756D65726963206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
+		Protected Function NextAlpha(fromOffset As Integer) As Integer
+		  /// Finds the next alphanumeric character, starting at `fromOffset`.
+		  
+		  For i As Integer = fromOffset + 1 To TextStorage.Length - 1
+		    Var char As String = TextStorage.GetCharAt(i)
+		    If IsAlpha(char) Then Return i
+		  Next i
+		  
+		  Return TextStorage.Length
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420626C6F636B206368617261637465722C20666F722074686520676976656E2060666F724368617260206368617261637465722E
 		Protected Function NextBlockChar(forChar As string, offset As Integer, ByRef charToFind As String) As Integer
 		  /// Finds the next block character, for the given `forChar` character.
@@ -1161,6 +2163,36 @@ Implements MessageCentre.MessageReceiver
 		  Next i
 		  
 		  Return TextStorage.Length
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E647320746865206E657874206E6F6E2D616C7068616E756D65726963206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
+		Protected Function NextNonAlpha(fromOffset As Integer) As Integer
+		  /// Finds the next non-alphanumeric character, starting at `fromOffset`.
+		  
+		  For i As Integer = fromOffset + 1 To TextStorage.Length - 1
+		    Var char As String = TextStorage.GetCharAt(i)
+		    If Not IsAlpha(char) Then Return i
+		  Next i
+		  
+		  Return TextStorage.Length
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E647320746865206E657874206E6F6E2D77686974657370616365206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
+		Protected Function NextNonWhitespace(fromOffset As Integer, maxOffset As Integer = -1) As Integer
+		  /// Finds the next non-whitespace character, starting at `fromOffset`.
+		  
+		  If maxOffset < 0 Then maxOffset = TextStorage.Length
+		  
+		  For i As Integer = fromOffset + 1 To maxOffset - 1
+		    Var char As String = TextStorage.GetCharAt(i)
+		    If Not IsWhitespace(char) Then Return i
+		  Next
+		  
+		  Return maxOffset
 		  
 		End Function
 	#tag EndMethod
@@ -1234,6 +2266,69 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function OpeningBlockLineForLine(lineIndex As Integer) As Integer
+		  Var temp_value As Integer
+		  temp_value = Lines.PreviousBlockStartLine(lineIndex, True)
+		  
+		  If temp_value <= 0 Then
+		    If Lines.GetLine(lineIndex).IsBlockStart Then temp_value = lineIndex
+		  End If
+		  
+		  Return temp_value
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub PaintCaret(atPos As Integer, g As Graphics, gutterWidth As Integer)
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  If Not mHasFocus And DragSource = Nil Then Return
+		  If SelectionLength > 0 And DragTextSelection = Nil Then Return
+		  
+		  CaretVisible = Not CaretVisible
+		  If CaretVisible Then Return
+		  
+		  Var xpos, ypos As Double
+		  
+		  If atPos = CaretPos Then
+		    XYAtCharPos(atPos, CaretLine, xpos, ypos)
+		  Else
+		    XYAtCharPos(atPos, xpos, ypos)
+		  End If
+		  
+		  If xpos < gutterWidth Or ypos < 0 Then Return
+		  
+		  g.DrawingColor = CaretColor
+		  
+		  If ThickInsertionPoint Then
+		    g.PenSize = 2
+		  End If
+		  g.DrawLine xpos - 1, ypos - 1, xpos - 1, ypos - TextHeight + 1
+		  g.PenSize = 1
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 5061696E7473206120626C756520636972636C65206F7665722074686520686967686C69676874656420626C6F636B206368617261637465722069662060486967686C696768744D61746368696E67427261636B6574736020697320547275652E
+		Protected Sub PaintHighlightedBlock(g As Graphics)
+		  /// Paints a blue circle over the highlighted block character 
+		  /// if `HighlightMatchingBrackets` is True.
+		  
+		  If Not HighlightMatchingBrackets Then Return
+		  
+		  g.PenSize = 2
+		  g.DrawingColor = SyntaxArea.AdjustColorForDarkMode(&c4444FF)
+		  g.DrawOval(blockBeginPosX - 2 - g.TextWidth("(") / 2, blockBeginPosY - g.TextHeight - 1, g.TextHeight + 4, g.TextHeight + 4)
+		  g.PenSize = 1
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Paste()
 		  Var c As New Clipboard
@@ -1255,6 +2350,18 @@ Implements MessageCentre.MessageReceiver
 		  Redraw
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F757320616C7068616E756D6572696320636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Protected Function previousAlpha(fromOffset As Integer) As Integer
+		  /// Finds the previous alphanumeric character starting at `fromOffset`.
+		  
+		  For i As Integer = fromOffset - 1 DownTo 1
+		    Var char As String = TextStorage.GetCharAt(i - 1)
+		    If IsAlpha(char) Then Return i
+		  Next i
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -1322,6 +2429,30 @@ Implements MessageCentre.MessageReceiver
 		  For i As Integer = fromOffset - 1 DownTo 1
 		    Var char As String = TextStorage.GetCharAt(i - 1)
 		    If matchesRegex(pattern, char) Then Return i
+		  Next i
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206E6F6E2D616C7068616E756D6572696320636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Protected Function PreviousNonAlpha(fromOffset As Integer) As Integer
+		  /// Finds the previous non-alphanumeric character starting at `fromOffset`.
+		  
+		  For i As Integer = fromOffset - 1 DownTo 1
+		    Var char As String = TextStorage.GetCharAt(i - 1)
+		    If Not IsAlpha(char) Then Return i
+		  Next i
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206E6F6E2D7768697465737061636520636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Protected Function PreviousNonWhitespace(fromOffset As Integer) As Integer
+		  /// Finds the previous non-whitespace character starting at `fromOffset`.
+		  
+		  For i As Integer = fromOffset - 1 DownTo 1
+		    Var char As String = TextStorage.GetCharAt(i - 1)
+		    If Not IsWhitespace(char) Then Return i
 		  Next i
 		  
 		End Function
@@ -1821,6 +2952,48 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 52657475726E732061205069637475726520726570726573656E746174696F6E206F66207468652073656C65637465642074657874206265696E6720647261676765642E
+		Protected Function SelectedTextDragImage() As Picture
+		  /// Returns a Picture representation of the selected text being dragged.
+		  
+		  Var s As String = SelText
+		  Var selection As String = s.Left(200) + " "
+		  If s.Length > 200 Then selection = selection + "..."
+		  
+		  Var w, h As Integer
+		  Var tmp As Picture = TemporaryPicture
+		  w = Min(tmp.Graphics.TextWidth(selection + " "), Width)
+		  h = tmp.Graphics.TextHeight(selection, w)
+		  
+		  Var image As Picture = New Picture(w, h, 32)
+		  image.Graphics.FontSize = FontSize
+		  image.Graphics.FontName = TextFont
+		  Image.Graphics.DrawText(selection, 0, Image.Graphics.TextHeight - (Image.Graphics.TextHeight - Image.Graphics.FontAscent), w)
+		  
+		  Return image
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 53656C656374732074686520676976656E206C696E652E
+		Sub SelectLine(lineNumber As Integer, refresh As Boolean = True)
+		  /// Selects the given line.
+		  
+		  If lineNumber < 0 Or lineNumber >= Lines.Count Then
+		    Break
+		    System.Beep
+		    Return
+		  End If
+		  
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineNumber)
+		  If Not line.Visible Then Lines.RevealLine(lineNumber)
+		  ChangeSelection(line.Offset, line.Length - line.DelimiterLength)
+		  
+		  If refresh Then Redraw
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SetBrightModeColor(c As Color, propertyName As String)
 		  #Pragma Warning "REFACTOR: Remove this once we have migrated to ColorGroups"
@@ -1888,6 +3061,27 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ToggleLineFold(lineIndex As Integer)
+		  If Not EnableLineFoldings Then Return
+		  
+		  Var topLine As Integer = Lines.ToggleLineFolding(lineIndex)
+		  If topLine > -1 Then
+		    // Check if the caret is in an invisible line.
+		    Var line As SyntaxArea.TextLine = Lines.GetLine(Lines.GetLineNumberForOffset(CaretPos))
+		    // If it's invisible, move the caret to the folded line.
+		    If Not line.Visible Then
+		      line = Lines.GetLine(topLine)
+		      If line <> Nil Then ChangeSelection(line.Offset, 0)
+		    End If
+		    InvalidateAllLines
+		  Else
+		    InvalidateLine(lineIndex)
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 5361766573207468652073637265656E20706F736974696F6E206F662074686520676976656E206F66667365742E
 		Protected Sub UpdateDesiredColumn(pos As Integer = -1)
 		  /// Saves the screen position of the given offset.
@@ -1896,6 +3090,38 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If pos < 0 Then pos = Self.CaretPos
 		  mDesiredColumnCharPos = pos
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateIndentation()
+		  If mKeepEntireTextIndented Then
+		    // Prevents the LineHighlighter from interfering while we're modifying the lines.
+		    Var lock As New SyntaxArea.LinesLock(Self)
+		    #Pragma Unused lock
+		    
+		    Var trimLines As Boolean = Not mIndentVisually
+		    Var indentationState As Variant
+		    
+		    Var lineIdx As Integer = Lines.FirstLineForIndentation
+		    
+		    While lineIdx < Self.LineCount
+		      Var modified As Boolean = PrivateIndentline(lineIdx, trimLines, indentationState)
+		      If Not modified Then
+		        If lineIdx > Lines.LastLineForIndentation Then
+		          // We're done.
+		          Exit
+		        End If
+		      End If
+		      If trimLines Then
+		        InvalidateLine(lineIdx)
+		      End If
+		      lineIdx = lineIdx + 1
+		    Wend
+		    
+		    Lines.IndentationFinished
+		  End If
 		  
 		End Sub
 	#tag EndMethod
@@ -2021,6 +3247,18 @@ Implements MessageCentre.MessageReceiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event FocusLost()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event FocusReceived()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GutterClicked(onLine As Integer, x As Integer, y As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event HighlightingComplete()
 	#tag EndHook
 
@@ -2036,8 +3274,36 @@ Implements MessageCentre.MessageReceiver
 		Event MaxLineLengthChanged(maxLineLengthInPixels As Single)
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event MouseDown(x As Integer, y As Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MouseExit()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MouseMove(x As Integer, y As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MouseUp(x As Integer, y As Integer)
+	#tag EndHook
+
 	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206F70656E696E672E
 		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PaintAboveLine(lineIndex As Integer, g As Graphics, x As Integer, y As Integer, w As Integer, h As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PaintBelowLine(lineIndex As Integer, g As Graphics, x As Integer, y As Integer, w As Integer, h As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PaintOver(g As Graphics, gutterWidth As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -2065,7 +3331,19 @@ Implements MessageCentre.MessageReceiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event UseBackgroundColorForLine(lineIndex As Integer, ByRef lineBackgroundColor As Color) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event UseBookmarkIconForLine(lineIndex As Integer) As Picture
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event VerticalScrollValueChanged()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event WordUnderMouse(word As String)
 	#tag EndHook
 
 
@@ -3613,6 +4891,9 @@ Implements MessageCentre.MessageReceiver
 	#tag EndConstant
 
 	#tag Constant, Name = DEFAULT_FONTSIZE, Type = Double, Dynamic = False, Default = \"12", Scope = Public, Description = 5468652064656661756C7420666F6E742073697A652E
+	#tag EndConstant
+
+	#tag Constant, Name = RegEXURL, Type = String, Dynamic = False, Default = \"(\?x) # FREE SPACING\n(\?i-U) # Case-insensitive\x2C greedy\n\n# Define the prefix\n(\?(DEFINE)(\?<prefix>[A-Z]{3\x2C}://))\n# Define a valid URL character\n(\?(DEFINE)(\?<valid>[A-Z0-9\\-_~:/\?\\#[\\]@!$&\'()*+;\x3D.\x2C%]))\n\n# START\n\\b # Word boundary\n(\?: # Non-capturing group\n(\?<\x3D\\<)(\?&prefix)(\?&valid)+(\?\x3D\\>) # Anything between angle-brackets\n| # OR\n(\?<\x3D\\[)(\?&prefix)(\?&valid)+(\?\x3D\\]) # Anything between square-brackets\n| # OR\n(\?<\x3D\\{)(\?&prefix)(\?&valid)+(\?\x3D\\}) # Anything between curly-brackets\n| # OR\n(\?&prefix)(\?&valid)+(\?<![\\.\x2C]) # Can\'t end on a dot or comma\n) # End non-capturing group", Scope = Private
 	#tag EndConstant
 
 
