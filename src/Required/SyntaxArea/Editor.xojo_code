@@ -3,6 +3,140 @@ Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
+		Sub Closing()
+		  // Remove this control from all the message lists.
+		  Self.UnregisterReceiver
+		  
+		  If mHighlightTimer <> Nil Then
+		    mHighlightTimer.RunMode = Timer.RunModes.Off
+		    mHighlightTimer.Enabled = False
+		    mHighlightTimer = Nil
+		  End If
+		  
+		  If mRedrawTimer <> Nil Then
+		    mRedrawTimer.RunMode = Timer.RunModes.Off
+		    mRedrawTimer.Enabled = False
+		    mRedrawTimer = Nil
+		  End If
+		  
+		  // Kill the highlighting thread.
+		  StopHighlighter
+		  mHighlighter = Nil
+		  
+		  // Avoid circular references.
+		  mCaretBlinker = Nil
+		  Lines = Nil
+		  
+		  If CurrentFocusedField = Self Then gCurrentFocusedField = Nil
+		  
+		  mWindowIsClosing = True
+		  
+		  Close
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function ConstructContextualMenu(base As DesktopMenuItem, x As Integer, y As Integer) As Boolean
+		  If ConstructContextualMenu(DesktopMenuItem(base), x, y) Then Return True
+		  
+		  If base.Count > 0 Then base.AddMenu New DesktopMenuItem("-")
+		  
+		  base.AddMenu(EditCut.Clone)
+		  base.AddMenu(EditCopy.Clone)
+		  base.AddMenu(EditPaste.Clone)
+		  base.AddMenu(EditClear.Clone)
+		  base.AddMenu(New DesktopMenuItem("-"))
+		  base.AddMenu(EditSelectAll.Clone)
+		  
+		  Return True
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function DragEnter(obj As DragItem, action As DragItem.Types) As Boolean
+		  #Pragma Unused obj
+		  #Pragma Unused action
+		  
+		  Me.SetFocus
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function DragOver(x As Integer, y As Integer, obj As DragItem, action As DragItem.Types) As Boolean
+		  #Pragma Unused obj
+		  #Pragma Unused action
+		  
+		  // Save the drag position.
+		  DragTextPos = CharPosAtXY(x, y)
+		  
+		  // If there's no DragTextSelection, then the text must come from some external source.
+		  If DragTextSelection = Nil Then
+		    ChangeSelection(DragTextPos, 0)
+		  End If
+		  
+		  CaretVisible = True
+		  
+		  Redraw
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub DropObject(obj As DragItem, action As DragItem.Types)
+		  #Pragma Unused action
+		  
+		  If Not obj.TextAvailable Then Return
+		  
+		  CurrentEventID = System.Ticks
+		  
+		  Var moveWithin As Boolean
+		  ignoreRepaint = True
+		  // Check if the text comes from this same field.
+		  moveWithin = DragSource = Self
+		  
+		  // Moved inside the selected text, do nothing.
+		  If moveWithin And DragTextPos >= DragTextSelection.offset And _
+		    DragTextPos <= DragTextSelection.offset + DragTextSelection.length Then
+		    ignoreRepaint = False
+		    Return
+		  End If
+		  
+		  // Since the text is being moved inside the field, remove the old selection.
+		  If moveWithin Then
+		    PrivateRemove(DragTextSelection.Offset, DragTextSelection.Length, False)
+		  End If
+		  
+		  // Fix offsets, and insert text.
+		  If DragTextSelection = Nil Or DragTextPos < DragTextSelection.Offset Then
+		    Insert(DragTextPos, obj.Text)
+		    
+		  ElseIf DragTextPos > DragTextSelection.Offset + DragTextSelection.Length Then
+		    Insert(DragTextPos - DragTextSelection.Length, obj.Text)
+		  End If
+		  
+		  // Select the text.
+		  ChangeSelection(SelectionStart, - obj.Text.Length)
+		  ignoreRepaint = False
+		  
+		  // If the drag comes from an external source, `MouseUp` isn't raised, so clean up if needed.
+		  If Not moveWithin Then
+		    dragTextOnDrag = False
+		    DragSource = Nil
+		    DragTextSelection = Nil
+		    InvalidateAllLines
+		  End If
+		  
+		  Me.Setfocus
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndEvent
+
 	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
 		Sub Opening()
 		  BlockBeginPosX = -1
@@ -34,6 +168,58 @@ Implements MessageCentre.MessageReceiver
 	#tag EndEvent
 
 
+	#tag MenuHandler
+		Function EditClear() As Boolean Handles EditClear.Action
+		  Me.SelText = ""
+		  Redraw
+		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function EditCopy() As Boolean Handles EditCopy.Action
+		  Copy
+		  
+		  Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function EditCut() As Boolean Handles EditCut.Action
+		  Var c As New Clipboard
+		  
+		  c.Text = Me.SelText.ReplaceAll(Chr(1), Chr(0))
+		  
+		  Me.SelText = ""
+		  
+		  Redraw
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function EditPaste() As Boolean Handles EditPaste.Action
+		  Paste
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function EditSelectAll() As Boolean Handles EditSelectAll.Action
+		  SelectAll
+		  
+		  Redraw
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+
 	#tag Method, Flags = &h1
 		Protected Sub AutocompleteCancelled(requestFocus As Boolean)
 		  If requestFocus Then SetFocus
@@ -44,6 +230,43 @@ Implements MessageCentre.MessageReceiver
 		  Self.UnregisterForMessage(CurrentSuggestionWindow)
 		  
 		  currentSuggestionWindow = Nil
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 4765747320746865206175746F636F6D706C657465206F7074696F6E732066726F6D2074686520636C69656E742077696E646F772E
+		Protected Sub AutocompleteEOL()
+		  /// Gets the autocomplete options from the client window.
+		  
+		  Call FetchAutocompleteOptions
+		  If CurrentAutocompleteOptions = Nil Then Return // Nothing to autocomplete.
+		  
+		  Var maxIndex As Integer = CurrentAutocompleteOptions.Options.LastIndex
+		  Var firstMatch, longestCommonPrefix, currentPathComponent As String
+		  
+		  longestCommonPrefix = CurrentAutocompleteOptions.LongestCommonPrefix
+		  currentPathComponent = CurrentAutocompleteOptions.CurrentPathComponent
+		  If maxIndex > -1 Then firstMatch = CurrentAutocompleteOptions.Options(0)
+		  
+		  If maxIndex > 0 Then
+		    // More than one option.
+		    OptionForTrailingSuggestion = longestCommonPrefix
+		    trailingSuggestion = _
+		    longestCommonPrefix.Right(longestCommonPrefix.Length - currentPathComponent.Length) + "…"
+		    
+		  ElseIf maxIndex = 0 And Text <> firstMatch Then
+		    // Just one.
+		    OptionForTrailingSuggestion = firstMatch
+		    trailingSuggestion = firstMatch.Middle(firstMatch.LongestCommonPrefixIndex(currentPathComponent))
+		    
+		  Else
+		    // The word is already fully typed.
+		    AutoCompleteDone = True
+		    Return
+		  End If
+		  
+		  Var y As Double
+		  XYAtCharPos(CaretPos, CaretLine, AutocompleteSuggestionInsertionX, y)
 		  
 		End Sub
 	#tag EndMethod
@@ -131,13 +354,376 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 4368616E67657320746865207669657720746F2074686520676976656E207363726F6C6C2076616C7565732E
+		Protected Sub ChangeScrollValues(horizontal As Integer, vertical As Integer)
+		  /// Changes the view to the given scroll values.
+		  
+		  mCaretBlinker.Reset
+		  
+		  Var needsRedraw As Boolean = False
+		  Var valuesChanged As Boolean
+		  
+		  If horizontal <> ScrollPositionX Then
+		    // Cap values.
+		    horizontal = Max(Min(horizontal, mLastLongestLinePixels - Self.Width + LineNumberOffset + RightScrollMargin), 0)
+		    
+		    // Force a full redraw.
+		    If horizontal <> ScrollPositionX Then
+		      InvalidateAllLines
+		    End If
+		    
+		    // Change scrollbars.
+		    mScrollPositionX = horizontal
+		    If mHorizontalScrollBar <> Nil Then
+		      mHorizontalScrollBar.Value = horizontal
+		    Else
+		      needsRedraw = True
+		    End If
+		    
+		    valuesChanged = True
+		    RaiseEvent HorizontalScrollValueChanged
+		  End If
+		  
+		  If vertical <> ScrollPosition Then
+		    // Cap values.
+		    If EnableLineFoldings Then
+		      Var v2 As Integer = Max(Min(vertical, Lines.Count - Lines.InvisibleLines - MaxVisibleLines), 0)
+		      If vertical <> v2 Then
+		        vertical = v2
+		      End If
+		    Else
+		      vertical = Max(Min(vertical, Lines.Count - MaxVisibleLines), 0)
+		    End If
+		    
+		    If vertical <> ScrollPosition Then
+		      InvalidateAllLines
+		    End If
+		    
+		    // Change scrollbars.
+		    mScrollPosition = vertical
+		    If mVerticalScrollbar <> Nil Then
+		      mVerticalScrollbar.Value = vertical
+		    Else
+		      needsRedraw = True
+		    End If
+		    
+		    valuesChanged = True
+		    RaiseEvent VerticalScrollValueChanged
+		  End If
+		  
+		  If valuesChanged Then RaiseEvent ScrollValuesChanged
+		  If needsRedraw Then Redraw
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ChangeSelection(selStart As Integer, selLength As Integer, viaDoubleClick As Boolean = False)
+		  // Changes the current document selection.
+		  
+		  // Nothing to change.
+		  If selStart = mSelectionStart And selLength = mSelectionLength Then Return
+		  
+		  // Backwards selections?
+		  If selLength < 0 Then
+		    selLength = - selLength
+		    selStart = selStart - selLength
+		  End If
+		  
+		  // Cap selstart.
+		  If selStart < 0 Then
+		    selStart = 0
+		  ElseIf selStart > TextStorage.Length Then
+		    selStart = TextStorage.Length
+		  End If
+		  
+		  // Cap SelLength.
+		  If selStart + selLength > TextStorage.Length Then
+		    selLength = selLength - TextStorage.Length
+		  End If
+		  
+		  // Find the starting line for the selection.
+		  Var linenum As Integer = Lines.GetLineNumberForOffset(SelStart)
+		  Var line As TextLine = Lines.GetLine(linenum)
+		  
+		  // Deal with invisible lines.
+		  If EnableLineFoldings Then
+		    Var startLineIdx, endLineIdx As Integer
+		    Var startLine, endLine As SyntaxArea.TextLine
+		    Var update As Boolean
+		    
+		    // Check if selstart is in a visible line, if not, move it to the next or 
+		    // previous visible line.
+		    If selStart <> mSelectionStart Then
+		      If linenum <> CaretLine Then
+		        // Only if the new line is different from the previous.
+		        startLineIdx = Lines.GetLineNumberForOffset(selStart)
+		        startLine = Lines.GetLine(startLineIdx)
+		        If startLine <> Nil And selStart > mSelectionStart Then
+		          // Moving forwards.
+		          If Not startLine.Visible Then
+		            startLineIdx = Lines.NextVisibleLine(startLineIdx)
+		            update = True
+		          End If
+		        ElseIf startLine <> Nil And selstart < mSelectionStart Then
+		          // Moving backwards.
+		          If Not startLine.Visible Then
+		            startLineIdx = Lines.PreviousVisibleLine(startLineIdx)
+		            update = True
+		          End If
+		        End If
+		        
+		        If update Then
+		          startLine = Lines.GetLine(startLineIdx)
+		          If startLine <> Nil Then
+		            selStart = OffsetForXPos(startLine, CaretDesiredColumn)
+		            linenum = startLineIdx
+		            line = startLine
+		            
+		            If selLength > 0 Then
+		              selLength = mSelectionStart + mSelectionLength - selStart
+		            End If
+		          End If
+		        End If
+		      End If
+		    End If
+		    
+		    If Not update And selLength > 0 And selLength <> mSelectionLength Then
+		      endLineIdx = Lines.GetLineNumberForOffset(selStart + selLength)
+		      endLine = Lines.GetLine(endLineIdx)
+		      
+		      If endLine <> Nil And selLength > mSelectionLength Then
+		        // Enlarging the selection.
+		        If Not endLine.Visible Then
+		          endLineIdx = Lines.NextVisibleLine(endLineIdx)
+		          update = True
+		        End If
+		      ElseIf endLine <> Nil And selLength < mSelectionLength Then
+		        // Shrinking the selection.
+		        If Not endLine.Visible Then
+		          endlineIdx = Lines.PreviousVisibleLine(endLineIdx)
+		          update = True
+		        End If
+		      End If
+		      
+		      If update Then
+		        endLine = Lines.GetLine(endLineIdx)
+		        If endLine <> Nil Then
+		          selLength = OffsetForXPos(endLine, CaretDesiredColumn) - selStart
+		        End If
+		      End If
+		    End If
+		  End If
+		  
+		  // Ensure the selection isn't inside an EOL delimiter.
+		  If line <> Nil Then
+		    If selStart > line.Offset + line.Length - line.DelimiterLength Then
+		      If selStart > mSelectionStart Then
+		        selStart = line.Offset + line.Length
+		      Else
+		        selStart = line.Offset + line.Length - line.DelimiterLength
+		      End If
+		      linenum = Lines.GetLineNumberForOffset(selStart)
+		      line = Lines.GetLine(linenum)
+		    End If
+		  End If
+		  
+		  // Update the selection if inside a placeholder.
+		  Var selectedPlaceholder As SyntaxArea.TextPlaceholder = Nil
+		  If mSelectionStart < selStart Then
+		     // Moving the start to the right.
+		    Var placeholder As SyntaxArea.TextPlaceholder = line.PlaceholderForOffset(selStart)
+		    If placeholder <> Nil Then
+		      If selLength = 0 Then
+		        selStart = placeholder.Offset + line.Offset
+		        selLength = placeholder.Length
+		        selectedPlaceholder = placeholder
+		        
+		      Else
+		        selStart = placeholder.Offset + placeholder.Length + line.Offset
+		        selLength = selLength - placeholder.Length + 1
+		      End If
+		    End If
+		    
+		  ElseIf mSelectionStart > selStart Then
+		    // Moving start to the left.
+		    If selStart = -1 Then Exit
+		    
+		    Var placeholder As SyntaxArea.TextPlaceholder = line.PlaceholderForOffset(selStart)
+		    
+		    If placeholder <> Nil Then
+		      If selLength = 0 Then
+		        selStart = placeholder.Offset + line.Offset
+		        selLength = placeholder.Length
+		        selectedPlaceholder = placeholder
+		        
+		      Else
+		        selStart = placeholder.Offset + line.Offset
+		        selLength = selLength + placeholder.Length - 1
+		      End If
+		    End If
+		    
+		  ElseIf mSelectionLength > selLength Then
+		    // Shrinking the selection.
+		    Var endline As SyntaxArea.TextLine = _
+		    Lines.GetLine(Lines.GetLineNumberForOffset(selStart + selLength))
+		    If endline <> Nil Then
+		      Var placeholder As SyntaxArea.TextPlaceholder = _
+		      endline.PlaceholderForOffset(selStart + selLength)
+		      
+		      If placeholder <> Nil Then
+		        selLength = Max(selLength - placeholder.Length + 1, 0)
+		      End If
+		    End If
+		    
+		  ElseIf mSelectionLength < selLength Then
+		     // Expanding the selection.
+		    Var endline As SyntaxArea.TextLine = _
+		    Lines.GetLine(Lines.GetLineNumberForOffset(selStart + selLength))
+		    If endline <> Nil Then
+		      Var placeholder As SyntaxArea.TextPlaceholder = _
+		      endline.PlaceholderForOffset(selStart + selLength)
+		      
+		      If placeholder <> Nil Then
+		        selLength = selLength + placeholder.Length - 1
+		      End If
+		    End If
+		  End If
+		  
+		  // Change internal values.
+		  mSelectionStart = selStart
+		  mSelectionLength = selLength
+		  
+		  // If SelLength = 0 or outside selection then update the caret.
+		  If selLength = 0 Or CaretPos < selStart Or CaretPos > selStart + selLength Then
+		    // Has the line changed? If so, invalidate the lines.
+		    If linenum <> CaretLine Then
+		      InvalidateLine(CaretLine)
+		      mCaretLine = Lines.GetLineNumberForOffset(selStart)
+		    End If
+		    
+		    mCaretPos = selStart
+		    
+		    // Check if the caret is out of view.
+		    ViewToCharPos(CaretLine, mCaretPos)
+		  End If
+		  
+		  // Blink only if no selection.
+		  EnableBlinker(selLength = 0)
+		  
+		  If Not UndoMgr.IsUndoing Then
+		    // Raise the SelectionChanged event
+		    RaiseEvent SelectionChanged(linenum + 1, selStart - line.Offset, selLength)
+		    
+		    If selectedPlaceholder <> Nil Then
+		      Var label As String = _
+		      TextStorage.GetText(line.Offset + selectedPlaceholder.TextRange.Offset, _
+		      selectedPlaceholder.TextRange.Length)
+		      RaiseEvent PlaceholderSelected(label, linenum, Lines.GetLine(linenum), selectedPlaceholder, viaDoubleClick)
+		    End If
+		  End If
+		  
+		  // Fire autocomplete events.
+		  If selLength > 0 Or Not EnableAutocomplete Then Return
+		  trailingSuggestion = ""
+		  
+		  // Are we at the end of the current line?
+		  If caretPos = line.Offset + line.Length - line.DelimiterLength Then
+		    // Check if the caret is out of view.
+		    AutocompleteEOL
+		  End If
+		  
+		  InvalidateLine(CaretLine)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732074686520636861726163746572206F666673657420617420706F736974696F6E2028782C207929206F72202D31206966206E6F7420666F756E642E
+		Function CharPosAtXY(x As Integer, y As Integer) As Integer
+		  /// Returns the character offset at position (x, y) or -1 if not found.
+		  
+		  Var lineNum As Integer
+		  
+		  // Find the line.
+		  If EnableLineFoldings Then
+		    lineNum = Lines.GetNumberOfLinesNeededToView(Min(Lines.Count - 1, _
+		    Max(0, Floor((y + (ScrollPosition * TextHeight)) / TextHeight))))
+		  Else
+		    lineNum = Min(Lines.Count - 1, _
+		    Max(0, Floor((y + (ScrollPosition * TextHeight)) / TextHeight)))
+		  End If
+		  
+		  // Find the character offset.
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineNum)
+		  
+		  // Not found?
+		  If line = Nil Then Return -1
+		  
+		  Var offset As Integer = LeftMarginOffset + LineNumberOffset - ScrollPositionX
+		  
+		  Return OffsetForXPos(line, x - offset)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 436C6561727320686967686C6967687465642072616E67657320616E6420726564726177732E
+		Sub ClearHighlightedCharacterRanges()
+		  /// Clears highlighted ranges and redraws.
+		  
+		  If HighlightedRanges.SelectionCount = 0 Then Return
+		  
+		  HighlightedRanges.Clear
+		  InvalidateAllLines
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Function ColorReturningProc() As Color
 	#tag EndDelegateDeclaration
 
+	#tag Method, Flags = &h0
+		Sub Copy()
+		  If SelectionLength = 0 Then Return
+		  Var c As New Clipboard
+		  
+		  Var textToCopy As String
+		  
+		  textToCopy = Me.SelText.ReplaceAll(Chr(1), Chr(0))
+		  
+		  #If TargetWindows
+		    // As the `Text()` and `SelText()` functions use CR for line delimiters, 
+		    // we need to convert them into the native format here).
+		    textToCopy = textToCopy.ReplaceAll(Me.LineDelimiter, EndOfLine.Windows)
+		  #ElseIf TargetLinux
+		    textToCopy = textToCopy.ReplaceAll(Me.LineDelimiter, EndOfLine.Unix)
+		  #EndIf
+		  
+		  c.Text = textToCopy
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function CurrentAutocompleteOptions() As SyntaxArea.AutocompleteOptions
 		  Return mCurrentAutocompleteOptions
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 47657473207468652063757272656E7420776F72642C207768657265207468652063617265742069732061742E
+		Protected Function CurrentWord() As SyntaxArea.TextSegment
+		  /// Gets the current word, where the caret is at.
+		  ///
+		  /// A word is anything except whitespace.
+		  
+		  Var startIndex, endIndex As Integer
+		  startIndex = PreviousCharInSet(CaretPos + 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
+		  endIndex = NextCharInSet(CaretPos - 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
+		  
+		  Return New SyntaxArea.TextSegment(startIndex, endIndex - startIndex)
 		  
 		End Function
 	#tag EndMethod
@@ -155,6 +741,46 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 41736B732074686520636C69656E742077696E646F7720666F72206175746F636F6D706C657465206F7074696F6E7320666F72207468652063757272656E7420776F72642E
+		Protected Function FetchAutocompleteOptions() As Boolean
+		  /// Asks the client window for autocomplete options for the current word.
+		  
+		  mCurrentAutocompleteOptions = Nil
+		  
+		  // Get the word where the caret is.
+		  Var CurrentWordSegment As SyntaxArea.TextSegment = CurrentWord
+		  If CurrentWordSegment.Length = 0 Then Return False
+		  If CaretPos = CurrentWordSegment.Offset Then
+		    // Return false if the cursor is at the beginning of the word.
+		    Return False
+		  End If
+		  
+		  // Get the actual word text.
+		  Var prefix As String = TextStorage.GetText(CurrentWordSegment.Offset, CurrentWordSegment.Length).Trim
+		  If prefix.Length = 0 Or prefix = "." Then Return False
+		  
+		  // Raise event.
+		  mCurrentAutocompleteOptions = RaiseEvent AutocompleteOptionsForPrefix(prefix)
+		  
+		  If CurrentAutocompleteOptions = Nil Then Return False
+		  
+		  If CurrentAutocompleteOptions.Options.LastIndex < -1 Then
+		    mCurrentAutocompleteOptions = Nil
+		    Return False
+		  End If
+		  
+		  CurrentAutocompleteOptions.Prefix = prefix
+		  
+		  // Get the current path component. This is the last word after the last period in the prefix.
+		  // E.g: If the prefix is "one.two.three" then the current component will be "three".
+		  Var tmpPath() As String = prefix.Split(".")
+		  CurrentAutocompleteOptions.CurrentPathComponent = TmpPath(tmpPath.LastIndex)
+		  
+		  Return True
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -194,6 +820,95 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
+		Protected Sub HandleTextChanged()
+		  /// Optionally clears highlighted ranges and raises the `TextChanged` event.
+		  
+		  If ClearHighlightedRangesOnTextChange Then
+		    ClearHighlightedCharacterRanges
+		  End If
+		  
+		  RaiseEvent TextChanged
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Highlight()
+		  If mHighlighter = Nil Or mHighlighter.ThreadState = Thread.ThreadStates.NotRunning Then
+		    HighlighterTask(True).Start
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420636C6F73696E6720626C6F636B2C207374617274696E6720617420606F6666736574602E
+		Protected Sub HighlightClosingBlock(s As String, offset As Integer)
+		  /// Finds the next closing block, starting at `offset`.
+		  
+		  Var pos As Integer
+		  Var closeChar As String
+		  pos = NextBlockChar(s, offset, closeChar)
+		  
+		  If pos >= 0 Then
+		    If HighlightMatchingBracketsMode = 0 Then
+		      // Circle.
+		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
+		    Else
+		      Var line As Integer = LineNumAtCharPos(pos)
+		      MatchingBlockHighlight = _
+		      New SyntaxArea.CharSelection(pos, 1, line, line, BracketHighlightColor)
+		      InvalidateLine(line)
+		    End If
+		    
+		    RaiseEvent BlockCharsMatched(s, offset, closeChar, pos)
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function HighLighterTask(createIfMissing As Boolean) As SyntaxArea.LineHighlighter
+		  If mHighlighter = Nil And createIfMissing Then
+		    mHighlighter = _
+		    New SyntaxArea.LineHighlighter(Self, SyntaxDefinition, Self.ModifiedLines, _
+		    TextStorage, Lines)
+		    Self.RegisterForMessage(mHighlighter)
+		  End If
+		  
+		  Return mHighlighter
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206F70656E696E6720626C6F636B2C207374617274696E67206174206F66667365742E
+		Protected Sub HighlightOpeningBlock(s As String, offset As Integer)
+		  /// Finds the previous opening block, starting at offset.
+		  
+		  Var pos As Integer
+		  Var openingChar As String
+		  pos = PreviousBlockChar(s, offset, openingChar)
+		  
+		  If pos >= 0 Then
+		    If HighlightMatchingBracketsMode = 0 Then
+		       // Circle.
+		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
+		    Else
+		      Var line As Integer = LineNumAtCharPos(pos)
+		      MatchingBlockHighlight = _
+		      New SyntaxArea.CharSelection(pos, 1, line, line, BracketHighlightColor)
+		      InvalidateLine(line)
+		    End If
+		    
+		    BlockCharsMatched(openingChar, pos, s, offset)
+		  Else
+		    // No open block found.
+		    Break
+		    System.Beep
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function IndentStr(indents As Integer) As String
 		  If mIndentString = "" Then
@@ -206,6 +921,13 @@ Implements MessageCentre.MessageReceiver
 		  Return mIndentString.Left(indents)
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Insert(offset As Integer, s As String)
+		  PrivateReplace(offset, 0, s, True)
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 4D61726B7320616C6C206C696E657320666F7220726564726177696E672E
@@ -225,6 +947,23 @@ Implements MessageCentre.MessageReceiver
 		  
 		  InvalidLines.Value(index) = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 52657475726E73205472756520696620606368617260206973206120626C6F636B206368617261637465722E
+		Protected Function IsBlockChar(char As String) As Boolean
+		  /// Returns True if `char` is a block character.
+		  
+		  If BlockCharsPattern = "" Then
+		    // Build the search pattern.
+		    For i As Integer = 0 To BLOCK_OPEN_CHARS.Length -1
+		      BlockCharsPattern = BlockCharsPattern + "\" + BLOCK_OPEN_CHARS.Middle(i, 1) + "\" + BLOCK_CLOSE_CHARS.Middle(i, 1)
+		    Next
+		    BlockCharsPattern = "[" + BlockCharsPattern + "]"
+		  End If
+		  
+		  Return MatchesRegex(BlockCharsPattern, char)
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865206C696E65206E756D626572206368616E6765732E
@@ -274,6 +1013,13 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function LineNumAtCharPos(offset As Integer) As Integer
+		  Return Lines.GetLineNumberForOffset(offset)
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 456974686572207468652073796D626F6C732068617665206368616E6765642C206F7220746865206C696E6520636F6E7461696E696E67207468656D207761732072656D6F7665642C20736F2072656D6F7665207468656D2066726F6D20746865206C6F63616C207461626C652E
 		Protected Sub LineSymbolsRemoved(symbols As Dictionary)
 		  /// Either the symbols have changed, or the line containing them was removed,
@@ -284,6 +1030,36 @@ Implements MessageCentre.MessageReceiver
 		  Next key
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function LTrimLines(s As String) As String
+		  Var lines() As String = s.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
+		  
+		  For i As Integer = 0 To lines.LastIndex
+		    lines(i) = lines(i).TrimLeft
+		  Next i
+		  
+		  Return String.FromArray(lines, EndOfLine)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 52657475726E732054727565206966206065787072657373696F6E60206D6174636865732074686520607061747465726E602E
+		Protected Function MatchesRegex(pattern As String, expression As String) As Boolean
+		  /// Returns True if `expression` matches the `pattern`.
+		  
+		  Var rg As New RegEx
+		  
+		  rg.SearchPattern = pattern
+		  
+		  expression = expression.ConvertEncoding(SyntaxArea.InternalEncoding)
+		  
+		  Var myMatch As RegExMatch = rg.Search(expression)
+		  
+		  Return myMatch <> Nil
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865726527732061206E6577206C696E652074686174277320746865206C6F6E67657374206C696E652E
@@ -319,6 +1095,236 @@ Implements MessageCentre.MessageReceiver
 		  CalculateMaxHorizontalSB
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420626C6F636B206368617261637465722C20666F722074686520676976656E2060666F724368617260206368617261637465722E
+		Protected Function NextBlockChar(forChar As string, offset As Integer, ByRef charToFind As String) As Integer
+		  /// Finds the next block character, for the given `forChar` character.
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  // Find the character that closes `forChar`.
+		  charToFind = ""
+		  For i As Integer = 0 To BLOCK_OPEN_CHARS.Length -1
+		    If forChar = BLOCK_OPEN_CHARS.Middle(i, 1) Then
+		      charToFind = BLOCK_CLOSE_CHARS.Middle(i, 1)
+		      Exit For
+		    End If
+		  Next i
+		  If charToFind = "" Then Return -1
+		  
+		  // Handle nested blocks.
+		  Var depth As Integer
+		  Var char As String
+		  
+		  Var textToSearch As String = TextStorage.GetText(offset + 1, TextStorage.Length - (offset + 1))
+		  textToSearch = textToSearch.ConvertEncoding(SyntaxArea.InternalEncoding)
+		  
+		  Var scanner As New RegEx
+		  scanner.SearchPattern = "\" + forChar + "|\" + charToFind
+		  
+		  Var match As RegExMatch = scanner.Search(textToSearch)
+		  While match <> Nil
+		    char = match.SubExpressionString(0)
+		    
+		    // If it's the character we're looking for, and not nested, then we've found it.
+		    If char = charToFind And depth = 0 Then
+		      Return textToSearch.LeftBytes(match.SubExpressionStartB(0)).Length + offset + 1
+		      
+		      // Else, if it's the same character as the input, then we're nesting.
+		    ElseIf char = forChar Then
+		      depth = depth + 1
+		      
+		      // If nested, and we found a closing character, decrease nesting count.
+		    ElseIf char = charToFind Then
+		      depth = depth - 1
+		    End If
+		    
+		    match = scanner.Search
+		  Wend
+		  
+		  Return -1
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420636861726163746572206E6F7420696E2074686520676976656E207365742C207374617274696E6720617420706F73206066726F6D4F6666736574602E
+		Protected Function NextCharInSet(fromOffset As Integer, pattern As String = "[^\w\.]") As Integer
+		  /// Finds the next character not in the given set, starting at pos `fromOffset`.
+		  
+		  For i As Integer = fromOffset + 1 To TextStorage.Length - 1
+		    Var char As String = TextStorage.GetCharAt(i)
+		    If matchesRegex(pattern, char) Then Return i
+		  Next i
+		  
+		  Return TextStorage.Length
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E647320746865206F66667365742028636F6C756D6E2920666F72206120676976656E206C696E6520616E6420646573697265642073637265656E20706F736974696F6E202878706F73292E
+		Protected Function OffsetForXPos(line As SyntaxArea.TextLine, xPos As Integer) As Integer
+		  /// Finds the offset (column) for a given line and desired screen position (xpos).
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  xPos = xPos - line.VisualIndent(Self.IndentVisually)
+		  
+		  Var offset As Integer = line.length
+		  Var lineWidth As Integer
+		  xPos = max(0, xPos) // Negative numbers would be in the margin.
+		  
+		  Var startPos As Integer
+		  Var searchWord As SyntaxArea.TextSegment = line.LocalSegmentForXPos(xPos)
+		  If searchWord <> Nil Then startPos = searchWord.Offset
+		  Var tmp As Picture = TemporaryPicture
+		  
+		  If searchWord IsA SyntaxArea.TextPlaceholder Then
+		    // Width up to placeholder.
+		    lineWidth = line.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters, startPos)
+		    Var placeholderWidth As Double = searchWord.Width
+		    
+		    If Dragging Then
+		      If xPos >= lineWidth + placeholderWidth / 2 Then
+		        offset = searchWord.Offset + searchWord.Length
+		      Else
+		        offset = searchWord.Offset
+		      End If
+		    Else
+		      // Put the offset in the middle of the thing.
+		      offset = searchWord.Offset + searchWord.Length / 2
+		    End If
+		    
+		  Else
+		    For i As Integer = startPos To line.Length
+		      // Scan the chars in the line until we find the right column.
+		      lineWidth = line.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters, i)
+		      
+		      If lineWidth >= xPos Then
+		        Var matchChar As String = _
+		        line.CharToDisplayAt(TextStorage, Max(i - 1, 0), DisplayInvisibleCharacters)
+		        If searchWord <> Nil Then
+		          tmp.Graphics.Bold = searchWord.Bold
+		          tmp.Graphics.Italic = searchWord.Italic
+		          tmp.Graphics.Underline = searchWord.Underline
+		        End If
+		        Var charw As Integer = tmp.Graphics.TextWidth(matchChar)
+		        
+		        If lineWidth - charw / 2 > xPos Then
+		          offset = Max(i - 1, 0)
+		        Else
+		          offset = i
+		        End If
+		        Exit For
+		      End If
+		    Next i
+		  End If
+		  
+		  // Avoid delimiters.
+		  offset = line.Offset + Min(offset, line.Length - line.DelimiterLength)
+		  
+		  Return offset
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Paste()
+		  Var c As New Clipboard
+		  If Not c.TextAvailable Then Return
+		  
+		  Var t As String = c.Text
+		  
+		  If IndentVisually Then
+		    // trim lines
+		    t = LTrimLines(t)
+		  End If
+		  
+		  t = t.ReplaceAll(Chr(0), Chr(1))
+		  
+		  Me.SelText = t
+		  
+		  InvalidateAllLines
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function PreviousBlockChar(forChar As String, offset As Integer, ByRef charToFind As String) As Integer
+		  /// Finds the previous block character.
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  charToFind = ""
+		  
+		  // Select the appropriate one.
+		  For i As Integer = 0 To BLOCK_CLOSE_CHARS.Length - 1 
+		    If forChar = BLOCK_CLOSE_CHARS.Middle(i, 1) Then
+		      charToFind = BLOCK_OPEN_CHARS.Middle(i, 1)
+		      Exit For
+		    End If
+		  Next i
+		  If charToFind = "" Then Return - 1
+		  
+		  Var depth As Integer
+		  Var char As String
+		  
+		  Var textToSearch As String = TextStorage.GetText(0, offset)
+		  textToSearch = textToSearch.ConvertEncoding(SyntaxArea.InternalEncoding)
+		  
+		  textToSearch = textToSearch.Reverse
+		  
+		  Var scanner As New RegEx
+		  scanner.SearchPattern = "\" + forChar + "|\" + charToFind
+		  
+		  Var match As RegExMatch = scanner.Search(textToSearch)
+		  
+		  // Scan the text.
+		  While match <> Nil
+		    char = match.SubExpressionString(0)
+		    
+		    // Found.
+		    If char = charToFind And depth = 0 Then
+		      Return offset - 1 - textToSearch.LeftBytes(match.SubExpressionStartB(0)).Length
+		      
+		      // Nest.
+		    ElseIf char = forChar Then
+		      depth = depth + 1
+		      
+		      // Un-nest.
+		    ElseIf char = charToFind Then
+		      depth = depth - 1
+		    End If
+		    
+		    match = scanner.Search
+		  Wend
+		  
+		  Return -1
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E64732074686520636861726163746572206E6F7420696E2074686520676976656E207365742E
+		Protected Function PreviousCharInSet(fromOffset As Integer, pattern As String = "[^\w\.]") As Integer
+		  /// Finds the character not in the given set.
+		  
+		  For i As Integer = fromOffset - 1 DownTo 1
+		    Var char As String = TextStorage.GetCharAt(i - 1)
+		    If matchesRegex(pattern, char) Then Return i
+		  Next i
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -506,6 +1512,127 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2E20596F752073686F756C646E277420757365206974206469726563746C792E20496E737465616420757365206053656C53746172746020616E64206053656C54657874602E
+		Sub PrivateRemove(offset As Integer, length As Integer, updateCaret As Boolean = True)
+		  /// This method is used internally by the control, and externally by the undo mechanism.
+		  /// You shouldn't use it directly. Instead use `SelStart` and `SelText`.
+		  
+		  // Prevent the LineHighlighter from interfering while we're modifying the lines.
+		  Var lock As New SyntaxArea.LinesLock(Self)
+		  #Pragma Unused lock
+		  
+		  If ReadOnly Then
+		    Break
+		    System.Beep
+		    Return
+		  End If
+		  
+		  // Nothing to delete?e
+		  If length = 0 Then Return
+		  
+		  Var undoText As String = TextStorage.GetText(Max(offset, 0), length)
+		  Var undoAttrs() As SyntaxArea.TextLineAttributes = _
+		  Lines.GetAttributesOfLinesInRange(Max(offset, 0), length)
+		  
+		  If TextStorage.Remove(offset, length) Then
+		    RaiseEvent TextRemoved(offset, undoText)
+		    UndoMgr.Push(New SyntaxArea.UndoableDelete(Self, offset, length, undoText, undoAttrs, CaretPos, CurrentEventID))
+		    Lines.Remove(offset, length)
+		    If updateCaret Then ChangeSelection(SelectionStart - length, 0)
+		    Highlight
+		    HandleTextChanged
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2C20796F752073686F756C646E277420757365206974206469726563746C792C2075736520696E73746561642053656C656374696F6E537461727420616E642053656C546578742E
+		Sub PrivateReplace(offset As Integer, length As Integer, s As String, alwaysMarkChanged As Boolean = True, eventID As Integer = -1, keepSelection As Boolean = False, beSilent As Boolean = False)
+		  /// This method is used internally by the control, and externally by the undo mechanism, 
+		  /// you shouldn't use it directly, use instead SelectionStart and SelText.
+		  
+		  // If keepSelection = False, it means that the selection+caret is reset to the end of 
+		  // the replaced text
+		  // If keepSelection = True, then the previous selection+caret remains intact, but 
+		  // selection pointers get shifted accordingly.
+		  
+		  If ReadOnly Then
+		    System.Beep
+		    Return
+		  End If
+		  
+		  // Prevent the LineHighlighter from interfering while we're modifying the lines.
+		  Var lock As New SyntaxArea.LinesLock(Self)
+		  
+		  // Use the default line ending from the line manager if the text is just 
+		  // the Return or Enter character.
+		  s = s.ReplaceLineEndings(Lines.LineEnding)
+		  s = s.ReplaceAll(chr(3), Lines.LineEnding)
+		  
+		  Var removedText As String = TextStorage.GetText(offset, length)
+		  Var removedAttrs() As SyntaxArea.TextLineAttributes = _
+		  Lines.GetAttributesOfLinesInRange(offset, length)
+		  
+		  If eventID < 0 Then eventID = CurrentEventID
+		  UndoMgr.Push(New SyntaxArea.UndoableReplace(Self, offset, length, removedText, s, _
+		  removedAttrs, CaretPos, eventID))
+		  
+		  // Modify the buffer and rescan the lines.
+		  TextStorage.Replace(offset, length, s)
+		  Lines.Replace(offset, length, s, alwaysMarkChanged)
+		  
+		  If keepSelection Then
+		    // We need to adjust the caret and selection if they're inside or past the changed text.
+		    // Note: This code has only been tested to work with replacements in a single line
+		    // It might not work with multi-line replacements!
+		    Var lengthDiff As Integer = s.Length - removedText.Length
+		    If lengthDiff <> 0 Then
+		      Var minLength As Integer = Min(s.Length, removedText.Length)
+		      Var selStart As Integer = mSelectionStart
+		      Var selEnd As Integer = selStart + mSelectionLength
+		      If selEnd >= offset + minLength Then
+		        selEnd = Max(offset, selEnd + lengthDiff)
+		      End
+		      If selStart >= offset + minLength Then
+		        selStart = Max(offset, selStart + lengthDiff)
+		      End
+		      ChangeSelection(selStart, Max(0, selEnd - selStart))
+		    End If
+		    
+		  Else
+		    // Set the caret past the replaced text.
+		    ChangeSelection(offset + s.Length, 0)
+		  End
+		  
+		  lock = Nil
+		  
+		  Highlight
+		  
+		  If Not UndoMgr.IsUndoing Then
+		    // Fire the text changed events.
+		    HandleTextChanged
+		    If removedText <> "" Then RaiseEvent TextRemoved(offset, removedText)
+		    RaiseEvent TextInserted(offset, s)
+		    
+		    If beSilent Then
+		      // In this case we don't want the highlighting of closing elements.
+		      Return
+		    End If
+		    
+		    // Is the text a closing element? ] } ) ?
+		    If s.Length > 1 Or Not IsBlockChar(s) Or Not HighlightMatchingBrackets Then Return
+		    
+		    // If so, highlight it.
+		    If BLOCK_CLOSE_CHARS.IndexOf(s) > -1 Then
+		      HighlightOpeningBlock(s, offset)
+		    Else
+		      HighlightClosingBlock(s, offset)
+		    End If
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 50617274206F6620746865204D65737361676543656E7472652E4D657373616765526563656976657220696E746572666163652E
 		Protected Sub ReceiveMessage(theMessage As MessageCentre.Message)
 		  /// Part of the MessageCentre.MessageReceiver interface.
@@ -619,6 +1746,32 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub RedrawNow(caller As Timer)
+		  #Pragma Unused caller
+		  
+		  Self.Refresh
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RedrawThreadSafe()
+		  If Thread.Current = Nil Then
+		    Self.Refresh
+		  Else
+		    // We can't issue a repaint from this thread in Xojo, so we need to use a timer for it.
+		    If mRedrawTimer = Nil Then
+		      mRedrawTimer = New Timer
+		      AddHandler mRedrawTimer.Action, AddressOf RedrawNow
+		      mRedrawTimer.Period = 0
+		    End If
+		    mRedrawTimer.RunMode = Timer.RunModes.Single
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 52656D6F76657320616C6C206C656164696E672077686974652073706163652C20616464696E672070726F70657220696E64656E746174696F6E20287573696E672074616220636861726163746572732920696E73746561642E
 		Sub ReIndentText()
 		  /// Removes all leading white space, adding proper indentation (using tab characters) instead.
@@ -661,6 +1814,13 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub SelectAll()
+		  ChangeSelection(0, TextStorage.Length)
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SetBrightModeColor(c As Color, propertyName As String)
 		  #Pragma Warning "REFACTOR: Remove this once we have migrated to ColorGroups"
@@ -698,6 +1858,18 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub StopHighlighter()
+		  If mHighlighter <> Nil Then
+		    If mHighlighter.ThreadState <> Thread.ThreadStates.NotRunning Then
+		      mHighlighter.Stop
+		    End If
+		    Lines.LinesLock = Nil
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 52657475726E20612074656D706F72617279207069637475726520746861742063616E206265207573656420666F722067726170686963732063616C63756C6174696F6E732C206574632E
 		Protected Function TemporaryPicture() As Picture
 		  /// Return a temporary picture that can be used for graphics calculations, etc.
@@ -716,9 +1888,144 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 5361766573207468652073637265656E20706F736974696F6E206F662074686520676976656E206F66667365742E
+		Protected Sub UpdateDesiredColumn(pos As Integer = -1)
+		  /// Saves the screen position of the given offset.
+		  
+		  If Lines.Count = 0 Then Return
+		  
+		  If pos < 0 Then pos = Self.CaretPos
+		  mDesiredColumnCharPos = pos
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ViewToCharPos(charPos As Integer)
+		  ViewToCharPos(Lines.GetLineNumberForOffset(CharPos), CharPos)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ViewToCharPos(charLine As Integer, charPos As Integer)
+		  // Move the view to the given character position..
+		  
+		  Var horizontal, vertical As Integer
+		  Var scrollPos As Integer = Self.ScrollPosition
+		  If EnableLineFoldings Then scrollPosition = Lines.getNumberOfLinesNeededToView(scrollPos)
+		  
+		  horizontal = ScrollPositionX
+		  vertical = Self.ScrollPosition
+		  
+		  // Vertical check.
+		  If charLine < vertical Then
+		    vertical = charLine
+		  Else
+		    Var visibleLines As Integer = Self.VisibleAndHiddenLines - 1
+		    If visibleLines > 0 And(charLine - visibleLines > vertical) Then
+		      vertical = charLine - visibleLines
+		    End If
+		  End If
+		  
+		  // Horizontal check.
+		  Var x, y As Double
+		  XYAtCharPos(charPos, charLine, x, y)
+		  
+		  If x < LineNumberOffset Or x >= Self.Width Then
+		    horizontal = ScrollPositionX + x - (Me.Width - RightScrollMargin)
+		  End If
+		  
+		  ChangeScrollValues(horizontal, vertical)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 52657475726E7320746865206E756D626572206F662076697369626C65206C696E657320616E642068696464656E206C696E65732E
+		Private Function VisibleAndHiddenLines() As Integer
+		  /// Returns the number of visible lines and hidden lines.
+		  
+		  If EnableLineFoldings Then
+		    Return Lines.InvisibleLines + MaxVisibleLines
+		  Else
+		    Return MaxVisibleLines
+		  End If
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 52657475726E73207468652073637265656E20706F736974696F6E20666F722074686520676976656E206063686172506F73602E
+		Protected Function XPosForOffset(line As SyntaxArea.TextLine, charPos As Integer) As Single
+		  /// Returns the screen position for the given `charPos`.
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  Var tmp As Picture = TemporaryPicture
+		  
+		  Var indent As Integer = line.VisualIndent(Self.IndentVisually)
+		  
+		  Return line.TextWidth(TextStorage, tmp.Graphics, DisplayInvisibleCharacters, _
+		  charPos - line.offset) + indent
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub XYAtCharPos(charPos As Integer, ByRef X As Double, ByRef Y As Double)
+		  Var lineNumber As Integer
+		  lineNumber = lines.GetLineNumberForOffset(charPos)
+		  XYAtCharPos(CharPos, LineNumber, x, y)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub XYAtCharPos(charPos As Integer, lineNumber As Integer, ByRef X As Double, ByRef Y As Double)
+		  // Finds the screenX and screenY for the given `charPos`.
+		  
+		  // Y.
+		  Var ypos As Integer
+		  If EnableLineFoldings Then
+		    ypos = (Lines.GetNumberOfVisibleLinesUpToLine(lineNumber) - ScrollPosition) * TextHeight
+		  Else
+		    ypos = (lineNumber - ScrollPosition) * TextHeight
+		  End If
+		  
+		  // Find the character offset.
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineNumber)
+		  If line = Nil Then Return
+		  
+		  Var sx As Integer = leftMarginOffset + LineNumberOffset - ScrollPositionX
+		  
+		  Var xpos As Integer = sx + XPosForOffset(line, charPos)
+		  
+		  x = xpos
+		  y = ypos + TextHeight
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event AutocompleteOptionsForPrefix(prefix As String) As SyntaxArea.AutocompleteOptions
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event BlockCharsMatched(blockOpenChar As String, blockOpenOffset As Integer, blockCloseChar As String, blockCloseOffset As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ConstructContextualMenu(base As DesktopMenuItem, x As Integer, y As Integer) As Boolean
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event HighlightingComplete()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event HorizontalScrollValueChanged()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -731,6 +2038,34 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206F70656E696E672E
 		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PlaceholderSelected(placeholderLabel As String, lineIndex As Integer, line As SyntaxArea.TextLine, placeholder As SyntaxArea.TextPlaceholder, doubleClick As Boolean)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ScrollValuesChanged()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event SelectionChanged(line As Integer, column As Integer, length As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event TextChanged()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event TextInserted(offset As Integer, s As String)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event TextRemoved(offset As Integer, s As String)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event VerticalScrollValueChanged()
 	#tag EndHook
 
 
@@ -826,7 +2161,7 @@ Implements MessageCentre.MessageReceiver
 			  #Pragma Warning "TODO: Replace this bundled image with something else?"
 			  
 			  If gBlockStartImage = Nil Then
-			    gBlockStartSmage = SyntaxArea.LoadMaskedPicture(blockStartMarker)
+			    gBlockStartImage = SyntaxArea.LoadMaskedPicture(blockStartMarker)
 			  End If
 			  
 			  Return gBlockStartImage
@@ -1964,7 +3299,7 @@ Implements MessageCentre.MessageReceiver
 		#tag Setter
 			Set
 			  CurrentEventID = System.Ticks
-			  Private_replace(SelectionStart, SelectionLength, value, True)
+			  PrivateReplace(SelectionStart, SelectionLength, value, True)
 			  
 			End Set
 		#tag EndSetter
@@ -2077,7 +3412,7 @@ Implements MessageCentre.MessageReceiver
 			    Me.EnableLineFoldings = True
 			  End If
 			  
-			  TextChanged
+			  RaiseEvent TextChanged
 			  
 			  Highlight
 			  InvalidateAllLines
@@ -2261,6 +3596,15 @@ Implements MessageCentre.MessageReceiver
 		VisibleLineRange As SyntaxArea.DataRange
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = BLOCK_CLOSE_CHARS, Type = String, Dynamic = False, Default = \")]}", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = BLOCK_OPEN_CHARS, Type = String, Dynamic = False, Default = \"([{", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CURRENT_CARET_WORD_DELIMITER_PATTERN, Type = String, Dynamic = False, Default = \"[^\\w\\.]", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = DEFAULT_FONT, Type = String, Dynamic = False, Default = \"", Scope = Public, Description = 5468652064656661756C7420666F6E7420746F207573652E
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"Menlo"

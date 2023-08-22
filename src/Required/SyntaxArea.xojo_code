@@ -152,6 +152,35 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Reverse(Extends s As String) As String
+		  // Returns `s` with the characters in reverse order.
+		  ///
+		  /// From Joe Strout's StringUtils module.
+		  
+		  If s.Length < 2 Then Return s
+		  
+		  #If Not DebugBuild
+		    #Pragma DisableBackgroundTasks
+		    #Pragma DisableBoundsChecking
+		  #EndIf
+		  
+		  Var characters() As String = s.Split("")
+		  Var leftIndex As Integer = 0
+		  Var rightIndex As Integer = characters.LastIndex
+		  While leftIndex < rightIndex
+		    Var temp As String = characters(leftIndex)
+		    characters(leftIndex) = characters(rightIndex)
+		    characters(rightIndex) = temp
+		    leftIndex = leftIndex + 1
+		    rightIndex = rightIndex - 1
+		  Wend
+		  
+		  Return String.FromArray(characters, "")
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 52657475726E732054727565206966207765206E65656420746F20737570706F7274206461726B206D6F64652E
 		Protected Function SupportsDarkMode() As Boolean
 		  /// Returns True if we need to support dark mode.
