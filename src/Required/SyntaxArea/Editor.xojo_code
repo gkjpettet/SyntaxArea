@@ -4928,30 +4928,6 @@ Implements MessageCentre.MessageReceiver
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="Boolean"
-			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -4974,6 +4950,14 @@ Implements MessageCentre.MessageReceiver
 			InitialValue=""
 			Type="String"
 			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -5056,6 +5040,22 @@ Implements MessageCentre.MessageReceiver
 			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Enabled"
 			Visible=true
 			Group="Appearance"
@@ -5089,15 +5089,15 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoCloseBrackets"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutocompleteAppliesStandardCase"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
@@ -5113,7 +5113,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoIndentNewLines"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
@@ -5121,7 +5121,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5129,7 +5129,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Border"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
@@ -5137,7 +5137,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BorderColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5145,7 +5145,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BracketHighlightColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5153,7 +5153,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CaretColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5185,7 +5185,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DirtyLinesColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5201,39 +5201,39 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DisplayDirtyLines"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DisplayInvisibleCharacters"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DisplayLineNumbers"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DisplayRightMarginMarker"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EnableAutocomplete"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
@@ -5241,9 +5241,9 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EnableLineFoldings"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -5257,15 +5257,15 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="FontSize"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="12"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GutterBackgroundColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5273,7 +5273,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GutterSeparationLineColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5345,15 +5345,15 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LeftMarginOffset"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="0"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LineNumbersColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5361,17 +5361,17 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LineNumbersFontSize"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="12"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LineNumbersTextFont"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="System"
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
@@ -5385,9 +5385,9 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ReadOnly"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -5465,7 +5465,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TextColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5473,9 +5473,9 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TextFont"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="System"
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
@@ -5497,7 +5497,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TextSelectionColor"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -5505,9 +5505,9 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ThickInsertionPoint"
-			Visible=false
+			Visible=true
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
