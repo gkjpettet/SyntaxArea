@@ -94,8 +94,8 @@ Implements MessageCentre.MessageReceiver
 		    MoveCaretLeft(False)
 		    
 		  Case CmdMoveRight, CmdMoveForward
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    CurrentEventID = 0
+		    MoveCaretRight(False)
 		    
 		  Case CmdMoveToBeginningOfDocument, CmdScrollToBeginningOfDocument
 		    #Pragma Warning "TODO: Implement"
@@ -110,8 +110,8 @@ Implements MessageCentre.MessageReceiver
 		    Break
 		    
 		  Case CmdMoveToEndOfLine, CmdMoveToRightEndOfLine
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    CurrentEventID = 0
+		    MoveCaretRight(True)
 		    
 		  Case CmdMoveWordLeft
 		    'MoveCaretToPreviousWordStart
@@ -2510,6 +2510,47 @@ Implements MessageCentre.MessageReceiver
 		        HighlightClosingBlock(char, CaretPos)
 		      End If
 		    End If
+		  End If
+		  
+		  UpdateDesiredColumn(CaretPos)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub MoveCaretRight(toEndOfLine As Boolean)
+		  Var pos As Integer
+		  
+		  // Default to moving one character.
+		  Var charsToMove As Integer = 1
+		  Var lineNum As Integer
+		  
+		  If SelectionLength > 0 Then
+		    ChangeSelection(SelectionStart + SelectionLength, 0)
+		    pos = SelectionStart
+		  Else
+		    If toEndOfLine Then
+		      lineNum = Lines.GetLineNumberForOffset(SelectionStart)
+		      
+		      charsToMove = Lines.GetLine(lineNum).Offset + _
+		      Lines.GetLine(lineNum).Length - SelectionStart - Lines.GetLine(lineNum).DelimiterLength
+		    End If
+		    
+		    Var char As String = TextStorage.GetCharAt(CaretPos)
+		    
+		    // Check if the next character is a block character.
+		    If IsBlockChar(char) Then
+		      // Mark it for highlighting.
+		      If BLOCK_CLOSE_CHARS.IndexOf(char) > -1 Then
+		        HighlightOpeningBlock(char, caretpos)
+		      Else
+		        HighlightClosingBlock(char, caretpos)
+		      End If
+		    End If
+		    
+		    ChangeSelection(SelectionStart + charsToMove, 0)
+		    pos = CaretPos
+		    ViewToCharPos(CaretLine, pos)
 		  End If
 		  
 		  UpdateDesiredColumn(CaretPos)
