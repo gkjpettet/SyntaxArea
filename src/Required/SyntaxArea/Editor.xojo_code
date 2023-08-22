@@ -54,6 +54,175 @@ Implements MessageCentre.MessageReceiver
 	#tag EndEvent
 
 	#tag Event
+		Function DoCommand(command As String) As Boolean
+		  /// Handles `command`.
+		  ///
+		  /// `command` is a string constant telling us which command we need to handle.
+		  
+		  CurrentEventID = System.Ticks
+		  
+		  Select Case command
+		    // =========================================
+		    // MOVING THE CARET
+		    // =========================================
+		  Case CmdScrollPageDown
+		    // `Fn-Down Arrow` on macOS.
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdScrollPageUp
+		    // `Fn-Up Arrow` on macOS
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdPageDown
+		    // `Page down` key on Windows / Linux.
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdPageUp
+		    // `Page up` key on Windows / Linux.
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveDown
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveLeft, CmdMoveBackward
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveRight, CmdMoveForward
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToBeginningOfDocument, CmdScrollToBeginningOfDocument
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToBeginningOfLine, CmdMoveToLeftEndOfLine
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToEndOfDocument, CmdScrollToEndOfDocument
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToEndOfLine, CmdMoveToRightEndOfLine
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveWordLeft
+		    'MoveCaretToPreviousWordStart
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveWordRight
+		    'MoveCaretToNextWordEnd
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveUp
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		    // =========================================
+		    // DELETING
+		    // =========================================
+		  Case CmdDeleteBackward
+		    HandleDelete(False, False)
+		    
+		  Case CmdDeleteForward
+		    HandleDelete(True, False)
+		    
+		    // =========================================
+		    // INSERTING
+		    // =========================================
+		  Case CmdInsertNewline
+		    // Occurs when the canvas has focus and the user presses Return or Enter.
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		    // =========================================
+		    // SELECTING TEXT
+		    // =========================================
+		  Case CmdMoveLeftAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveWordLeftAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveWordRightAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveRightAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToLeftEndOfLineAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToRightEndOfLineAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveUpAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveDownAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdPageDownAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdPageUpAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToBeginningOfDocumentAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdMoveToEndOfDocumentAndModifySelection
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		    // =========================================
+		    // MISC
+		    // =========================================
+		  Case CmdInsertTab
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case CmdInsertBacktab
+		    // Shift-Tab. This always acts like a tab insertion (permits the insertion of a tab
+		    // even when tab is used for autocomplete).
+		    #Pragma Warning "TODO: Implement"
+		    Break
+		    
+		  Case "noop:"
+		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
+		      // Ctrl+Space pressed.
+		      #Pragma Warning "TODO: Implement"
+		      Break
+		    End If
+		    
+		  End Select
+		  
+		  // Return True to prevent the event from propagating.
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Function DragEnter(obj As DragItem, action As DragItem.Types) As Boolean
 		  #Pragma Unused obj
 		  #Pragma Unused action
@@ -665,6 +834,16 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CaretColumn() As Integer
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		  If line <> Nil Then
+		    Return CaretPos - line.Offset
+		  End If
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 4368616E67657320746865207669657720746F2074686520676976656E207363726F6C6C2076616C7565732E
 		Protected Sub ChangeScrollValues(horizontal As Integer, vertical As Integer)
 		  /// Changes the view to the given scroll values.
@@ -1161,6 +1340,86 @@ Implements MessageCentre.MessageReceiver
 		  Return New SyntaxArea.TextSegment(startIndex, endIndex - startIndex)
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 48616E646C6573206368617261637465722064656C6574696F6E2C2065697468657220666F727761726473206F72206261636B77617264732C20776F7264206F72206368617261637465722E
+		Protected Sub DeleteChars(forwardDelete As Boolean, deleteWord As Boolean)
+		  /// Handles character deletion, either forwards or backwards, word or character.
+		  
+		  // Check if the key would delete a placeholder.
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		  If line <> Nil And line.HasPlaceholders Then
+		    Var placeholder As SyntaxArea.TextPlaceholder
+		    If forwardDelete Then
+		      Placeholder = line.PlaceholderForOffset(CaretPos + 1)
+		    Else
+		      Placeholder = line.PlaceholderForOffset(CaretPos - 1)
+		    End If
+		    If placeholder <> Nil Then
+		      ChangeSelection(placeholder.Offset + line.Offset, placeholder.Length)
+		    End If
+		  End If
+		  
+		  // Delete highlighted text.
+		  If Me.SelectionLength > 0 Then
+		    PrivateReplace(SelectionStart, Me.SelectionLength, "")
+		    Return
+		  End If
+		  
+		  Var length, offset As Integer
+		  
+		  If forwardDelete Then
+		    If CaretPos >= TextStorage.Length Then Return
+		    If deleteWord Then
+		      length = NextNonAlpha(CaretPos) - CaretPos
+		    Else
+		      // Delete a single character.
+		      length = 1
+		    End If
+		  Else
+		    // Backspace deletion.
+		    If deleteWord Then
+		      length = CaretPos - PreviousNonAlpha(CaretPos)
+		    Else
+		      // Single character deletion.
+		      length = 1
+		    End If
+		  End If
+		  
+		  Var updateCaret As Boolean = Not forwardDelete
+		  If Not mIndentVisually And mKeepEntireTextIndented Then
+		    // Here we may have a special case: If IndentVisually=false, and the user backspaces when the
+		    // cursor is at the start of the indented line, we'll need to delete not only the indentation
+		    // but the line delimiter to the previous line as well, or the user would not be able to ever join
+		    // the current line with the previous line because it would get re-indented right away again.
+		    Var caretCol As Integer = Self.CaretColumn
+		    Var lineText As String = Self.GetLine(caretLine)
+		    Var textLeftOfCaret As String = lineText.Left(caretCol)
+		    If textLeftOfCaret.Trim = "" Then
+		      // The cursor is at the start of the line or inside indentation space.
+		      If forwardDelete Then
+		        Var rightOfCaret As String = lineText.Middle(caretCol + 1, 1)
+		        If rightOfCaret <> "" And rightOfCaret <> LineDelimiter And rightOfCaret.Trim = "" Then
+		          // Forward delete in indentation whitespace doesn't work so skip it.
+		          System.Beep
+		          Return
+		        End If
+		      Else
+		        // Delete to the previous line.
+		        length = CaretPos - PreviousLineDelimiter(CaretPos) + 1
+		      End If
+		    End If
+		  End If
+		  
+		  If forwardDelete Then
+		    offset = SelectionStart
+		  Else
+		    offset = SelectionStart - length
+		  End If
+		  
+		  PrivateRemove(offset, length, updateCaret)
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1697,6 +1956,19 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E7320746865207465787420636F6E7461696E656420696E2061206C696E652E
+		Function GetLine(index As Integer) As String
+		  /// Returns the text contained in a line.
+		  
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(index)
+		  
+		  If line = Nil Then Return ""
+		  
+		  Return TextStorage.GetText(line.Offset, line.Length)
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetWord(start As Integer, source As String) As String
 		  Var s As String
@@ -1707,6 +1979,27 @@ Implements MessageCentre.MessageReceiver
 		  Return s.ReplaceLineEndings(EndOfLine).NthField(EndOfLine, 1)
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 5468652075736572206861732070726573736564207468652064656C657465206F7220666F72776172642064656C657465206B65792E204966206064656C657465576F7264602069732054727565207468656E207468652061646A6163656E7420776F72642077696C6C2062652072656D6F7665642E204F74686572776973652069742072656D6F766573207468652061646A6163656E74206368617261637465722E
+		Private Sub HandleDelete(forwardDelete As Boolean, deleteWord As Boolean)
+		  /// The user has pressed the delete or forward delete key.
+		  /// If `deleteWord` is True then the adjacent word will be removed.
+		  /// Otherwise it removes the adjacent character.
+		  
+		  // Add a new event ID if changed typing, or no event ID, or time
+		  // elapsed between events is 3 secs.
+		  If Typing Or CurrentEventID = 0 Or System.Ticks > CurrentEventID + (60 * UNDO_EVT_BLOCK_SECS) Then
+		    CurrentEventID = System.Ticks
+		  End If
+		  
+		  Typing = False
+		  
+		  DeleteChars(forwardDelete, deleteWord)
+		  
+		  UpdateDesiredColumn
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -2526,6 +2819,18 @@ Implements MessageCentre.MessageReceiver
 		  For i As Integer = fromOffset - 1 DownTo 1
 		    Var char As String = TextStorage.GetCharAt(i - 1)
 		    If matchesRegex(pattern, char) Then Return i
+		  Next i
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206C696E652064656C696D6974657220636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Protected Function PreviousLineDelimiter(fromOffset As Integer) As Integer
+		  /// Finds the previous line delimiter character starting at `fromOffset`.
+		  
+		  For i As Integer = fromOffset - 1 DownTo 1
+		    Var char As String = TextStorage.GetCharAt(i-1)
+		    If char = LineDelimiter Then Return i
 		  Next i
 		  
 		End Function
