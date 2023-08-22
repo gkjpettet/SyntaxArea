@@ -90,8 +90,8 @@ Implements MessageCentre.MessageReceiver
 		    Break
 		    
 		  Case CmdMoveLeft, CmdMoveBackward
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    CurrentEventID = 0
+		    MoveCaretLeft(False)
 		    
 		  Case CmdMoveRight, CmdMoveForward
 		    #Pragma Warning "TODO: Implement"
@@ -102,8 +102,8 @@ Implements MessageCentre.MessageReceiver
 		    Break
 		    
 		  Case CmdMoveToBeginningOfLine, CmdMoveToLeftEndOfLine
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    CurrentEventID = 0
+		    MoveCaretLeft(True)
 		    
 		  Case CmdMoveToEndOfDocument, CmdScrollToEndOfDocument
 		    #Pragma Warning "TODO: Implement"
@@ -140,9 +140,7 @@ Implements MessageCentre.MessageReceiver
 		    // INSERTING
 		    // =========================================
 		  Case CmdInsertNewline
-		    // Occurs when the canvas has focus and the user presses Return or Enter.
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    HandleInsertText(EndOfLine, Nil)
 		    
 		    // =========================================
 		    // SELECTING TEXT
@@ -331,63 +329,7 @@ Implements MessageCentre.MessageReceiver
 		Sub InsertText(text As String, range As TextRange)
 		  // Inserts a single character.
 		  
-		  // Rename the passed in variable. It's a ridiculous name...
-		  Var s As String = text
-		  
-		  // Add a new event ID if changed typing, or no event ID, or time elapsed
-		  // between events is 5 secs.
-		  If Not Typing Or CurrentEventID = 0 Or _
-		    System.Ticks > CurrentEventID + (60 * UNDO_EVT_BLOCK_SECS) Then
-		    CurrentEventID = System.Ticks
-		  End If
-		  Typing = True
-		  
-		  If Me.SelectionLength > 0 Then
-		    PrivateReplace(SelectionStart, Me.SelectionLength, s)
-		  Else
-		    // See if we need to autocomplete brackets.
-		    Var bracketInserted As Boolean
-		    If AutoCloseBrackets Then
-		      // Scan the possible opening block characters.
-		      For i As Integer = 0 To BLOCK_OPEN_CHARS.Length-1
-		        If s = BLOCK_OPEN_CHARS.Middle(i, 1) Then
-		          // Found, so the closing block MUST be at the same location, in
-		          // the BLOCK_CLOSE_CHARS.
-		          s = s + BLOCK_CLOSE_CHARS.Middle(i, 1)
-		          bracketInserted = True
-		          Exit For
-		        End If
-		      Next i
-		    End If
-		    Insert(SelectionStart, s)
-		    
-		    // If autocompleted, move caret one character to the left.
-		    If bracketInserted Then CaretPos = CaretPos - 1
-		  End If
-		  
-		  // Autoindent lines?
-		  // Check if current (new) entered line needs autoindenting.
-		  If AutoIndentNewLines And Not mIndentVisually Then
-		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
-		    If thisLine <> Nil And thisLine.IsBlockEnd Then
-		      // Indent this new line.
-		      Var state As Variant
-		      If PrivateIndentline(CaretLine, False, state) Then
-		        InvalidateLine(CaretLine)
-		      End If
-		    End If
-		  End If
-		  
-		  // Save the screen location of the caret, in case we need to move up/down.
-		  UpdateDesiredColumn
-		  
-		  If MouseOverBlock <> Nil Then
-		    CreateMouseOverBlockHighlight(CaretLine)
-		  End If
-		  
-		  // Redraw.
-		  IgnoreRepaint = False
-		  Redraw
+		  HandleInsertText(text, range)
 		  
 		End Sub
 	#tag EndEvent
@@ -2084,6 +2026,68 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21, Description = 43616C6C65642066726F6D2077697468696E207468652060496E736572745465787460206576656E742E205573656420696E7465726E616C6C7920746F20696E736572742061206368617261637465722E
+		Private Sub HandleInsertText(s As String, range As TextRange)
+		  /// Called from within the `InsertText` event. Used internally to insert a character.
+		  
+		  // Add a new event ID if changed typing, or no event ID, or time elapsed
+		  // between events is 5 secs.
+		  If Not Typing Or CurrentEventID = 0 Or _
+		    System.Ticks > CurrentEventID + (60 * UNDO_EVT_BLOCK_SECS) Then
+		    CurrentEventID = System.Ticks
+		  End If
+		  Typing = True
+		  
+		  If Me.SelectionLength > 0 Then
+		    PrivateReplace(SelectionStart, Me.SelectionLength, s)
+		  Else
+		    // See if we need to autocomplete brackets.
+		    Var bracketInserted As Boolean
+		    If AutoCloseBrackets Then
+		      // Scan the possible opening block characters.
+		      For i As Integer = 0 To BLOCK_OPEN_CHARS.Length-1
+		        If s = BLOCK_OPEN_CHARS.Middle(i, 1) Then
+		          // Found, so the closing block MUST be at the same location, in
+		          // the BLOCK_CLOSE_CHARS.
+		          s = s + BLOCK_CLOSE_CHARS.Middle(i, 1)
+		          bracketInserted = True
+		          Exit For
+		        End If
+		      Next i
+		    End If
+		    Insert(SelectionStart, s)
+		    
+		    // If autocompleted, move caret one character to the left.
+		    If bracketInserted Then CaretPos = CaretPos - 1
+		  End If
+		  
+		  // Autoindent lines?
+		  // Check if current (new) entered line needs autoindenting.
+		  If AutoIndentNewLines And Not mIndentVisually Then
+		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		    If thisLine <> Nil And thisLine.IsBlockEnd Then
+		      // Indent this new line.
+		      Var state As Variant
+		      If PrivateIndentline(CaretLine, False, state) Then
+		        InvalidateLine(CaretLine)
+		      End If
+		    End If
+		  End If
+		  
+		  // Save the screen location of the caret, in case we need to move up/down.
+		  UpdateDesiredColumn
+		  
+		  If MouseOverBlock <> Nil Then
+		    CreateMouseOverBlockHighlight(CaretLine)
+		  End If
+		  
+		  // Redraw.
+		  IgnoreRepaint = False
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function HandleKeyDown(key As String) As Boolean
 		  #Pragma Warning "REMOVE if possible now we're using TextInputCanvas"
@@ -2471,6 +2475,44 @@ Implements MessageCentre.MessageReceiver
 		  
 		  // Calculate scrollbar.
 		  CalculateMaxHorizontalSB
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub MoveCaretLeft(toStartOfLine As Boolean)
+		  Var pos, charsToMove, lineNum As Integer
+		  
+		  // If there's an active selection, move CaretPos to start of selection
+		  If SelectionLength > 0 Then
+		    ChangeSelection(SelectionStart, 0)
+		    pos = SelectionStart
+		    
+		  Else
+		    If toStartOfLine Then
+		      lineNum = Lines.GetLineNumberForOffset(SelectionStart)
+		      charsToMove = SelectionStart - Lines.GetLine(LineNum).Offset
+		    Else
+		      charsToMove = 1
+		    End If
+		    
+		    ChangeSelection(SelectionStart - charsToMove, 0)
+		    pos = CaretPos
+		    ViewToCharPos(CaretLine, pos)
+		    
+		    // Did we just cross a block character?
+		    Var char As String = TextStorage.GetCharAt(CaretPos)
+		    If IsBlockChar(char) Then
+		      // Find the opening/closing character for this block.
+		      If BLOCK_CLOSE_CHARS.IndexOf(char) > -1 Then
+		        HighlightOpeningBlock(char, CaretPos)
+		      Else
+		        HighlightClosingBlock(char, CaretPos)
+		      End If
+		    End If
+		  End If
+		  
+		  UpdateDesiredColumn(CaretPos)
 		  
 		End Sub
 	#tag EndMethod
