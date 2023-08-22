@@ -54,12 +54,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndEvent
 
 	#tag Event
-		Function DoCommand(command As String) As Boolean
-		  
-		End Function
-	#tag EndEvent
-
-	#tag Event
 		Function DragEnter(obj As DragItem, action As DragItem.Types) As Boolean
 		  #Pragma Unused obj
 		  #Pragma Unused action
@@ -154,7 +148,7 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Event
 		Sub FocusReceived()
-		  mhasFocus = True
+		  mHasFocus = True
 		  RaiseEvent FocusReceived
 		  EnableBlinker(SelectionLength = 0)
 		  Redraw
@@ -162,6 +156,80 @@ Implements MessageCentre.MessageReceiver
 		  gCurrentFocusedField = Self
 		  
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub InsertText(text As String, range As TextRange)
+		  // Inserts a single character.
+		  
+		  // Rename the passed in variable. It's a ridiculous name...
+		  Var s As String = text
+		  
+		  // Add a new event ID if changed typing, or no event ID, or time elapsed
+		  // between events is 5 secs.
+		  If Not Typing Or CurrentEventID = 0 Or _
+		    System.Ticks > CurrentEventID + (60 * UNDO_EVT_BLOCK_SECS) Then
+		    CurrentEventID = System.Ticks
+		  End If
+		  Typing = True
+		  
+		  If Me.SelectionLength > 0 Then
+		    PrivateReplace(SelectionStart, Me.SelectionLength, s)
+		  Else
+		    // See if we need to autocomplete brackets.
+		    Var bracketInserted As Boolean
+		    If AutoCloseBrackets Then
+		      // Scan the possible opening block characters.
+		      For i As Integer = 0 To BLOCK_OPEN_CHARS.Length-1
+		        If s = BLOCK_OPEN_CHARS.Middle(i, 1) Then
+		          // Found, so the closing block MUST be at the same location, in
+		          // the BLOCK_CLOSE_CHARS.
+		          s = s + BLOCK_CLOSE_CHARS.Middle(i, 1)
+		          bracketInserted = True
+		          Exit For
+		        End If
+		      Next i
+		    End If
+		    Insert(SelectionStart, s)
+		    
+		    // If autocompleted, move caret one character to the left.
+		    If bracketInserted Then CaretPos = CaretPos - 1
+		  End If
+		  
+		  // Autoindent lines?
+		  // Check if current (new) entered line needs autoindenting.
+		  If AutoIndentNewLines And Not mIndentVisually Then
+		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		    If thisLine <> Nil And thisLine.IsBlockEnd Then
+		      // Indent this new line.
+		      Var state As Variant
+		      If PrivateIndentline(CaretLine, False, state) Then
+		        InvalidateLine(CaretLine)
+		      End If
+		    End If
+		  End If
+		  
+		  // Save the screen location of the caret, in case we need to move up/down.
+		  UpdateDesiredColumn
+		  
+		  If MouseOverBlock <> Nil Then
+		    CreateMouseOverBlockHighlight(CaretLine)
+		  End If
+		  
+		  // Redraw.
+		  IgnoreRepaint = False
+		  Redraw
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function IsEditable() As Boolean
+		  /// Returns False if the canvas is read-only or True if it's editable.
+		  
+		  Return Not mReadOnly
+		  
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -4013,10 +4081,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h1
-		Protected KeyDownTime As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected LastClickTicks As Integer
 	#tag EndProperty
 
@@ -4923,6 +4987,9 @@ Implements MessageCentre.MessageReceiver
 	#tag EndConstant
 
 	#tag Constant, Name = RegEXURL, Type = String, Dynamic = False, Default = \"(\?x) # FREE SPACING\n(\?i-U) # Case-insensitive\x2C greedy\n\n# Define the prefix\n(\?(DEFINE)(\?<prefix>[A-Z]{3\x2C}://))\n# Define a valid URL character\n(\?(DEFINE)(\?<valid>[A-Z0-9\\-_~:/\?\\#[\\]@!$&\'()*+;\x3D.\x2C%]))\n\n# START\n\\b # Word boundary\n(\?: # Non-capturing group\n(\?<\x3D\\<)(\?&prefix)(\?&valid)+(\?\x3D\\>) # Anything between angle-brackets\n| # OR\n(\?<\x3D\\[)(\?&prefix)(\?&valid)+(\?\x3D\\]) # Anything between square-brackets\n| # OR\n(\?<\x3D\\{)(\?&prefix)(\?&valid)+(\?\x3D\\}) # Anything between curly-brackets\n| # OR\n(\?&prefix)(\?&valid)+(\?<![\\.\x2C]) # Can\'t end on a dot or comma\n) # End non-capturing group", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = UNDO_EVT_BLOCK_SECS, Type = Double, Dynamic = False, Default = \"3", Scope = Protected
 	#tag EndConstant
 
 
