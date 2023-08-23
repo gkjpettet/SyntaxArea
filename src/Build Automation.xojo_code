@@ -6,6 +6,14 @@
 			Begin BuildStepList Mac OS X
 				Begin BuildProjectStep Build
 				End
+				Begin CopyFilesBuildStep CopyDefinitions
+					AppliesTo = 0
+					Architecture = 0
+					Target = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
+				End
 				Begin SignProjectStep Sign
 				  DeveloperID=
 				End
