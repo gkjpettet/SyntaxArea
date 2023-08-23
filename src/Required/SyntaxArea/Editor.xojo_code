@@ -66,19 +66,15 @@ Implements MessageCentre.MessageReceiver
 		    // MOVING THE CARET
 		    // =========================================
 		  Case CmdScrollPageDown
-		    // `Fn-Down Arrow` on macOS.
 		    PageDown
 		    
 		  Case CmdScrollPageUp
-		    // `Fn-Up Arrow` on macOS
 		    PageUp
 		    
 		  Case CmdPageDown
-		    // `Page down` key on Windows / Linux.
 		    PageDown
 		    
 		  Case CmdPageUp
-		    // `Page up` key on Windows / Linux.
 		    PageUp
 		    
 		  Case CmdMoveDown
@@ -130,12 +126,10 @@ Implements MessageCentre.MessageReceiver
 		    // SELECTING TEXT
 		    // =========================================
 		  Case CmdMoveLeftAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveLeftAndModifySelection(False, False)
 		    
 		  Case CmdMoveWordLeftAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveLeftAndModifySelection(False, True)
 		    
 		  Case CmdMoveWordRightAndModifySelection
 		    #Pragma Warning "TODO: Implement"
@@ -146,8 +140,7 @@ Implements MessageCentre.MessageReceiver
 		    Break
 		    
 		  Case CmdMoveToLeftEndOfLineAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveLeftAndModifySelection(True, False)
 		    
 		  Case CmdMoveToRightEndOfLineAndModifySelection
 		    #Pragma Warning "TODO: Implement"
@@ -2217,8 +2210,7 @@ Implements MessageCentre.MessageReceiver
 		    BlockCharsMatched(openingChar, pos, s, offset)
 		  Else
 		    // No open block found.
-		    Break
-		    System.Beep
+		    // Ignore.
 		  End If
 		  
 		End Sub
@@ -2707,6 +2699,76 @@ Implements MessageCentre.MessageReceiver
 		  If lineNum < ScrollPosition Then
 		    ChangeScrollValues(ScrollPositionX, lineNum)
 		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 4D6F76657320746865206361726574206C65667477617264732C206D6F64696679696E67207468652073656C656374696F6E2E
+		Protected Sub MoveLeftAndModifySelection(toStartOfLine As Boolean, toPreviousWord As Boolean)
+		  /// Moves the caret leftwards, modifying the selection.
+		  
+		  Var pos As Integer
+		  
+		  // Default to moving one place.
+		  Var charsToMove As Integer = 1
+		  Var lineNum As Integer
+		  
+		  // If the end of the selection is after the caret position then shrink the selection.
+		  If SelectionStart + SelectionLength > CaretPos Then
+		    
+		    // Move to start of line.
+		    If toStartOfLine Then
+		      lineNum = Lines.GetLineNumberForOffset(SelectionStart + SelectionLength)
+		      
+		      If SelectionStart + SelectionLength > Lines.GetLine(lineNum).Offset Then
+		        ChangeSelection(Lines.GetLine(lineNum).Offset, CaretPos - Lines.GetLine(lineNum).Offset)
+		        pos = SelectionStart
+		        
+		      End If
+		      
+		      ViewToCharPos(lineNum, SelectionStart + SelectionLength)
+		      
+		    ElseIf toPreviousWord Then
+		      Var previous As Integer = PreviousNonAlpha(SelectionStart + SelectionLength)
+		      ChangeSelection(previous, CaretPos - previous)
+		      pos = previous
+		      ViewToCharPos(pos)
+		      
+		    Else
+		      // Move just by one place.
+		      ChangeSelection(SelectionStart, SelectionLength - charsToMove)
+		      pos = SelectionStart + SelectionLength
+		      ViewToCharPos(pos)
+		    End If
+		    
+		  Else
+		    // The selection end is at the caret position so expand the selection.
+		    If toStartOfLine Then
+		      lineNum = Lines.GetLineNumberForOffset(Max(SelectionStart, 0))
+		      
+		      If SelectionStart > Lines.GetLine(lineNum).Offset Then
+		        ChangeSelection(Lines.GetLine(lineNum).Offset, CaretPos - Lines.GetLine(lineNum).Offset)
+		        pos = SelectionStart
+		      End If
+		      
+		      ViewToCharPos(lineNum, SelectionStart)
+		      
+		    ElseIf toPreviousWord Then
+		      Var previous As Integer = PreviousNonAlpha(SelectionStart)
+		      
+		      ChangeSelection(previous, CaretPos - previous)
+		      pos = SelectionStart
+		      ViewToCharPos(pos)
+		      
+		    Else
+		      // Move one place.
+		      ChangeSelection(SelectionStart - charsToMove, SelectionLength + charsToMove)
+		      pos = SelectionStart
+		      ViewToCharPos(pos)
+		    End If
+		  End If
+		  
+		  UpdateDesiredColumn(CaretPos)
 		  
 		End Sub
 	#tag EndMethod

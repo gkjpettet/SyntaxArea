@@ -49,7 +49,7 @@ Begin DesktopWindow Window1
       Enabled         =   True
       EnableLineFoldings=   True
       EnableLineFoldingSetting=   False
-      FontSize        =   12
+      FontSize        =   13
       GutterBackgroundColor=   &cD6D6D600
       GutterSeparationLineColor=   &cFF2F9200
       GutterWidth     =   0
@@ -89,7 +89,7 @@ Begin DesktopWindow Window1
       TabWidth        =   0
       Text            =   ""
       TextColor       =   &c00000000
-      TextFont        =   "System"
+      TextFont        =   "Source Code Pro"
       TextHeight      =   0.0
       TextLength      =   0
       TextSelectionColor=   &cD783FF00
