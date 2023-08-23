@@ -132,43 +132,34 @@ Implements MessageCentre.MessageReceiver
 		    MoveLeftAndModifySelection(False, True)
 		    
 		  Case CmdMoveWordRightAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretRightAndModifySelection(False, True)
 		    
 		  Case CmdMoveRightAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretRightAndModifySelection(False, False)
 		    
 		  Case CmdMoveToLeftEndOfLineAndModifySelection
 		    MoveLeftAndModifySelection(True, False)
 		    
 		  Case CmdMoveToRightEndOfLineAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretRightAndModifySelection(True, False)
 		    
 		  Case CmdMoveUpAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveUpAndModifySelection(False, False)
 		    
 		  Case CmdMoveDownAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveDownAndModifySelection(False, False)
 		    
 		  Case CmdPageDownAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveDownAndModifySelection(True, False)
 		    
 		  Case CmdPageUpAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveUpAndModifySelection(True, False)
 		    
 		  Case CmdMoveToBeginningOfDocumentAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveUpAndModifySelection(False, True)
 		    
 		  Case CmdMoveToEndOfDocumentAndModifySelection
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveDownAndModifySelection(False, True)
 		    
 		    // =========================================
 		    // MISC
@@ -2595,6 +2586,71 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420746F207468652072696768742C206D6F64696679696E67207468652073656C656374696F6E2E
+		Protected Sub MoveCaretRightAndModifySelection(toEndOfLine As Boolean, toNextWord As Boolean)
+		  /// Moves the caret to the right, modifying the selection.
+		  
+		  // Default moving one character.
+		  Var charsToMove As Integer = 1
+		  
+		  Var pos, lineNum As Integer
+		  
+		  If SelectionStart < CaretPos Then
+		    // Shrink the selection.
+		    If toEndOfLine Then
+		      lineNum = Lines.GetLineNumberForOffset(SelectionStart)
+		      
+		      If SelectionStart < Lines.GetLine(lineNum).Offset + Lines.GetLine(lineNum).Length Then
+		        Var line As SyntaxArea.TextLine = Lines.GetLine(lineNum)
+		        ChangeSelection(line.Offset + line.Length - line.DelimiterLength, CaretPos - line.Offset - line.Length)
+		        pos = SelectionStart
+		      End If
+		      ViewToCharPos(lineNum, SelectionStart)
+		      
+		    ElseIf toNextWord Then
+		      Var nextOffset As Integer = NextNonAlpha(SelectionStart)
+		      ChangeSelection(nextOffset, CaretPos - nextOffset)
+		      pos = nextOffset
+		      ViewToCharPos(pos)
+		      
+		    Else
+		      // Move one place.
+		      ChangeSelection(SelectionStart + charsToMove, SelectionLength - charsToMove)
+		      pos = SelectionStart
+		      ViewToCharPos(pos)
+		    End If
+		    
+		  Else
+		    // Expand the selection.
+		    If toEndOfLine Then
+		      lineNum = lines.GetLineNumberForOffset(SelectionStart + SelectionLength)
+		      
+		      If SelectionStart + SelectionLength < Lines.GetLine(lineNum).Offset + Lines.GetLine(lineNum).Length Then
+		        Var line As SyntaxArea.TextLine = Lines.GetLine(lineNum)
+		        ChangeSelection(SelectionStart, line.Offset + line.Length - SelectionStart - line.DelimiterLength)
+		        pos = SelectionStart + SelectionLength
+		      End If
+		      ViewToCharPos(lineNum, SelectionStart + SelectionLength)
+		      
+		    ElseIf toNextWord Then
+		      Var nextOffset As Integer = NextNonAlpha(SelectionStart + SelectionLength)
+		      ChangeSelection(nextOffset, CaretPos - nextOffset)
+		      pos = nextOffset
+		      ViewToCharPos(pos)
+		      
+		    Else
+		      // Single character.
+		      ChangeSelection(SelectionStart, SelectionLength + charsToMove)
+		      pos = SelectionStart + SelectionLength
+		      ViewToCharPos(pos)
+		    End If
+		  End If
+		  
+		  UpdateDesiredColumn(CaretPos)
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub MoveCaretToNextWordBoundary()
 		  Var charsToMove As Integer = NextNonAlpha(SelectionStart) - SelectionStart
@@ -2703,6 +2759,58 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420646F776E20616E64206D6F646966696573207468652073656C656374696F6E2E
+		Protected Sub MoveDownAndModifySelection(pageDown As Boolean, moveToEnd As Boolean)
+		  /// Moves the caret down and modifies the selection.
+		  
+		  Var lineNum As Integer
+		  
+		  // Find the line number.
+		  If SelectionStart < CaretPos Then
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart)
+		  Else
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart + SelectionLength)
+		  End If
+		  
+		  // Default to moving one line.
+		  Var linesToMove As Integer = 1
+		  
+		  If moveToEnd Then
+		    linesToMove = Lines.Count - 1 - ScrollPosition
+		  ElseIf pageDown Then
+		    linesToMove = MaxVisibleLines - 1
+		  End If
+		  
+		  Var line As SyntaxArea.TextLine
+		  Var offset As Integer
+		  
+		  // Get the line to move to.
+		  lineNum = lineNum + linesToMove
+		  If lineNum >= Lines.Count Then
+		    // Moving down on the last line - jump to the end of that line.
+		    lineNum = Lines.Count - 1
+		    line = Lines.GetLine(lineNum)
+		    offset = line.Offset + line.Length - line.DelimiterLength
+		  Else
+		    line = Lines.GetLine(lineNum)
+		    // Find the offset for the desired screen position.
+		    offset = OffsetForXPos(line, CaretDesiredColumn)
+		  End If
+		  
+		  // Extend the selection.
+		  ChangeSelection(Min(CaretPos, offset), Abs(offset - CaretPos))
+		  
+		  // Scroll if necessary.
+		  If lineNum > ScrollPosition + VisibleLineRange.length - 2 Then
+		    ChangeScrollValues(ScrollPositionX, lineNum - VisibleLineRange.Length + 2)
+		  End If
+		  
+		  IgnoreRepaint = False
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 4D6F76657320746865206361726574206C65667477617264732C206D6F64696679696E67207468652073656C656374696F6E2E
 		Protected Sub MoveLeftAndModifySelection(toStartOfLine As Boolean, toPreviousWord As Boolean)
 		  /// Moves the caret leftwards, modifying the selection.
@@ -2769,6 +2877,57 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		  UpdateDesiredColumn(CaretPos)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420757020616E64206D6F646966696573207468652073656C656374696F6E2E
+		Protected Sub MoveUpAndModifySelection(pageUp As Boolean, moveToStart As Boolean)
+		  /// Moves the caret up and modifies the selection.
+		  
+		  Var lineNum As Integer
+		  
+		  // Get the starting line number.
+		  If SelectionStart < CaretPos Then
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart)
+		  Else
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart + SelectionLength)
+		  End If
+		  
+		  // Default moving one place.
+		  Var linesToMove As Integer = 1
+		  
+		  If moveToStart Then
+		    // Move to the start of the document.
+		    linesToMove = ScrollPosition + MaxVisibleLines
+		  ElseIf pageUp Then
+		    // Move up a full page.
+		    linesToMove = MaxVisibleLines - 1
+		  End If
+		  
+		  Var line As SyntaxArea.TextLine
+		  Var offset As Integer
+		  
+		  lineNum = lineNum - linesToMove
+		  If lineNum < 0 Then
+		    // Moving up on the first line - jump to the begining of the line.
+		    lineNum = 0
+		    line = lines.getLine(lineNum)
+		    offset = 0
+		  Else
+		    line = Lines.GetLine(LineNum)
+		    offset = OffsetForXPos(line, CaretDesiredColumn)
+		  End If
+		  
+		  ChangeSelection(Min(CaretPos, offset), Abs(offset - CaretPos))
+		  
+		  // Scroll.
+		  If lineNum < ScrollPosition Then
+		    ChangeScrollValues(ScrollPositionX, lineNum)
+		  End If
+		  
+		  IgnoreRepaint = False
+		  Redraw
 		  
 		End Sub
 	#tag EndMethod
