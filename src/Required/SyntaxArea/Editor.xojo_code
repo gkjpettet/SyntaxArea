@@ -67,27 +67,22 @@ Implements MessageCentre.MessageReceiver
 		    // =========================================
 		  Case CmdScrollPageDown
 		    // `Fn-Down Arrow` on macOS.
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    PageDown
 		    
 		  Case CmdScrollPageUp
 		    // `Fn-Up Arrow` on macOS
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    PageUp
 		    
 		  Case CmdPageDown
 		    // `Page down` key on Windows / Linux.
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    PageDown
 		    
 		  Case CmdPageUp
 		    // `Page up` key on Windows / Linux.
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    PageUp
 		    
 		  Case CmdMoveDown
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretDown(False, False)
 		    
 		  Case CmdMoveLeft, CmdMoveBackward
 		    CurrentEventID = 0
@@ -106,8 +101,7 @@ Implements MessageCentre.MessageReceiver
 		    MoveCaretLeft(True)
 		    
 		  Case CmdMoveToEndOfDocument, CmdScrollToEndOfDocument
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretDown(False, True)
 		    
 		  Case CmdMoveToEndOfLine, CmdMoveToRightEndOfLine
 		    CurrentEventID = 0
@@ -2479,6 +2473,56 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420646F776E2E20446F6573206E6F74206D6F646966792073656C656374696F6E732E
+		Protected Sub MoveCaretDown(pageDown As Boolean, moveToEnd As Boolean)
+		  /// Moves the caret down. Does not modify selections.
+		  
+		  Var lineNum As Integer
+		  
+		  // Find the line number.
+		  If SelectionStart < CaretPos Then
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart)
+		  Else
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart + SelectionLength)
+		  End If
+		  
+		  // Default to moving one line.
+		  Var linesToMove As Integer = 1
+		  
+		  If moveToEnd Then
+		    // Move to the end of the document.
+		    linesToMove = Lines.Count - 1 - ScrollPosition
+		  ElseIf pageDown Then
+		    // Move down a full page.
+		    linesToMove = MaxVisibleLines - 1
+		  End If
+		  
+		  Var line As SyntaxArea.TextLine
+		  Var offset As Integer
+		  // Get the line to move to.
+		  lineNum = lineNum + linesToMove
+		  If lineNum >= Lines.Count Then
+		    // Moving down on the last line - jump to the end of that line.
+		    lineNum = Lines.Count - 1
+		    line = Lines.GetLine(lineNum)
+		    offset = line.offset + line.Length - line.DelimiterLength
+		  Else
+		    line = Lines.GetLine(lineNum)
+		    // Find the offset for the desired screen position.
+		    offset = OffsetForXPos(line, CaretDesiredColumn)
+		  End If
+		  
+		  // Actually move the caret.
+		  ChangeSelection(offset, 0)
+		  
+		  // Scroll if necessary.
+		  If lineNum > ScrollPosition + VisibleLineRange.Length - 2 Then
+		    ChangeScrollValues(ScrollPositionX, lineNum - VisibleLineRange.Length + 2)
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub MoveCaretLeft(toStartOfLine As Boolean)
 		  Var pos, charsToMove, lineNum As Integer
@@ -2751,6 +2795,24 @@ Implements MessageCentre.MessageReceiver
 		  Return temp_value
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 5363726F6C6C732074686520646F63756D656E7420646F776E206120706167652E20446F6573206E6F74206D6F7665207468652063617265742E
+		Protected Sub PageDown()
+		  /// Scrolls the document down a page. Does not move the caret.
+		  
+		  ScrollPosition = Min(Lines.Count, ScrollPosition + MaxVisibleLines)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 5363726F6C6C732074686520646F63756D656E74207570206120706167652E20446F6573206E6F74206D6F7665207468652063617265742E
+		Protected Sub PageUp()
+		  /// Scrolls the document up a page. Does not move the caret.
+		  
+		  ScrollPosition = Max(ScrollPosition - MaxVisibleLines, 0)
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
