@@ -118,8 +118,7 @@ Implements MessageCentre.MessageReceiver
 		    Break
 		    
 		  Case CmdMoveUp
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretUp(False, False)
 		    
 		    // =========================================
 		    // DELETING
@@ -2473,9 +2472,15 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420646F776E2E20446F6573206E6F74206D6F646966792073656C656374696F6E732E
+	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420646F776E2E
 		Protected Sub MoveCaretDown(pageDown As Boolean, moveToEnd As Boolean)
-		  /// Moves the caret down. Does not modify selections.
+		  /// Moves the caret down.
+		  
+		  // If there's a selection, move the caret to the end of the selection.
+		  If SelectionLength > 0 Then
+		    ChangeSelection(SelectionStart + SelectionLength, 0)
+		    Return
+		  End If
 		  
 		  Var lineNum As Integer
 		  
@@ -2519,7 +2524,6 @@ Implements MessageCentre.MessageReceiver
 		  If lineNum > ScrollPosition + VisibleLineRange.Length - 2 Then
 		    ChangeScrollValues(ScrollPositionX, lineNum - VisibleLineRange.Length + 2)
 		  End If
-		  
 		End Sub
 	#tag EndMethod
 
@@ -2598,6 +2602,59 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		  UpdateDesiredColumn(CaretPos)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub MoveCaretUp(pageUp As Boolean, moveToStart As Boolean)
+		  // I there's a selection, simply move to start of selection.
+		  If SelectionLength > 0 Then
+		    ChangeSelection(SelectionStart, 0)
+		    Return
+		  End If
+		   
+		  Var lineNum As Integer
+		  
+		  // Get the starting line number.
+		  If SelectionStart < CaretPos Then
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart)
+		  Else
+		    lineNum = Lines.GetLineNumberForOffset(SelectionStart + SelectionLength)
+		  End If
+		  
+		  // Default moving one line.
+		  Var linesToMove As Integer = 1
+		  
+		  If moveToStart Then
+		    // Move to the start of the document.
+		    linesToMove = ScrollPosition + MaxVisibleLines
+		  ElseIf pageUp Then
+		    // Move up a full page.
+		    linesToMove = MaxVisibleLines - 1
+		  End If
+		  
+		  Var line As SyntaxArea.TextLine
+		  Var offset As Integer
+		  
+		  lineNum = lineNum - linesToMove
+		  If lineNum < 0 Then
+		     // Moving up on the first lin -, jump to the begining of line.
+		    lineNum = 0
+		    line = Lines.GetLine(lineNum)
+		    offset = 0
+		  Else
+		    line = Lines.GetLine(lineNum)
+		    offset = OffsetForXPos(line, caretDesiredColumn)
+		  End If
+		  
+		  // Move the caret.
+		  ChangeSelection(offset, 0)
+		  
+		  // Scroll.
+		  If lineNum < ScrollPosition Then
+		    ChangeScrollValues(ScrollPositionX, lineNum)
+		  End If
 		  
 		End Sub
 	#tag EndMethod
