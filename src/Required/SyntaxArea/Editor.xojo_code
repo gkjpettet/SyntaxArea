@@ -85,37 +85,28 @@ Implements MessageCentre.MessageReceiver
 		    MoveCaretDown(False, False)
 		    
 		  Case CmdMoveLeft, CmdMoveBackward
-		    CurrentEventID = 0
 		    MoveCaretLeft(False)
 		    
 		  Case CmdMoveRight, CmdMoveForward
-		    CurrentEventID = 0
 		    MoveCaretRight(False)
 		    
 		  Case CmdMoveToBeginningOfDocument, CmdScrollToBeginningOfDocument
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretUp(False, True)
 		    
 		  Case CmdMoveToBeginningOfLine, CmdMoveToLeftEndOfLine
-		    CurrentEventID = 0
 		    MoveCaretLeft(True)
 		    
 		  Case CmdMoveToEndOfDocument, CmdScrollToEndOfDocument
 		    MoveCaretDown(False, True)
 		    
 		  Case CmdMoveToEndOfLine, CmdMoveToRightEndOfLine
-		    CurrentEventID = 0
 		    MoveCaretRight(True)
 		    
 		  Case CmdMoveWordLeft
-		    'MoveCaretToPreviousWordStart
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretToPreviousWordBoundary
 		    
 		  Case CmdMoveWordRight
-		    'MoveCaretToNextWordEnd
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    MoveCaretToNextWordBoundary
 		    
 		  Case CmdMoveUp
 		    MoveCaretUp(False, False)
@@ -956,7 +947,7 @@ Implements MessageCentre.MessageReceiver
 		  // Update the selection if inside a placeholder.
 		  Var selectedPlaceholder As SyntaxArea.TextPlaceholder = Nil
 		  If mSelectionStart < selStart Then
-		     // Moving the start to the right.
+		    // Moving the start to the right.
 		    Var placeholder As SyntaxArea.TextPlaceholder = line.PlaceholderForOffset(selStart)
 		    If placeholder <> Nil Then
 		      If selLength = 0 Then
@@ -1002,7 +993,7 @@ Implements MessageCentre.MessageReceiver
 		    End If
 		    
 		  ElseIf mSelectionLength < selLength Then
-		     // Expanding the selection.
+		    // Expanding the selection.
 		    Var endline As SyntaxArea.TextLine = _
 		    Lines.GetLine(Lines.GetLineNumberForOffset(selStart + selLength))
 		    If endline <> Nil Then
@@ -1547,7 +1538,7 @@ Implements MessageCentre.MessageReceiver
 		            g.FillRectangle(LineNumberOffset, sy - g.TextHeight, g.Width - line.VisualIndent(Self.IndentVisually), TextHeight)
 		            
 		          ElseIf lineIdx = tmpSelection.StartLine And tmpSelection.EndLine <> tmpSelection.StartLine Then
-		             // First line.
+		            // First line.
 		            XYAtCharPos(tmpSelection.Offset, lineIdx, x, y)
 		            
 		            If tmpSelection.Rounded Then
@@ -2214,7 +2205,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If pos >= 0 Then
 		    If HighlightMatchingBracketsMode = 0 Then
-		       // Circle.
+		      // Circle.
 		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
 		    Else
 		      Var line As Integer = LineNumAtCharPos(pos)
@@ -2476,6 +2467,8 @@ Implements MessageCentre.MessageReceiver
 		Protected Sub MoveCaretDown(pageDown As Boolean, moveToEnd As Boolean)
 		  /// Moves the caret down.
 		  
+		  CurrentEventID = 0
+		  
 		  // If there's a selection, move the caret to the end of the selection.
 		  If SelectionLength > 0 Then
 		    ChangeSelection(SelectionStart + SelectionLength, 0)
@@ -2529,6 +2522,8 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Method, Flags = &h1
 		Protected Sub MoveCaretLeft(toStartOfLine As Boolean)
+		  CurrentEventID = 0
+		  
 		  Var pos, charsToMove, lineNum As Integer
 		  
 		  // If there's an active selection, move CaretPos to start of selection
@@ -2567,6 +2562,8 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Method, Flags = &h1
 		Protected Sub MoveCaretRight(toEndOfLine As Boolean)
+		  CurrentEventID = 0
+		  
 		  Var pos As Integer
 		  
 		  // Default to moving one character.
@@ -2607,13 +2604,68 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub MoveCaretToNextWordBoundary()
+		  Var charsToMove As Integer = NextNonAlpha(SelectionStart) - SelectionStart
+		  
+		  Var char As String = TextStorage.GetCharAt(CaretPos)
+		  
+		  // Check if the next character is a block character.
+		  If IsBlockChar(char) Then
+		    // Mark it for highlight.
+		    If BLOCK_CLOSE_CHARS.IndexOf(char) > -1 Then
+		      HighlightOpeningBlock(char, CaretPos)
+		    Else
+		      HighlightClosingBlock(char, CaretPos)
+		    End If
+		  End If
+		  
+		  ChangeSelection(SelectionStart + charsToMove, 0)
+		  
+		  Var pos As Integer = CaretPos
+		  
+		  ViewToCharPos(CaretLine, pos)
+		  
+		  UpdateDesiredColumn(CaretPos)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub MoveCaretToPreviousWordBoundary()
+		  CurrentEventID = 0
+		  
+		  Var charsToMove As Integer = SelectionStart - previousNonAlpha(SelectionStart)
+		  
+		  ChangeSelection(SelectionStart - charsToMove, 0)
+		  Var pos As Integer = CaretPos
+		  ViewToCharPos(CaretLine, pos)
+		  
+		  // Did we just cross a block character?
+		  Var char As String = TextStorage.GetCharAt(CaretPos)
+		  If IsBlockChar(char) Then
+		    // Find the opening/closing character for this block.
+		    If BLOCK_CLOSE_CHARS.IndexOf(char) > -1 Then
+		      HighlightOpeningBlock(char, CaretPos)
+		    Else
+		      HighlightClosingBlock(char, CaretPos)
+		    End If
+		  End If
+		  
+		  UpdateDesiredColumn(CaretPos)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Sub MoveCaretUp(pageUp As Boolean, moveToStart As Boolean)
-		  // I there's a selection, simply move to start of selection.
+		  CurrentEventID = 0
+		  
+		  // If there's a selection, simply move to start of selection.
 		  If SelectionLength > 0 Then
 		    ChangeSelection(SelectionStart, 0)
 		    Return
 		  End If
-		   
+		  
 		  Var lineNum As Integer
 		  
 		  // Get the starting line number.
@@ -2639,7 +2691,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  lineNum = lineNum - linesToMove
 		  If lineNum < 0 Then
-		     // Moving up on the first lin -, jump to the begining of line.
+		    // Moving up on the first lin -, jump to the begining of line.
 		    lineNum = 0
 		    line = Lines.GetLine(lineNum)
 		    offset = 0
@@ -3071,7 +3123,7 @@ Implements MessageCentre.MessageReceiver
 		    // stop the outer loop.
 		    Return True
 		  End If
-		   
+		  
 		  If SyntaxDefinition = Nil Then
 		    line.Indent = 0
 		    Return False
