@@ -508,14 +508,56 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Event
 		Function MouseWheel(x As Integer, y As Integer, deltaX As Integer, deltaY As Integer) As Boolean
+		  /// The mouse has wheeled on Windows or Linux.
+		  ///
+		  /// `x` is the X coord relative to the control that has received the event.
+		  /// `y` is the Y coord relative to the control that has received the event.
+		  /// `deltaX` is the number of horizontal scroll lines moved.
+		  /// `deltaY` is the number of vertical scroll lines moved.
+		  ///
+		  /// Returns True to prevent propagating the event further.
+		  ///
+		  /// `deltaX` is positive when the user scrolls right and negative when scrolling left. 
+		  /// `deltaY` is positive when the user scrolls down and negative when scrolling up.
+		  ///
+		  /// Never called on macOS (handled instead within `NSScrollViewBoundsChanged`).
+		  
 		  #Pragma Unused x
 		  #Pragma Unused y
+		  
+		  #If TargetMacOS Then
+		    Return True
+		  #EndIf
 		  
 		  If MouseOverBlock <> Nil Then MouseOverBlock = Nil
 		  
 		  ChangeScrollValues(ScrollPositionX + (deltaX * 5), ScrollPosition + deltaY)
 		  
 		End Function
+	#tag EndEvent
+
+	#tag Event , Description = 546865207363726F6C6C207669657720626F756E647320686173206368616E6765642E
+		Sub NSScrollViewBoundsChanged(bounds As CGRect)
+		  /// The user has scrolled with the mouse / trackpad on macOS.
+		  ///
+		  /// bounds.Origin.X is the horizontal scroll offset (same as NSScrollViewCanvas.ScrollX_)
+		  /// bounds.Origin.Y is the vertical scroll offset (same as NSScrollViewCanvas.ScrollY_)
+		  /// bounds.RectSize contains the width and height of the document window.
+		  ///
+		  /// This replaces the `MouseWheel` event on macOS.
+		  /// Never fires on Windows / Linux.
+		  
+		  // Use `y` for brevity.
+		  Var y As Integer = bounds.Origin.Y + (mLineHeight / 2)
+		  If y > (mContentsHeight - Me.Height - mLineHeight) Then
+		    y = mContentsHeight
+		  End If
+		  
+		  If MouseOverBlock <> Nil Then MouseOverBlock = Nil
+		  
+		  ChangeScrollValues(bounds.Origin.X, y / mLineHeight)
+		  
+		End Sub
 	#tag EndEvent
 
 	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
@@ -754,9 +796,9 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4368616E67657320746865207669657720746F2074686520676976656E207363726F6C6C2076616C7565732E
+	#tag Method, Flags = &h1, Description = 5363726F6C6C7320746865207669657720746F2060686F72697A6F6E74616C6020706978656C7320616E642060766572746963616C60206C696E65206E756D6265722E
 		Protected Sub ChangeScrollValues(horizontal As Integer, vertical As Integer)
-		  /// Changes the view to the given scroll values.
+		  /// Scrolls the view to `horizontal` pixels and `vertical` line number.
 		  
 		  mCaretBlinker.Reset
 		  
@@ -1067,7 +1109,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function checkDoubleClick(x As Integer, y As Integer) As Boolean
+		Private Function CheckDoubleClick(x As Integer, y As Integer) As Boolean
 		  Var doubleClickTime, currentClickTicks As Integer
 		  
 		  doubleClickTime = GetDoubleClickTimeTicks
@@ -1447,6 +1489,10 @@ Implements MessageCentre.MessageReceiver
 		    gr.FontName = TextFont
 		  End If
 		  
+		  // Cache the text height (used at the end of this method when setting the 
+		  // document size on macOS).
+		  mLineHeight = g.TextHeight
+		  
 		  // Starting positions.
 		  sx = LeftMarginOffset + LineNumberOffset - ScrollPositionX
 		  sy = g.TextHeight
@@ -1718,6 +1764,16 @@ Implements MessageCentre.MessageReceiver
 		  
 		  #If DebugBuild
 		    redrawTime = System.Microseconds - redrawTime
+		  #EndIf
+		  
+		  #If TargetMacOS
+		    mContentsWidth = mLastLongestLinePixels + LineNumberOffset + RightScrollMargin
+		    If EnableLineFoldings Then
+		      mContentsHeight = (Lines.Count - Lines.invisibleLines) * mLineHeight
+		    Else
+		      mContentsHeight = Lines.Count * mLineHeight
+		    End If
+		    SetDocumentSize(mContentsWidth, mContentsHeight)
 		  #EndIf
 		  
 		  mRedrawEverything = False
@@ -3218,7 +3274,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F757320616C7068616E756D6572696320636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function previousAlpha(fromOffset As Integer) As Integer
+		Protected Function PreviousAlpha(fromOffset As Integer) As Integer
 		  /// Finds the previous alphanumeric character starting at `fromOffset`.
 		  
 		  For i As Integer = fromOffset - 1 DownTo 1
@@ -5072,6 +5128,14 @@ Implements MessageCentre.MessageReceiver
 		Private mCaretPos As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h21, Description = 54686520746F74616C20686569676874206F662074686520646F63756D656E747320636F6E74656E742C206C61737420636F6D707574656420696E2044726177436F6E74656E74732E
+		Private mContentsHeight As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, Description = 546865207769647468206F662074686520646F63756D656E74277320636F6E74656E742C206C61737420636F6D707574656420696E2044726177436F6E74656E74732E
+		Private mContentsWidth As Double
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mCurrentAutocompleteOptions As SyntaxArea.AutocompleteOptions
 	#tag EndProperty
@@ -5166,6 +5230,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mLeftMarginOffset As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 412063616368656420636F7079206F6620746865206C696E65206865696768742C206C61737420636F6D707574656420696E2044726177436F6E74656E74732E
+		mLineHeight As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6356,6 +6424,14 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mLineHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

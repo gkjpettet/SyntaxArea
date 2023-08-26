@@ -10,7 +10,7 @@ Begin DesktopWindow Window1
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   612
+   Height          =   754
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -53,7 +53,7 @@ Begin DesktopWindow Window1
       GutterBackgroundColor=   &cD6D6D600
       GutterSeparationLineColor=   &cFF2F9200
       GutterWidth     =   0
-      Height          =   572
+      Height          =   637
       HighlightBlocksOnMouseOverGutter=   False
       HighlightMatchingBrackets=   True
       HighlightMatchingBracketsMode=   0
@@ -96,6 +96,38 @@ Begin DesktopWindow Window1
       ThickInsertionPoint=   False
       Tooltip         =   ""
       Top             =   20
+      Visible         =   True
+      Width           =   876
+   End
+   Begin DesktopLabel ScrollInfo
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   65
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   True
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "ScrollInfo"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   669
+      Transparent     =   False
+      Underline       =   False
       Visible         =   True
       Width           =   876
    End
