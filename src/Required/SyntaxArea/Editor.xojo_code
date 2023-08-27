@@ -4445,56 +4445,51 @@ Implements MessageCentre.MessageReceiver
 		Border As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F72206F662074686520656469746F72277320626F72646572202869662074686520626F7264657220697320656E61626C6564292E
 		#tag Getter
 			Get
-			  Return getCurrentModeColor(CurrentMethodName)
+			  Return mBorderColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mBorderColor = value
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		BorderColor As Color
+		BorderColor As ColorGroup
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7220746F20757365207768656E20686967686C69676874696E6720627261636B6574732E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mBracketHighlightColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If value = &c00000000 Then
-			    // If it's not explicitly assigned, we use a default (yellow)
-			    value = Color.Yellow
-			  End If
-			  
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mBracketHighlightColor = value
 			  
 			End Set
 		#tag EndSetter
-		BracketHighlightColor As Color
+		BracketHighlightColor As ColorGroup
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F72207468652063617265742E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mCaretColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mCaretColor = value
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		CaretColor As Color
+		CaretColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -4573,21 +4568,21 @@ Implements MessageCentre.MessageReceiver
 		Protected CursorIsIbeam As Boolean = True
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520746F20686967686C696768742022646972747922206C696E65732E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mDirtyLinesColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mDirtyLinesColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		DirtyLinesColor As Color
+		DirtyLinesColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -4765,21 +4760,21 @@ Implements MessageCentre.MessageReceiver
 		Protected Gutter As Picture
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206775747465722773206261636B67726F756E642E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mGutterBackgroundColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mGutterBackgroundColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		GutterBackgroundColor As Color
+		GutterBackgroundColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5132,11 +5127,23 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mBorderColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBracketHighlightColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mBrightModeColors As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mCaretBlinker As SyntaxArea.CaretBlinker
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCaretColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5165,6 +5172,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h1
 		Protected mDesiredColumnCharPos As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDirtyLinesColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5197,6 +5208,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h1
 		Protected mFullRefresh As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGutterBackgroundColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -6058,7 +6073,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6074,7 +6089,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6082,7 +6097,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6090,7 +6105,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6122,7 +6137,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
