@@ -23,151 +23,175 @@ Begin DesktopWindow Window1
    Title           =   "SyntaxArea Demo"
    Type            =   0
    Visible         =   True
-   Width           =   916
-   Begin SyntaxArea.Editor CodeEditor
-      AllowFocusRing  =   False
-      AutoCloseBrackets=   False
-      AutocompleteAppliesStandardCase=   True
-      AutoCompleteDone=   True
-      AutoDeactivate  =   True
-      AutoIndentNewLines=   True
-      BackColor       =   &cFFFFFF00
-      Border          =   False
-      BorderColor     =   &c00000000
-      BracketHighlightColor=   &c76D6FF00
-      CaretColor      =   &c00000000
-      CaretLine       =   0
-      CaretPos        =   0
-      ClearHighlightedRangesOnTextChange=   True
-      DirtyLinesColor =   &cFFD47900
-      DisableReset    =   False
-      DisplayDirtyLines=   False
-      DisplayInvisibleCharacters=   False
-      DisplayLineNumbers=   True
-      DisplayRightMarginMarker=   False
-      EnableAutocomplete=   False
+   Width           =   1094
+   Begin DesktopPagePanel Panel
+      AllowAutoDeactivate=   True
       Enabled         =   True
-      EnableLineFoldings=   True
-      EnableLineFoldingSetting=   False
-      FontSize        =   13
-      GutterBackgroundColor=   &cD6D6D600
-      GutterSeparationLineColor=   &cFF2F9200
-      GutterWidth     =   0
-      Height          =   628
-      HighlightBlocksOnMouseOverGutter=   False
-      HighlightMatchingBrackets=   True
-      HighlightMatchingBracketsMode=   0
-      IgnoreRepaint   =   False
-      IndentPixels    =   16
-      IndentVisually  =   True
+      Height          =   644
       Index           =   -2147483648
-      InitialParent   =   ""
-      KeepEntireTextIndented=   True
       Left            =   0
-      LeftMarginOffset=   0
-      LineNumbersColor=   &c00000000
-      LineNumbersFontSize=   12
-      LineNumbersTextFont=   "System"
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MaxVisibleLines =   0
-      ReadOnly        =   False
-      RightMarginAtPixel=   0
-      RightScrollMargin=   150
+      PanelCount      =   1
+      Panels          =   ""
       Scope           =   0
-      ScrollPosition  =   0
-      ScrollPositionX =   0
-      SelectionLength =   0
-      SelectionStart  =   0
-      SelText         =   ""
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
-      TabWidth        =   0
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "Source Code Pro"
-      TextHeight      =   0.0
-      TextLength      =   0
-      TextSelectionColor=   &cD783FF00
-      ThickInsertionPoint=   False
+      TabStop         =   False
       Tooltip         =   ""
       Top             =   0
-      Visible         =   True
-      Width           =   900
-   End
-   Begin DesktopScrollbar VerticalScrollBar
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowLiveScrolling=   True
-      AllowTabStop    =   True
-      Enabled         =   True
-      Height          =   628
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   900
-      LineStep        =   1
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      MaximumValue    =   0
-      MinimumValue    =   0
-      PageStep        =   20
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   True
+      Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   16
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
-   Begin DesktopScrollbar HorizontalScrollBar
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowLiveScrolling=   True
-      AllowTabStop    =   True
-      Enabled         =   True
-      Height          =   16
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LineStep        =   1
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      MaximumValue    =   0
-      MinimumValue    =   0
-      PageStep        =   20
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      Tooltip         =   ""
-      Top             =   628
-      Transparent     =   True
-      Value           =   0
-      Visible         =   True
-      Width           =   900
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
+      Width           =   755
+      Begin DesktopScrollbar HorizontalScrollBar
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   True
+         AllowLiveScrolling=   True
+         AllowTabStop    =   True
+         Enabled         =   True
+         Height          =   16
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   0
+         LineStep        =   1
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         MaximumValue    =   0
+         MinimumValue    =   0
+         PageStep        =   20
+         PanelIndex      =   0
+         Scope           =   0
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         Tooltip         =   ""
+         Top             =   628
+         Transparent     =   True
+         Value           =   0
+         Visible         =   True
+         Width           =   739
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
+      End
+      Begin DesktopScrollbar VerticalScrollBar
+         Active          =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   True
+         AllowLiveScrolling=   True
+         AllowTabStop    =   True
+         Enabled         =   True
+         Height          =   628
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   739
+         LineStep        =   1
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MaximumValue    =   0
+         MinimumValue    =   0
+         PageStep        =   20
+         PanelIndex      =   0
+         Scope           =   0
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Value           =   0
+         Visible         =   True
+         Width           =   16
+         _mIndex         =   0
+         _mInitialParent =   ""
+         _mName          =   ""
+         _mPanelIndex    =   0
+      End
+      Begin SyntaxArea.Editor CodeEditor
+         AllowFocusRing  =   False
+         AutoCloseBrackets=   False
+         AutocompleteAppliesStandardCase=   True
+         AutoCompleteDone=   True
+         AutoDeactivate  =   True
+         AutoIndentNewLines=   True
+         BackColor       =   &cFFFFFF00
+         Border          =   True
+         BorderColor     =   &c00000000
+         BracketHighlightColor=   &c76D6FF00
+         CaretColor      =   &c00000000
+         CaretLine       =   0
+         CaretPos        =   0
+         ClearHighlightedRangesOnTextChange=   True
+         DirtyLinesColor =   &cFFD47900
+         DisableReset    =   False
+         DisplayDirtyLines=   False
+         DisplayInvisibleCharacters=   False
+         DisplayLineNumbers=   True
+         DisplayRightMarginMarker=   False
+         EnableAutocomplete=   False
+         Enabled         =   True
+         EnableLineFoldings=   True
+         EnableLineFoldingSetting=   False
+         FontSize        =   13
+         GutterBackgroundColor=   &cD6D6D600
+         GutterSeparationLineColor=   &cFF2F9200
+         GutterWidth     =   0
+         Height          =   628
+         HighlightBlocksOnMouseOverGutter=   False
+         HighlightMatchingBrackets=   True
+         HighlightMatchingBracketsMode=   0
+         IgnoreRepaint   =   False
+         IndentPixels    =   16
+         IndentVisually  =   True
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         KeepEntireTextIndented=   True
+         Left            =   0
+         LeftMarginOffset=   0
+         LineNumbersColor=   &c00000000
+         LineNumbersFontSize=   12
+         LineNumbersTextFont=   "System"
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaxVisibleLines =   0
+         ReadOnly        =   False
+         RightMarginAtPixel=   0
+         RightScrollMargin=   150
+         Scope           =   0
+         ScrollPosition  =   0
+         ScrollPositionX =   0
+         SelectionLength =   0
+         SelectionStart  =   0
+         SelText         =   ""
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TabWidth        =   0
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "Source Code Pro"
+         TextHeight      =   0.0
+         TextLength      =   0
+         TextSelectionColor=   &cD783FF00
+         ThickInsertionPoint=   False
+         Tooltip         =   ""
+         Top             =   0
+         Visible         =   True
+         Width           =   739
+      End
    End
 End
 #tag EndDesktopWindow
@@ -195,6 +219,20 @@ End
 
 #tag EndWindowCode
 
+#tag Events HorizontalScrollBar
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.ScrollPositionX = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VerticalScrollBar
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.ScrollPosition = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CodeEditor
 	#tag Event , Description = 54686520656469746F72206973206F70656E696E672E
 		Sub Opening()
@@ -211,20 +249,6 @@ End
 		  #EndIf
 		  
 		  Me.Text = DEMO_XOJO_CODE
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events VerticalScrollBar
-	#tag Event
-		Sub ValueChanged()
-		  CodeEditor.ScrollPosition = Me.Value
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events HorizontalScrollBar
-	#tag Event
-		Sub ValueChanged()
-		  CodeEditor.ScrollPositionX = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
