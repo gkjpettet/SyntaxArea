@@ -3964,6 +3964,21 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 5365747320746865207363726F6C6C6261727320746F207573652077697468207468697320656469746F722E20486173206E6F20656666656374206F6E206D61634F53206173206E6174697665207363726F6C6C626172732061726520757365642E
+		Sub SetScrollbars(horizontal As DesktopScrollbar, vertical As DesktopScrollbar)
+		  /// Sets the scrollbars to use with this editor.
+		  /// Has no effect on macOS as native scrollbars are used.
+		  
+		  #If TargetMacOS
+		    Return
+		  #EndIf
+		  
+		  mHorizontalScrollBar = horizontal
+		  mVerticalScrollbar = vertical
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub StopHighlighter()
 		  If mHighlighter <> Nil Then
@@ -5438,7 +5453,7 @@ Implements MessageCentre.MessageReceiver
 		RightScrollMargin As Integer = 150
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520766572746963616C207363726F6C6C20706F736974696F6E2028696E206C696E6573292E
 		#tag Getter
 			Get
 			  Return mScrollPosition
@@ -5454,7 +5469,7 @@ Implements MessageCentre.MessageReceiver
 		ScrollPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 546865206E756D626572206F6620706978656C732074686520656469746F7220686173207363726F6C6C656420686F72697A6F6E74616C6C792E
 		#tag Getter
 			Get
 			  Return mScrollPositionX

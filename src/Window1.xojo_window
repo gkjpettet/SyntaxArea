@@ -10,7 +10,7 @@ Begin DesktopWindow Window1
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   754
+   Height          =   644
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -20,7 +20,7 @@ Begin DesktopWindow Window1
    MinimumHeight   =   64
    MinimumWidth    =   64
    Resizeable      =   True
-   Title           =   "Untitled"
+   Title           =   "SyntaxArea Demo"
    Type            =   0
    Visible         =   True
    Width           =   916
@@ -53,7 +53,7 @@ Begin DesktopWindow Window1
       GutterBackgroundColor=   &cD6D6D600
       GutterSeparationLineColor=   &cFF2F9200
       GutterWidth     =   0
-      Height          =   637
+      Height          =   628
       HighlightBlocksOnMouseOverGutter=   False
       HighlightMatchingBrackets=   True
       HighlightMatchingBracketsMode=   0
@@ -63,7 +63,7 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       KeepEntireTextIndented=   True
-      Left            =   20
+      Left            =   0
       LeftMarginOffset=   0
       LineNumbersColor=   &c00000000
       LineNumbersFontSize=   12
@@ -95,41 +95,79 @@ Begin DesktopWindow Window1
       TextSelectionColor=   &cD783FF00
       ThickInsertionPoint=   False
       Tooltip         =   ""
-      Top             =   20
+      Top             =   0
       Visible         =   True
-      Width           =   876
+      Width           =   900
    End
-   Begin DesktopLabel ScrollInfo
+   Begin DesktopScrollbar VerticalScrollBar
+      Active          =   False
       AllowAutoDeactivate=   True
-      Bold            =   False
+      AllowFocus      =   True
+      AllowLiveScrolling=   True
+      AllowTabStop    =   True
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   65
+      Height          =   628
       Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
+      InitialParent   =   ""
+      Left            =   900
+      LineStep        =   1
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumValue    =   0
+      MinimumValue    =   0
+      PageStep        =   20
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Value           =   0
+      Visible         =   True
+      Width           =   16
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
+   End
+   Begin DesktopScrollbar HorizontalScrollBar
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowLiveScrolling=   True
+      AllowTabStop    =   True
+      Enabled         =   True
+      Height          =   16
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LineStep        =   1
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   False
-      Multiline       =   True
+      MaximumValue    =   0
+      MinimumValue    =   0
+      PageStep        =   20
+      PanelIndex      =   0
       Scope           =   0
-      Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "ScrollInfo"
-      TextAlignment   =   0
-      TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   669
-      Transparent     =   False
-      Underline       =   False
+      Top             =   628
+      Transparent     =   True
+      Value           =   0
       Visible         =   True
-      Width           =   876
+      Width           =   900
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
 #tag EndDesktopWindow
@@ -160,7 +198,33 @@ End
 #tag Events CodeEditor
 	#tag Event , Description = 54686520656469746F72206973206F70656E696E672E
 		Sub Opening()
+		  // Set the scrollbars on Windows and Linux (they are native on macOS).
+		  
+		  #If TargetMacOS
+		    HorizontalScrollBar.Visible = False
+		    VerticalScrollBar.Visible = False
+		    CodeEditor.Width = CodeEditor.Width + VerticalScrollBar.Width
+		    CodeEditor.Height = CodeEditor.Height + HorizontalScrollBar.Height
+		    
+		  #Else
+		    Me.SetScrollbars(HorizontalScrollBar, VerticalScrollBar)
+		  #EndIf
+		  
 		  Me.Text = DEMO_XOJO_CODE
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VerticalScrollBar
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.ScrollPosition = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HorizontalScrollBar
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.ScrollPositionX = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
