@@ -40,6 +40,21 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E732061206461726B657220636F6C6F757220666F722074686520676976656E20636F6C6F75722E
+		Function DarkerColor(Extends forColor As ColorGroup, offset As Integer, adjustForDarkMode As Boolean) As Color
+		  /// Returns a darker colour for the given colour.
+		  
+		  Var c As Color = forColor
+		  
+		  If adjustForDarkMode And Color.IsDarkMode Then
+		    Return Color.RGB(Min(c.Red + offset, 255), Min(c.Green + offset, 255), Min(c.Blue + offset, 255))
+		  Else
+		    Return Color.RGB(Max(c.Red - offset, 0), Max(c.Green - offset, 0), Max(c.Blue - offset, 0))
+		  End If
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 52657475726E7320616E20696E7665727465642076657273696F6E206F66207468652070617373656420636F6C6F75722E
 		Function InvertColor(Extends c As Color) As color
 		  /// Returns an inverted version of the passed colour.

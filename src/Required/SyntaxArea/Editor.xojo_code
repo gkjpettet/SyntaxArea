@@ -4325,18 +4325,18 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mBackColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mBackColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		BackColor As Color
+		BackColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h1
@@ -5121,6 +5121,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mBackBuffer As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBackColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
