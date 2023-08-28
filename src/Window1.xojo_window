@@ -144,7 +144,7 @@ Begin DesktopWindow Window1
          EnableLineFoldingSetting=   False
          FontSize        =   13
          GutterBackgroundColor=   &cD6D6D600
-         GutterSeparationLineColor=   &cFF2F9200
+         GutterSeparationLineColor=   &c00000000
          GutterWidth     =   0
          Height          =   628
          HighlightBlocksOnMouseOverGutter=   False
@@ -167,6 +167,7 @@ Begin DesktopWindow Window1
          LockRight       =   True
          LockTop         =   True
          MaxVisibleLines =   0
+         mLineHeight     =   0.0
          ReadOnly        =   False
          RightMarginAtPixel=   0
          RightScrollMargin=   150
@@ -189,6 +190,7 @@ Begin DesktopWindow Window1
          ThickInsertionPoint=   False
          Tooltip         =   ""
          Top             =   0
+         UseSystemTextSelectionColor=   True
          Visible         =   True
          Width           =   739
       End

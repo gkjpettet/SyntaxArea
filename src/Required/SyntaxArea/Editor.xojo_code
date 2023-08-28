@@ -4777,21 +4777,21 @@ Implements MessageCentre.MessageReceiver
 		GutterBackgroundColor As ColorGroup
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F66207468652072696768742068616E6420626F72646572206F6620746865206775747465722E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mGutterSeparationLineColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mGutterSeparationLineColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		GutterSeparationLineColor As Color
+		GutterSeparationLineColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5010,21 +5010,21 @@ Implements MessageCentre.MessageReceiver
 		Protected LineNumberOffset As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206C696E65206E756D626572732E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mLineNumbersColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor(value, CurrentMethodName)
+			  mLineNumbersColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		LineNumbersColor As Color
+		LineNumbersColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5214,6 +5214,10 @@ Implements MessageCentre.MessageReceiver
 		Private mGutterBackgroundColor As ColorGroup
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mGutterSeparationLineColor As ColorGroup
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected mHasFocus As Boolean
 	#tag EndProperty
@@ -5272,6 +5276,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mLineNumberOffset As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLineNumbersColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5366,11 +5374,19 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mTextColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTextFont As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mTextHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTextSelectionColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5678,21 +5694,21 @@ Implements MessageCentre.MessageReceiver
 		Text As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 5468652064656661756C74207465787420636F6C6F75722E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  Return mTextColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  SetBrightModeColor (value, CurrentMethodName)
+			  mTextColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		TextColor As Color
+		TextColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5745,24 +5761,23 @@ Implements MessageCentre.MessageReceiver
 		TextLength As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662073656C656374656420746578742E
 		#tag Getter
 			Get
-			  Return GetCurrentModeColor(CurrentMethodName)
+			  If UseSystemTextSelectionColor Then
+			    Return Color.HighlightColor
+			  Else
+			    Return mTextSelectionColor
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  // Set default selection colour to the system default if none specified.
-			  If value = &c000000 Then
-			    SetBrightModeColor(Color.HighlightColor, CurrentMethodName)
-			  Else
-			    SetBrightModeColor(value, CurrentMethodName)
-			  End If
+			  mTextSelectionColor = value
 			  
 			End Set
 		#tag EndSetter
-		TextSelectionColor As Color
+		TextSelectionColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -5828,6 +5843,10 @@ Implements MessageCentre.MessageReceiver
 		#tag EndSetter
 		UndoMgr As UndoKit.UndoManager
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C20757365207468652073797374656D2773207374616E6461726420746578742073656C656374696F6E20636F6C6F7572207768656E2073656C656374696E6720746578742E2049662046616C73652069742077696C6C2075736520605465787453656C656374696F6E436F6C6F72602E
+		UseSystemTextSelectionColor As Boolean = True
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -6217,7 +6236,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6225,7 +6244,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6305,7 +6324,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6417,7 +6436,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6449,7 +6468,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Behavior"
 			InitialValue="&c000000"
-			Type="Color"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6466,6 +6485,14 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseSystemTextSelectionColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
