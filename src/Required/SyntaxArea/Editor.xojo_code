@@ -59,6 +59,8 @@ Implements MessageCentre.MessageReceiver
 		  ///
 		  /// `command` is a string constant telling us which command we need to handle.
 		  
+		  #Pragma Warning "TODO: Implement autocomplete"
+		  
 		  CurrentEventID = System.Ticks
 		  
 		  Select Case command
@@ -2017,6 +2019,8 @@ Implements MessageCentre.MessageReceiver
 		Private Sub HandleInsertText(s As String, range As TextRange)
 		  /// Called from within the `InsertText` event. Used internally to insert a character.
 		  
+		  #Pragma Warning "TODO: Handle the range property"
+		  
 		  // Add a new event ID if changed typing, or no event ID, or time elapsed
 		  // between events is 5 secs.
 		  If Not Typing Or CurrentEventID = 0 Or _
@@ -2077,7 +2081,7 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Method, Flags = &h1
 		Protected Function HandleKeyDown(key As String) As Boolean
-		  #Pragma Warning "REMOVE if possible now we're using TextInputCanvas"
+		  #Pragma Warning "Remove once implemented all of CEF's functionality in this method"
 		  Raise New UnsupportedOperationException("The HandleKeyDown method is not implemented.")
 		  
 		End Function
