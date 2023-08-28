@@ -90,7 +90,7 @@ Implements MessageCentre.MessageReceiver
 		    MoveCaretUp(False, True)
 		    
 		  Case CmdScrollToBeginningOfDocument
-		    ScrollHome
+		    ScrollToHome
 		    
 		  Case CmdMoveToBeginningOfLine, CmdMoveToLeftEndOfLine
 		    MoveCaretLeft(True)
@@ -99,7 +99,7 @@ Implements MessageCentre.MessageReceiver
 		    MoveCaretDown(False, True)
 		    
 		  Case CmdScrollToEndOfDocument
-		    ScrollEnd
+		    ScrollToEnd
 		    
 		  Case CmdMoveToEndOfLine, CmdMoveToRightEndOfLine
 		    MoveCaretRight(True)
@@ -1286,8 +1286,8 @@ Implements MessageCentre.MessageReceiver
 		  /// A word is anything except whitespace.
 		  
 		  Var startIndex, endIndex As Integer
-		  startIndex = PreviousCharInSet(CaretPos + 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
-		  endIndex = NextCharInSet(CaretPos - 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
+		  startIndex = PreviousCharacterInSet(CaretPos + 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
+		  endIndex = NextCharacterInSet(CaretPos - 1, CURRENT_CARET_WORD_DELIMITER_PATTERN)
 		  
 		  Return New SyntaxArea.TextSegment(startIndex, endIndex - startIndex)
 		  
@@ -1951,10 +1951,10 @@ Implements MessageCentre.MessageReceiver
 		    
 		    If BLOCK_OPEN_CHARS.IndexOf(char) > -1 Then
 		      word.Offset = CaretPos + 1
-		      word.Length = NextBlockChar(char, CaretPos, tmp) - CaretPos - 1
+		      word.Length = NextBlockCharacter(char, CaretPos, tmp) - CaretPos - 1
 		      
 		    Else
-		      word.Offset = PreviousBlockChar(char, CaretPos, tmp) + 1
+		      word.Offset = PreviousBlockCharacter(char, CaretPos, tmp) + 1
 		      word.Length = CaretPos - word.Offset
 		    End If
 		    
@@ -2083,8 +2083,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
-		Protected Sub HandleTextChanged()
+	#tag Method, Flags = &h21, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
+		Private Sub HandleTextChanged()
 		  /// Optionally clears highlighted ranges and raises the `TextChanged` event.
 		  
 		  If ClearHighlightedRangesOnTextChange Then
@@ -2095,8 +2095,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub HandleTextDrag(x As Integer, y As Integer)
+	#tag Method, Flags = &h21
+		Private Sub HandleTextDrag(x As Integer, y As Integer)
 		  // Save the selection.
 		  DragTextSelection = New SyntaxArea.DataRange
 		  DragTextSelection.Offset = SelectionStart
@@ -2114,8 +2114,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 53656C6563746564207468652063757272656E74206C696E652E
-		Protected Sub HandleTripleClick()
+	#tag Method, Flags = &h21, Description = 53656C6563746564207468652063757272656E74206C696E652E
+		Private Sub HandleTripleClick()
 		  /// Selected the current line.
 		  
 		  Me.SelectLine(CaretLine, True)
@@ -2123,8 +2123,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub HandleVerticalMouseDrag(x As Integer, y As Integer)
+	#tag Method, Flags = &h21
+		Private Sub HandleVerticalMouseDrag(x As Integer, y As Integer)
 		  #Pragma Unused x
 		  
 		  // If dragging selection outside visible area.
@@ -2150,8 +2150,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub Highlight()
+	#tag Method, Flags = &h21
+		Private Sub Highlight()
 		  If mHighlighter = Nil Or mHighlighter.ThreadState = Thread.ThreadStates.NotRunning Then
 		    HighlighterTask(True).Start
 		  End If
@@ -2159,13 +2159,13 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420636C6F73696E6720626C6F636B2C207374617274696E6720617420606F6666736574602E
-		Protected Sub HighlightClosingBlock(s As String, offset As Integer)
+	#tag Method, Flags = &h21, Description = 46696E647320746865206E65787420636C6F73696E6720626C6F636B2C207374617274696E6720617420606F6666736574602E
+		Private Sub HighlightClosingBlock(s As String, offset As Integer)
 		  /// Finds the next closing block, starting at `offset`.
 		  
 		  Var pos As Integer
 		  Var closeChar As String
-		  pos = NextBlockChar(s, offset, closeChar)
+		  pos = NextBlockCharacter(s, offset, closeChar)
 		  
 		  If pos >= 0 Then
 		    If HighlightMatchingBracketsMode = 0 Then
@@ -2184,8 +2184,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function HighLighterTask(createIfMissing As Boolean) As SyntaxArea.LineHighlighter
+	#tag Method, Flags = &h21
+		Private Function HighLighterTask(createIfMissing As Boolean) As SyntaxArea.LineHighlighter
 		  If mHighlighter = Nil And createIfMissing Then
 		    mHighlighter = _
 		    New SyntaxArea.LineHighlighter(Self, SyntaxDefinition, Self.ModifiedLines, _
@@ -2198,13 +2198,13 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206F70656E696E6720626C6F636B2C207374617274696E67206174206F66667365742E
-		Protected Sub HighlightOpeningBlock(s As String, offset As Integer)
+	#tag Method, Flags = &h21, Description = 46696E6473207468652070726576696F7573206F70656E696E6720626C6F636B2C207374617274696E67206174206F66667365742E
+		Private Sub HighlightOpeningBlock(s As String, offset As Integer)
 		  /// Finds the previous opening block, starting at offset.
 		  
 		  Var pos As Integer
 		  Var openingChar As String
-		  pos = PreviousBlockChar(s, offset, openingChar)
+		  pos = PreviousBlockCharacter(s, offset, openingChar)
 		  
 		  If pos >= 0 Then
 		    If HighlightMatchingBracketsMode = 0 Then
@@ -2226,8 +2226,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function IndentStr(indents As Integer) As String
+	#tag Method, Flags = &h21
+		Private Function IndentStr(indents As Integer) As String
 		  If mIndentString = "" Then
 		    mIndentString = Chr(9)
 		    For i As Integer = 1 To 8
@@ -2266,16 +2266,16 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 52657475726E7320547275652069662060736020697320616C7068616E756D657269633F
-		Protected Function IsAlpha(s As String) As Boolean
+	#tag Method, Flags = &h21, Description = 52657475726E7320547275652069662060736020697320616C7068616E756D657269633F
+		Private Function IsAlpha(s As String) As Boolean
 		  /// Returns True if `s` is alphanumeric?
 		  
 		  Return MatchesRegex("\w", s)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 52657475726E73205472756520696620606368617260206973206120626C6F636B206368617261637465722E
-		Protected Function IsBlockChar(char As String) As Boolean
+	#tag Method, Flags = &h21, Description = 52657475726E73205472756520696620606368617260206973206120626C6F636B206368617261637465722E
+		Private Function IsBlockChar(char As String) As Boolean
 		  /// Returns True if `char` is a block character.
 		  
 		  If BlockCharsPattern = "" Then
@@ -2318,11 +2318,24 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 52657475726E7320547275652069662060736020697320636F6E7369646572656420746F20626520776869746573706163652E
-		Protected Function IsWhitespace(s As String) As Boolean
+	#tag Method, Flags = &h21, Description = 52657475726E7320547275652069662060736020697320636F6E7369646572656420746F20626520776869746573706163652E
+		Private Function IsWhitespace(s As String) As Boolean
 		  /// Returns True if `s` is considered to be whitespace.
 		  
 		  Return MatchesRegex("\s", s)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function LeftTrimLines(s As String) As String
+		  Var lines() As String = s.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
+		  
+		  For i As Integer = 0 To lines.LastIndex
+		    lines(i) = lines(i).TrimLeft
+		  Next i
+		  
+		  Return String.FromArray(lines, EndOfLine)
 		  
 		End Function
 	#tag EndMethod
@@ -2334,8 +2347,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865206C696E65206E756D626572206368616E6765732E
-		Protected Sub LineCountChanged(newLineCount As Integer)
+	#tag Method, Flags = &h21, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865206C696E65206E756D626572206368616E6765732E
+		Private Sub LineCountChanged(newLineCount As Integer)
 		  /// Called by the line manager, when the line number changes.
 		  
 		  #Pragma Unused newLineCount
@@ -2361,8 +2374,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub LineHighlighted(lineIndex As Integer)
+	#tag Method, Flags = &h21
+		Private Sub LineHighlighted(lineIndex As Integer)
 		  // Mark for repaint.
 		  InvalidateLine(lineIndex)
 		  
@@ -2388,8 +2401,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 456974686572207468652073796D626F6C732068617665206368616E6765642C206F7220746865206C696E6520636F6E7461696E696E67207468656D207761732072656D6F7665642C20736F2072656D6F7665207468656D2066726F6D20746865206C6F63616C207461626C652E
-		Protected Sub LineSymbolsRemoved(symbols As Dictionary)
+	#tag Method, Flags = &h21, Description = 456974686572207468652073796D626F6C732068617665206368616E6765642C206F7220746865206C696E6520636F6E7461696E696E67207468656D207761732072656D6F7665642C20736F2072656D6F7665207468656D2066726F6D20746865206C6F63616C207461626C652E
+		Private Sub LineSymbolsRemoved(symbols As Dictionary)
 		  /// Either the symbols have changed, or the line containing them was removed,
 		  /// so remove them from the local table.
 		  
@@ -2400,21 +2413,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function LTrimLines(s As String) As String
-		  Var lines() As String = s.ReplaceLineEndings(EndOfLine).Split(EndOfLine)
-		  
-		  For i As Integer = 0 To lines.LastIndex
-		    lines(i) = lines(i).TrimLeft
-		  Next i
-		  
-		  Return String.FromArray(lines, EndOfLine)
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, Description = 52657475726E732054727565206966206065787072657373696F6E60206D6174636865732074686520607061747465726E602E
-		Protected Function MatchesRegex(pattern As String, expression As String) As Boolean
+	#tag Method, Flags = &h21, Description = 52657475726E732054727565206966206065787072657373696F6E60206D6174636865732074686520607061747465726E602E
+		Private Function MatchesRegex(pattern As String, expression As String) As Boolean
 		  /// Returns True if `expression` matches the `pattern`.
 		  
 		  Var rg As New RegEx
@@ -2430,8 +2430,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865726527732061206E6577206C696E652074686174277320746865206C6F6E67657374206C696E652E
-		Protected Sub MaxLineLengthChanged(longestLineIndex As Integer)
+	#tag Method, Flags = &h21, Description = 43616C6C656420627920746865206C696E65206D616E616765722C207768656E20746865726527732061206E6577206C696E652074686174277320746865206C6F6E67657374206C696E652E
+		Private Sub MaxLineLengthChanged(longestLineIndex As Integer)
 		  /// Called by the line manager, when there's a new line that's the longest line.
 		  
 		  #If Not DebugBuild
@@ -2465,8 +2465,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420646F776E2E
-		Protected Sub MoveCaretDown(pageDown As Boolean, moveToEnd As Boolean)
+	#tag Method, Flags = &h21, Description = 4D6F7665732074686520636172657420646F776E2E
+		Private Sub MoveCaretDown(pageDown As Boolean, moveToEnd As Boolean)
 		  /// Moves the caret down.
 		  
 		  CurrentEventID = 0
@@ -2526,8 +2526,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub MoveCaretLeft(toStartOfLine As Boolean)
+	#tag Method, Flags = &h21
+		Private Sub MoveCaretLeft(toStartOfLine As Boolean)
 		  CurrentEventID = 0
 		  
 		  Var pos, charsToMove, lineNum As Integer
@@ -2566,8 +2566,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub MoveCaretRight(toEndOfLine As Boolean)
+	#tag Method, Flags = &h21
+		Private Sub MoveCaretRight(toEndOfLine As Boolean)
 		  CurrentEventID = 0
 		  
 		  Var pos As Integer
@@ -2609,8 +2609,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420746F207468652072696768742C206D6F64696679696E67207468652073656C656374696F6E2E
-		Protected Sub MoveCaretRightAndModifySelection(toEndOfLine As Boolean, toNextWord As Boolean)
+	#tag Method, Flags = &h21, Description = 4D6F7665732074686520636172657420746F207468652072696768742C206D6F64696679696E67207468652073656C656374696F6E2E
+		Private Sub MoveCaretRightAndModifySelection(toEndOfLine As Boolean, toNextWord As Boolean)
 		  /// Moves the caret to the right, modifying the selection.
 		  
 		  // Default moving one character.
@@ -2674,8 +2674,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub MoveCaretToNextWordBoundary()
+	#tag Method, Flags = &h21
+		Private Sub MoveCaretToNextWordBoundary()
 		  Var charsToMove As Integer = NextNonAlpha(SelectionStart) - SelectionStart
 		  
 		  Var char As String = TextStorage.GetCharAt(CaretPos)
@@ -2701,8 +2701,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub MoveCaretToPreviousWordBoundary()
+	#tag Method, Flags = &h21
+		Private Sub MoveCaretToPreviousWordBoundary()
 		  CurrentEventID = 0
 		  
 		  Var charsToMove As Integer = SelectionStart - previousNonAlpha(SelectionStart)
@@ -2727,8 +2727,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub MoveCaretUp(pageUp As Boolean, moveToStart As Boolean)
+	#tag Method, Flags = &h21
+		Private Sub MoveCaretUp(pageUp As Boolean, moveToStart As Boolean)
 		  CurrentEventID = 0
 		  
 		  // If there's a selection, simply move to start of selection.
@@ -2782,8 +2782,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420646F776E20616E64206D6F646966696573207468652073656C656374696F6E2E
-		Protected Sub MoveDownAndModifySelection(pageDown As Boolean, moveToEnd As Boolean)
+	#tag Method, Flags = &h21, Description = 4D6F7665732074686520636172657420646F776E20616E64206D6F646966696573207468652073656C656374696F6E2E
+		Private Sub MoveDownAndModifySelection(pageDown As Boolean, moveToEnd As Boolean)
 		  /// Moves the caret down and modifies the selection.
 		  
 		  Var lineNum As Integer
@@ -2834,8 +2834,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4D6F76657320746865206361726574206C65667477617264732C206D6F64696679696E67207468652073656C656374696F6E2E
-		Protected Sub MoveLeftAndModifySelection(toStartOfLine As Boolean, toPreviousWord As Boolean)
+	#tag Method, Flags = &h21, Description = 4D6F76657320746865206361726574206C65667477617264732C206D6F64696679696E67207468652073656C656374696F6E2E
+		Private Sub MoveLeftAndModifySelection(toStartOfLine As Boolean, toPreviousWord As Boolean)
 		  /// Moves the caret leftwards, modifying the selection.
 		  
 		  Var pos As Integer
@@ -2904,8 +2904,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4D6F7665732074686520636172657420757020616E64206D6F646966696573207468652073656C656374696F6E2E
-		Protected Sub MoveUpAndModifySelection(pageUp As Boolean, moveToStart As Boolean)
+	#tag Method, Flags = &h21, Description = 4D6F7665732074686520636172657420757020616E64206D6F646966696573207468652073656C656374696F6E2E
+		Private Sub MoveUpAndModifySelection(pageUp As Boolean, moveToStart As Boolean)
 		  /// Moves the caret up and modifies the selection.
 		  
 		  Var lineNum As Integer
@@ -2955,8 +2955,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420616C7068616E756D65726963206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function NextAlpha(fromOffset As Integer) As Integer
+	#tag Method, Flags = &h21, Description = 46696E647320746865206E65787420616C7068616E756D65726963206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
+		Private Function NextAlpha(fromOffset As Integer) As Integer
 		  /// Finds the next alphanumeric character, starting at `fromOffset`.
 		  
 		  For i As Integer = fromOffset + 1 To TextStorage.Length - 1
@@ -2969,8 +2969,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420626C6F636B206368617261637465722C20666F722074686520676976656E2060666F724368617260206368617261637465722E
-		Protected Function NextBlockChar(forChar As string, offset As Integer, ByRef charToFind As String) As Integer
+	#tag Method, Flags = &h21, Description = 46696E647320746865206E65787420626C6F636B206368617261637465722C20666F722074686520676976656E2060666F724368617260206368617261637465722E
+		Private Function NextBlockCharacter(forChar As string, offset As Integer, ByRef charToFind As String) As Integer
 		  /// Finds the next block character, for the given `forChar` character.
 		  
 		  #If Not DebugBuild
@@ -3023,8 +3023,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E647320746865206E65787420636861726163746572206E6F7420696E2074686520676976656E207365742C207374617274696E6720617420706F73206066726F6D4F6666736574602E
-		Protected Function NextCharInSet(fromOffset As Integer, pattern As String = "[^\w\.]") As Integer
+	#tag Method, Flags = &h21, Description = 46696E647320746865206E65787420636861726163746572206E6F7420696E2074686520676976656E207365742C207374617274696E6720617420706F73206066726F6D4F6666736574602E
+		Private Function NextCharacterInSet(fromOffset As Integer, pattern As String = "[^\w\.]") As Integer
 		  /// Finds the next character not in the given set, starting at pos `fromOffset`.
 		  
 		  For i As Integer = fromOffset + 1 To TextStorage.Length - 1
@@ -3037,8 +3037,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E647320746865206E657874206E6F6E2D616C7068616E756D65726963206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function NextNonAlpha(fromOffset As Integer) As Integer
+	#tag Method, Flags = &h21, Description = 46696E647320746865206E657874206E6F6E2D616C7068616E756D65726963206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
+		Private Function NextNonAlpha(fromOffset As Integer) As Integer
 		  /// Finds the next non-alphanumeric character, starting at `fromOffset`.
 		  
 		  For i As Integer = fromOffset + 1 To TextStorage.Length - 1
@@ -3051,8 +3051,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E647320746865206E657874206E6F6E2D77686974657370616365206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function NextNonWhitespace(fromOffset As Integer, maxOffset As Integer = -1) As Integer
+	#tag Method, Flags = &h21, Description = 46696E647320746865206E657874206E6F6E2D77686974657370616365206368617261637465722C207374617274696E67206174206066726F6D4F6666736574602E
+		Private Function NextNonWhitespace(fromOffset As Integer, maxOffset As Integer = -1) As Integer
 		  /// Finds the next non-whitespace character, starting at `fromOffset`.
 		  
 		  If maxOffset < 0 Then maxOffset = TextStorage.Length
@@ -3067,8 +3067,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E647320746865206F66667365742028636F6C756D6E2920666F72206120676976656E206C696E6520616E6420646573697265642073637265656E20706F736974696F6E202878706F73292E
-		Protected Function OffsetForXPos(line As SyntaxArea.TextLine, xPos As Integer) As Integer
+	#tag Method, Flags = &h21, Description = 46696E647320746865206F66667365742028636F6C756D6E2920666F72206120676976656E206C696E6520616E6420646573697265642073637265656E20706F736974696F6E202878706F73292E
+		Private Function OffsetForXPos(line As SyntaxArea.TextLine, xPos As Integer) As Integer
 		  /// Finds the offset (column) for a given line and desired screen position (xpos).
 		  
 		  #If Not DebugBuild
@@ -3136,8 +3136,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function OpeningBlockLineForLine(lineIndex As Integer) As Integer
+	#tag Method, Flags = &h21
+		Private Function OpeningBlockLineForLine(lineIndex As Integer) As Integer
 		  Var temp_value As Integer
 		  temp_value = Lines.PreviousBlockStartLine(lineIndex, True)
 		  
@@ -3150,8 +3150,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 5363726F6C6C732074686520646F63756D656E7420646F776E206120706167652E20446F6573206E6F74206D6F7665207468652063617265742E
-		Protected Sub PageDown()
+	#tag Method, Flags = &h0, Description = 5363726F6C6C732074686520646F63756D656E7420646F776E206120706167652E20446F6573206E6F74206D6F7665207468652063617265742E
+		Sub PageDown()
 		  /// Scrolls the document down a page. Does not move the caret.
 		  
 		  ScrollPosition = Min(Lines.Count, ScrollPosition + MaxVisibleLines)
@@ -3159,8 +3159,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 5363726F6C6C732074686520646F63756D656E74207570206120706167652E20446F6573206E6F74206D6F7665207468652063617265742E
-		Protected Sub PageUp()
+	#tag Method, Flags = &h0, Description = 5363726F6C6C732074686520646F63756D656E74207570206120706167652E20446F6573206E6F74206D6F7665207468652063617265742E
+		Sub PageUp()
 		  /// Scrolls the document up a page. Does not move the caret.
 		  
 		  ScrollPosition = Max(ScrollPosition - MaxVisibleLines, 0)
@@ -3168,8 +3168,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub PaintCaret(atPos As Integer, g As Graphics, gutterWidth As Integer)
+	#tag Method, Flags = &h21
+		Private Sub PaintCaret(atPos As Integer, g As Graphics, gutterWidth As Integer)
 		  #If Not DebugBuild
 		    #Pragma DisableBackgroundTasks
 		    #Pragma DisableBoundsChecking
@@ -3203,8 +3203,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 5061696E7473206120626C756520636972636C65206F7665722074686520686967686C69676874656420626C6F636B206368617261637465722069662060486967686C696768744D61746368696E67427261636B6574736020697320547275652E
-		Protected Sub PaintHighlightedBlock(g As Graphics)
+	#tag Method, Flags = &h21, Description = 5061696E7473206120626C756520636972636C65206F7665722074686520686967686C69676874656420626C6F636B206368617261637465722069662060486967686C696768744D61746368696E67427261636B6574736020697320547275652E
+		Private Sub PaintHighlightedBlock(g As Graphics)
 		  /// Paints a blue circle over the highlighted block character 
 		  /// if `HighlightMatchingBrackets` is True.
 		  
@@ -3227,7 +3227,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If IndentVisually Then
 		    // trim lines
-		    t = LTrimLines(t)
+		    t = LeftTrimLines(t)
 		  End If
 		  
 		  t = t.ReplaceAll(Chr(0), Chr(1))
@@ -3241,8 +3241,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F757320616C7068616E756D6572696320636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function PreviousAlpha(fromOffset As Integer) As Integer
+	#tag Method, Flags = &h21, Description = 46696E6473207468652070726576696F757320616C7068616E756D6572696320636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Private Function PreviousAlpha(fromOffset As Integer) As Integer
 		  /// Finds the previous alphanumeric character starting at `fromOffset`.
 		  
 		  For i As Integer = fromOffset - 1 DownTo 1
@@ -3253,8 +3253,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function PreviousBlockChar(forChar As String, offset As Integer, ByRef charToFind As String) As Integer
+	#tag Method, Flags = &h21
+		Private Function PreviousBlockCharacter(forChar As String, offset As Integer, ByRef charToFind As String) As Integer
 		  /// Finds the previous block character.
 		  
 		  #If Not DebugBuild
@@ -3311,8 +3311,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E64732074686520636861726163746572206E6F7420696E2074686520676976656E207365742E
-		Protected Function PreviousCharInSet(fromOffset As Integer, pattern As String = "[^\w\.]") As Integer
+	#tag Method, Flags = &h21, Description = 46696E64732074686520636861726163746572206E6F7420696E2074686520676976656E207365742E
+		Private Function PreviousCharacterInSet(fromOffset As Integer, pattern As String = "[^\w\.]") As Integer
 		  /// Finds the character not in the given set.
 		  
 		  For i As Integer = fromOffset - 1 DownTo 1
@@ -3323,8 +3323,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206C696E652064656C696D6974657220636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function PreviousLineDelimiter(fromOffset As Integer) As Integer
+	#tag Method, Flags = &h21, Description = 46696E6473207468652070726576696F7573206C696E652064656C696D6974657220636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Private Function PreviousLineDelimiter(fromOffset As Integer) As Integer
 		  /// Finds the previous line delimiter character starting at `fromOffset`.
 		  
 		  For i As Integer = fromOffset - 1 DownTo 1
@@ -3335,8 +3335,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206E6F6E2D616C7068616E756D6572696320636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function PreviousNonAlpha(fromOffset As Integer) As Integer
+	#tag Method, Flags = &h21, Description = 46696E6473207468652070726576696F7573206E6F6E2D616C7068616E756D6572696320636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Private Function PreviousNonAlpha(fromOffset As Integer) As Integer
 		  /// Finds the previous non-alphanumeric character starting at `fromOffset`.
 		  
 		  For i As Integer = fromOffset - 1 DownTo 1
@@ -3347,8 +3347,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 46696E6473207468652070726576696F7573206E6F6E2D7768697465737061636520636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
-		Protected Function PreviousNonWhitespace(fromOffset As Integer) As Integer
+	#tag Method, Flags = &h21, Description = 46696E6473207468652070726576696F7573206E6F6E2D7768697465737061636520636861726163746572207374617274696E67206174206066726F6D4F6666736574602E
+		Private Function PreviousNonWhitespace(fromOffset As Integer) As Integer
 		  /// Finds the previous non-whitespace character starting at `fromOffset`.
 		  
 		  For i As Integer = fromOffset - 1 DownTo 1
@@ -3740,8 +3740,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 526564726177732074686520656E746972652063616E7661732E
-		Protected Sub Redraw(forced As Boolean = False)
+	#tag Method, Flags = &h21, Description = 526564726177732074686520656E746972652063616E7661732E
+		Private Sub Redraw(forced As Boolean = False)
 		  /// Redraws the entire canvas.
 		  
 		  If IgnoreRepaint And Not forced Then Return
@@ -3846,16 +3846,16 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 5363726F6C6C7320746F2074686520656E64206F662074686520646F63756D656E742E20446F6573206E6F74206D6F7665207468652063617265742E
-		Protected Sub ScrollEnd()
+	#tag Method, Flags = &h0, Description = 5363726F6C6C7320746F2074686520656E64206F662074686520646F63756D656E742E20446F6573206E6F74206D6F7665207468652063617265742E
+		Sub ScrollToEnd()
 		  /// Scrolls to the end of the document. Does not move the caret.
 		  
 		  ScrollPosition = Lines.Count
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 5363726F6C6C7320746F2074686520626567696E6E696E67206F662074686520646F63756D656E742E20446F6573206E6F74206D6F7665207468652063617265742E
-		Protected Sub ScrollHome()
+	#tag Method, Flags = &h0, Description = 5363726F6C6C7320746F2074686520626567696E6E696E67206F662074686520646F63756D656E742E20446F6573206E6F74206D6F7665207468652063617265742E
+		Sub ScrollToHome()
 		  /// Scrolls to the beginning of the document. Does not move the caret.
 		  
 		  ScrollPosition = 0
@@ -3869,8 +3869,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 52657475726E732061205069637475726520726570726573656E746174696F6E206F66207468652073656C65637465642074657874206265696E6720647261676765642E
-		Protected Function SelectedTextDragImage() As Picture
+	#tag Method, Flags = &h21, Description = 52657475726E732061205069637475726520726570726573656E746174696F6E206F66207468652073656C65637465642074657874206265696E6720647261676765642E
+		Private Function SelectedTextDragImage() As Picture
 		  /// Returns a Picture representation of the selected text being dragged.
 		  
 		  Var s As String = SelText
@@ -3938,8 +3938,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 52657475726E20612074656D706F72617279207069637475726520746861742063616E206265207573656420666F722067726170686963732063616C63756C6174696F6E732C206574632E
-		Protected Function TemporaryPicture() As Picture
+	#tag Method, Flags = &h21, Description = 52657475726E20612074656D706F72617279207069637475726520746861742063616E206265207573656420666F722067726170686963732063616C63756C6174696F6E732C206574632E
+		Private Function TemporaryPicture() As Picture
 		  /// Return a temporary picture that can be used for graphics calculations, etc.
 		  
 		  If mTempPicture = Nil Then mTempPicture = New Picture(2, 2)
@@ -3977,8 +3977,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 5361766573207468652073637265656E20706F736974696F6E206F662074686520676976656E206F66667365742E
-		Protected Sub UpdateDesiredColumn(pos As Integer = -1)
+	#tag Method, Flags = &h21, Description = 5361766573207468652073637265656E20706F736974696F6E206F662074686520676976656E206F66667365742E
+		Private Sub UpdateDesiredColumn(pos As Integer = -1)
 		  /// Saves the screen position of the given offset.
 		  
 		  If Lines.Count = 0 Then Return
@@ -4074,8 +4074,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 52657475726E73207468652073637265656E20706F736974696F6E20666F722074686520676976656E206063686172506F73602E
-		Protected Function XPosForOffset(line As SyntaxArea.TextLine, charPos As Integer) As Single
+	#tag Method, Flags = &h21, Description = 52657475726E73207468652073637265656E20706F736974696F6E20666F722074686520676976656E206063686172506F73602E
+		Private Function XPosForOffset(line As SyntaxArea.TextLine, charPos As Integer) As Single
 		  /// Returns the screen position for the given `charPos`.
 		  
 		  #If Not DebugBuild
@@ -4093,8 +4093,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub XYAtCharPos(charPos As Integer, ByRef X As Double, ByRef Y As Double)
+	#tag Method, Flags = &h21
+		Private Sub XYAtCharPos(charPos As Integer, ByRef X As Double, ByRef Y As Double)
 		  Var lineNumber As Integer
 		  lineNumber = lines.GetLineNumberForOffset(charPos)
 		  XYAtCharPos(CharPos, LineNumber, x, y)
@@ -4102,8 +4102,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub XYAtCharPos(charPos As Integer, lineNumber As Integer, ByRef X As Double, ByRef Y As Double)
+	#tag Method, Flags = &h21
+		Private Sub XYAtCharPos(charPos As Integer, lineNumber As Integer, ByRef X As Double, ByRef Y As Double)
 		  // Finds the screenX and screenY for the given `charPos`.
 		  
 		  // Y.
