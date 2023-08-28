@@ -489,8 +489,6 @@ Protected Class HighlightContext
 
 	#tag Method, Flags = &h21
 		Private Function SubContextPattern() As String
-		  #Pragma Warning "REMOVE? This seems to never get called."
-		  
 		  If mSubContextPattern = "" Then
 		    // Get the regex for the subContexts.
 		    If SubContexts.LastIndex >= 0 Then

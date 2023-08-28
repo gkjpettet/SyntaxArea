@@ -5,8 +5,6 @@ Protected Module SyntaxArea
 		  /// Returns a dark mode equivalent color for `c` if we're in dark mode.
 		  /// Assumes a light mode colour is passed.
 		  
-		  #Pragma Warning "REFACTOR: Remove this when we have migrated to ColorGroups"
-		  
 		  #If RBVersion >= 2019.02
 		    #If AppSupportsDarkMode
 		      If Color.IsDarkMode Then

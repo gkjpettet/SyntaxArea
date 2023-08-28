@@ -59,8 +59,6 @@ Implements MessageCentre.MessageReceiver
 		  ///
 		  /// `command` is a string constant telling us which command we need to handle.
 		  
-		  #Pragma Warning "TODO: Implement autocomplete"
-		  
 		  CurrentEventID = System.Ticks
 		  
 		  Select Case command
@@ -173,14 +171,12 @@ Implements MessageCentre.MessageReceiver
 		    // MISC
 		    // =========================================
 		  Case CmdInsertTab
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    HandleTabKey
 		    
 		  Case CmdInsertBacktab
 		    // Shift-Tab. This always acts like a tab insertion (permits the insertion of a tab
 		    // even when tab is used for autocomplete).
-		    #Pragma Warning "TODO: Implement"
-		    Break
+		    HandleInsertText(Chr(9), Nil)
 		    
 		  Case "noop:"
 		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
@@ -2085,6 +2081,16 @@ Implements MessageCentre.MessageReceiver
 		  Raise New UnsupportedOperationException("The HandleKeyDown method is not implemented.")
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 48616E646C657320746865207072657373696E67206F662074686520746162206B65792E
+		Private Sub HandleTabKey()
+		  /// Handles the pressing of the tab key.
+		  
+		  #Pragma Warning "TODO: Handle the tab key"
+		  Raise New UnsupportedOperationException("Tab key handling is not yet implemented.")
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
