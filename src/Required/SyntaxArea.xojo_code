@@ -27,9 +27,9 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E732061206461726B657220636F6C6F757220666F722074686520676976656E20636F6C6F75722E
+	#tag Method, Flags = &h0, Description = 52657475726E732061206461726B657220636F6C6F757220666F722074686520676976656E20436F6C6F722E
 		Function DarkerColor(Extends forColor As Color, offset As Integer, adjustForDarkMode As Boolean) As Color
-		  /// Returns a darker colour for the given colour.
+		  /// Returns a darker colour for the given Color.
 		  
 		  If adjustForDarkMode And Color.IsDarkMode Then
 		    Return Color.RGB(Min(forColor.Red + offset, 255), Min(forColor.Green + offset, 255), Min(forColor.Blue + offset, 255))
@@ -40,9 +40,9 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E732061206461726B657220636F6C6F757220666F722074686520676976656E20636F6C6F75722E
+	#tag Method, Flags = &h0, Description = 52657475726E732061206461726B657220636F6C6F757220666F722074686520676976656E20436F6C6F7247726F75702E
 		Function DarkerColor(Extends forColor As ColorGroup, offset As Integer, adjustForDarkMode As Boolean) As Color
-		  /// Returns a darker colour for the given colour.
+		  /// Returns a darker colour for the given ColorGroup.
 		  
 		  Var c As Color = forColor
 		  
@@ -118,9 +118,9 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E732061206C69676874657220636F6C6F757220666F722074686520676976656E20636F6C6F722E
+	#tag Method, Flags = &h0, Description = 52657475726E732061206C69676874657220636F6C6F757220666F722074686520676976656E20436F6C6F722E
 		Function LighterColor(Extends forColor As Color, offset As Integer, adjustForDarkMode As Boolean) As Color
-		  /// Returns a lighter colour for the given color.
+		  /// Returns a lighter colour for the given Color.
 		  
 		  If adjustForDarkMode And Color.IsDarkMode Then
 		    // Lighter.
@@ -134,9 +134,9 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E732061206C69676874657220636F6C6F757220666F722074686520676976656E20636F6C6F722E
+	#tag Method, Flags = &h0, Description = 52657475726E732061206C69676874657220636F6C6F757220666F722074686520676976656E20436F6C6F7247726F75702E
 		Function LighterColor(Extends forColor As ColorGroup, offset As Integer, adjustForDarkMode As Boolean) As Color
-		  /// Returns a lighter colour for the given color.
+		  /// Returns a lighter colour for the given ColorGroup.
 		  
 		  Var c As Color = forColor
 		  
@@ -226,21 +226,6 @@ Protected Module SyntaxArea
 		  Wend
 		  
 		  Return String.FromArray(characters, "")
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, Description = 52657475726E732054727565206966207765206E65656420746F20737570706F7274206461726B206D6F64652E
-		Protected Function SupportsDarkMode() As Boolean
-		  /// Returns True if we need to support dark mode.
-		  
-		  #If RBVersion >= 2019.02
-		    #If AppSupportsDarkMode
-		      Return True
-		    #EndIf
-		  #EndIf
-		  
-		  Return False
 		  
 		End Function
 	#tag EndMethod

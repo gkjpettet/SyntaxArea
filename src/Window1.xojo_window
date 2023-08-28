@@ -251,6 +251,8 @@ End
 		  #EndIf
 		  
 		  Me.Text = DEMO_XOJO_CODE
+		  
+		  CodeEditor.BackColor = New ColorGroup(Color.White, Color.Black)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

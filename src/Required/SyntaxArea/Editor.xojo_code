@@ -1183,10 +1183,6 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag DelegateDeclaration, Flags = &h0
-		Delegate Function ColorReturningProc() As Color
-	#tag EndDelegateDeclaration
-
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Remember all opened editor objects so we can update them if dark mode is invoked.
@@ -1198,8 +1194,6 @@ Implements MessageCentre.MessageReceiver
 		  
 		  IgnoreRepaint = True
 		  
-		  mBrightModeColors = New Dictionary
-		  mDarkModeColors = New Dictionary
 		  
 		End Sub
 	#tag EndMethod
@@ -1842,43 +1836,6 @@ Implements MessageCentre.MessageReceiver
 		  If Not EnableLineFoldings Then Return 0
 		  
 		  Return BlockStartImage.Width + 2
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function GetCurrentModeColor(propertyName As String) As Color
-		  #Pragma Warning "REFACTOR: This should be removed in favour of ColorGroups"
-		  
-		  Var result As Variant
-		  If Color.IsDarkMode Then
-		    result = mDarkModeColors.Lookup(propertyName, Nil)
-		    If result = Nil Then
-		      // We were in light mode before, now we can fetch the correct dark mode colour.
-		      result = mBrightModeColors.Lookup(propertyName, Nil)
-		      Var dark As Color = SyntaxArea.AdjustColorForDarkMode(result)
-		      mDarkModeColors.Value(propertyName) = dark
-		      
-		    ElseIf result IsA ColorReturningProc Then
-		      result = ColorReturningProc(result).Invoke
-		      mDarkModeColors.Value(propertyName) = result
-		    End If
-		    
-		  Else
-		    result = mBrightModeColors.Lookup(propertyName, Nil)
-		    If result Is Nil Then
-		      Break // This should not happen...
-		      result = mDarkModeColors.Lookup(propertyName, Nil)
-		      result = SyntaxArea.InvertedModeColor(result)
-		      mBrightModeColors.Value(propertyName) = result
-		      
-		    ElseIf result IsA ColorReturningProc Then
-		      result = ColorReturningProc(result).Invoke
-		      mBrightModeColors.Value(propertyName) = result
-		    End If
-		  End If
-		  
-		  Return result
 		  
 		End Function
 	#tag EndMethod
@@ -3229,7 +3186,8 @@ Implements MessageCentre.MessageReceiver
 		  If ThickInsertionPoint Then
 		    g.PenSize = 2
 		  End If
-		  g.DrawLine xpos - 1, ypos - 1, xpos - 1, ypos - TextHeight + 1
+		  
+		  g.DrawLine(xpos - 1, ypos - 1, xpos - 1, ypos - TextHeight + 1)
 		  g.PenSize = 1
 		  
 		End Sub
@@ -3923,43 +3881,6 @@ Implements MessageCentre.MessageReceiver
 		  ChangeSelection(line.Offset, line.Length - line.DelimiterLength)
 		  
 		  If refresh Then Redraw
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SetBrightModeColor(c As Color, propertyName As String)
-		  #Pragma Warning "REFACTOR: Remove this once we have migrated to ColorGroups"
-		  
-		  propertyName = propertyName.Replace(".Set", ".Get")
-		  
-		  mBrightModeColors.Value(propertyName) = c
-		  
-		  If SyntaxArea.SupportsDarkMode Then
-		    If Not Color.IsDarkMode Then
-		      // Will be set in the getter once we are out of dark mode.
-		      mDarkModeColors.Value(propertyName) = Nil
-		    Else
-		      Var dark As Color = SyntaxArea.AdjustColorForDarkMode(c)
-		      
-		      If propertyName = "SyntaxArea.Editor.BackColor.Get" Then // Was "CustomEditField.BackColor.Get".
-		        mDarkModeColors.Value(propertyName) = &C171717
-		      Else
-		        mDarkModeColors.Value(propertyName) = dark
-		      End If
-		    End If
-		  End If
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SetColorProvider(providerFunction As ColorReturningProc, propertyName As String)
-		  #Pragma Warning "REFACTOR: Remove this once we have migrated to ColorGroups"
-		  
-		  propertyName = propertyName.Replace (".Set", ".Get")
-		  mBrightModeColors.Value (propertyName) = providerFunction
-		  mDarkModeColors.Value (propertyName) = providerFunction
 		  
 		End Sub
 	#tag EndMethod
@@ -5134,10 +5055,6 @@ Implements MessageCentre.MessageReceiver
 		Private mBracketHighlightColor As ColorGroup
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mBrightModeColors As Dictionary
-	#tag EndProperty
-
 	#tag Property, Flags = &h1
 		Protected mCaretBlinker As SyntaxArea.CaretBlinker
 	#tag EndProperty
@@ -5164,10 +5081,6 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mCurrentAutocompleteOptions As SyntaxArea.AutocompleteOptions
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDarkModeColors As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -5869,13 +5782,13 @@ Implements MessageCentre.MessageReceiver
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = BLOCK_CLOSE_CHARS, Type = String, Dynamic = False, Default = \")]}", Scope = Protected
+	#tag Constant, Name = BLOCK_CLOSE_CHARS, Type = String, Dynamic = False, Default = \")]}", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = BLOCK_OPEN_CHARS, Type = String, Dynamic = False, Default = \"([{", Scope = Protected
+	#tag Constant, Name = BLOCK_OPEN_CHARS, Type = String, Dynamic = False, Default = \"([{", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = CURRENT_CARET_WORD_DELIMITER_PATTERN, Type = String, Dynamic = False, Default = \"[^\\w\\.]", Scope = Protected
+	#tag Constant, Name = CURRENT_CARET_WORD_DELIMITER_PATTERN, Type = String, Dynamic = False, Default = \"[^\\w\\.]", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = DEFAULT_FONT, Type = String, Dynamic = False, Default = \"", Scope = Public, Description = 5468652064656661756C7420666F6E7420746F207573652E
@@ -5890,7 +5803,7 @@ Implements MessageCentre.MessageReceiver
 	#tag Constant, Name = RegEXURL, Type = String, Dynamic = False, Default = \"(\?x) # FREE SPACING\n(\?i-U) # Case-insensitive\x2C greedy\n\n# Define the prefix\n(\?(DEFINE)(\?<prefix>[A-Z]{3\x2C}://))\n# Define a valid URL character\n(\?(DEFINE)(\?<valid>[A-Z0-9\\-_~:/\?\\#[\\]@!$&\'()*+;\x3D.\x2C%]))\n\n# START\n\\b # Word boundary\n(\?: # Non-capturing group\n(\?<\x3D\\<)(\?&prefix)(\?&valid)+(\?\x3D\\>) # Anything between angle-brackets\n| # OR\n(\?<\x3D\\[)(\?&prefix)(\?&valid)+(\?\x3D\\]) # Anything between square-brackets\n| # OR\n(\?<\x3D\\{)(\?&prefix)(\?&valid)+(\?\x3D\\}) # Anything between curly-brackets\n| # OR\n(\?&prefix)(\?&valid)+(\?<![\\.\x2C]) # Can\'t end on a dot or comma\n) # End non-capturing group", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = UNDO_EVT_BLOCK_SECS, Type = Double, Dynamic = False, Default = \"3", Scope = Protected
+	#tag Constant, Name = UNDO_EVT_BLOCK_SECS, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
