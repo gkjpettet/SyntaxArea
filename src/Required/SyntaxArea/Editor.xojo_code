@@ -126,7 +126,7 @@ Implements MessageCentre.MessageReceiver
 		    // INSERTING
 		    // =========================================
 		  Case CmdInsertNewline
-		    HandleInsertText(EndOfLine, Nil)
+		    HandleInsertText(EndOfLine)
 		    
 		    // =========================================
 		    // SELECTING TEXT
@@ -174,13 +174,13 @@ Implements MessageCentre.MessageReceiver
 		    If AutocompleteCombo = AutocompleteCombos.Tab And EnableAutocomplete Then
 		      AutocompleteManual
 		    Else
-		      HandleInsertText(Chr(9), Nil)
+		      HandleInsertText(Chr(9))
 		    End If
 		    
 		  Case CmdInsertBacktab
 		    // Shift-Tab. This always acts like a tab insertion (permits the insertion of a tab
 		    // even when tab is used for autocomplete).
-		    HandleInsertText(Chr(9), Nil)
+		    HandleInsertText(Chr(9))
 		    
 		  Case "noop:"
 		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
@@ -303,6 +303,32 @@ Implements MessageCentre.MessageReceiver
 	#tag EndEvent
 
 	#tag Event
+		Function FontNameAtLocation(location As Integer) As String
+		  /// Returns the current font name.
+		  ///
+		  /// The editor only supports a uniform font name for all tokens.
+		  
+		  #Pragma Unused location
+		  
+		  Return Self.TextFont
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function FontSizeAtLocation(location As Integer) As Single
+		  /// Returns the current font size.
+		  ///
+		  /// The editor only supports a uniform font size for all tokens.
+		  
+		  #Pragma Unused location
+		  
+		  Return Self.FontSize
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub InsertText(text As String, range As TextRange)
 		  // Inserts a single character.
 		  
@@ -313,7 +339,14 @@ Implements MessageCentre.MessageReceiver
 		    If Keyboard.AsyncControlKey And Text = " " Then Return
 		  #EndIf
 		  
-		  HandleInsertText(text, range)
+		  If range <> Nil And Me.SelectionLength = 0 And TargetMacOS Then
+		    // The user has pressed and held down a character and has selected a special 
+		    // character from the popup to insert. At this point, we will have already inserted
+		    // the character of the key being depressed so we need to delete it first.
+		    HandleDelete(False, False)
+		  End If
+		  
+		  HandleInsertText(text)
 		  
 		End Sub
 	#tag EndEvent
@@ -631,6 +664,24 @@ Implements MessageCentre.MessageReceiver
 		  DrawContents(g, Me.Window)
 		  
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function RectForRange(ByRef range As TextRange) As Xojo.Rect
+		  /// Returns a range for macOS to display the character picker.
+		  ///
+		  /// I'm being lazy here and returning an arbitrary width and height because for our 
+		  /// purposes we're only  interested in the popup being positioned at the correct location.
+		  /// This will likely mean that I'm not fully supporting advanced uses of this event but 
+		  /// since I don't actually understand the event, that's OK by me.
+		  
+		  #Pragma Unused range
+		  
+		  Var x, y As Double
+		  XYAtCharPos(CaretPos, x, y)
+		  Return New Rect(x, y, 20, 20) // 20, 20 is arbitrary.
+		  
+		End Function
 	#tag EndEvent
 
 
@@ -2133,10 +2184,8 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 43616C6C65642066726F6D2077697468696E207468652060496E736572745465787460206576656E742E205573656420696E7465726E616C6C7920746F20696E736572742061206368617261637465722E
-		Private Sub HandleInsertText(s As String, range As TextRange)
+		Private Sub HandleInsertText(s As String)
 		  /// Called from within the `InsertText` event. Used internally to insert a character.
-		  
-		  #Pragma Warning "TODO: Handle the range property"
 		  
 		  // Add a new event ID if changed typing, or no event ID, or time elapsed
 		  // between events is 5 secs.
@@ -2194,14 +2243,6 @@ Implements MessageCentre.MessageReceiver
 		  Redraw
 		  
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function HandleKeyDown(key As String) As Boolean
-		  #Pragma Warning "Remove once implemented all of CEF's functionality in this method"
-		  Raise New UnsupportedOperationException("The HandleKeyDown method is not implemented.")
-		  
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
@@ -3835,7 +3876,7 @@ Implements MessageCentre.MessageReceiver
 		      
 		    Case Messages.SuggestionWindowKeyDown
 		      Var key As String = theMessage.Info(2)
-		      Call HandleKeyDown(key)
+		      Call HandleInsertText(key)
 		      
 		    Case Messages.CurrentAutocompleteOptions
 		      theMessage.AddInfo(3, CurrentAutocompleteOptions)
@@ -4215,10 +4256,10 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub XYAtCharPos(charPos As Integer, ByRef X As Double, ByRef Y As Double)
+		Private Sub XYAtCharPos(charPos As Integer, ByRef x As Double, ByRef y As Double)
 		  Var lineNumber As Integer
 		  lineNumber = lines.GetLineNumberForOffset(charPos)
-		  XYAtCharPos(CharPos, LineNumber, x, y)
+		  XYAtCharPos(CharPos, lineNumber, x, y)
 		  
 		End Sub
 	#tag EndMethod

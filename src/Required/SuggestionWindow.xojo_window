@@ -262,13 +262,13 @@ End
 	#tag Event
 		Function KeyDown(key As String) As Boolean
 		  Select Case Asc(key)
-		  Case 27, 8, 127
+		  Case 27, 8, 127 // Esc, backspace, delete.
 		    Cancel(True)
 		    
-		  Case 9, 13, 3, 32
+		  Case 9, 13, 3, 32 // Tab, CR, end of text, space
 		    Submit
 		    
-		  Case 28, 29, 30, 31
+		  Case 28, 29, 30, 31 // File separator, group separator, record separator, unit separator.
 		    Return False
 		    
 		  Else
