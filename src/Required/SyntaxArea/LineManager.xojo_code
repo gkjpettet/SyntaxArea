@@ -634,7 +634,7 @@ Protected Class LineManager
 		  If length <= 0 Then Return
 		  
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, LINE_CHANGED_MESSAGE)
+		  msg.AddInfo(1, Messages.LineChanged)
 		  msg.AddInfo(2, startIndex)
 		  msg.AddInfo(3, length)
 		  
@@ -646,7 +646,7 @@ Protected Class LineManager
 	#tag Method, Flags = &h1
 		Protected Sub NotifyLineCountChanged()
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, LINE_COUNT_CHANGED_MESSAGE)
+		  msg.AddInfo(1, Messages.LineCountChanged)
 		  msg.AddInfo(2, count)
 		  
 		  MessageCentre.SendMessage(msg)
@@ -657,7 +657,7 @@ Protected Class LineManager
 	#tag Method, Flags = &h1
 		Protected Sub NotifyMaxLineLengthChanged(longestLineIndex As Integer)
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, MAX_LINE_LENGTH_CHANGED_MESSAGE)
+		  msg.AddInfo(1, Messages.MaxLineLengthChanged)
 		  msg.AddInfo(2, longestLineIndex)
 		  
 		  MessageCentre.SendMessage(msg)
@@ -823,7 +823,7 @@ Protected Class LineManager
 		  If tmp.KeyCount = 0 Then Return
 		  
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, LINE_SYMBOLS_REMOVED_MESSAGE)
+		  msg.AddInfo(1, Messages.LineSymbolsRemoved)
 		  msg.AddInfo(2, tmp)
 		  
 		  If toIndex - fromIndex <= 2 Then
@@ -1250,19 +1250,6 @@ Protected Class LineManager
 	#tag Property, Flags = &h1
 		Protected VisibleCache As Dictionary
 	#tag EndProperty
-
-
-	#tag Constant, Name = LINE_CHANGED_MESSAGE, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = LINE_COUNT_CHANGED_MESSAGE, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = LINE_SYMBOLS_REMOVED_MESSAGE, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = MAX_LINE_LENGTH_CHANGED_MESSAGE, Type = Double, Dynamic = False, Default = \"3", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior

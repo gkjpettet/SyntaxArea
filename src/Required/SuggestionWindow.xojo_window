@@ -109,7 +109,7 @@ End
 		  OptionSubmitted = True
 		  
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, AutocompleteCancelledMsg)
+		  msg.AddInfo(1, SyntaxArea.Messages.AutocompleteCancelled)
 		  msg.AddInfo(2, requestFocus)
 		  MessageCentre.SendMessage(msg)
 		  
@@ -186,7 +186,7 @@ End
 		  Var options As SyntaxArea.AutocompleteOptions
 		  
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, CurrentAutocompleteOptionsMsg)
+		  msg.AddInfo(1, SyntaxArea.Messages.CurrentAutocompleteOptions)
 		  MessageCentre.SendMessage(msg)
 		  options = msg.Info(3)
 		  
@@ -232,7 +232,7 @@ End
 		  End If
 		  
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, OptionSelectedMsg)
+		  msg.AddInfo(1, SyntaxArea.Messages.SuggestionWindowOptionSelected)
 		  msg.AddInfo(2, option)
 		  MessageCentre.SendMessage(msg)
 		  
@@ -245,19 +245,6 @@ End
 	#tag Property, Flags = &h21
 		Private OptionSubmitted As Boolean
 	#tag EndProperty
-
-
-	#tag Constant, Name = AutocompleteCancelledMsg, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = CurrentAutocompleteOptionsMsg, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = KeyDownMsg, Type = Double, Dynamic = False, Default = \"3", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = OptionSelectedMsg, Type = Double, Dynamic = False, Default = \"4", Scope = Public
-	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -288,13 +275,13 @@ End
 		    Var options As SyntaxArea.AutocompleteOptions
 		    
 		    Var msg As New MessageCentre.Message(Self, Self)
-		    Msg.AddInfo(1, KeyDownMsg)
+		    Msg.AddInfo(1, SyntaxArea.Messages.SuggestionWindowKeyDown)
 		    msg.AddInfo(2, key)
 		    MessageCentre.sendMessage(Msg)
 		    
 		    // Key down message.
 		    msg = New MessageCentre.Message(Self, Self)
-		    msg.AddInfo(1, CurrentAutocompleteOptionsMsg)
+		    msg.AddInfo(1, SyntaxArea.Messages.CurrentAutocompleteOptions)
 		    MessageCentre.SendMessage(msg)
 		    
 		    // `msg` should have the options now.

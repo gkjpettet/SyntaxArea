@@ -3689,12 +3689,12 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If theMessage.Sender = lines Then
 		    Select Case type
-		    Case LineManager.LINE_COUNT_CHANGED_MESSAGE
+		    Case Messages.LineCountChanged
 		      Var count As Integer = theMessage.Info(2) // 2 holds the number of lines.
 		      Var invisible As Integer = theMessage.Info(3) // 3 holds the number of invisible lines.
 		      Self.LineCountChanged(count - invisible)
 		      
-		    Case LineManager.LINE_CHANGED_MESSAGE
+		    Case Messages.LineChanged
 		      Var index As Integer = theMessage.Info(2)
 		      Var length As Integer = theMessage.Info(3)
 		      
@@ -3707,42 +3707,42 @@ Implements MessageCentre.MessageReceiver
 		      
 		      Call ModifiedLines.AddRange(index, length)
 		      
-		    Case LineManager.MAX_LINE_LENGTH_CHANGED_MESSAGE
+		    Case Messages.MaxLineLengthChanged
 		      Var index As Integer = theMessage.Info(2)
 		      Self.MaxLineLengthChanged(index)
 		      
-		    Case LineManager.LINE_SYMBOLS_REMOVED_MESSAGE
+		    Case Messages.LineSymbolsRemoved
 		      LineSymbolsRemoved(theMessage.Info(2))
 		    End Select
 		    
 		  ElseIf theMessage.Sender = CurrentSuggestionWindow Then
 		    
 		    Select Case Type
-		    Case SuggestionWindow.AutocompleteCancelledMsg
+		    Case Messages.AutocompleteCancelled
 		      Var requestFocus As Boolean = theMessage.Info(2)
 		      AutocompleteCancelled(requestFocus)
 		      
-		    Case SuggestionWindow.KeyDownMsg
+		    Case Messages.SuggestionWindowKeyDown
 		      Var key As String = theMessage.Info(2)
 		      Call HandleKeyDown(key)
 		      
-		    Case SuggestionWindow.CurrentAutocompleteOptionsMsg
+		    Case Messages.CurrentAutocompleteOptions
 		      theMessage.AddInfo(3, CurrentAutocompleteOptions)
 		      
-		    Case SuggestionWindow.OptionSelectedMsg
+		    Case Messages.SuggestionWindowOptionSelected
 		      Var option As String = theMessage.Info(2)
 		      AutocompleteOptionSelected(option)
 		    End Select
 		    
 		  ElseIf theMessage.Sender = mHighlighter Then
 		    Select Case type
-		    Case LineHighlighter.HighlightDoneMsg
+		    Case Messages.HighlightDone
 		      RaiseEvent HighlightingComplete
 		      
-		    Case LineHighlighter.LineHighlightedMsg
+		    Case Messages.LineHighlighted
 		      LineHighlighted(theMessage.Info(2))
 		      
-		    Case LineHighlighter.ScreenLinesHighlightedMsg
+		    Case Messages.ScreenLinesHighlighted
 		      Redraw
 		    End Select
 		  End If

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class LineHighlighter
 Inherits Thread
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Run()
 		  Var owner As SyntaxArea.Editor = Self.Owner
@@ -38,9 +38,9 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub DoneWithScreenLines()
-		  If Not MessageCentre.IsMessageInQueue(Self, 1, ScreenLinesHighlightedMsg) Then
+		  If Not MessageCentre.IsMessageInQueue(Self, 1, Messages.ScreenLinesHighlighted) Then
 		    Var msg As New MessageCentre.Message(Self, Self)
-		    msg.AddInfo(1, ScreenLinesHighlightedMsg)
+		    msg.AddInfo(1, Messages.ScreenLinesHighlighted)
 		    MessageCentre.sendMessage(msg)
 		  End If
 		  
@@ -49,9 +49,9 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub HighlightingDone()
-		  If Not MessageCentre.IsMessageInQueue(Self, 1, HighlightDoneMsg) Then
+		  If Not MessageCentre.IsMessageInQueue(Self, 1, Messages.HighlightDone) Then
 		    Var msg As New MessageCentre.Message(Self, Self)
-		    msg.AddInfo(1, HighlightDoneMsg)
+		    msg.AddInfo(1, Messages.HighlightDone)
 		    MessageCentre.QueueMessage(msg)
 		  End If
 		  
@@ -147,7 +147,7 @@ Inherits Thread
 	#tag Method, Flags = &h21
 		Private Sub LineHighlighted(index As Integer)
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, LineHighlightedMsg)
+		  msg.AddInfo(1, Messages.LineHighlighted)
 		  msg.AddInfo(2, index)
 		  MessageCentre.SendMessage(msg)
 		  
@@ -256,16 +256,6 @@ Inherits Thread
 		#tag EndGetter
 		Private Owner As SyntaxArea.Editor
 	#tag EndComputedProperty
-
-
-	#tag Constant, Name = HighlightDoneMsg, Type = Double, Dynamic = False, Default = \"0", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = LineHighlightedMsg, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = ScreenLinesHighlightedMsg, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior
