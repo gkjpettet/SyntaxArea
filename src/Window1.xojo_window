@@ -121,6 +121,7 @@ Begin DesktopWindow Window1
          AllowFocusRing  =   False
          AutoCloseBrackets=   False
          AutocompleteAppliesStandardCase=   True
+         AutocompleteCombo=   1
          AutoCompleteDone=   True
          AutoDeactivate  =   True
          AutoIndentNewLines=   True
@@ -138,7 +139,7 @@ Begin DesktopWindow Window1
          DisplayInvisibleCharacters=   False
          DisplayLineNumbers=   True
          DisplayRightMarginMarker=   False
-         EnableAutocomplete=   False
+         EnableAutocomplete=   True
          Enabled         =   True
          EnableLineFoldings=   True
          EnableLineFoldingSetting=   False

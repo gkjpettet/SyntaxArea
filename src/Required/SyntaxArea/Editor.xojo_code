@@ -171,7 +171,11 @@ Implements MessageCentre.MessageReceiver
 		    // MISC
 		    // =========================================
 		  Case CmdInsertTab
-		    HandleTabKey
+		    If AutocompleteCombo = AutocompleteCombos.Tab And EnableAutocomplete Then
+		      AutocompleteManual
+		    Else
+		      HandleInsertText(Chr(9), Nil)
+		    End If
 		    
 		  Case CmdInsertBacktab
 		    // Shift-Tab. This always acts like a tab insertion (permits the insertion of a tab
@@ -181,8 +185,9 @@ Implements MessageCentre.MessageReceiver
 		  Case "noop:"
 		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
 		      // Ctrl+Space pressed.
-		      #Pragma Warning "TODO: Implement"
-		      Break
+		      If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
+		        AutocompleteManual
+		      End If
 		    End If
 		    
 		  End Select
@@ -301,6 +306,13 @@ Implements MessageCentre.MessageReceiver
 		Sub InsertText(text As String, range As TextRange)
 		  // Inserts a single character.
 		  
+		  // If the user presses Ctrl+Space on Windows/Linux, this event fires
+		  // before the `KeyDown` event so if Ctrl is being held down at this point we need 
+		  // to *not* insert the space character.
+		  #If TargetWindows Or TargetLinux
+		    If Keyboard.AsyncControlKey And Text = " " Then Return
+		  #EndIf
+		  
 		  HandleInsertText(text, range)
 		  
 		End Sub
@@ -311,6 +323,24 @@ Implements MessageCentre.MessageReceiver
 		  /// Returns False if the canvas is read-only or True if it's editable.
 		  
 		  Return Not mReadOnly
+		  
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function KeyDown(key As String) As Boolean
+		  #Pragma Unused Key
+		  
+		  // Catch Ctrl-Space key on Windows & Linux.
+		  // This is handled on macOS within `DoCommand` as "noop:"
+		  #If TargetWindows Or TargetLinux
+		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
+		      If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
+		        AutocompleteManual
+		      End If
+		      Return True
+		    End If
+		  #EndIf
 		  
 		End Function
 	#tag EndEvent
@@ -703,6 +733,63 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Var y As Double
 		  XYAtCharPos(CaretPos, CaretLine, AutocompleteSuggestionInsertionX, y)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AutocompleteManual()
+		  // Get the word where the caret is at.
+		  Var CurrentWordSegment As SyntaxArea.TextSegment = CurrentWord
+		  If CurrentWordSegment.length = 0 Then Return
+		  
+		  // Is there a suggestion to autocomplete?
+		  If trailingSuggestion.Length > 0 And trailingSuggestion <> "…" Then
+		    
+		    Var suggestionLength As Integer
+		    If trailingSuggestion.Right(1) = "…" Then
+		      suggestionLength = trailingSuggestion.Length - 1
+		    Else
+		      suggestionLength = trailingSuggestion.Length
+		    End If
+		    
+		    // Insert it.
+		    AutocompleteOptionSelected(OptionForTrailingSuggestion)
+		    Return
+		  End If
+		  
+		  // Get all of the autocomplete options for the word.
+		  Call FetchAutocompleteOptions
+		  If CurrentAutocompleteOptions = Nil Then
+		     // Nothing to autocomplete.
+		    Return
+		  End If
+		  If CurrentAutocompleteOptions.Options.LastIndex < 0 Then Return
+		  
+		  // Find the (x, y) position of the caret.
+		  Var x, y, fx, fy As Double
+		  XYAtCharPos(CaretPos, CaretLine, x, y)
+		  GetFieldXY(fx, fy)
+		  x = x + fx
+		  y = y + fy
+		  
+		  Var cx, cy As Integer
+		  cx = x
+		  cy = y
+		  
+		  // Give the user the option to offset the suggestion window if needed.
+		  If ShouldDisplaySuggestionWindowAtPos(cx, cy) Then
+		    x = cx
+		    y = cy
+		  End If
+		  
+		  // Show the suggestion window.
+		  CurrentSuggestionWindow = New SuggestionWindow
+		  
+		  // Start listening for messages from the suggestion window.
+		  Self.RegisterForMessage(CurrentSuggestionWindow)
+		  
+		  CurrentSuggestionWindow.Show(x, y)
 		  
 		End Sub
 	#tag EndMethod
@@ -1883,6 +1970,40 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub GetFieldXY(ByRef locX As Double, ByRef locY As Double)
+		  // Find the window where this control is since the control can be deep 
+		  // within container controls...
+		  locX = Me.Left
+		  locY = Me.top
+		  
+		  Var container As DesktopWindow
+		  container = Me.Window
+		  
+		  While True
+		    locX = locX + Container.Left
+		    locY = locY + Container.Top
+		    
+		    If container IsA DesktopContainer Then
+		      container = DesktopWindow(DesktopContainer(container).Window)
+		      
+		    ElseIf container IsA DesktopWindow Then
+		      // Account for any toolbar.
+		      #If TargetWindows Then
+		        For i As Integer = 0 To container.ControlCount-1
+		          If container.ControlAt(i) IsA DesktopToolbar Then
+		            Var tb As DesktopToolbar = DesktopToolbar(container.ControlAt(i))
+		            locY = locY + tb.Height
+		          End If
+		        Next i
+		      #EndIf
+		      Exit
+		    End If
+		  Wend
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 52657475726E7320746865207465787420636F6E7461696E656420696E2061206C696E652E
 		Function GetLine(index As Integer) As String
 		  /// Returns the text contained in a line.
@@ -2081,16 +2202,6 @@ Implements MessageCentre.MessageReceiver
 		  Raise New UnsupportedOperationException("The HandleKeyDown method is not implemented.")
 		  
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, Description = 48616E646C657320746865207072657373696E67206F662074686520746162206B65792E
-		Private Sub HandleTabKey()
-		  /// Handles the pressing of the tab key.
-		  
-		  #Pragma Warning "TODO: Handle the tab key"
-		  Raise New UnsupportedOperationException("Tab key handling is not yet implemented.")
-		  
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 4F7074696F6E616C6C7920636C6561727320686967686C6967687465642072616E67657320616E6420726169736573207468652060546578744368616E67656460206576656E742E
@@ -4223,6 +4334,10 @@ Implements MessageCentre.MessageReceiver
 		Event SelectionChanged(line As Integer, column As Integer, length As Integer)
 	#tag EndHook
 
+	#tag Hook, Flags = &h0, Description = 54686520656469746F722069732061626F757420746F2073686F77207468652073756767657374696F6E2077696E646F772E2052657475726E205472756520696620796F752077616E7420746F206368616E676520776865726520697420697320646973706C617965642028627920616C746572696E67207468652070617373656420427952656620706172616D6574657273292E
+		Event ShouldDisplaySuggestionWindowAtPos(ByRef X As Integer, ByRef Y As Integer) As Boolean
+	#tag EndHook
+
 	#tag Hook, Flags = &h0
 		Event TextChanged()
 	#tag EndHook
@@ -4265,6 +4380,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h0
 		AutocompleteAppliesStandardCase As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 546865206B6579626F6172642073686F7274637574207573656420746F2074726967676572206175746F636F6D706C6574696F6E2E
+		AutocompleteCombo As SyntaxArea.AutocompleteCombos = SyntaxArea.AutocompleteCombos.Tab
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -6443,6 +6562,18 @@ Implements MessageCentre.MessageReceiver
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutocompleteCombo"
+			Visible=true
+			Group="Behavior"
+			InitialValue="SyntaxArea.AutocompleteCombos.Tab"
+			Type="SyntaxArea.AutocompleteCombos"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - CtrlSpace"
+				"1 - Tab"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
