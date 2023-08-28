@@ -400,7 +400,7 @@ Implements MessageCentre.MessageReceiver
 		  ElseIf x < LineNumberOffset Then
 		    SelectedLine = Lines.GetLineNumberForOffset(selStart)
 		    
-		    If EnableLineFoldings And x >= LineNumberOffset - BlockStartImage.Width - 2 Then
+		    If EnableLineFoldings And x >= LineNumberOffset - BlockStartImage.Graphics.Width - 2 Then
 		      // Toggle foldings.
 		      ToggleLineFold(SelectedLine)
 		      CreateMouseOverBlockHighlight(SelectedLine)
@@ -528,7 +528,7 @@ Implements MessageCentre.MessageReceiver
 		    Return
 		  End If
 		  
-		  If x < LineNumberOffset - BlockStartImage.Width - 2 Then
+		  If x < LineNumberOffset - BlockStartImage.Graphics.Width - 2 Then
 		    If MouseOverBlock <> Nil Then
 		      MouseOverBlock = Nil
 		      Redraw
@@ -1818,12 +1818,12 @@ Implements MessageCentre.MessageReceiver
 		        If EnableLineFoldings And line.IsBlockStart Then
 		          If line.Folded Then
 		            // Draw a line folded marker.
-		            gg.DrawPicture(BlockFoldedImage, LineNumberOffset - BlockFoldedImage.Width - 2, sy - TextHeight + (TextHeight - BlockFoldedImage.Height) / 2 + 1)
+		            gg.DrawPicture(BlockFoldedImage, LineNumberOffset - BlockFoldedImage.Graphics.Width - 2, sy - TextHeight + (TextHeight - BlockFoldedImage.Graphics.Height) / 2 + 1)
 		          Else
-		            gg.DrawPicture(BlockStartImage, LineNumberOffset - BlockStartImage.Width - 2, sy - TextHeight + (TextHeight - BlockStartImage.Height) / 2 + 1)
+		            gg.DrawPicture(BlockStartImage, LineNumberOffset - BlockStartImage.Graphics.Width - 2, sy - TextHeight + (TextHeight - BlockStartImage.Graphics.Height) / 2 + 1)
 		          End If
 		        ElseIf EnableLineFoldings And line.IsBlockEnd Then
-		          gg.DrawPicture(BlockEndImage, LineNumberOffset - BlockEndImage.Width - 2, sy - TextHeight + (TextHeight - BlockEndImage.Height) / 2 + 1)
+		          gg.DrawPicture(BlockEndImage, LineNumberOffset - BlockEndImage.Graphics.Width - 2, sy - TextHeight + (TextHeight - BlockEndImage.Graphics.Height) / 2 + 1)
 		        End If
 		        
 		        gg.Bold = False
@@ -1977,7 +1977,7 @@ Implements MessageCentre.MessageReceiver
 		Private Function FoldingOffset() As Integer
 		  If Not EnableLineFoldings Then Return 0
 		  
-		  Return BlockStartImage.Width + 2
+		  Return BlockStartImage.Graphics.Width + 2
 		  
 		End Function
 	#tag EndMethod
@@ -4468,49 +4468,88 @@ Implements MessageCentre.MessageReceiver
 		Private BlockCharsPattern As String
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F2075736520666F722074686520626C6F636B20656E6420696D61676520696E20746865206775747465722E
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Replace this bundled image with something else?"
+			  #Pragma Warning "TODO: Actually draw an upwards facing triangle"
 			  
-			  If gBlockEndImage = Nil Then
-			    gBlockEndImage = SyntaxArea.LoadMaskedPicture(blockEndMarker)
+			  If mBlockEndImage = Nil Then
+			    Var p As Picture
+			    If Me.Window = Nil Then
+			      p = New Picture(9, 9)
+			    Else
+			      p = Me.Window.BitmapForCaching(9, 9)
+			    End If
+			    
+			    p.Graphics.DrawingColor = Color.Red
+			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
+			    p.Graphics.DrawingColor = Color.Yellow
+			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    
+			    mBlockEndImage = p
 			  End If
 			  
-			  Return gBlockEndImage
+			  Return mBlockEndImage
 			  
 			End Get
 		#tag EndGetter
-		Protected Shared BlockEndImage As Picture
+		Private BlockEndImage As Picture
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21, Description = 54686520696D616765207573656420696E207468652067757474657220746F20726570726573656E74206120666F6C646564206C696E652E
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Replace this bundled image with something else?"
-			  If gBlockFoldedImage = Nil Then
-			    gBlockFoldedImage = SyntaxArea.LoadMaskedPicture(blockFoldedMarker)
+			  #Pragma Warning "TODO: Actually draw a sideways facing triangle"
+			  
+			  If mBlockFoldedImage = Nil Then
+			    Var p As Picture
+			    If Me.Window = Nil Then
+			      p = New Picture(9, 9)
+			    Else
+			      p = Me.Window.BitmapForCaching(9, 9)
+			    End If
+			    
+			    p.Graphics.DrawingColor = Color.Orange
+			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
+			    p.Graphics.DrawingColor = Color.Purple
+			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    
+			    mBlockFoldedImage = p
 			  End If
 			  
-			  Return gBlockFoldedImage
+			  Return mBlockFoldedImage
+			  
 			End Get
 		#tag EndGetter
-		Protected Shared BlockFoldedImage As Picture
+		Private BlockFoldedImage As Picture
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F2075736520666F722074686520626C6F636B20737461727420696D61676520696E20746865206775747465722E
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Replace this bundled image with something else?"
+			  #Pragma Warning "TODO: Actually draw a downwards facing triangle"
 			  
-			  If gBlockStartImage = Nil Then
-			    gBlockStartImage = SyntaxArea.LoadMaskedPicture(blockStartMarker)
+			  If mBlockStartImage = Nil Then
+			    Var p As Picture
+			    If Me.Window = Nil Then
+			      p = New Picture(9, 9)
+			    Else
+			      p = Me.Window.BitmapForCaching(9, 9)
+			    End If
+			    
+			    p.Graphics.DrawingColor = Color.Green
+			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
+			    p.Graphics.DrawingColor = Color.Blue
+			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    
+			    mBlockStartImage = p
 			  End If
 			  
-			  Return gBlockStartImage
+			  Return mBlockStartImage
+			  
 			End Get
 		#tag EndGetter
-		Protected Shared BlockStartImage As Picture
+		Private BlockStartImage As Picture
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -4850,18 +4889,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private Shared gBlockEndImage As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared gBlockFoldedImage As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared gBlockStartImage As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private Shared gBookmarkImage As Picture
 	#tag EndProperty
 
@@ -5109,7 +5136,7 @@ Implements MessageCentre.MessageReceiver
 			    mLineNumberOffset = tmp.Graphics.TextWidth(Lines.Count.ToString) + 10
 			    
 			    If EnableLineFoldings Then
-			      mLineNumberOffset = LineNumberOffset + BlockStartImage.Width + 2
+			      mLineNumberOffset = LineNumberOffset + BlockStartImage.Graphics.Width + 2
 			    End If
 			  End If
 			  
@@ -5237,6 +5264,18 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mBackColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlockEndImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlockFoldedImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlockStartImage As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
