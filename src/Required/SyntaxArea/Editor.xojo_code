@@ -86,14 +86,20 @@ Implements MessageCentre.MessageReceiver
 		  Case CmdMoveRight, CmdMoveForward
 		    MoveCaretRight(False)
 		    
-		  Case CmdMoveToBeginningOfDocument, CmdScrollToBeginningOfDocument
+		  Case CmdMoveToBeginningOfDocument
 		    MoveCaretUp(False, True)
+		    
+		  Case CmdScrollToBeginningOfDocument
+		    ScrollHome
 		    
 		  Case CmdMoveToBeginningOfLine, CmdMoveToLeftEndOfLine
 		    MoveCaretLeft(True)
 		    
-		  Case CmdMoveToEndOfDocument, CmdScrollToEndOfDocument
+		  Case CmdMoveToEndOfDocument
 		    MoveCaretDown(False, True)
+		    
+		  Case CmdScrollToEndOfDocument
+		    ScrollEnd
 		    
 		  Case CmdMoveToEndOfLine, CmdMoveToRightEndOfLine
 		    MoveCaretRight(True)
@@ -652,8 +658,8 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMenuHandler
 
 
-	#tag Method, Flags = &h1
-		Protected Sub AutocompleteCancelled(requestFocus As Boolean)
+	#tag Method, Flags = &h21
+		Private Sub AutocompleteCancelled(requestFocus As Boolean)
 		  If requestFocus Then SetFocus
 		  
 		  AutoCompleteDone = True
@@ -666,8 +672,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 4765747320746865206175746F636F6D706C657465206F7074696F6E732066726F6D2074686520636C69656E742077696E646F772E
-		Protected Sub AutocompleteEOL()
+	#tag Method, Flags = &h21, Description = 4765747320746865206175746F636F6D706C657465206F7074696F6E732066726F6D2074686520636C69656E742077696E646F772E
+		Private Sub AutocompleteEOL()
 		  /// Gets the autocomplete options from the client window.
 		  
 		  Call FetchAutocompleteOptions
@@ -703,8 +709,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 54686520737472696E6720606F7074696F6E60207761732073656C656374656420696E207468652073756767657374696F6E732077696E646F772E
-		Protected Sub AutocompleteOptionSelected(option As String)
+	#tag Method, Flags = &h21, Description = 54686520737472696E6720606F7074696F6E60207761732073656C656374656420696E207468652073756767657374696F6E732077696E646F772E
+		Private Sub AutocompleteOptionSelected(option As String)
 		  /// The string `option` was selected in the suggestions window.
 		  
 		  If option <> "" Then
@@ -745,8 +751,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 436F6D707574657320746865206D6178696D756D20686F72697A6F6E74616C207363726F6C6C6261722076616C75652E
-		Protected Sub CalculateMaxHorizontalSB()
+	#tag Method, Flags = &h21, Description = 436F6D707574657320746865206D6178696D756D20686F72697A6F6E74616C207363726F6C6C6261722076616C75652E
+		Private Sub CalculateMaxHorizontalSB()
 		  /// Computes the maximum horizontal scrollbar value.
 		  
 		  If mHorizontalScrollBar <> Nil Then
@@ -768,8 +774,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 436F6D707574657320746865206D6178696D756D20766572746963616C207363726F6C6C6261722076616C75652E
-		Protected Sub CalculateMaxVerticalSB()
+	#tag Method, Flags = &h21, Description = 436F6D707574657320746865206D6178696D756D20766572746963616C207363726F6C6C6261722076616C75652E
+		Private Sub CalculateMaxVerticalSB()
 		  /// Computes the maximum vertical scrollbar value.
 		  
 		  If mVerticalScrollbar <> Nil Then
@@ -796,8 +802,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 5363726F6C6C7320746865207669657720746F2060686F72697A6F6E74616C6020706978656C7320616E642060766572746963616C60206C696E65206E756D6265722E
-		Protected Sub ChangeScrollValues(horizontal As Integer, vertical As Integer)
+	#tag Method, Flags = &h21, Description = 5363726F6C6C7320746865207669657720746F2060686F72697A6F6E74616C6020706978656C7320616E642060766572746963616C60206C696E65206E756D6265722E
+		Private Sub ChangeScrollValues(horizontal As Integer, vertical As Integer)
 		  /// Scrolls the view to `horizontal` pixels and `vertical` line number.
 		  
 		  mCaretBlinker.Reset
@@ -859,8 +865,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub ChangeSelection(selStart As Integer, selLength As Integer, viaDoubleClick As Boolean = False)
+	#tag Method, Flags = &h21
+		Private Sub ChangeSelection(selStart As Integer, selLength As Integer, viaDoubleClick As Boolean = False)
 		  // Changes the current document selection.
 		  
 		  // Nothing to change.
@@ -1266,15 +1272,15 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function CurrentAutocompleteOptions() As SyntaxArea.AutocompleteOptions
+	#tag Method, Flags = &h21
+		Private Function CurrentAutocompleteOptions() As SyntaxArea.AutocompleteOptions
 		  Return mCurrentAutocompleteOptions
 		  
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 47657473207468652063757272656E7420776F72642C207768657265207468652063617265742069732061742E
-		Protected Function CurrentWord() As SyntaxArea.TextSegment
+	#tag Method, Flags = &h21, Description = 47657473207468652063757272656E7420776F72642C207768657265207468652063617265742069732061742E
+		Private Function CurrentWord() As SyntaxArea.TextSegment
 		  /// Gets the current word, where the caret is at.
 		  ///
 		  /// A word is anything except whitespace.
@@ -1288,8 +1294,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 48616E646C6573206368617261637465722064656C6574696F6E2C2065697468657220666F727761726473206F72206261636B77617264732C20776F7264206F72206368617261637465722E
-		Protected Sub DeleteChars(forwardDelete As Boolean, deleteWord As Boolean)
+	#tag Method, Flags = &h21, Description = 48616E646C6573206368617261637465722064656C6574696F6E2C2065697468657220666F727761726473206F72206261636B77617264732C20776F7264206F72206368617261637465722E
+		Private Sub DeleteChars(forwardDelete As Boolean, deleteWord As Boolean)
 		  /// Handles character deletion, either forwards or backwards, word or character.
 		  
 		  // Check if the key would delete a placeholder.
@@ -1776,8 +1782,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub EnableBlinker(value As Boolean)
+	#tag Method, Flags = &h21
+		Private Sub EnableBlinker(value As Boolean)
 		  If mCaretBlinker = Nil Then Return
 		  
 		  If value And Not ReadOnly Then
@@ -1791,8 +1797,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 41736B732074686520636C69656E742077696E646F7720666F72206175746F636F6D706C657465206F7074696F6E7320666F72207468652063757272656E7420776F72642E
-		Protected Function FetchAutocompleteOptions() As Boolean
+	#tag Method, Flags = &h21, Description = 41736B732074686520636C69656E742077696E646F7720666F72206175746F636F6D706C657465206F7074696F6E7320666F72207468652063757272656E7420776F72642E
+		Private Function FetchAutocompleteOptions() As Boolean
 		  /// Asks the client window for autocomplete options for the current word.
 		  
 		  mCurrentAutocompleteOptions = Nil
@@ -1831,8 +1837,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function FoldingOffset() As Integer
+	#tag Method, Flags = &h21
+		Private Function FoldingOffset() As Integer
 		  If Not EnableLineFoldings Then Return 0
 		  
 		  Return BlockStartImage.Width + 2
@@ -1925,8 +1931,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub HandleDoubleClick()
+	#tag Method, Flags = &h21
+		Private Sub HandleDoubleClick()
 		  // Highlight word(s) after a double click.
 		  
 		  Var word As New SyntaxArea.TextSegment
@@ -1972,8 +1978,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, Description = 48616E646C65732061206D6F7573652064726167206F6E20746865206775747465722E
-		Protected Sub HandleDragOnGutter(X as integer, Y as integer)
+	#tag Method, Flags = &h21, Description = 48616E646C65732061206D6F7573652064726167206F6E20746865206775747465722E
+		Private Sub HandleDragOnGutter(X as integer, Y as integer)
 		  /// Handles a mouse drag on the gutter.
 		  
 		  Var currPos As Integer = CharPosAtXY(x, y)
@@ -1993,8 +1999,8 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub HandleHorizontalMouseDrag(x As Integer, y As Integer)
+	#tag Method, Flags = &h21
+		Private Sub HandleHorizontalMouseDrag(x As Integer, y As Integer)
 		  #Pragma Unused y
 		  
 		  If x < LineNumberOffset Then
@@ -2507,7 +2513,11 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		  // Actually move the caret.
-		  ChangeSelection(offset, 0)
+		  If moveToEnd Then
+		    ChangeSelection(TextStorage.Length, 0)
+		  Else
+		    ChangeSelection(offset, 0)
+		  End If
 		  
 		  // Scroll if necessary.
 		  If lineNum > ScrollPosition + VisibleLineRange.Length - 2 Then
@@ -3833,6 +3843,22 @@ Implements MessageCentre.MessageReceiver
 		    Highlight
 		  End If
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 5363726F6C6C7320746F2074686520656E64206F662074686520646F63756D656E742E20446F6573206E6F74206D6F7665207468652063617265742E
+		Protected Sub ScrollEnd()
+		  /// Scrolls to the end of the document. Does not move the caret.
+		  
+		  ScrollPosition = Lines.Count
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, Description = 5363726F6C6C7320746F2074686520626567696E6E696E67206F662074686520646F63756D656E742E20446F6573206E6F74206D6F7665207468652063617265742E
+		Protected Sub ScrollHome()
+		  /// Scrolls to the beginning of the document. Does not move the caret.
+		  
+		  ScrollPosition = 0
 		End Sub
 	#tag EndMethod
 
