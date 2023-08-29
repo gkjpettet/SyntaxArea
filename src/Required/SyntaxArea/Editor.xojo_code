@@ -4585,20 +4585,23 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F2075736520666F722074686520626C6F636B20656E6420696D61676520696E20746865206775747465722E
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Actually draw an upwards facing triangle"
-			  
 			  If mBlockEndImage = Nil Then
+			    Var w As Double = 9
+			    Var h As Double = 9
 			    Var p As Picture
+			    
 			    If Me.Window = Nil Then
-			      p = New Picture(9, 9)
+			      p = New Picture(w, h)
 			    Else
-			      p = Me.Window.BitmapForCaching(9, 9)
+			      p = Me.Window.BitmapForCaching(w, h)
 			    End If
 			    
-			    p.Graphics.DrawingColor = Color.Red
-			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
-			    p.Graphics.DrawingColor = Color.Yellow
-			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    Var triangle As New GraphicsPath
+			    triangle.MoveToPoint(w/2, 0)
+			    triangle.AddLineToPoint(w, h)
+			    triangle.AddLineToPoint(0, h)
+			    p.Graphics.DrawingColor = mBlockFoldMarkerColor
+			    p.Graphics.FillPath(triangle, True)
 			    
 			    mBlockEndImage = p
 			  End If
@@ -4610,23 +4613,43 @@ Implements MessageCentre.MessageReceiver
 		Private BlockEndImage As Picture
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662074686520747269616E676C6520696E6469636174696E67206120666F6C64656420626C6F636B20696E20746865206775747465722E
+		#tag Getter
+			Get
+			  Return mBlockFoldedColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mBlockFoldedColor = value
+			  mBlockFoldedImage = Nil
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		BlockFoldedColor As ColorGroup
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D616765207573656420696E207468652067757474657220746F20726570726573656E74206120666F6C646564206C696E652E
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Actually draw a sideways facing triangle"
-			  
 			  If mBlockFoldedImage = Nil Then
+			    Var w As Double = 9
+			    Var h As Double = 9
 			    Var p As Picture
+			    
 			    If Me.Window = Nil Then
-			      p = New Picture(9, 9)
+			      p = New Picture(w, h)
 			    Else
-			      p = Me.Window.BitmapForCaching(9, 9)
+			      p = Me.Window.BitmapForCaching(w, h)
 			    End If
 			    
-			    p.Graphics.DrawingColor = Color.Orange
-			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
-			    p.Graphics.DrawingColor = Color.Purple
-			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    Var triangle As New GraphicsPath
+			    triangle.MoveToPoint(0, 0)
+			    triangle.AddLineToPoint(w, h/2)
+			    triangle.AddLineToPoint(0, h)
+			    p.Graphics.DrawingColor = mBlockFoldedColor
+			    p.Graphics.FillPath(triangle, True)
 			    
 			    mBlockFoldedImage = p
 			  End If
@@ -4666,23 +4689,44 @@ Implements MessageCentre.MessageReceiver
 		Private BlockFoldedTrailImage As Picture
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662074686520747269616E676C6520666F7220626C6F636B20737461727420616E6420626C6F636B20656E64206D61726B6572732E
+		#tag Getter
+			Get
+			  Return mBlockFoldMarkerColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mBlockFoldMarkerColor = value
+			  mBlockStartImage = Nil
+			  mBlockEndImage = Nil
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		BlockFoldMarkerColor As ColorGroup
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F2075736520666F722074686520626C6F636B20737461727420696D61676520696E20746865206775747465722E
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Actually draw a downwards facing triangle"
-			  
 			  If mBlockStartImage = Nil Then
+			    Var w As Double = 9
+			    Var h As Double = 9
 			    Var p As Picture
+			    
 			    If Me.Window = Nil Then
-			      p = New Picture(9, 9)
+			      p = New Picture(w, h)
 			    Else
-			      p = Me.Window.BitmapForCaching(9, 9)
+			      p = Me.Window.BitmapForCaching(w, h)
 			    End If
 			    
-			    p.Graphics.DrawingColor = Color.Green
-			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
-			    p.Graphics.DrawingColor = Color.Blue
-			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    Var triangle As New GraphicsPath
+			    triangle.MoveToPoint(0, 0)
+			    triangle.AddLineToPoint(w, 0)
+			    triangle.AddLineToPoint(w/2, h)
+			    p.Graphics.DrawingColor = mBlockFoldMarkerColor
+			    p.Graphics.FillPath(triangle, True)
 			    
 			    mBlockStartImage = p
 			  End If
@@ -5435,11 +5479,19 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mBlockFoldedColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mBlockFoldedImage As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mBlockFoldedTrailImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlockFoldMarkerColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6825,6 +6877,22 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BlockFoldMarkerColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BlockFoldedColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

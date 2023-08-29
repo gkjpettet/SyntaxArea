@@ -127,6 +127,8 @@ Begin DesktopWindow Window1
          AutoDeactivate  =   True
          AutoIndentNewLines=   True
          BackColor       =   &cFFFFFF00
+         BlockFoldedColor=   &cFF930000
+         BlockFoldMarkerColor=   &c92929200
          Border          =   True
          BorderColor     =   &c00000000
          BracketHighlightColor=   &c76D6FF00
@@ -160,6 +162,7 @@ Begin DesktopWindow Window1
          KeepEntireTextIndented=   True
          Left            =   0
          LeftMarginOffset=   0
+         LineHeight      =   0.0
          LineNumbersColor=   &c00000000
          LineNumbersFontSize=   12
          LineNumbersTextFont=   "System"
