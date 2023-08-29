@@ -130,6 +130,7 @@ Begin DesktopWindow Window1
          BlockFoldedColor=   &cFF930000
          BlockFoldedEllipsisColor=   &cC0C0C000
          BlockFoldMarkerColor=   &c92929200
+         BookmarkColor   =   &c0096FF00
          Border          =   True
          BorderColor     =   &c00000000
          BracketHighlightColor=   &c76D6FF00

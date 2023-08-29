@@ -1634,7 +1634,7 @@ Implements MessageCentre.MessageReceiver
 		  Var gutterWidth As Integer = LineNumberOffset
 		  
 		  // Line numbers.
-		  If Self.displayLineNumbers Then
+		  If Self.DisplayLineNumbers Then
 		    // Create the line numbers picture if needed.
 		    If Not createBackBuffers Then
 		      // Draw the gutter directly into the canvas graphics object (Retina requirement).
@@ -4758,23 +4758,47 @@ Implements MessageCentre.MessageReceiver
 		Private BlockStartImage As Picture
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mBookmarkColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mBookmarkColor = value
+			  mBookmarkImage = Nil
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		BookmarkColor As ColorGroup
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Actually draw a bookmark image"
-			  
 			  If mBookmarkImage = Nil Then
+			    Var w As Double = 16
+			    Var h As Double = mLineHeight
 			    Var p As Picture
 			    If Me.Window = Nil Then
-			      p = New Picture(9, 9)
+			      p = New Picture(w, h)
 			    Else
-			      p = Me.Window.BitmapForCaching(9, 9)
+			      p = Me.Window.BitmapForCaching(w, h)
 			    End If
 			    
-			    p.Graphics.DrawingColor = Color.White
-			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
-			    p.Graphics.DrawingColor = Color.Magenta
-			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    p.Graphics.DrawingColor = BookmarkColor
+			    Var path As New GraphicsPath
+			    Var shapeH As Double = 10
+			    Var topEdge As Double = (h/2) - (shapeH/2)
+			    Var bottomEdge As Double = (h/2) + (shapeH/2)
+			    path.MoveToPoint(0, topEdge)
+			    path.AddLineToPoint(w/2, topEdge)
+			    path.AddLineToPoint(w, h/2)
+			    path.AddLineToPoint(w/2, bottomEdge)
+			    path.AddLineToPoint(0, bottomEdge)
+			    p.Graphics.FillPath(path, True)
 			    
 			    mBookmarkImage = p
 			  End If
@@ -5520,6 +5544,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mBlockStartImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBookmarkColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6921,6 +6949,14 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldedEllipsisColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BookmarkColor"
 			Visible=true
 			Group="Behavior"
 			InitialValue=""
