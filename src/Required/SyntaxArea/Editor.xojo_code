@@ -1601,7 +1601,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If realign Then
 		    If createBackBuffers Then
-		      // Create double buffer.
+		      // Create a double buffer.
 		      mBackBuffer = parentWindow.BitmapForCaching(gr.Width, gr.Height)
 		    End If
 		    CalculateMaxHorizontalSB
@@ -4630,6 +4630,23 @@ Implements MessageCentre.MessageReceiver
 		BlockFoldedColor As ColorGroup
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F722074686520656C6C697073697320696E6469636174696E67206120626C6F636B20697320666F6C6465642E
+		#tag Getter
+			Get
+			  Return mBlockFoldedEllipsisColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mBlockFoldedEllipsisColor = value
+			  mBlockFoldedImage = Nil
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		BlockFoldedEllipsisColor As ColorGroup
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D616765207573656420696E207468652067757474657220746F20726570726573656E74206120666F6C646564206C696E652E
 		#tag Getter
 			Get
@@ -4664,20 +4681,23 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F207573652061742074686520656E64206F6620746865206669727374206C696E6520696E206120666F6C64656420626C6F636B2074686174207369676E696669657320746865726520617265206164646974696F6E616C206C696E65732E
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Actually draw an ellipsis"
-			  
 			  If mBlockFoldedTrailImage = Nil Then
+			    Const HPADDING = 2
+			    Var h As Double = mLineHeight
+			    Var w As Double = (h * 1.4) + (2 * HPADDING)
 			    Var p As Picture
 			    If Me.Window = Nil Then
-			      p = New Picture(17, mLineHeight)
+			      p = New Picture(w, h)
 			    Else
-			      p = Me.Window.BitmapForCaching(17, mLineHeight)
+			      p = Me.Window.BitmapForCaching(w, h)
 			    End If
 			    
-			    p.Graphics.DrawingColor = Color.Cyan
-			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
-			    p.Graphics.DrawingColor = Color.Brown
-			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    p.Graphics.DrawingColor = BlockFoldedEllipsisColor
+			    Var baseline As Double = (h/2) - (h/6)
+			    Var circleW As Double = h/3
+			    p.Graphics.FillOval(HPADDING, baseline, circleW, circleW)
+			    p.Graphics.FillOval(HPADDING + (h/2), baseline, circleW, circleW)
+			    p.Graphics.FillOval(HPADDING + h, baseline, circleW, circleW)
 			    
 			    mBlockFoldedTrailImage = p
 			  End If
@@ -5480,6 +5500,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mBlockFoldedColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlockFoldedEllipsisColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6889,6 +6913,14 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldedColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BlockFoldedEllipsisColor"
 			Visible=true
 			Group="Behavior"
 			InitialValue=""
