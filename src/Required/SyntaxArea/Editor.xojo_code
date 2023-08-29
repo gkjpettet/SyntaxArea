@@ -2518,7 +2518,7 @@ Implements MessageCentre.MessageReceiver
 		  Var search As New RegEx
 		  Var matches As New RegExMatch
 		  
-		  search.SearchPattern = RegEXURL
+		  search.SearchPattern = REGEX_URL
 		  matches = Search.Search(input)
 		  
 		  If matches = Nil Then Exit Function
@@ -4779,7 +4779,7 @@ Implements MessageCentre.MessageReceiver
 		#tag Getter
 			Get
 			  If mBookmarkImage = Nil Then
-			    Var w As Double = 16
+			    Var w As Double = BOOKMARK_WIDTH
 			    Var h As Double = mLineHeight
 			    Var p As Picture
 			    If Me.Window = Nil Then
@@ -5385,7 +5385,7 @@ Implements MessageCentre.MessageReceiver
 			    tmp.Graphics.FontName = LineNumbersTextFont
 			    tmp.Graphics.FontSize = LineNumbersFontSize
 			    tmp.Graphics.Bold = True
-			    mLineNumberOffset = tmp.Graphics.TextWidth(Lines.Count.ToString) + 10
+			    mLineNumberOffset = Max(tmp.Graphics.TextWidth(Lines.Count.ToString) + BOOKMARK_WIDTH, MIN_LINENUMBER_OFFSET)
 			    
 			    If EnableLineFoldings Then
 			      mLineNumberOffset = LineNumberOffset + BlockStartImage.Graphics.Width + 2
@@ -6299,6 +6299,9 @@ Implements MessageCentre.MessageReceiver
 	#tag Constant, Name = BLOCK_OPEN_CHARS, Type = String, Dynamic = False, Default = \"([{", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = BOOKMARK_WIDTH, Type = Double, Dynamic = False, Default = \"16", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = CURRENT_CARET_WORD_DELIMITER_PATTERN, Type = String, Dynamic = False, Default = \"[^\\w\\.]", Scope = Private
 	#tag EndConstant
 
@@ -6311,7 +6314,10 @@ Implements MessageCentre.MessageReceiver
 	#tag Constant, Name = DEFAULT_FONTSIZE, Type = Double, Dynamic = False, Default = \"12", Scope = Public, Description = 5468652064656661756C7420666F6E742073697A652E
 	#tag EndConstant
 
-	#tag Constant, Name = RegEXURL, Type = String, Dynamic = False, Default = \"(\?x) # FREE SPACING\n(\?i-U) # Case-insensitive\x2C greedy\n\n# Define the prefix\n(\?(DEFINE)(\?<prefix>[A-Z]{3\x2C}://))\n# Define a valid URL character\n(\?(DEFINE)(\?<valid>[A-Z0-9\\-_~:/\?\\#[\\]@!$&\'()*+;\x3D.\x2C%]))\n\n# START\n\\b # Word boundary\n(\?: # Non-capturing group\n(\?<\x3D\\<)(\?&prefix)(\?&valid)+(\?\x3D\\>) # Anything between angle-brackets\n| # OR\n(\?<\x3D\\[)(\?&prefix)(\?&valid)+(\?\x3D\\]) # Anything between square-brackets\n| # OR\n(\?<\x3D\\{)(\?&prefix)(\?&valid)+(\?\x3D\\}) # Anything between curly-brackets\n| # OR\n(\?&prefix)(\?&valid)+(\?<![\\.\x2C]) # Can\'t end on a dot or comma\n) # End non-capturing group", Scope = Private
+	#tag Constant, Name = MIN_LINENUMBER_OFFSET, Type = Double, Dynamic = False, Default = \"30", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = REGEX_URL, Type = String, Dynamic = False, Default = \"(\?x) # FREE SPACING\n(\?i-U) # Case-insensitive\x2C greedy\n\n# Define the prefix\n(\?(DEFINE)(\?<prefix>[A-Z]{3\x2C}://))\n# Define a valid URL character\n(\?(DEFINE)(\?<valid>[A-Z0-9\\-_~:/\?\\#[\\]@!$&\'()*+;\x3D.\x2C%]))\n\n# START\n\\b # Word boundary\n(\?: # Non-capturing group\n(\?<\x3D\\<)(\?&prefix)(\?&valid)+(\?\x3D\\>) # Anything between angle-brackets\n| # OR\n(\?<\x3D\\[)(\?&prefix)(\?&valid)+(\?\x3D\\]) # Anything between square-brackets\n| # OR\n(\?<\x3D\\{)(\?&prefix)(\?&valid)+(\?\x3D\\}) # Anything between curly-brackets\n| # OR\n(\?&prefix)(\?&valid)+(\?<![\\.\x2C]) # Can\'t end on a dot or comma\n) # End non-capturing group", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UNDO_EVT_BLOCK_SECS, Type = Double, Dynamic = False, Default = \"3", Scope = Private
