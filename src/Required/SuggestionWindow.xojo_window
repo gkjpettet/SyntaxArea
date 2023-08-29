@@ -21,14 +21,14 @@ Begin DesktopWindow SuggestionWindow
    MinimumWidth    =   64
    Resizeable      =   False
    Title           =   ""
-   Type            =   3
+   Type            =   4
    Visible         =   True
    Width           =   120
    Begin DesktopListBox OptionList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
-      AllowFocusRing  =   True
+      AllowFocusRing  =   False
       AllowResizableColumns=   False
       AllowRowDragging=   False
       AllowRowReordering=   False
