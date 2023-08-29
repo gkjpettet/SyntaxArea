@@ -1858,7 +1858,7 @@ Implements MessageCentre.MessageReceiver
 		        // Row icon available?
 		        If line.Icon <> Nil Then
 		          Var icn As Picture = line.Icon
-		          gg.DrawPicture(icn, gutterWidth - icn.Width - 2 - FoldingOffset, sy - g.TextHeight + (g.TextHeight - icn.Height) / 2)
+		          gg.DrawPicture(icn, gutterWidth - icn.Graphics.Width - 2 - FoldingOffset, sy - g.TextHeight + (g.TextHeight - icn.Graphics.Height) / 2)
 		        Else
 		          // Line number.
 		          gg.DrawingColor = LineNumbersColor
@@ -2636,10 +2636,11 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 53657473207468652069636F6E206F662074686520737065636966696564207A65726F2D6261736564206C696E6520696E64657820746F207468652070617373656420706963747572652E20596F752073686F756C6420656E737572652074686520686569676874206F6620746865207061737365642070696374757265206D6174636865732060456469746F722E4C696E65486569676874602E
+	#tag Method, Flags = &h0, Description = 53657473207468652069636F6E206F662074686520737065636966696564207A65726F2D6261736564206C696E6520696E64657820746F207468652070617373656420706963747572652E20596F752073686F756C6420656E737572652074686520686569676874206F6620746865207061737365642070696374757265206D6174636865732060456469746F722E4C696E65486569676874602E205468652069636F6E2077696C6C207265706C61636520746865206C696E65206E756D62657220666F722074686973206C696E652E
 		Sub LineIcon(lineIndex As Integer, Assigns p As Picture)
 		  /// Sets the icon of the specified zero-based line index to the passed picture.
 		  /// You should ensure the height of the passed picture matches `Editor.LineHeight`.
+		  /// The icon will replace the line number for this line.
 		  
 		  Var line As SyntaxArea.TextLine = lines.getLine(lineIndex)
 		  
@@ -4215,6 +4216,22 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 49662074686520737065636966696564206C696E6520686173206120626F6F6B6D61726B2C2069742069732072656D6F7665642C206F746865727769736520697420697320656E61626C65642E
+		Sub ToggleBookmark(lineIndex As Integer)
+		  /// If the specified line has a bookmark, it is removed, otherwise it is enabled.
+		  
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineIndex)
+		  If line = Nil Then Return
+		  
+		  If BookmarkTable.HasKey(lineIndex) Then
+		    ClearBookmark(lineIndex)
+		  Else
+		    AddBookmark(lineIndex)
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub ToggleLineFold(lineIndex As Integer)
 		  If Not EnableLineFoldings Then Return
@@ -4690,9 +4707,9 @@ Implements MessageCentre.MessageReceiver
 			      p = Me.Window.BitmapForCaching(9, 9)
 			    End If
 			    
-			    p.Graphics.DrawingColor = Color.Green
+			    p.Graphics.DrawingColor = Color.White
 			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
-			    p.Graphics.DrawingColor = Color.Blue
+			    p.Graphics.DrawingColor = Color.Magenta
 			    p.Graphics.FillRectangle(0, 0, 5, 5)
 			    
 			    mBookmarkImage = p
@@ -4805,7 +4822,7 @@ Implements MessageCentre.MessageReceiver
 		Private CaretDesiredColumn As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520696E646578206F6620746865206C696E6520746865206361726574206973206F6E20287A65726F2D6261736564292E
 		#tag Getter
 			Get
 			  Return mCaretLine

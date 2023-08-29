@@ -196,6 +196,68 @@ Begin DesktopWindow Window1
          Width           =   739
       End
    End
+   Begin DesktopButton ButtonAddIcon
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Add Icon (0)"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   767
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   134
+   End
+   Begin DesktopButton ButtonToggleBookmark
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Toggle Bookmark"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   767
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   52
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   134
+   End
 End
 #tag EndDesktopWindow
 
@@ -254,6 +316,25 @@ End
 		  Me.Text = DEMO_XOJO_CODE
 		  
 		  CodeEditor.BackColor = New ColorGroup(Color.White, Color.Black)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ButtonAddIcon
+	#tag Event
+		Sub Pressed()
+		  // Adds a line icon to line 0.
+		  Var p As Picture = Window1.BitmapForCaching(10, CodeEditor.LineHeight)
+		  p.Graphics.DrawingColor = Color.Purple
+		  p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
+		  CodeEditor.LineIcon(0) = p
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ButtonToggleBookmark
+	#tag Event
+		Sub Pressed()
+		  // Toggles the bookmark for the line the caret is on.
+		  CodeEditor.ToggleBookmark(CodeEditor.CaretLine)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
