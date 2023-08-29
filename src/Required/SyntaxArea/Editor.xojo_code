@@ -60,6 +60,7 @@ Implements MessageCentre.MessageReceiver
 		  /// `command` is a string constant telling us which command we need to handle.
 		  
 		  CurrentEventID = System.Ticks
+		  Typing = False
 		  
 		  Select Case command
 		    // =========================================
@@ -737,6 +738,16 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMenuHandler
 
 
+	#tag Method, Flags = &h0, Description = 41646473206120626F6F6B6D61726B20746F20746865207370656369666963207A65726F2D6261736564206C696E652E
+		Sub AddBookmark(lineIndex As Integer)
+		  /// Adds a bookmark to the specific zero-based line.
+		  
+		  BookmarkTable.Value(lineIndex) = Nil
+		  InvalidateLine(lineIndex)
+		  Redraw
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub AutocompleteCancelled(requestFocus As Boolean)
 		  If requestFocus Then SetFocus
@@ -812,7 +823,7 @@ Implements MessageCentre.MessageReceiver
 		  // Get all of the autocomplete options for the word.
 		  Call FetchAutocompleteOptions
 		  If CurrentAutocompleteOptions = Nil Then
-		     // Nothing to autocomplete.
+		    // Nothing to autocomplete.
 		    Return
 		  End If
 		  If CurrentAutocompleteOptions.Options.LastIndex < 0 Then Return
@@ -1311,6 +1322,38 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52656D6F7665732074686520626F6F6B6D61726B2066726F6D2074686520737065636966696564207A65726F2D6261736564206C696E6520696E64657820696620697420686173206F6E652E
+		Sub ClearBookmark(lineIndex As Integer)
+		  /// Removes the bookmark from the specified zero-based line index if it has one.
+		  
+		  If Not BookmarkTable.HasKey(lineIndex) Then Return
+		  
+		  BookmarkTable.Remove(lineIndex)
+		  InvalidateLine(lineIndex)
+		  Redraw
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 436C6561727320616C6C206C696E6520626F6F6B6D61726B732E
+		Sub ClearBookmarks()
+		  /// Clears all line bookmarks.
+		  
+		  BookmarkTable.RemoveAll
+		  InvalidateAllLines
+		  Redraw
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4D61726B7320616C6C206C696E657320617320636C65616E2028692E652E206E6F74206469727479292E
+		Sub ClearDirtyLines()
+		  /// Marks all lines as clean (i.e. not dirty).
+		  
+		  Lines.ClearDirtyLines
+		  InvalidateAllLines
+		  Redraw
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 436C6561727320686967686C6967687465642072616E67657320616E6420726564726177732E
 		Sub ClearHighlightedCharacterRanges()
 		  /// Clears highlighted ranges and redraws.
@@ -1741,7 +1784,7 @@ Implements MessageCentre.MessageReceiver
 		      PaintBelowLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
 		      
 		      // Paint the line.
-		      line.Paint(TextStorage, g, sx, sy - (g.TextHeight - g.FontAscent), TextColor, DisplayInvisibleCharacters, SelectionStart, SelectionLength, True, Self.IndentVisually)
+		      line.Paint(TextStorage, g, sx, sy - (g.TextHeight - g.FontAscent), TextColor, DisplayInvisibleCharacters, SelectionStart, SelectionLength, True, Self.IndentVisually, BlockFoldedTrailImage)
 		      
 		      // Line overlay?
 		      PaintAboveLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
@@ -1752,7 +1795,7 @@ Implements MessageCentre.MessageReceiver
 		        If tmp <> Nil Then
 		          // Make italic and paint after the current line.
 		          tmp.Italic = True
-		          tmp.Paint(TextStorage, g, sx + line.TotalWidth + SyntaxArea.BlockFoldedTrailImage.Width + 6, sy - (g.TextHeight - g.FontAscent), TextColor, False, SelectionStart, SelectionLength, False, Self.IndentVisually)
+		          tmp.Paint(TextStorage, g, sx + line.TotalWidth + BlockFoldedTrailImage.Graphics.Width + 6, sy - (g.TextHeight - g.FontAscent), TextColor, False, SelectionStart, SelectionLength, False, Self.IndentVisually, BlockFoldedTrailImage)
 		          tmp.Italic = False
 		        End If
 		      End If
@@ -1794,7 +1837,7 @@ Implements MessageCentre.MessageReceiver
 		        If BookmarkTable.HasKey(lineIdx) Then
 		          Var img As Picture = UseBookmarkIconForLine(lineIdx)
 		          If img = Nil Then img = BookmarkImage
-		          gg.DrawPicture(img, 0, sy - g.TextHeight + (g.TextHeight - img.Height) / 2)
+		          gg.DrawPicture(img, 0, sy - g.TextHeight + (g.TextHeight - img.Graphics.Height) / 2)
 		        End If
 		        
 		        // Row icon available?
@@ -2533,6 +2576,14 @@ Implements MessageCentre.MessageReceiver
 		Function LineDelimiter() As String
 		  Return lines.LineEnding
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732054727565206966207468652071756572696564207A65726F2D6261736564206C696E6520696E64657820686173206120626F6F6B6D61726B2E
+		Function LineHasBookmark(lineIndex As Integer) As Boolean
+		  /// Returns True if the queried zero-based line index has a bookmark.
+		  
+		  Return BookmarkTable.HasKey(lineIndex)
 		End Function
 	#tag EndMethod
 
@@ -4431,8 +4482,8 @@ Implements MessageCentre.MessageReceiver
 		AutoCompleteDone As Boolean = True
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected AutocompleteSuggestionInsertionX As Double
+	#tag Property, Flags = &h21
+		Private AutocompleteSuggestionInsertionX As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -4456,12 +4507,12 @@ Implements MessageCentre.MessageReceiver
 		BackColor As ColorGroup
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h1
-		Protected BlockBeginPosX As Double
+	#tag Property, Flags = &h21
+		Private BlockBeginPosX As Double
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected BlockBeginPosY As Double
+	#tag Property, Flags = &h21
+		Private BlockBeginPosY As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -4524,6 +4575,34 @@ Implements MessageCentre.MessageReceiver
 		Private BlockFoldedImage As Picture
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F207573652061742074686520656E64206F6620746865206669727374206C696E6520696E206120666F6C64656420626C6F636B2074686174207369676E696669657320746865726520617265206164646974696F6E616C206C696E65732E
+		#tag Getter
+			Get
+			  #Pragma Warning "TODO: Actually draw an ellipsis"
+			  
+			  If mBlockFoldedTrailImage = Nil Then
+			    Var p As Picture
+			    If Me.Window = Nil Then
+			      p = New Picture(17, mLineHeight)
+			    Else
+			      p = Me.Window.BitmapForCaching(17, mLineHeight)
+			    End If
+			    
+			    p.Graphics.DrawingColor = Color.Cyan
+			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
+			    p.Graphics.DrawingColor = Color.Brown
+			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    
+			    mBlockFoldedTrailImage = p
+			  End If
+			  
+			  Return mBlockFoldedTrailImage
+			  
+			End Get
+		#tag EndGetter
+		Private BlockFoldedTrailImage As Picture
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F2075736520666F722074686520626C6F636B20737461727420696D61676520696E20746865206775747465722E
 		#tag Getter
 			Get
@@ -4552,22 +4631,35 @@ Implements MessageCentre.MessageReceiver
 		Private BlockStartImage As Picture
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
-			  #Pragma Warning "TODO: Replace this bundled image with something else?"
+			  #Pragma Warning "TODO: Actually draw a bookmark image"
 			  
-			  If gBookmarkImage = Nil Then
-			    gBookmarkImage = SyntaxArea.LoadMaskedPicture(bookmarksimg)
+			  If mBookmarkImage = Nil Then
+			    Var p As Picture
+			    If Me.Window = Nil Then
+			      p = New Picture(9, 9)
+			    Else
+			      p = Me.Window.BitmapForCaching(9, 9)
+			    End If
+			    
+			    p.Graphics.DrawingColor = Color.Green
+			    p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
+			    p.Graphics.DrawingColor = Color.Blue
+			    p.Graphics.FillRectangle(0, 0, 5, 5)
+			    
+			    mBookmarkImage = p
 			  End If
 			  
-			  Return gBookmarkImage
+			  Return mBookmarkImage
+			  
 			End Get
 		#tag EndGetter
-		Protected Shared BookmarkImage As Picture
+		Private BookmarkImage As Picture
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21, Description = 53746F7265732074686520696E6469636573206F6620746865206C696E6573207769746820626F6F6B6D61726B732E204B6579203D206C696E6520696E6465782C2056616C7565203D20756E757365642E
 		#tag Getter
 			Get
 			  If mBookmarkTable = Nil Then
@@ -4582,7 +4674,7 @@ Implements MessageCentre.MessageReceiver
 			  mBookmarkTable = value
 			End Set
 		#tag EndSetter
-		Protected BookmarkTable As Dictionary
+		Private BookmarkTable As Dictionary
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -4648,7 +4740,7 @@ Implements MessageCentre.MessageReceiver
 		CaretColor As ColorGroup
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
 			  Var x, y As Double
@@ -4664,7 +4756,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Get
 		#tag EndGetter
-		Protected CaretDesiredColumn As Integer
+		Private CaretDesiredColumn As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -4699,12 +4791,12 @@ Implements MessageCentre.MessageReceiver
 		ClearHighlightedRangesOnTextChange As Boolean = True
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected CurrentDocumentSymbols As Dictionary
+	#tag Property, Flags = &h21
+		Private CurrentDocumentSymbols As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected CurrentEventID As Integer
+	#tag Property, Flags = &h21
+		Private CurrentEventID As Integer
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -4716,12 +4808,12 @@ Implements MessageCentre.MessageReceiver
 		Shared CurrentFocusedField As SyntaxArea.Editor
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h1
-		Protected CurrentSuggestionWindow As SuggestionWindow
+	#tag Property, Flags = &h21
+		Private CurrentSuggestionWindow As SuggestionWindow
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected CursorIsIbeam As Boolean = True
+	#tag Property, Flags = &h21
+		Private CursorIsIbeam As Boolean = True
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520746F20686967686C696768742022646972747922206C696E65732E
@@ -4822,16 +4914,16 @@ Implements MessageCentre.MessageReceiver
 		Private Shared DragSource As SyntaxArea.Editor
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected DragTextOnDrag As Boolean
+	#tag Property, Flags = &h21
+		Private DragTextOnDrag As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected DragTextPos As Integer
+	#tag Property, Flags = &h21
+		Private DragTextPos As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected DragTextSelection As SyntaxArea.DataRange
+	#tag Property, Flags = &h21
+		Private DragTextSelection As SyntaxArea.DataRange
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -4874,6 +4966,10 @@ Implements MessageCentre.MessageReceiver
 			  mFontSize = value
 			  TextHeight = 0
 			  
+			  // We need to redraw the trailing folded line image as it's
+			  // height varies depending on the line height.
+			  mBlockFoldedTrailImage = Nil
+			  
 			  mLastLongestLineLength = 0
 			  mLastLongestLinePixels = 0
 			  MaxLineLengthChanged(Lines.LongestLineIdx)
@@ -4889,10 +4985,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private Shared gBookmarkImage As Picture
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private Shared gCurrentFocusedField As SyntaxArea.Editor
 	#tag EndProperty
 
@@ -4900,8 +4992,8 @@ Implements MessageCentre.MessageReceiver
 		Private Shared gRightMargInlineImage As Picture
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected Gutter As Picture
+	#tag Property, Flags = &h21
+		Private Gutter As Picture
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206775747465722773206261636B67726F756E642E
@@ -4955,7 +5047,7 @@ Implements MessageCentre.MessageReceiver
 		HighlightBlocksOnMouseOverGutter As Boolean
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
 			  If mHighlightedRanges = Nil Then
@@ -4972,7 +5064,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		Protected HighlightedRanges As SyntaxArea.CharSelectionManager
+		Private HighlightedRanges As SyntaxArea.CharSelectionManager
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -5029,7 +5121,7 @@ Implements MessageCentre.MessageReceiver
 		IndentVisually As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
 			  If mInvalidLines = Nil Then
@@ -5045,7 +5137,7 @@ Implements MessageCentre.MessageReceiver
 			  mInvalidLines = value
 			End Set
 		#tag EndSetter
-		Protected InvalidLines As Dictionary
+		Private InvalidLines As Dictionary
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -5070,16 +5162,16 @@ Implements MessageCentre.MessageReceiver
 		KeepEntireTextIndented As Boolean
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h1
-		Protected LastClickTicks As Integer
+	#tag Property, Flags = &h21
+		Private LastClickTicks As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected LastDragTicks As Integer
+	#tag Property, Flags = &h21
+		Private LastDragTicks As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected LastDrawnTopLine As Integer
+	#tag Property, Flags = &h21
+		Private LastDrawnTopLine As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5102,8 +5194,8 @@ Implements MessageCentre.MessageReceiver
 		Private LastRedrawTicks As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected LastTripleClickTicks As Integer
+	#tag Property, Flags = &h21
+		Private LastTripleClickTicks As Integer
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5123,7 +5215,7 @@ Implements MessageCentre.MessageReceiver
 		LeftMarginOffset As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
 			  If Not DisplayLineNumbers Then Return 0
@@ -5151,7 +5243,7 @@ Implements MessageCentre.MessageReceiver
 			  mLineNumberOffset = 0
 			End Set
 		#tag EndSetter
-		Protected LineNumberOffset As Integer
+		Private LineNumberOffset As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206C696E65206E756D626572732E
@@ -5207,7 +5299,7 @@ Implements MessageCentre.MessageReceiver
 		LineNumbersTextFont As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
 			  If mLines = Nil Then
@@ -5226,15 +5318,15 @@ Implements MessageCentre.MessageReceiver
 			  mLines = value
 			End Set
 		#tag EndSetter
-		Protected Lines As SyntaxArea.LineManager
+		Private Lines As SyntaxArea.LineManager
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private LoadingDocument As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected MatchingBlockHighlight As SyntaxArea.CharSelection
+	#tag Property, Flags = &h21
+		Private MatchingBlockHighlight As SyntaxArea.CharSelection
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5275,7 +5367,15 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mBlockFoldedTrailImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mBlockStartImage As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBookmarkImage As Picture
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5290,8 +5390,8 @@ Implements MessageCentre.MessageReceiver
 		Private mBracketHighlightColor As ColorGroup
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mCaretBlinker As SyntaxArea.CaretBlinker
+	#tag Property, Flags = &h21
+		Private mCaretBlinker As SyntaxArea.CaretBlinker
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5318,8 +5418,8 @@ Implements MessageCentre.MessageReceiver
 		Private mCurrentAutocompleteOptions As SyntaxArea.AutocompleteOptions
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mDesiredColumnCharPos As Integer
+	#tag Property, Flags = &h21
+		Private mDesiredColumnCharPos As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5354,8 +5454,8 @@ Implements MessageCentre.MessageReceiver
 		Private mFontSize As Integer = 0
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mFullRefresh As Boolean
+	#tag Property, Flags = &h21
+		Private mFullRefresh As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5366,8 +5466,8 @@ Implements MessageCentre.MessageReceiver
 		Private mGutterSeparationLineColor As ColorGroup
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mHasFocus As Boolean
+	#tag Property, Flags = &h21
+		Private mHasFocus As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5382,8 +5482,8 @@ Implements MessageCentre.MessageReceiver
 		Private mHighlightTimer As Timer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mHorizontalScrollbar As DesktopScrollbar
+	#tag Property, Flags = &h21
+		Private mHorizontalScrollbar As DesktopScrollbar
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5410,16 +5510,16 @@ Implements MessageCentre.MessageReceiver
 		Private mLastLongestLineLength As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mLastLongestLinePixels As Single
+	#tag Property, Flags = &h21
+		Private mLastLongestLinePixels As Single
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLeftMarginOffset As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h0, Description = 412063616368656420636F7079206F6620746865206C696E65206865696768742C206C61737420636F6D707574656420696E2044726177436F6E74656E74732E
-		mLineHeight As Double
+	#tag Property, Flags = &h21, Description = 412063616368656420636F7079206F6620746865206C696E65206865696768742C206C61737420636F6D707574656420696E2044726177436F6E74656E74732E
+		Private mLineHeight As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5450,7 +5550,7 @@ Implements MessageCentre.MessageReceiver
 		Private mModifiedLines As SyntaxArea.ModifiedLineRangeManager
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
 			  If mModifiedLines = Nil Then
@@ -5466,11 +5566,11 @@ Implements MessageCentre.MessageReceiver
 			  mModifiedLines = value
 			End Set
 		#tag EndSetter
-		Protected ModifiedLines As SyntaxArea.ModifiedLineRangeManager
+		Private ModifiedLines As SyntaxArea.ModifiedLineRangeManager
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
-		MouseOverBlock As Dictionary
+	#tag Property, Flags = &h21
+		Private MouseOverBlock As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5549,8 +5649,8 @@ Implements MessageCentre.MessageReceiver
 		Private mUndoMgr As UndoKit.UndoManager
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mVerticalScrollbar As DesktopScrollbar
+	#tag Property, Flags = &h21
+		Private mVerticalScrollbar As DesktopScrollbar
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5569,8 +5669,8 @@ Implements MessageCentre.MessageReceiver
 		Private OptionForTrailingSuggestion As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected PreviouslyDrawnSelection As SyntaxArea.CharSelection
+	#tag Property, Flags = &h21
+		Private PreviouslyDrawnSelection As SyntaxArea.CharSelection
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5928,7 +6028,7 @@ Implements MessageCentre.MessageReceiver
 		TextSelectionColor As ColorGroup
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
 			  If mTextStorage = Nil Then
@@ -5948,7 +6048,7 @@ Implements MessageCentre.MessageReceiver
 			  mTextStorage = value
 			End Set
 		#tag EndSetter
-		Protected TextStorage As SyntaxArea.GapBuffer
+		Private TextStorage As SyntaxArea.GapBuffer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5965,12 +6065,12 @@ Implements MessageCentre.MessageReceiver
 		ThickInsertionPoint As Boolean
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h1
-		Protected TrailingSuggestion As String
+	#tag Property, Flags = &h21
+		Private TrailingSuggestion As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected Typing As Boolean
+	#tag Property, Flags = &h21
+		Private Typing As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -6625,14 +6725,6 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mLineHeight"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

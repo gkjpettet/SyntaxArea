@@ -220,7 +220,7 @@ Inherits SyntaxArea.TextSegment
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 44726177732074686973206C696E652E
-		Sub Paint(storage As SyntaxArea.GapBuffer, g As Graphics, x As Double, y As Double, defaultColor As Color, displayInvisible As Boolean, selStart As Integer, selLength As Integer, showLeadingSpace As Boolean, indentVisually As Boolean)
+		Sub Paint(storage As SyntaxArea.GapBuffer, g As Graphics, x As Double, y As Double, defaultColor As Color, displayInvisible As Boolean, selStart As Integer, selLength As Integer, showLeadingSpace As Boolean, indentVisually As Boolean, foldedTrailImage As Picture)
 		  /// Draws this line.
 		  
 		  #If Not DebugBuild
@@ -395,8 +395,7 @@ Inherits SyntaxArea.TextSegment
 		  
 		  // Ellipsis image.
 		  If folded Then
-		    Var img As Picture = SyntaxArea.BlockFoldedTrailImage
-		    g.DrawPicture(img, x + 3, y - g.FontAscent + (g.TextHeight - img.Height) / 2 + 1)
+		    g.DrawPicture(foldedTrailImage, x + 3, y - g.FontAscent + (g.TextHeight - foldedTrailImage.Graphics.Height) / 2 + 1)
 		  End If
 		  
 		  showInvisible = displayInvisible

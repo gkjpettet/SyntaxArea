@@ -150,22 +150,6 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function LoadMaskedPicture(image As Picture) As Picture
-		  /// Internally used when drawing block folded markers.
-		  
-		  #Pragma Warning "TODO: Can this be removed if we use Retina image sets?"
-		  ' Need to move away from required bundled images.
-		  
-		  If image = Nil Then Return Nil
-		  
-		  Var newPic As Picture = New Picture(image.Width / 2, Image.Height)
-		  newPic.Graphics.DrawPicture(image, 0, 0)
-		  
-		  Return newPic
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, Description = 46696E647320746865206C6F6E6765737420636F6D6D6F6E20707265666978206265747765656E2074776F20737472696E67732E
 		Function LongestCommonPrefixIndex(Extends source As String, target As String) As Integer
 		  /// Finds the longest common prefix between two strings.
@@ -229,20 +213,6 @@ Protected Module SyntaxArea
 	#tag EndMethod
 
 
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  If mBlocktrailImage = Nil Then
-			    #Pragma Warning "TODO: Remove the need for a bundled image"
-			    mBlocktrailImage = SyntaxArea.LoadMaskedPicture(blockFoldedTrailMarker)
-			  End If
-			  
-			  Return mBlocktrailImage
-			End Get
-		#tag EndGetter
-		Protected BlockFoldedTrailImage As Picture
-	#tag EndComputedProperty
-
 	#tag ComputedProperty, Flags = &h1, Description = 54686520656E636F64696E67207573656420696E7465726E616C6C792062792053796E746178417265612E
 		#tag Getter
 			Get
@@ -255,10 +225,6 @@ Protected Module SyntaxArea
 		#tag EndGetter
 		Protected InternalEncoding As TextEncoding
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private mBlocktrailImage As Picture
-	#tag EndProperty
 
 
 	#tag Constant, Name = DebugIndentation, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected, Description = 53657420746F205472756520696620796F7527726520747279696E6720746F20646562756720696E64656E746174696F6E206973737565732E
