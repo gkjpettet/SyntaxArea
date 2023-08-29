@@ -685,6 +685,21 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndEvent
 
+	#tag Event
+		Sub ScaleFactorChanged(newScaleFactor as Double)
+		  #Pragma Unused newScaleFactor
+		  
+		  mFullRefresh = True
+		  
+		  mBlockEndImage = Nil
+		  mBlockFoldedImage = Nil
+		  mBlockFoldedTrailImage = Nil
+		  mBlockStartImage = Nil
+		  mBookmarkImage = Nil
+		  
+		End Sub
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function EditClear() As Boolean Handles EditClear.Action
@@ -2064,8 +2079,8 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub GetFieldXY(ByRef locX As Double, ByRef locY As Double)
+	#tag Method, Flags = &h21
+		Private Sub GetFieldXY(ByRef locX As Double, ByRef locY As Double)
 		  // Find the window where this control is since the control can be deep 
 		  // within container controls...
 		  locX = Me.Left
@@ -2603,6 +2618,37 @@ Implements MessageCentre.MessageReceiver
 		  For i As Integer = 0 To line.LineSymbols.KeyCount - 1
 		    CurrentDocumentSymbols.Value(line) = Nil
 		  Next i
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E73207468652069636F6E20666F722074686520676976656E207A65726F2D6261736564206C696E6520696E646578206F72204E696C2069662074686572652069736E2774206F6E652E
+		Function LineIcon(lineIndex As Integer) As Picture
+		  /// Returns the icon for the given zero-based line index or Nil if there isn't one.
+		  
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineIndex)
+		  If line = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return line.Icon
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 53657473207468652069636F6E206F662074686520737065636966696564207A65726F2D6261736564206C696E6520696E64657820746F207468652070617373656420706963747572652E20596F752073686F756C6420656E737572652074686520686569676874206F6620746865207061737365642070696374757265206D6174636865732060456469746F722E4C696E65486569676874602E
+		Sub LineIcon(lineIndex As Integer, Assigns p As Picture)
+		  /// Sets the icon of the specified zero-based line index to the passed picture.
+		  /// You should ensure the height of the passed picture matches `Editor.LineHeight`.
+		  
+		  Var line As SyntaxArea.TextLine = lines.getLine(lineIndex)
+		  
+		  line.Icon = p
+		  If line.Icon = Nil Then Return
+		  
+		  InvalidateLine(lineIndex)
+		  
+		  Redraw
 		  
 		End Sub
 	#tag EndMethod
@@ -5215,6 +5261,15 @@ Implements MessageCentre.MessageReceiver
 		LeftMarginOffset As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 546865206865696768742C20696E20706978656C732C206F662065616368206C696E652E2044657465726D696E65642062792074686520666F6E742073697A652E20526561642D6F6E6C792E
+		#tag Getter
+			Get
+			  Return mLineHeight
+			End Get
+		#tag EndGetter
+		LineHeight As Double
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
@@ -6746,6 +6801,14 @@ Implements MessageCentre.MessageReceiver
 				"0 - CtrlSpace"
 				"1 - Tab"
 			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

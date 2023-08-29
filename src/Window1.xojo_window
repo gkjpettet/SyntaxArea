@@ -38,6 +38,7 @@ Begin DesktopWindow Window1
       PanelCount      =   1
       Panels          =   ""
       Scope           =   0
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   False
@@ -135,7 +136,7 @@ Begin DesktopWindow Window1
          ClearHighlightedRangesOnTextChange=   True
          DirtyLinesColor =   &cFFD47900
          DisableReset    =   False
-         DisplayDirtyLines=   False
+         DisplayDirtyLines=   True
          DisplayInvisibleCharacters=   False
          DisplayLineNumbers=   True
          DisplayRightMarginMarker=   False
@@ -168,7 +169,6 @@ Begin DesktopWindow Window1
          LockRight       =   True
          LockTop         =   True
          MaxVisibleLines =   0
-         mLineHeight     =   0.0
          ReadOnly        =   False
          RightMarginAtPixel=   0
          RightScrollMargin=   150
