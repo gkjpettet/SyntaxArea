@@ -322,8 +322,7 @@ Protected Class HighlightDefinition
 
 	#tag Method, Flags = &h21
 		Private Sub IndentNode(node As XmlNode, level As Integer, indentCloseTag As Boolean = False)
-		  #Pragma Warning "CHECK: Why is this static?"
-		  Static ss As String
+		  Var ss As String // NOTE: This was static in the original CEF code. Relevant?
 		  
 		  If ss = "" Then
 		    ss = EndOfLine
