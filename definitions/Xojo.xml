@@ -48,7 +48,7 @@
         </highlightContext>
 
 		<highlightContext name="PreProcessor" highlightColor="#0000FF">
-            <entryRegEx>(#\w+)</entryRegEx>
+            <entryRegEx>#(?:if|elseif|else|endif|pragma)</entryRegEx>
         </highlightContext>        
 		
 		<highlightContext name="Comment" highlightColor="#7F0000" italic="true">
@@ -82,7 +82,7 @@
 				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{4})[[:xdigit:]]{1,2}</entryRegEx>
 		</highlightContext>
 
-        <highlightContext name="BasicTypes" highlightColor="#0000FF" bold="true">
+        <highlightContext name="BasicTypes" highlightColor="#0000FF" bold="false">
             <keywords>
 				<string>Boolean</string>
 				<string>Color</string>
@@ -103,7 +103,7 @@
             </keywords>
         </highlightContext>
 
-        <highlightContext name="Keywords" highlightColor="#0000FF" bold="true">
+        <highlightContext name="Keywords" highlightColor="#0000FF" bold="false">
             <keywords>
 				<string>#Else</string>
 				<string>#ElseIf</string>
