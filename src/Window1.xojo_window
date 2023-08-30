@@ -147,6 +147,7 @@ Begin DesktopWindow Window1
          Enabled         =   True
          EnableLineFoldings=   True
          EnableLineFoldingSetting=   False
+         FontName        =   "Source Code Pro"
          FontSize        =   13
          GutterBackgroundColor=   &cD6D6D600
          GutterSeparationLineColor=   &c00000000
@@ -162,11 +163,11 @@ Begin DesktopWindow Window1
          InitialParent   =   "Panel"
          KeepEntireTextIndented=   True
          Left            =   0
-         LeftMarginOffset=   0
+         LeftMarginOffset=   5
          LineHeight      =   0.0
          LineNumbersColor=   &c00000000
+         LineNumbersFontName=   "System"
          LineNumbersFontSize=   12
-         LineNumbersTextFont=   "System"
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -181,7 +182,6 @@ Begin DesktopWindow Window1
          ScrollPositionX =   0
          SelectionLength =   0
          SelectionStart  =   0
-         SelText         =   ""
          SuggestionPopupBackColor=   &cFFFFFF00
          SuggestionPopupSelectedColor=   &c00000000
          SuggestionPopupTextColor=   &c00000000
@@ -191,7 +191,6 @@ Begin DesktopWindow Window1
          TabWidth        =   0
          Text            =   ""
          TextColor       =   &c00000000
-         TextFont        =   "Source Code Pro"
          TextHeight      =   0.0
          TextLength      =   0
          TextSelectionColor=   &cD783FF00

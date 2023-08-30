@@ -314,7 +314,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  #Pragma Unused location
 		  
-		  Return Self.TextFont
+		  Return Self.FontName
 		  
 		End Function
 	#tag EndEvent
@@ -639,7 +639,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  RaiseEvent Opening
 		  
-		  If TextFont = "" Then TextFont = DEFAULT_FONT
+		  If FontName = "" Then FontName = DEFAULT_FONT
 		  If FontSize = 0 Then FontSize = DEFAULT_FONTSIZE
 		  
 		  Me.MouseCursor = System.Cursors.IBeam
@@ -708,7 +708,7 @@ Implements MessageCentre.MessageReceiver
 
 	#tag MenuHandler
 		Function EditClear() As Boolean Handles EditClear.Action
-		  Me.SelText = ""
+		  Me.SelectionText = ""
 		  Redraw
 		  Return True
 		End Function
@@ -726,9 +726,9 @@ Implements MessageCentre.MessageReceiver
 		Function EditCut() As Boolean Handles EditCut.Action
 		  Var c As New Clipboard
 		  
-		  c.Text = Me.SelText.ReplaceAll(Chr(1), Chr(0))
+		  c.Text = Me.SelectionText.ReplaceAll(Chr(1), Chr(0))
 		  
-		  Me.SelText = ""
+		  Me.SelectionText = ""
 		  
 		  Redraw
 		  
@@ -820,7 +820,7 @@ Implements MessageCentre.MessageReceiver
 		  If option <> "" Then
 		    If SelectionLength > 0 Then
 		      // Replace the highlighted text.
-		      SelText = option
+		      SelectionText = option
 		      
 		    Else
 		      // Add option to current word, removing common prefix.
@@ -828,7 +828,7 @@ Implements MessageCentre.MessageReceiver
 		        // We need to replace the whole word with the Autocomplete option.
 		        PrivateReplace(CaretPos - CurrentAutocompleteOptions.CurrentPathComponent.Length, CurrentAutocompleteOptions.CurrentPathComponent.Length, option)
 		      Else
-		        SelText = option.Middle(option.LongestCommonPrefixIndex(CurrentAutocompleteOptions.CurrentPathComponent) + 1)
+		        SelectionText = option.Middle(option.LongestCommonPrefixIndex(CurrentAutocompleteOptions.CurrentPathComponent) + 1)
 		      End If
 		    End If
 		  End If
@@ -1340,10 +1340,10 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Var textToCopy As String
 		  
-		  textToCopy = Me.SelText.ReplaceAll(Chr(1), Chr(0))
+		  textToCopy = Me.SelectionText.ReplaceAll(Chr(1), Chr(0))
 		  
 		  #If TargetWindows
-		    // As the `Text()` and `SelText()` functions use CR for line delimiters, 
+		    // As the `Text()` and `SelectionText()` functions use CR for line delimiters, 
 		    // we need to convert them into the native format here).
 		    textToCopy = textToCopy.ReplaceAll(Me.LineDelimiter, EndOfLine.Windows)
 		  #ElseIf TargetLinux
@@ -1579,7 +1579,7 @@ Implements MessageCentre.MessageReceiver
 		      If Gutter = Nil Or Gutter.Height <> g.Height Or gutter.Width <> gutterWidth Then
 		        Gutter = parentWindow.BitmapForCaching(gutterWidth, g.Height)
 		        gg = gutter.Graphics
-		        gg.FontName = LineNumbersTextFont
+		        gg.FontName = LineNumbersFontName
 		        gg.FontSize = LineNumbersFontSize
 		      Else
 		        gg = gutter.Graphics
@@ -1612,10 +1612,10 @@ Implements MessageCentre.MessageReceiver
 		  
 		  // Set the text properties.
 		  g.FontSize = FontSize
-		  g.FontName = TextFont
+		  g.FontName = FontName
 		  If g <> gr Then
 		    gr.FontSize = FontSize
-		    gr.FontName = TextFont
+		    gr.FontName = FontName
 		  End If
 		  
 		  // Cache the text height (used at the end of this method when setting the 
@@ -1798,13 +1798,13 @@ Implements MessageCentre.MessageReceiver
 		          // Line number.
 		          gg.DrawingColor = LineNumbersColor
 		          If gr = gg Then
-		            gg.FontName = LineNumbersTextFont
+		            gg.FontName = LineNumbersFontName
 		            gg.FontSize = LineNumbersFontSize
 		          End If
 		          gg.DrawText(Str(lineIdx + 1), LineNumberOffset - 2 - gg.TextWidth(Str(lineIdx + 1)) - FoldingOffset, sy - (TextHeight - gg.FontAscent) / 2)
 		          If gr = gg Then
 		            gg.FontSize = FontSize
-		            gg.FontName = TextFont
+		            gg.FontName = FontName
 		          End If
 		        End If
 		        
@@ -2226,7 +2226,7 @@ Implements MessageCentre.MessageReceiver
 		  Var drag As Picture = SelectedTextDragImage
 		  Var di As DragItem = New DragItem(Self.Window, x, y, drag.Width, drag.Height)
 		  
-		  di.Text = Me.SelText
+		  di.Text = Me.SelectionText
 		  
 		  // Set the dragging source.
 		  DragSource = Self
@@ -3393,7 +3393,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  t = t.ReplaceAll(Chr(0), Chr(1))
 		  
-		  Me.SelText = t
+		  Me.SelectionText = t
 		  
 		  InvalidateAllLines
 		  
@@ -3708,7 +3708,7 @@ Implements MessageCentre.MessageReceiver
 	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2E20596F752073686F756C646E277420757365206974206469726563746C792E20496E737465616420757365206053656C53746172746020616E64206053656C54657874602E
 		Sub PrivateRemove(offset As Integer, length As Integer, updateCaret As Boolean = True)
 		  /// This method is used internally by the control, and externally by the undo mechanism.
-		  /// You shouldn't use it directly. Instead use `SelStart` and `SelText`.
+		  /// You shouldn't use it directly. Instead use `SelStart` and `SelectionText`.
 		  
 		  // Prevent the LineHighlighter from interfering while we're modifying the lines.
 		  Var lock As New SyntaxArea.LinesLock(Self)
@@ -3742,7 +3742,7 @@ Implements MessageCentre.MessageReceiver
 	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2C20796F752073686F756C646E277420757365206974206469726563746C792C2075736520696E73746561642053656C656374696F6E537461727420616E642053656C546578742E
 		Sub PrivateReplace(offset As Integer, length As Integer, s As String, alwaysMarkChanged As Boolean = True, eventID As Integer = -1, keepSelection As Boolean = False, beSilent As Boolean = False)
 		  /// This method is used internally by the control, and externally by the undo mechanism, 
-		  /// you shouldn't use it directly, use instead SelectionStart and SelText.
+		  /// you shouldn't use it directly, use instead SelectionStart and SelectionText.
 		  
 		  // If keepSelection = False, it means that the selection+caret is reset to the end of 
 		  // the replaced text
@@ -4034,7 +4034,7 @@ Implements MessageCentre.MessageReceiver
 		Private Function SelectedTextDragImage() As Picture
 		  /// Returns a Picture representation of the selected text being dragged.
 		  
-		  Var s As String = SelText
+		  Var s As String = SelectionText
 		  Var selection As String = s.Left(200) + " "
 		  If s.Length > 200 Then selection = selection + "..."
 		  
@@ -4045,7 +4045,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Var image As Picture = New Picture(w, h, 32)
 		  image.Graphics.FontSize = FontSize
-		  image.Graphics.FontName = TextFont
+		  image.Graphics.FontName = FontName
 		  Image.Graphics.DrawText(selection, 0, Image.Graphics.TextHeight - (Image.Graphics.TextHeight - Image.Graphics.FontAscent), w)
 		  
 		  Return image
@@ -4156,7 +4156,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If mTempPicture = Nil Then mTempPicture = New Picture(2, 2)
 		  
-		  mTempPicture.Graphics.FontName = TextFont
+		  mTempPicture.Graphics.FontName = FontName
 		  mTempPicture.Graphics.FontSize = FontSize
 		  
 		  mTempPicture.Graphics.Bold = False
@@ -5052,6 +5052,28 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return mFontName
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value = mFontName Then Return
+			  
+			  mFontName = value
+			  TextHeight = 0
+			  InvalidateAllLines
+			  CalculateMaxHorizontalSB
+			  CalculateMaxVerticalSB
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		FontName As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return mFontSize
 			End Get
 		#tag EndGetter
@@ -5289,7 +5311,7 @@ Implements MessageCentre.MessageReceiver
 		Private LastTripleClickTicks As Integer
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 546865206E756D626572206F6620706978656C73207468652074657874206973206F66667365742066726F6D20746865206C6566742065646765206F662074686520656469746F722028692E652E207468652073706163696E67206265747765656E20746865207465787420616E642074686520677574746572292E
 		#tag Getter
 			Get
 			  Return mLeftMarginOffset
@@ -5322,7 +5344,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			  If mLineNumberOffset = 0 Then
 			    Var tmp As Picture = TemporaryPicture
-			    tmp.Graphics.FontName = LineNumbersTextFont
+			    tmp.Graphics.FontName = LineNumbersFontName
 			    tmp.Graphics.FontSize = LineNumbersFontSize
 			    tmp.Graphics.Bold = True
 			    mLineNumberOffset = Max(tmp.Graphics.TextWidth(Lines.Count.ToString) + BOOKMARK_WIDTH, MIN_LINENUMBER_OFFSET)
@@ -5366,6 +5388,24 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return mLineNumbersFontName
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mLineNumbersFontName = value
+			  LineNumberOffset = 0
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		LineNumbersFontName As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return mLineNumbersFontSize
 			End Get
 		#tag EndGetter
@@ -5379,24 +5419,6 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		LineNumbersFontSize As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mLineNumbersTextFont
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mLineNumbersTextFont = value
-			  LineNumberOffset = 0
-			  InvalidateAllLines
-			  Redraw
-			  
-			End Set
-		#tag EndSetter
-		LineNumbersTextFont As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -5567,6 +5589,10 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mFontName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mFontSize As Integer = 0
 	#tag EndProperty
 
@@ -5647,11 +5673,11 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLineNumbersFontSize As Integer = 9
+		Private mLineNumbersFontName As String = "System"
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLineNumbersTextFont As String = "System"
+		Private mLineNumbersFontSize As Integer = 9
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5751,10 +5777,6 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mTextColor As ColorGroup
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTextFont As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5932,10 +5954,10 @@ Implements MessageCentre.MessageReceiver
 		SelectionStart As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 47657473206F72207365747320746865207465787420696E207468652063757272656E742073656C656374696F6E2E204966207468657265206973206E6F2063757272656E742073656C656374696F6E207468656E2074657874206973207365742F7265747269657665642066726F6D207468652063757272656E7420636172657420706F736974696F6E2E
 		#tag Getter
 			Get
-			  // Returned line delimiters will be CR, i.e. Chr(13), by default and not CR+LF or LF,
+			  /// Returned line delimiters will be CR, i.e. Chr(13), by default and not CR+LF or LF,
 			  /// even on Windows and Linux.
 			  
 			  Return TextStorage.GetText(SelectionStart, SelectionLength)
@@ -5948,7 +5970,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		SelText As String
+		SelectionText As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F662074686520617574636F6D706C6574652073756767657374696F6E20706F7075702E
@@ -6133,27 +6155,6 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		TextColor As ColorGroup
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mTextFont
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value = mTextFont Then Return
-			  mTextFont = value
-			  TextHeight = 0
-			  InvalidateAllLines
-			  CalculateMaxHorizontalSB
-			  CalculateMaxVerticalSB
-			  Redraw
-			  
-			End Set
-		#tag EndSetter
-		TextFont As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -6654,22 +6655,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GutterBackgroundColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GutterSeparationLineColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="GutterWidth"
 			Visible=false
 			Group="Behavior"
@@ -6737,33 +6722,9 @@ Implements MessageCentre.MessageReceiver
 			Name="LeftMarginOffset"
 			Visible=true
 			Group="Behavior"
-			InitialValue="0"
+			InitialValue="5"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersFontSize"
-			Visible=true
-			Group="Behavior"
-			InitialValue="12"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersTextFont"
-			Visible=true
-			Group="Behavior"
-			InitialValue="System"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaxVisibleLines"
@@ -6791,7 +6752,7 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RightScrollMargin"
-			Visible=false
+			Visible=true
 			Group="Behavior"
 			InitialValue="150"
 			Type="Integer"
@@ -6830,7 +6791,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SelText"
+			Name="SelectionText"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -6862,7 +6823,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TextFont"
+			Name="FontName"
 			Visible=true
 			Group="Behavior"
 			InitialValue="System"
@@ -6984,6 +6945,46 @@ Implements MessageCentre.MessageReceiver
 			InitialValue=""
 			Type="ColorGroup"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GutterBackgroundColor"
+			Visible=true
+			Group="Gutter"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GutterSeparationLineColor"
+			Visible=true
+			Group="Gutter"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersColor"
+			Visible=true
+			Group="Gutter"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersFontSize"
+			Visible=true
+			Group="Gutter"
+			InitialValue="12"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersFontName"
+			Visible=true
+			Group="Gutter"
+			InitialValue="System"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

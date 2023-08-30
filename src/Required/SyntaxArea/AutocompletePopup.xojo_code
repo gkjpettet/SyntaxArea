@@ -135,7 +135,7 @@ Inherits DesktopListBox
 		  Me.Width = 0
 		  Me.DefaultRowHeight = 20
 		  Me.ColumnCount = 1
-		  Me.FontName = Owner.TextFont
+		  Me.FontName = Owner.FontName
 		  Me.FontSize = Owner.FontSize
 		End Sub
 	#tag EndMethod
@@ -149,7 +149,7 @@ Inherits DesktopListBox
 		  For Each option As String In options
 		    Me.AddRow(option)
 		    mTempPicture.Graphics.FontSize = Owner.FontSize
-		    mTempPicture.Graphics.FontName = Owner.TextFont
+		    mTempPicture.Graphics.FontName = Owner.FontName
 		    Var neededWidth As Integer = mTempPicture.Graphics.TextWidth(option)
 		    If neededWidth > Self.Width Then
 		      // Expand to fit the options.
