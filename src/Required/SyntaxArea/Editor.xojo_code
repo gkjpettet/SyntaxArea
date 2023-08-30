@@ -5003,7 +5003,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Shared DragSource As SyntaxArea.Editor
+		Private DragSource As SyntaxArea.Editor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
