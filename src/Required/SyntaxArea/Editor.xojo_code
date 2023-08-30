@@ -828,7 +828,7 @@ Implements MessageCentre.MessageReceiver
 		        // We need to replace the whole word with the Autocomplete option.
 		        PrivateReplace(CaretPos - CurrentAutocompleteOptions.CurrentPathComponent.Length, CurrentAutocompleteOptions.CurrentPathComponent.Length, option)
 		      Else
-		        SelectionText = option.Middle(option.LongestCommonPrefixIndex(CurrentAutocompleteOptions.CurrentPathComponent) + 1)
+		        SelectionText = option.Middle(option.LongestCommonPrefixIndex(CurrentAutocompleteOptions.CurrentPathComponent))
 		      End If
 		    End If
 		  End If

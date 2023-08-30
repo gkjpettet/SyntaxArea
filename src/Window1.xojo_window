@@ -121,7 +121,7 @@ Begin DesktopWindow Window1
       Begin SyntaxArea.Editor CodeEditor
          AllowFocusRing  =   False
          AutoCloseBrackets=   False
-         AutocompleteAppliesStandardCase=   True
+         AutocompleteAppliesStandardCase=   False
          AutocompleteCombo=   1
          AutoDeactivate  =   True
          AutoIndentNewLines=   True
@@ -274,15 +274,14 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  // Load the bundled Xojo syntax definition file.
 		  Var defFile As FolderItem = SpecialFolder.Resource("Xojo.xml")
 		  Var syntaxDefinition As New SyntaxArea.HighlightDefinition
 		  Call syntaxDefinition.LoadFromXml(defFile)
-		  
 		  CodeEditor.SyntaxDefinition = syntaxDefinition
 		  
+		  // Enable line foldings if the definition supports them.
 		  CodeEditor.EnableLineFoldings = syntaxDefinition.SupportsCodeBlocks
-		  
-		  CodeEditor.SetFocus
 		  
 		  #If TargetMacOS
 		    CodeEditor.HasBottomBorder = False
@@ -290,7 +289,10 @@ End
 		    CodeEditor.HasBottomBorder = True
 		  #EndIf
 		  
+		  // Setup up our simple demonstration autocomplete engine.
 		  InitialiseAutocompleteEngine
+		  
+		  CodeEditor.SetFocus
 		  
 		End Sub
 	#tag EndEvent
@@ -298,11 +300,99 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub InitialiseAutocompleteEngine()
-		  MyAutocompleteEngine = New AutocompleteEngine(True)
+		  /// Initialises our basic autocomplete engine for Xojo keywords.
 		  
-		  MyAutocompleteEngine.AddOption("test")
-		  MyAutocompleteEngine.AddOption("testing")
-		  MyAutocompleteEngine.AddOption("testible")
+		  MyAutocompleteEngine = New AutocompleteEngine(False)
+		  
+		  MyAutocompleteEngine.AddOption("#Else")
+		  MyAutocompleteEngine.AddOption("#ElseIf")
+		  MyAutocompleteEngine.AddOption("#End")
+		  MyAutocompleteEngine.AddOption("#If")
+		  MyAutocompleteEngine.AddOption("#Pragma")
+		  MyAutocompleteEngine.AddOption("AddHandler")
+		  MyAutocompleteEngine.AddOption("AddressOf")
+		  MyAutocompleteEngine.AddOption("And")
+		  MyAutocompleteEngine.AddOption("Array")
+		  MyAutocompleteEngine.AddOption("As")
+		  MyAutocompleteEngine.AddOption("Assigns")
+		  MyAutocompleteEngine.AddOption("Break")
+		  MyAutocompleteEngine.AddOption("ByRef")
+		  MyAutocompleteEngine.AddOption("ByVal")
+		  MyAutocompleteEngine.AddOption("Call")
+		  MyAutocompleteEngine.AddOption("Case")
+		  MyAutocompleteEngine.AddOption("Class")
+		  MyAutocompleteEngine.AddOption("Const")
+		  MyAutocompleteEngine.AddOption("Continue")
+		  MyAutocompleteEngine.AddOption("CType")
+		  MyAutocompleteEngine.AddOption("Declare")
+		  MyAutocompleteEngine.AddOption("Delegate")
+		  MyAutocompleteEngine.AddOption("Dim")
+		  MyAutocompleteEngine.AddOption("Do")
+		  MyAutocompleteEngine.AddOption("DownTo")
+		  MyAutocompleteEngine.AddOption("Each")
+		  MyAutocompleteEngine.AddOption("Else")
+		  MyAutocompleteEngine.AddOption("ElseIf")
+		  MyAutocompleteEngine.AddOption("End")
+		  MyAutocompleteEngine.AddOption("Enum")
+		  MyAutocompleteEngine.AddOption("Event")
+		  MyAutocompleteEngine.AddOption("Exception")
+		  MyAutocompleteEngine.AddOption("Exit")
+		  MyAutocompleteEngine.AddOption("Extends")
+		  MyAutocompleteEngine.AddOption("False")
+		  MyAutocompleteEngine.AddOption("Finally")
+		  MyAutocompleteEngine.AddOption("For")
+		  MyAutocompleteEngine.AddOption("Function")
+		  MyAutocompleteEngine.AddOption("Global")
+		  MyAutocompleteEngine.AddOption("Goto")
+		  MyAutocompleteEngine.AddOption("If")
+		  MyAutocompleteEngine.AddOption("Implements")
+		  MyAutocompleteEngine.AddOption("In")
+		  MyAutocompleteEngine.AddOption("Inherits")
+		  MyAutocompleteEngine.AddOption("Interface")
+		  MyAutocompleteEngine.AddOption("Is")
+		  MyAutocompleteEngine.AddOption("IsA")
+		  MyAutocompleteEngine.AddOption("Lib")
+		  MyAutocompleteEngine.AddOption("Loop")
+		  MyAutocompleteEngine.AddOption("Me")
+		  MyAutocompleteEngine.AddOption("Mod")
+		  MyAutocompleteEngine.AddOption("Module")
+		  MyAutocompleteEngine.AddOption("New")
+		  MyAutocompleteEngine.AddOption("Next")
+		  MyAutocompleteEngine.AddOption("Nil")
+		  MyAutocompleteEngine.AddOption("Not")
+		  MyAutocompleteEngine.AddOption("Object")
+		  MyAutocompleteEngine.AddOption("Optional")
+		  MyAutocompleteEngine.AddOption("Or")
+		  MyAutocompleteEngine.AddOption("ParamArray")
+		  MyAutocompleteEngine.AddOption("Private")
+		  MyAutocompleteEngine.AddOption("Property")
+		  MyAutocompleteEngine.AddOption("Protected")
+		  MyAutocompleteEngine.AddOption("Public")
+		  MyAutocompleteEngine.AddOption("Raise")
+		  MyAutocompleteEngine.AddOption("RaiseEvent")
+		  MyAutocompleteEngine.AddOption("Redim")
+		  MyAutocompleteEngine.AddOption("Rem")
+		  MyAutocompleteEngine.AddOption("RemoveHandler")
+		  MyAutocompleteEngine.AddOption("Return")
+		  MyAutocompleteEngine.AddOption("Select")
+		  MyAutocompleteEngine.AddOption("Self")
+		  MyAutocompleteEngine.AddOption("Shared")
+		  MyAutocompleteEngine.AddOption("Static")
+		  MyAutocompleteEngine.AddOption("Step")
+		  MyAutocompleteEngine.AddOption("Structure")
+		  MyAutocompleteEngine.AddOption("Sub")
+		  MyAutocompleteEngine.AddOption("Super")
+		  MyAutocompleteEngine.AddOption("Then")
+		  MyAutocompleteEngine.AddOption("To")
+		  MyAutocompleteEngine.AddOption("Try")
+		  MyAutocompleteEngine.AddOption("Until")
+		  MyAutocompleteEngine.AddOption("Using")
+		  MyAutocompleteEngine.AddOption("Var")
+		  MyAutocompleteEngine.AddOption("WeakAddressOf")
+		  MyAutocompleteEngine.AddOption("Wend")
+		  MyAutocompleteEngine.AddOption("With")
+		  MyAutocompleteEngine.AddOption("Xor")
+		  
 		End Sub
 	#tag EndMethod
 
