@@ -373,7 +373,7 @@ Implements MessageCentre.MessageReceiver
 		  #If TargetWindows Or TargetLinux
 		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
 		      If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
-		        AutocompleteManual
+		        ShowAutocompletion
 		      End If
 		      Return True
 		    End If
@@ -1322,12 +1322,6 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  #Pragma Warning "REMOVE: I think these references can be removed..."
-		  // Remember all opened editor objects so we can update them if dark mode is invoked.
-		  mWeakSelf = New WeakRef(Self)
-		  If gWeakCEFs = Nil Then gWeakCEFs = New Dictionary
-		  gWeakCEFs.Value(mWeakSelf) = True
-		  
 		  Super.Constructor
 		  
 		  IgnoreRepaint = True
@@ -5140,10 +5134,6 @@ Implements MessageCentre.MessageReceiver
 		GutterWidth As Integer
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h21
-		Private Shared gWeakCEFs As Dictionary
-	#tag EndProperty
-
 	#tag Property, Flags = &h0
 		HighlightBlocksOnMouseOverGutter As Boolean
 	#tag EndProperty
@@ -5793,10 +5783,6 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mVisibleLineRange As SyntaxArea.DataRange
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWeakSelf As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

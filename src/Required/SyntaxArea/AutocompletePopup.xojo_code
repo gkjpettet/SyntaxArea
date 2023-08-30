@@ -153,7 +153,7 @@ Inherits DesktopListBox
 		    Var neededWidth As Integer = mTempPicture.Graphics.TextWidth(option)
 		    If neededWidth > Self.Width Then
 		      // Expand to fit the options.
-		      Self.Width = neededWidth + 2
+		      Self.Width = neededWidth + 10
 		    End If
 		  Next option
 		  
