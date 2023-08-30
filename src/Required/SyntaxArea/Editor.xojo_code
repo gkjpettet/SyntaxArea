@@ -1765,7 +1765,11 @@ Implements MessageCentre.MessageReceiver
 		      If displayLineNumbers Then
 		        // The caret line is slightly darker.
 		        If EnableLineFoldings Then
-		          gg.DrawingColor = GutterBackgroundColor.LighterColor(10, True)
+		          If UseLighterLineFoldingBackColor Then
+		            gg.DrawingColor = GutterBackgroundColor.LighterColor(10, True)
+		          Else
+		            gg.DrawingColor = GutterBackgroundColor
+		          End If
 		          gg.FillRectangle(LineNumberOffset - FoldingOffset - 1, sy - g.TextHeight, FoldingOffset, TextHeight)
 		        End If
 		        If CaretLine = lineIdx Then
@@ -5045,8 +5049,8 @@ Implements MessageCentre.MessageReceiver
 		EnableLineFoldings As Boolean
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
-		EnableLineFoldingSetting As Boolean
+	#tag Property, Flags = &h21, Description = 5573656420696E7465726E616C6C7920746F20747261636B206966206C696E6520666F6C64696E67732061726520656E61626C65642E204C696E6520666F6C64696E677320617265206175746F6D61746963616C6C792064697361626C656420696620746865726520617265206D6F7265207468616E203135303030206C696E6573206F6620636F64652E
+		Private EnableLineFoldingSetting As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5800,6 +5804,10 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mUseLighterLineFoldingBackColor As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mVerticalScrollbar As DesktopScrollbar
 	#tag EndProperty
 
@@ -6117,7 +6125,7 @@ Implements MessageCentre.MessageReceiver
 			  TextStorage.SetText(value)
 			  Lines.SetText(value.Length)
 			  
-			  // Add disable linefoldings for text bigger than 15000 lines otherwise it's slow.
+			  // Disable line folding for text bigger than 15000 lines otherwise it's slow.
 			  If lines.Count > 15000 Then
 			    If Me.EnableLineFoldings Then
 			      EnableLineFoldingSetting = True
@@ -6267,6 +6275,21 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		UndoMgr As UndoKit.UndoManager
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 4966205472756520616E64206C696E6520666F6C64696E67732061726520656E61626C6564207468656E2061206C69676874657220636F6C6F7572207468616E2074686520677574746572206261636B20636F6C6F75722077696C6C206265207573656420666F7220746865206261636B67726F756E6420626568696E6420746865206C696E6520666F6C64696E67206D61726B65727320696E20746865206775747465722E
+		#tag Getter
+			Get
+			  Return mUseLighterLineFoldingBackColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mUseLighterLineFoldingBackColor = value
+			  Redraw
+			End Set
+		#tag EndSetter
+		UseLighterLineFoldingBackColor As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C20757365207468652073797374656D2773207374616E6461726420746578742073656C656374696F6E20636F6C6F7572207768656E2073656C656374696E6720746578742E2049662046616C73652069742077696C6C2075736520605465787453656C656374696F6E436F6C6F72602E
@@ -6455,12 +6478,60 @@ Implements MessageCentre.MessageReceiver
 			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Border"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Enabled"
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontName"
+			Visible=true
+			Group="Appearance"
+			InitialValue="System"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontSize"
+			Visible=true
+			Group="Appearance"
+			InitialValue="12"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IndentVisually"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersFontName"
+			Visible=true
+			Group="Appearance"
+			InitialValue="System"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersFontSize"
+			Visible=true
+			Group="Appearance"
+			InitialValue="12"
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tooltip"
@@ -6487,70 +6558,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AutoCloseBrackets"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutocompleteAppliesStandardCase"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoIndentNewLines"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Border"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BorderColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BracketHighlightColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="CaretColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="CaretLine"
 			Visible=false
 			Group="Behavior"
@@ -6572,14 +6579,6 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DirtyLinesColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6623,35 +6622,11 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="EnableAutocomplete"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="EnableLineFoldings"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EnableLineFoldingSetting"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontSize"
-			Visible=true
-			Group="Behavior"
-			InitialValue="12"
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6703,27 +6678,19 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="IndentVisually"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="KeepEntireTextIndented"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="LeftMarginOffset"
 			Visible=true
 			Group="Behavior"
 			InitialValue="5"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineHeight"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -6815,22 +6782,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TextColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontName"
-			Visible=true
-			Group="Behavior"
-			InitialValue="System"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TextHeight"
 			Visible=false
 			Group="Behavior"
@@ -6847,18 +6798,18 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TextSelectionColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="ThickInsertionPoint"
 			Visible=true
 			Group="Behavior"
 			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseLighterLineFoldingBackColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -6871,9 +6822,161 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="BackColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BlockFoldedColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BlockFoldedEllipsisColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BlockFoldMarkerColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BracketHighlightColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BookmarkColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BorderColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CaretColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DirtyLinesColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GutterBackgroundColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GutterSeparationLineColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LineNumbersColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SuggestionPopupBackColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SuggestionPopupSelectedColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SuggestionPopupTextColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextSelectionColor"
+			Visible=true
+			Group="Colours"
+			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutocompleteAppliesStandardCase"
+			Visible=true
+			Group="Autocompletion"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoCloseBrackets"
+			Visible=true
+			Group="Autocompletion"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AutocompleteCombo"
 			Visible=true
-			Group="Behavior"
+			Group="Autocompletion"
 			InitialValue="SyntaxArea.AutocompleteCombos.Tab"
 			Type="SyntaxArea.AutocompleteCombos"
 			EditorType="Enum"
@@ -6883,108 +6986,28 @@ Implements MessageCentre.MessageReceiver
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="LineHeight"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Double"
+			Name="AutoIndentNewLines"
+			Visible=true
+			Group="Autocompletion"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="BlockFoldMarkerColor"
+			Name="EnableAutocomplete"
 			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			Group="Autocompletion"
+			InitialValue="False"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="BlockFoldedColor"
+			Name="KeepEntireTextIndented"
 			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			Group="Autocompletion"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BlockFoldedEllipsisColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BookmarkColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SuggestionPopupBackColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SuggestionPopupTextColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SuggestionPopupSelectedColor"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GutterBackgroundColor"
-			Visible=true
-			Group="Gutter"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GutterSeparationLineColor"
-			Visible=true
-			Group="Gutter"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersColor"
-			Visible=true
-			Group="Gutter"
-			InitialValue="&c000000"
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersFontSize"
-			Visible=true
-			Group="Gutter"
-			InitialValue="12"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersFontName"
-			Visible=true
-			Group="Gutter"
-			InitialValue="System"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

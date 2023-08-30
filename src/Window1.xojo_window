@@ -146,7 +146,6 @@ Begin DesktopWindow Window1
          EnableAutocomplete=   True
          Enabled         =   True
          EnableLineFoldings=   True
-         EnableLineFoldingSetting=   False
          FontName        =   "Source Code Pro"
          FontSize        =   13
          GutterBackgroundColor=   &cD6D6D600
@@ -166,7 +165,7 @@ Begin DesktopWindow Window1
          LeftMarginOffset=   5
          LineHeight      =   0.0
          LineNumbersColor=   &c00000000
-         LineNumbersFontName=   "System"
+         LineNumbersFontName=   "Source Code Pro"
          LineNumbersFontSize=   12
          LockBottom      =   True
          LockedInPosition=   False
@@ -182,6 +181,7 @@ Begin DesktopWindow Window1
          ScrollPositionX =   0
          SelectionLength =   0
          SelectionStart  =   0
+         SelectionText   =   ""
          SuggestionPopupBackColor=   &cFFFFFF00
          SuggestionPopupSelectedColor=   &c00000000
          SuggestionPopupTextColor=   &c00000000
@@ -197,6 +197,7 @@ Begin DesktopWindow Window1
          ThickInsertionPoint=   False
          Tooltip         =   ""
          Top             =   0
+         UseLighterLineFoldingBackColor=   False
          UseSystemTextSelectionColor=   True
          Visible         =   True
          Width           =   739
