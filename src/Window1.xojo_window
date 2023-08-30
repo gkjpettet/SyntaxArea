@@ -123,7 +123,6 @@ Begin DesktopWindow Window1
          AutoCloseBrackets=   False
          AutocompleteAppliesStandardCase=   True
          AutocompleteCombo=   1
-         AutoCompleteDone=   True
          AutoDeactivate  =   True
          AutoIndentNewLines=   True
          BackColor       =   &cFFFFFF00
@@ -183,6 +182,9 @@ Begin DesktopWindow Window1
          SelectionLength =   0
          SelectionStart  =   0
          SelText         =   ""
+         SuggestionPopupBackColor=   &cFFFFFF00
+         SuggestionPopupSelectedColor=   &c00000000
+         SuggestionPopupTextColor=   &c00000000
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True

@@ -173,7 +173,7 @@ Implements MessageCentre.MessageReceiver
 		    // =========================================
 		  Case CmdInsertTab
 		    If AutocompleteCombo = AutocompleteCombos.Tab And EnableAutocomplete Then
-		      AutocompleteManual
+		      ShowAutocompletion
 		    Else
 		      HandleInsertText(Chr(9))
 		    End If
@@ -187,7 +187,7 @@ Implements MessageCentre.MessageReceiver
 		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
 		      // Ctrl+Space pressed.
 		      If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
-		        AutocompleteManual
+		        ShowAutocompletion
 		      End If
 		    End If
 		    
@@ -296,6 +296,9 @@ Implements MessageCentre.MessageReceiver
 		  mHasFocus = True
 		  RaiseEvent FocusReceived
 		  EnableBlinker(SelectionLength = 0)
+		  
+		  If MyAutocompletePopup <> Nil Then MyAutocompletePopup.Visible = False
+		  
 		  Redraw
 		  
 		  gCurrentFocusedField = Self
@@ -697,6 +700,8 @@ Implements MessageCentre.MessageReceiver
 		  mBlockStartImage = Nil
 		  mBookmarkImage = Nil
 		  
+		  MyAutocompletePopup.ScaleFactorChanged
+		  
 		End Sub
 	#tag EndEvent
 
@@ -763,16 +768,11 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
+	#tag Method, Flags = &h21, Description = 54686520757365722063616E63656C6C6564206175746F636F6D706C6574696F6E2E
 		Private Sub AutocompleteCancelled(requestFocus As Boolean)
+		  /// The user cancelled autocompletion.
+		  
 		  If requestFocus Then SetFocus
-		  
-		  AutoCompleteDone = True
-		  
-		  // Stop listening messages from SuggestionWindow.
-		  Self.UnregisterForMessage(CurrentSuggestionWindow)
-		  
-		  currentSuggestionWindow = Nil
 		  
 		End Sub
 	#tag EndMethod
@@ -804,69 +804,11 @@ Implements MessageCentre.MessageReceiver
 		    
 		  Else
 		    // The word is already fully typed.
-		    AutoCompleteDone = True
 		    Return
 		  End If
 		  
 		  Var y As Double
 		  XYAtCharPos(CaretPos, CaretLine, AutocompleteSuggestionInsertionX, y)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub AutocompleteManual()
-		  // Get the word where the caret is at.
-		  Var CurrentWordSegment As SyntaxArea.TextSegment = CurrentWord
-		  If CurrentWordSegment.length = 0 Then Return
-		  
-		  // Is there a suggestion to autocomplete?
-		  If trailingSuggestion.Length > 0 And trailingSuggestion <> "…" Then
-		    
-		    Var suggestionLength As Integer
-		    If trailingSuggestion.Right(1) = "…" Then
-		      suggestionLength = trailingSuggestion.Length - 1
-		    Else
-		      suggestionLength = trailingSuggestion.Length
-		    End If
-		    
-		    // Insert it.
-		    AutocompleteOptionSelected(OptionForTrailingSuggestion)
-		    Return
-		  End If
-		  
-		  // Get all of the autocomplete options for the word.
-		  Call FetchAutocompleteOptions
-		  If CurrentAutocompleteOptions = Nil Then
-		    // Nothing to autocomplete.
-		    Return
-		  End If
-		  If CurrentAutocompleteOptions.Options.LastIndex < 0 Then Return
-		  
-		  // Find the (x, y) position of the caret.
-		  Var x, y, fx, fy As Double
-		  XYAtCharPos(CaretPos, CaretLine, x, y)
-		  GetFieldXY(fx, fy)
-		  x = x + fx
-		  y = y + fy
-		  
-		  Var cx, cy As Integer
-		  cx = x
-		  cy = y
-		  
-		  // Give the user the option to offset the suggestion window if needed.
-		  If ShouldDisplaySuggestionWindowAtPos(cx, cy) Then
-		    x = cx
-		    y = cy
-		  End If
-		  
-		  // Show the suggestion window.
-		  CurrentSuggestionWindow = New SuggestionWindow
-		  
-		  // Start listening for messages from the suggestion window.
-		  Self.RegisterForMessage(CurrentSuggestionWindow)
-		  
-		  CurrentSuggestionWindow.Show(x, y)
 		  
 		End Sub
 	#tag EndMethod
@@ -891,10 +833,6 @@ Implements MessageCentre.MessageReceiver
 		    End If
 		  End If
 		  
-		  // Stop listening messages from SuggestionWindow.
-		  Self.UnregisterForMessage(CurrentSuggestionWindow)
-		  CurrentSuggestionWindow = Nil
-		  
 		  // Check indentations.
 		  If AutoIndentNewLines And Not mIndentVisually Then
 		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
@@ -908,7 +846,6 @@ Implements MessageCentre.MessageReceiver
 		  
 		  SetFocus
 		  Redraw
-		  AutoCompleteDone = True
 		  
 		End Sub
 	#tag EndMethod
@@ -1385,6 +1322,7 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  #Pragma Warning "REMOVE: I think these references can be removed..."
 		  // Remember all opened editor objects so we can update them if dark mode is invoked.
 		  mWeakSelf = New WeakRef(Self)
 		  If gWeakCEFs = Nil Then gWeakCEFs = New Dictionary
@@ -1394,7 +1332,10 @@ Implements MessageCentre.MessageReceiver
 		  
 		  IgnoreRepaint = True
 		  
-		  
+		  MyAutocompletePopup = New SyntaxArea.AutocompletePopup(Self)
+		  Self.RegisterForMessage(MyAutocompletePopup)
+		  MyAutocompletePopup.Visible = False
+		  Me.Window.AddControl(MyAutocompletePopup)
 		End Sub
 	#tag EndMethod
 
@@ -2077,40 +2018,6 @@ Implements MessageCentre.MessageReceiver
 		  Return doubleClickTime
 		  
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub GetFieldXY(ByRef locX As Double, ByRef locY As Double)
-		  // Find the window where this control is since the control can be deep 
-		  // within container controls...
-		  locX = Me.Left
-		  locY = Me.top
-		  
-		  Var container As DesktopWindow
-		  container = Me.Window
-		  
-		  While True
-		    locX = locX + Container.Left
-		    locY = locY + Container.Top
-		    
-		    If container IsA DesktopContainer Then
-		      container = DesktopWindow(DesktopContainer(container).Window)
-		      
-		    ElseIf container IsA DesktopWindow Then
-		      // Account for any toolbar.
-		      #If TargetWindows Then
-		        For i As Integer = 0 To container.ControlCount-1
-		          If container.ControlAt(i) IsA DesktopToolbar Then
-		            Var tb As DesktopToolbar = DesktopToolbar(container.ControlAt(i))
-		            locY = locY + tb.Height
-		          End If
-		        Next i
-		      #EndIf
-		      Exit
-		    End If
-		  Wend
-		  
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 52657475726E7320746865207465787420636F6E7461696E656420696E2061206C696E652E
@@ -3965,7 +3872,7 @@ Implements MessageCentre.MessageReceiver
 		      LineSymbolsRemoved(theMessage.Info(2))
 		    End Select
 		    
-		  ElseIf theMessage.Sender = CurrentSuggestionWindow Then
+		  ElseIf theMessage.Sender = MyAutocompletePopup Then
 		    
 		    Select Case Type
 		    Case Messages.AutocompleteCancelled
@@ -4182,6 +4089,57 @@ Implements MessageCentre.MessageReceiver
 		  
 		  mHorizontalScrollBar = horizontal
 		  mVerticalScrollbar = vertical
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 53686F777320746865206175746F636F6D706C6574696F6E20706F707570206966207468657265206172652073756767657374696F6E7320617661696C61626C652E
+		Private Sub ShowAutocompletion()
+		  /// Shows the autocompletion popup if there are suggestions available.
+		  
+		  // Get the word where the caret is at.
+		  Var CurrentWordSegment As SyntaxArea.TextSegment = CurrentWord
+		  If CurrentWordSegment.length = 0 Then Return
+		  
+		  // Is there a suggestion to autocomplete?
+		  If trailingSuggestion.Length > 0 And trailingSuggestion <> "…" Then
+		    
+		    Var suggestionLength As Integer
+		    If trailingSuggestion.Right(1) = "…" Then
+		      suggestionLength = trailingSuggestion.Length - 1
+		    Else
+		      suggestionLength = trailingSuggestion.Length
+		    End If
+		    
+		    // Insert it.
+		    AutocompleteOptionSelected(OptionForTrailingSuggestion)
+		    Return
+		  End If
+		  
+		  // Get all of the autocomplete options for the word.
+		  Call FetchAutocompleteOptions
+		  If CurrentAutocompleteOptions = Nil Then
+		    // Nothing to autocomplete.
+		    Return
+		  End If
+		  If CurrentAutocompleteOptions.Options.LastIndex < 0 Then Return
+		  
+		  // Find the (x, y) position of the caret.
+		  Var x, y  As Double
+		  XYAtCharPos(CaretPos, CaretLine, x, y)
+		  
+		  Var cx, cy As Integer
+		  cx = x
+		  cy = y
+		  
+		  // Give the user the option to offset the suggestion window if needed.
+		  If ShouldDisplaySuggestionWindowAtPos(cx, cy) Then
+		    x = cx
+		    y = cy
+		  End If
+		  
+		  // Show the autocomplete popup.
+		  MyAutocompletePopup.Show(x, y)
 		  
 		End Sub
 	#tag EndMethod
@@ -4539,10 +4497,6 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h0, Description = 546865206B6579626F6172642073686F7274637574207573656420746F2074726967676572206175746F636F6D706C6574696F6E2E
 		AutocompleteCombo As SyntaxArea.AutocompleteCombos = SyntaxArea.AutocompleteCombos.Tab
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		AutoCompleteDone As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -4958,10 +4912,6 @@ Implements MessageCentre.MessageReceiver
 		#tag EndGetter
 		Shared CurrentFocusedField As SyntaxArea.Editor
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private CurrentSuggestionWindow As SuggestionWindow
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private CursorIsIbeam As Boolean = True
@@ -5786,6 +5736,18 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSuggestionPopupBackColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSuggestionPopupSelectedColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSuggestionPopupTextColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSyntaxDefinition As SyntaxArea.HighlightDefinition
 	#tag EndProperty
 
@@ -5839,6 +5801,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mWindowIsClosing As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, Description = 5468697320656469746F722773206175746F636F6D706C65746520706F7075702E
+		Private MyAutocompletePopup As SyntaxArea.AutocompletePopup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5997,6 +5963,54 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		SelText As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F662074686520617574636F6D706C6574652073756767657374696F6E20706F7075702E
+		#tag Getter
+			Get
+			  Return mSuggestionPopupBackColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSuggestionPopupBackColor = value
+			  AutocompleteCancelled(True)
+			  
+			End Set
+		#tag EndSetter
+		SuggestionPopupBackColor As ColorGroup
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F722073656C6563746564207465787420696E20746865206175746F636F6D706C6574652073756767657374696F6E7320706F7075702E
+		#tag Getter
+			Get
+			  Return mSuggestionPopupSelectedColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSuggestionPopupSelectedColor = value
+			  AutocompleteCancelled(True)
+			  
+			End Set
+		#tag EndSetter
+		SuggestionPopupSelectedColor As ColorGroup
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662074686520617574636F6D706C6574652073756767657374696F6E7320696E2074686520706F7075702E
+		#tag Getter
+			Get
+			  Return mSuggestionPopupTextColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mSuggestionPopupTextColor = value
+			  AutocompleteCancelled(True)
+			  
+			End Set
+		#tag EndSetter
+		SuggestionPopupTextColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -6502,14 +6516,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AutoCompleteDone"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="AutoIndentNewLines"
 			Visible=true
 			Group="Behavior"
@@ -6963,6 +6969,30 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BookmarkColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SuggestionPopupBackColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SuggestionPopupTextColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SuggestionPopupSelectedColor"
 			Visible=true
 			Group="Behavior"
 			InitialValue=""
