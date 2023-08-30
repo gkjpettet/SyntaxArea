@@ -130,7 +130,6 @@ Begin DesktopWindow Window1
          BlockFoldedEllipsisColor=   &cC0C0C000
          BlockFoldMarkerColor=   &c92929200
          BookmarkColor   =   &c0096FF00
-         Border          =   True
          BorderColor     =   &c00000000
          BracketHighlightColor=   &c76D6FF00
          CaretColor      =   &c00000000
@@ -151,6 +150,10 @@ Begin DesktopWindow Window1
          GutterBackgroundColor=   &cD6D6D600
          GutterSeparationLineColor=   &c00000000
          GutterWidth     =   0
+         HasBottomBorder =   False
+         HasLeftBorder   =   True
+         HasRightBorder  =   True
+         HasTopBorder    =   True
          Height          =   628
          HighlightBlocksOnMouseOverGutter=   False
          HighlightMatchingBrackets=   True
@@ -166,7 +169,7 @@ Begin DesktopWindow Window1
          LineHeight      =   0.0
          LineNumbersColor=   &c00000000
          LineNumbersFontName=   "Source Code Pro"
-         LineNumbersFontSize=   12
+         LineNumbersFontSize=   11
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -280,6 +283,12 @@ End
 		  CodeEditor.EnableLineFoldings = syntaxDefinition.SupportsCodeBlocks
 		  
 		  CodeEditor.SetFocus
+		  
+		  #If TargetMacOS
+		    CodeEditor.HasBottomBorder = False
+		  #Else
+		    CodeEditor.HasBottomBorder = True
+		  #EndIf
 		  
 		  InitialiseAutocompleteEngine
 		  

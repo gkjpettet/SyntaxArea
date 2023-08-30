@@ -1864,9 +1864,28 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		  // And their frame.
-		  If Border Then
+		  // If Border Then
+		  // g.DrawingColor = BorderColor
+		  // g.DrawRectangle(0, 0, g.Width, g.Height)
+		  // End If
+		  If HasLeftBorder Then
 		    g.DrawingColor = BorderColor
-		    g.DrawRectangle(0, 0, g.Width, g.Height)
+		    g.DrawLine(0, 0, 0, g.Height)
+		  End If
+		  
+		  If HasRightBorder Then
+		    g.DrawingColor = BorderColor
+		    g.DrawLine(g.Width - 1, 0, g.Width - 1, g.Height)
+		  End If
+		  
+		  If HasTopBorder Then
+		    g.DrawingColor = BorderColor
+		    g.DrawLine(0, 0, g.Width, 0)
+		  End If
+		  
+		  If HasBottomBorder Then
+		    g.DrawingColor = BorderColor
+		    g.DrawLine(0, g.Height - 1, g.Width, g.Height - 1)
 		  End If
 		  
 		  // Now we can draw the back buffer to the screen
@@ -4780,22 +4799,6 @@ Implements MessageCentre.MessageReceiver
 		Private BookmarkTable As Dictionary
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mDrawFrame
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mDrawFrame = value
-			  InvalidateAllLines
-			  Redraw
-			End Set
-		#tag EndSetter
-		Border As Boolean
-	#tag EndComputedProperty
-
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F72206F662074686520656469746F72277320626F72646572202869662074686520626F7264657220697320656E61626C6564292E
 		#tag Getter
 			Get
@@ -5158,6 +5161,70 @@ Implements MessageCentre.MessageReceiver
 			End Get
 		#tag EndGetter
 		GutterWidth As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E206120626F74746F6D20626F726465722077696C6C20626520647261776E2E
+		#tag Getter
+			Get
+			  Return mHasBottomBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mHasBottomBorder = value
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		HasBottomBorder As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E2061206C65667420626F726465722077696C6C20626520647261776E2E
+		#tag Getter
+			Get
+			  Return mHasLeftBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mHasLeftBorder = value
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		HasLeftBorder As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E206120726967687420626F726465722077696C6C20626520647261776E2E
+		#tag Getter
+			Get
+			  Return mHasRightBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mHasRightBorder = value
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		HasRightBorder As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E206120746F7020626F726465722077696C6C20626520647261776E2E
+		#tag Getter
+			Get
+			  Return mHasTopBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mHasTopBorder = value
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		HasTopBorder As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -5585,10 +5652,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDrawFrame As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mEnableLineFoldings As Boolean
 	#tag EndProperty
 
@@ -5613,7 +5676,23 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHasBottomBorder As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHasFocus As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasLeftBorder As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasRightBorder As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasTopBorder As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6478,14 +6557,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Border"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Enabled"
 			Visible=true
 			Group="Appearance"
@@ -6507,6 +6578,38 @@ Implements MessageCentre.MessageReceiver
 			Group="Appearance"
 			InitialValue="12"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBottomBorder"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasLeftBorder"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasRightBorder"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasTopBorder"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
