@@ -28,8 +28,6 @@ Implements MessageCentre.MessageReceiver
 		  mCaretBlinker = Nil
 		  Lines = Nil
 		  
-		  If CurrentFocusedField = Self Then gCurrentFocusedField = Nil
-		  
 		  mWindowIsClosing = True
 		  
 		End Sub
@@ -301,7 +299,6 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Redraw
 		  
-		  gCurrentFocusedField = Self
 		  
 		End Sub
 	#tag EndEvent
@@ -1902,7 +1899,9 @@ Implements MessageCentre.MessageReceiver
 		  
 		  // Right margin marker.
 		  If DisplayRightMarginMarker And RightMarginAtPixel > 0 Then
-		    gr.DrawPicture(RightMarginLineImage, RightMarginAtPixel - ScrollPositionX + LeftMarginOffset + LineNumberOffset, 0, 1, gr.Height, 0, 0, 1, 1)
+		    gr.DrawingColor = RightMarginColor
+		    Var rightMarginX As Integer = RightMarginAtPixel - ScrollPositionX + LeftMarginOffset + LineNumberOffset
+		    gr.DrawLine(rightMarginX, 0, rightMarginX, g.Height)
 		  End If
 		  
 		  // Paint the caret.
@@ -4905,15 +4904,6 @@ Implements MessageCentre.MessageReceiver
 		Private CurrentEventID As Integer
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return gCurrentFocusedField
-			End Get
-		#tag EndGetter
-		Shared CurrentFocusedField As SyntaxArea.Editor
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private CursorIsIbeam As Boolean = True
 	#tag EndProperty
@@ -5107,14 +5097,6 @@ Implements MessageCentre.MessageReceiver
 		#tag EndSetter
 		FontSize As Integer
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private Shared gCurrentFocusedField As SyntaxArea.Editor
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared gRightMargInlineImage As Picture
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Gutter As Picture
@@ -5819,6 +5801,10 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRightMarginColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mScrollPosition As Integer
 	#tag EndProperty
 
@@ -5954,19 +5940,21 @@ Implements MessageCentre.MessageReceiver
 		RightMarginAtPixel As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C207269676874206D617267696E2072756C65722E
 		#tag Getter
 			Get
-			  If gRightMargInlineImage = Nil Then
-			    gRightMargInlineImage = New Picture(1, 1, 32)
-			    gRightMargInlineImage.RGBSurface.Pixel(0, 0) = &cff
-			  End If
-			  
-			  Return gRightMargInlineImage
-			  
+			  Return mRightMarginColor
 			End Get
 		#tag EndGetter
-		Protected Shared RightMarginLineImage As Picture
+		#tag Setter
+			Set
+			  mRightMarginColor = value
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		RightMarginColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -7017,6 +7005,14 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RightMarginColor"
+			Visible=true
+			Group="Colours"
+			InitialValue=""
 			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty

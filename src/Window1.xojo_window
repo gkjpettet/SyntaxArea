@@ -141,7 +141,7 @@ Begin DesktopWindow Window1
          DisplayDirtyLines=   True
          DisplayInvisibleCharacters=   False
          DisplayLineNumbers=   True
-         DisplayRightMarginMarker=   False
+         DisplayRightMarginMarker=   True
          EnableAutocomplete=   True
          Enabled         =   True
          EnableLineFoldings=   True
@@ -178,6 +178,7 @@ Begin DesktopWindow Window1
          MaxVisibleLines =   0
          ReadOnly        =   False
          RightMarginAtPixel=   0
+         RightMarginColor=   &c9437FF00
          RightScrollMargin=   150
          Scope           =   0
          ScrollPosition  =   0
