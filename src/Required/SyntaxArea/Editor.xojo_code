@@ -4267,6 +4267,47 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 4578706F727473207468697320656469746F72277320637573746F6D697361626C65207374796C657320616E642070726F706572746965732061732061207468656D652E
+		Function ToTheme() As SyntaxArea.EditorTheme
+		  /// Exports this editor's customisable styles and properties as a theme.
+		  
+		  Var theme As New SyntaxArea.EditorTheme
+		  
+		  // Editor colours.
+		  theme.BackColor = Self.BackColor
+		  theme.BlockFoldedColor = Self.BlockFoldedColor
+		  theme.BlockFoldedEllipsisColor = Self.BlockFoldedEllipsisColor
+		  theme.BlockFoldMarkerColor = Self.BlockFoldMarkerColor
+		  theme.BookmarkColor = Self.BookmarkColor
+		  theme.BracketHighlightColor = Self.BracketHighlightColor
+		  theme.CaretColor = Self.CaretColor
+		  theme.DirtyLinesColor = Self.DirtyLinesColor
+		  theme.GutterBackColor = Self.GutterBackColor
+		  theme.GutterSeparationLineColor = Self.GutterSeparationLineColor
+		  theme.LineNumbersColor = Self.LineNumbersColor
+		  theme.RightMarginColor = Self.RightMarginColor
+		  theme.SuggestionPopupBackColor = Self.SuggestionPopupBackColor
+		  theme.SuggestionPopupSelectedColor = Self.SuggestionPopupSelectedColor
+		  theme.SuggestionPopupTextColor = Self.SuggestionPopupTextColor
+		  theme.TextColor = Self.TextColor
+		  theme.TextSelectionColor = Self.TextSelectionColor
+		  
+		  // Font family and text size.
+		  theme.FontName = Self.FontName
+		  theme.FontSize = Self.FontSize
+		  
+		  // Line number font family and text size.
+		  theme.LineNumbersFontName = Self.LineNumbersFontName
+		  theme.LineNumbersFontSize = Self.LineNumbersFontSize
+		  
+		  // Other properties.
+		  theme.UseLighterLineFoldingBackColor = Self.UseLighterLineFoldingBackColor
+		  
+		  Return theme
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 5361766573207468652073637265656E20706F736974696F6E206F662074686520676976656E206F66667365742E
 		Private Sub UpdateDesiredColumn(pos As Integer = -1)
 		  /// Saves the screen position of the given offset.
