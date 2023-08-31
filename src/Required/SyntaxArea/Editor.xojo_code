@@ -637,7 +637,10 @@ Implements MessageCentre.MessageReceiver
 		  RaiseEvent Opening
 		  
 		  If FontName = "" Then FontName = DEFAULT_FONT
-		  If FontSize = 0 Then FontSize = DEFAULT_FONTSIZE
+		  If FontSize = 0 Then FontSize = DEFAULT_FONT_SIZE
+		  
+		  If LineNumbersFontName = "" Then LineNumbersFontName = DEFAULT_LINE_NUMBERS_FONT
+		  If LineNumbersFontSize = 0 Then LineNumbersFontSize = DEFAULT_LINE_NUMBERS_FONT_SIZE
 		  
 		  Me.MouseCursor = System.Cursors.IBeam
 		  CursorIsIbeam = True
@@ -1585,9 +1588,13 @@ Implements MessageCentre.MessageReceiver
 		    
 		    // Repaint the gutter background if needed.
 		    If mfullRefresh Or LastDrawnTopLine <> ScrollPosition Then
-		      gg.DrawingColor = GutterBackgroundColor.LighterColor(10, True)
+		      If UseLighterLineFoldingBackColor Then
+		        gg.DrawingColor = GutterBackColor.LighterColor(10, True)
+		      Else
+		        gg.DrawingColor = GutterBackColor
+		      End If
 		      gg.FillRectangle LineNumberOffset - FoldingOffset, 0, FoldingOffset, g.Height
-		      gg.DrawingColor = GutterBackgroundColor
+		      gg.DrawingColor = GutterBackColor
 		      gg.FillRectangle 0, 0, gutterWidth - FoldingOffset, g.Height
 		      gg.DrawingColor = GutterSeparationLineColor
 		      gg.DrawLine(LineNumberOffset - 1, 0, LineNumberOffset - 1, g.Height)
@@ -1763,19 +1770,19 @@ Implements MessageCentre.MessageReceiver
 		        // The caret line is slightly darker.
 		        If EnableLineFoldings Then
 		          If UseLighterLineFoldingBackColor Then
-		            gg.DrawingColor = GutterBackgroundColor.LighterColor(10, True)
+		            gg.DrawingColor = GutterBackColor.LighterColor(10, True)
 		          Else
-		            gg.DrawingColor = GutterBackgroundColor
+		            gg.DrawingColor = GutterBackColor
 		          End If
 		          gg.FillRectangle(LineNumberOffset - FoldingOffset - 1, sy - g.TextHeight, FoldingOffset, TextHeight)
 		        End If
 		        If CaretLine = lineIdx Then
-		          gg.DrawingColor = GutterBackgroundColor.DarkerColor(20, True)
+		          gg.DrawingColor = GutterBackColor.DarkerColor(20, True)
 		          gg.FillRectangle(0, sy - g.TextHeight, LineNumberOffset - 1 - FoldingOffset, TextHeight)
 		          gg.Bold = True
 		          gg.DrawingColor = SyntaxArea.AdjustColorForDarkMode(Color.Black)
 		        Else
-		          gg.DrawingColor = GutterBackgroundColor
+		          gg.DrawingColor = GutterBackColor
 		          gg.FillRectangle(0, sy - g.TextHeight, LineNumberOffset - 1 - FoldingOffset, TextHeight)
 		        End If
 		        
@@ -2592,6 +2599,39 @@ Implements MessageCentre.MessageReceiver
 		  For Each key As SyntaxArea.TextLine In symbols.Keys
 		    If CurrentDocumentSymbols.HasKey(key) Then CurrentDocumentSymbols.Remove(key)
 		  Next key
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4C6F6164732061207468656D652E
+		Sub LoadTheme(theme As SyntaxArea.EditorTheme)
+		  /// Loads a theme.
+		  
+		  Self.BackColor = theme.BackColor
+		  Self.BlockFoldedColor = theme.BlockFoldedColor
+		  Self.BlockFoldedEllipsisColor = theme.BlockFoldedEllipsisColor
+		  Self.BlockFoldMarkerColor = theme.BlockFoldMarkerColor
+		  Self.BookmarkColor = theme.BookmarkColor
+		  Self.BracketHighlightColor = theme.BracketHighlightColor
+		  Self.CaretColor = theme.CaretColor
+		  Self.DirtyLinesColor = theme.DirtyLinesColor
+		  Self.GutterBackColor = theme.GutterBackColor
+		  Self.GutterSeparationLineColor = theme.GutterSeparationLineColor
+		  Self.LineNumbersColor = theme.LineNumbersColor
+		  Self.RightMarginColor = theme.RightMarginColor
+		  Self.SuggestionPopupBackColor = theme.SuggestionPopupBackColor
+		  Self.SuggestionPopupSelectedColor = theme.SuggestionPopupSelectedColor
+		  Self.SuggestionPopupTextColor = theme.SuggestionPopupTextColor
+		  Self.TextColor = theme.TextColor
+		  Self.TextSelectionColor = theme.TextSelectionColor
+		  
+		  Self.FontName = theme.FontName
+		  Self.FontSize = theme.FontSize
+		  
+		  Self.LineNumbersFontName = theme.LineNumbersFontName
+		  Self.LineNumbersFontSize = theme.LineNumbersFontSize
+		  
+		  Self.UseLighterLineFoldingBackColor = theme.UseLighterLineFoldingBackColor
 		  
 		End Sub
 	#tag EndMethod
@@ -5105,18 +5145,18 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206775747465722773206261636B67726F756E642E
 		#tag Getter
 			Get
-			  Return mGutterBackgroundColor
+			  Return mGutterBackColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mGutterBackgroundColor = value
+			  mGutterBackColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		GutterBackgroundColor As ColorGroup
+		GutterBackColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F66207468652072696768742068616E6420626F72646572206F6620746865206775747465722E
@@ -5650,7 +5690,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGutterBackgroundColor As ColorGroup
+		Private mGutterBackColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6402,7 +6442,16 @@ Implements MessageCentre.MessageReceiver
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"System"
 	#tag EndConstant
 
-	#tag Constant, Name = DEFAULT_FONTSIZE, Type = Double, Dynamic = False, Default = \"12", Scope = Public, Description = 5468652064656661756C7420666F6E742073697A652E
+	#tag Constant, Name = DEFAULT_FONT_SIZE, Type = Double, Dynamic = False, Default = \"12", Scope = Public, Description = 5468652064656661756C7420666F6E742073697A652E
+	#tag EndConstant
+
+	#tag Constant, Name = DEFAULT_LINE_NUMBERS_FONT, Type = String, Dynamic = False, Default = \"", Scope = Public, Description = 5468652064656661756C7420666F6E7420746F207573652E
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"Menlo"
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"Consolas"
+		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"System"
+	#tag EndConstant
+
+	#tag Constant, Name = DEFAULT_LINE_NUMBERS_FONT_SIZE, Type = Double, Dynamic = False, Default = \"12", Scope = Public, Description = 5468652064656661756C7420666F6E742073697A652E
 	#tag EndConstant
 
 	#tag Constant, Name = MIN_LINENUMBER_OFFSET, Type = Double, Dynamic = False, Default = \"30", Scope = Private
@@ -6985,7 +7034,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GutterBackgroundColor"
+			Name="GutterBackColor"
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"

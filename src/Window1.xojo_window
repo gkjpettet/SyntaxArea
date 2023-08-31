@@ -141,13 +141,13 @@ Begin DesktopWindow Window1
          DisplayDirtyLines=   True
          DisplayInvisibleCharacters=   False
          DisplayLineNumbers=   True
-         DisplayRightMarginMarker=   True
+         DisplayRightMarginMarker=   False
          EnableAutocomplete=   True
          Enabled         =   True
          EnableLineFoldings=   True
          FontName        =   "Source Code Pro"
          FontSize        =   13
-         GutterBackgroundColor=   &cD6D6D600
+         GutterBackColor =   &c91919100
          GutterSeparationLineColor=   &c00000000
          GutterWidth     =   0
          HasBottomBorder =   False
@@ -223,8 +223,8 @@ Begin DesktopWindow Window1
       Left            =   767
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
@@ -254,8 +254,8 @@ Begin DesktopWindow Window1
       Left            =   767
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
@@ -292,6 +292,11 @@ End
 		  
 		  // Setup up our simple demonstration autocomplete engine.
 		  InitialiseAutocompleteEngine
+		  
+		  // Load the default theme.
+		  CodeEditor.LoadTheme(New SyntaxArea.EditorTheme)
+		  
+		  CodeEditor.FontSize = 13
 		  
 		  CodeEditor.SetFocus
 		  
