@@ -1905,6 +1905,7 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		  // Right margin marker.
+		  #Pragma Warning "TODO: Convert pixels to caret position / column"
 		  If DisplayRightMarginMarker And RightMarginAtPixel > 0 Then
 		    gr.DrawingColor = RightMarginColor
 		    Var rightMarginX As Integer = RightMarginAtPixel - ScrollPositionX + LeftMarginOffset + LineNumberOffset

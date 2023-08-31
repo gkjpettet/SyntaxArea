@@ -278,7 +278,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1027
+      Left            =   1034
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -317,7 +317,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1077
+      Left            =   1084
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -339,7 +339,7 @@ Begin DesktopWindow WinDemo
       Underline       =   False
       ValidationMask  =   "##"
       Visible         =   True
-      Width           =   39
+      Width           =   32
    End
    Begin DesktopPopupMenu PopupLineNumFontName
       AllowAutoDeactivate=   True
@@ -412,7 +412,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1027
+      Left            =   1034
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -451,7 +451,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1077
+      Left            =   1084
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -473,7 +473,225 @@ Begin DesktopWindow WinDemo
       Underline       =   False
       ValidationMask  =   "##"
       Visible         =   True
-      Width           =   39
+      Width           =   32
+   End
+   Begin DesktopCheckBox CheckBoxTopBorder
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Top Border"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   793
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   67
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   107
+   End
+   Begin DesktopCheckBox CheckBoxBottomBorder
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Bottom Border"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   793
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   88
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   107
+   End
+   Begin DesktopCheckBox CheckBoxLeftBorder
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Left Border"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   793
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   109
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   107
+   End
+   Begin DesktopCheckBox CheckBoxRightBorder
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Right Border"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   793
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   130
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   107
+   End
+   Begin DesktopCheckBox CheckBoxRightMarginRuler
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Right Margin Ruler"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   912
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   67
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   130
+   End
+   Begin DesktopLabel LabelRightRulerAt
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1041
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "At"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   67
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   31
+   End
+   Begin DesktopTextField RightRulerAt
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1084
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   2
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   0
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   67
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   "##"
+      Visible         =   True
+      Width           =   32
    End
 End
 #tag EndDesktopWindow
@@ -637,6 +855,16 @@ End
 		  // Line number font size.
 		  LineNumFontSize.Text = CodeEditor.LineNumbersFontSize.ToString
 		  
+		  // Borders.
+		  CheckBoxTopBorder.Value = CodeEditor.HasTopBorder
+		  CheckBoxBottomBorder.Value = CodeEditor.HasBottomBorder
+		  CheckBoxLeftBorder.Value = CodeEditor.HasLeftBorder
+		  CheckBoxRightBorder.Value = CodeEditor.HasRightBorder
+		  
+		  // Ruler.
+		  CheckBoxRightMarginRuler.Value = CodeEditor.DisplayRightMarginMarker
+		  RightRulerAt.Text = CodeEditor.RightMarginAtPixel.ToString
+		  
 		End Sub
 	#tag EndMethod
 
@@ -781,6 +1009,59 @@ End
 	#tag Event
 		Sub FocusLost()
 		  CodeEditor.LineNumbersFontSize = Integer.FromString(Me.Text)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxTopBorder
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.HasTopBorder = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxBottomBorder
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.HasBottomBorder = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxLeftBorder
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.HasLeftBorder = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxRightBorder
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.HasRightBorder = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxRightMarginRuler
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.DisplayRightMarginMarker = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RightRulerAt
+	#tag Event
+		Function KeyDown(key As String) As Boolean
+		  Select Case key.Asc
+		  Case 13, 3 // Return
+		    CodeEditor.RightMarginAtPixel = Integer.FromString(Me.Text)
+		    Return True
+		  End Select
+		  
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub FocusLost()
+		  CodeEditor.RightMarginAtPixel = Integer.FromString(Me.Text)
 		  
 		End Sub
 	#tag EndEvent
