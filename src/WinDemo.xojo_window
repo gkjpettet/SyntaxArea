@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopWindow Window1
+Begin DesktopWindow WinDemo
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF
    Composite       =   False
@@ -23,7 +23,7 @@ Begin DesktopWindow Window1
    Title           =   "SyntaxArea Demo"
    Type            =   0
    Visible         =   True
-   Width           =   1094
+   Width           =   1136
    Begin DesktopPagePanel Panel
       AllowAutoDeactivate=   True
       Enabled         =   True
@@ -47,7 +47,7 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   755
+      Width           =   781
       Begin DesktopScrollbar HorizontalScrollBar
          Active          =   False
          AllowAutoDeactivate=   True
@@ -77,7 +77,7 @@ Begin DesktopWindow Window1
          Transparent     =   True
          Value           =   0
          Visible         =   True
-         Width           =   739
+         Width           =   765
          _mIndex         =   0
          _mInitialParent =   ""
          _mName          =   ""
@@ -93,7 +93,7 @@ Begin DesktopWindow Window1
          Height          =   628
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         Left            =   739
+         Left            =   765
          LineStep        =   1
          LockBottom      =   True
          LockedInPosition=   False
@@ -204,70 +204,276 @@ Begin DesktopWindow Window1
          UseLighterLineFoldingBackColor=   False
          UseSystemTextSelectionColor=   True
          Visible         =   True
-         Width           =   739
+         Width           =   765
       End
    End
-   Begin DesktopButton ButtonAddIcon
+   Begin DesktopPopupMenu PopupFontName
       AllowAutoDeactivate=   True
       Bold            =   False
-      Cancel          =   False
-      Caption         =   "Add Icon (0)"
-      Default         =   False
       Enabled         =   True
-      FontName        =   "System"
+      FontName        =   "SmallSystem"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
+      InitialValue    =   ""
       Italic          =   False
-      Left            =   767
+      Left            =   889
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   0
       Scope           =   0
+      SelectedRowIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   20
+      Top             =   10
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   134
+      Width           =   140
    End
-   Begin DesktopButton ButtonToggleBookmark
+   Begin DesktopLabel LabelFontName
       AllowAutoDeactivate=   True
       Bold            =   False
-      Cancel          =   False
-      Caption         =   "Toggle Bookmark"
-      Default         =   False
       Enabled         =   True
-      FontName        =   "System"
+      FontName        =   "SmallSystem"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   767
+      Left            =   809
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   0
+      Multiline       =   False
       Scope           =   0
+      Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   "Font"
+      TextAlignment   =   3
+      TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   52
+      Top             =   10
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   134
+      Width           =   68
+   End
+   Begin DesktopLabel LabelFontSize
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1027
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Size"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   10
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   38
+   End
+   Begin DesktopTextField FontSize
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1077
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   2
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   0
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   10
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   "##"
+      Visible         =   True
+      Width           =   39
+   End
+   Begin DesktopPopupMenu PopupLineNumFontName
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   889
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedRowIndex=   0
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   35
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   140
+   End
+   Begin DesktopLabel LabelLineNumFontName
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   793
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Line Num Font"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   35
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   84
+   End
+   Begin DesktopLabel LabelLineNumFontSize
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1027
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Size"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   35
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   38
+   End
+   Begin DesktopTextField LineNumFontSize
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1077
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MaximumCharactersAllowed=   2
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   0
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   35
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   "##"
+      Visible         =   True
+      Width           =   39
    End
 End
 #tag EndDesktopWindow
@@ -295,11 +501,14 @@ End
 		  
 		  // Load the default theme.
 		  CodeEditor.LoadTheme(New SyntaxArea.EditorTheme)
+		  CodeEditor.FontName = SyntaxArea.Editor.DEFAULT_FONT
+		  CodeEditor.LineNumbersFontName = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT
 		  
 		  CodeEditor.FontSize = 13
 		  
 		  CodeEditor.SetFocus
 		  
+		  InitialiseControls
 		End Sub
 	#tag EndEvent
 
@@ -402,6 +611,35 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 496E697469616C6973657320616C6C206F662074686520636F6E74726F6C7320746F206D617463682074686520696E697469616C2073657474696E6773206F662074686520636F646520656469746F722E
+		Sub InitialiseControls()
+		  /// Initialises all of the controls to match the initial settings of the code editor.
+		  
+		  // Font name.
+		  For i As Integer = 0 to PopupFontName.LastRowIndex
+		    If PopupFontName.RowValueAt(i) = CodeEditor.FontName Then
+		      PopupFontName.SelectedRowIndex = i
+		      Exit
+		    End If
+		  Next i
+		  
+		  // Font size.
+		  FontSize.Text = CodeEditor.FontSize.ToString
+		  
+		  // Line number font name.
+		  For i As Integer = 0 to PopupFontName.LastRowIndex
+		    If PopupLineNumFontName.RowValueAt(i) = CodeEditor.LineNumbersFontName Then
+		      PopupLineNumFontName.SelectedRowIndex = i
+		      Exit
+		    End If
+		  Next i
+		  
+		  // Line number font size.
+		  LineNumFontSize.Text = CodeEditor.LineNumbersFontSize.ToString
+		  
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h0
 		MyAutocompleteEngine As AutocompleteEngine
@@ -459,22 +697,91 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events ButtonAddIcon
+#tag Events PopupFontName
 	#tag Event
-		Sub Pressed()
-		  // Adds a line icon to line 0.
-		  Var p As Picture = Window1.BitmapForCaching(10, CodeEditor.LineHeight)
-		  p.Graphics.DrawingColor = Color.Purple
-		  p.Graphics.FillRectangle(0, 0, p.Graphics.Width, p.Graphics.Height)
-		  CodeEditor.LineIcon(0) = p
+		Sub Opening()
+		  Me.AddRow("System")
+		  Me.AddRow("SmallSystem")
+		  
+		  For i As Integer = 0 To system.FontCount - 1
+		    Me.AddRow(System.FontAt(i))
+		    If System.FontAt(i) = CodeEditor.FontName Then
+		      // +2 to account for the system fonts added above.
+		      Me.SelectedRowIndex = i + 2
+		    End If
+		  Next i
+		  
+		  If Me.SelectedRowIndex < 0 Then Me.SelectedRowIndex = 0
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  CodeEditor.FontName = Me.SelectedRowValue
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ButtonToggleBookmark
+#tag Events LabelFontSize
+#tag EndEvents
+#tag Events FontSize
 	#tag Event
-		Sub Pressed()
-		  // Toggles the bookmark for the line the caret is on.
-		  CodeEditor.ToggleBookmark(CodeEditor.CaretLine)
+		Function KeyDown(key As String) As Boolean
+		  Select Case key.Asc
+		  Case 13, 3 // Return
+		    CodeEditor.FontSize = Integer.FromString(Me.Text)
+		    Return True
+		  End Select
+		  
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub FocusLost()
+		  CodeEditor.FontSize = Integer.FromString(Me.Text)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PopupLineNumFontName
+	#tag Event
+		Sub Opening()
+		  Me.AddRow("System")
+		  Me.AddRow("SmallSystem")
+		  
+		  For i As Integer = 0 To system.FontCount - 1
+		    Me.AddRow(System.FontAt(i))
+		    If System.FontAt(i) = CodeEditor.LineNumbersFontName Then
+		      // +2 to account for the system fonts added above.
+		      Me.SelectedRowIndex = i + 2
+		    End If
+		  Next i
+		  
+		  If Me.SelectedRowIndex < 0 Then Me.SelectedRowIndex = 0
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  CodeEditor.LineNumbersFontName = Me.SelectedRowValue
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LineNumFontSize
+	#tag Event
+		Function KeyDown(key As String) As Boolean
+		  Select Case key.Asc
+		  Case 13, 3 // Return
+		    CodeEditor.LineNumbersFontSize = Integer.FromString(Me.Text)
+		    Return True
+		  End Select
+		  
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub FocusLost()
+		  CodeEditor.LineNumbersFontSize = Integer.FromString(Me.Text)
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
