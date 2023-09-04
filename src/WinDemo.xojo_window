@@ -144,7 +144,7 @@ Begin DesktopWindow WinDemo
          DisplayVerticalRuler=   False
          EnableAutocomplete=   True
          Enabled         =   True
-         EnableLineFoldings=   True
+         EnableLineFolding=   True
          FontName        =   "Source Code Pro"
          FontSize        =   13
          GutterBackColor =   &c91919100
@@ -1271,6 +1271,66 @@ Begin DesktopWindow WinDemo
       VisualState     =   1
       Width           =   143
    End
+   Begin DesktopCheckBox CheckBoxDisplayInvisibleCharacters
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Display Invisible Characters"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   38
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   279
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   179
+   End
+   Begin DesktopCheckBox CheckBoxEnableAutocomplete
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Enable Autocomplete"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   39
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   300
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   179
+   End
 End
 #tag EndDesktopWindow
 
@@ -1471,6 +1531,12 @@ End
 		  
 		  // Line folding.
 		  CheckBoxEnableLineFolding.Value = CodeEditor.EnableLineFolding
+		  
+		  // Invisible characters.
+		  CheckBoxDisplayInvisibleCharacters.Value = CodeEditor.DisplayInvisibleCharacters
+		  
+		  // Autocomplete.
+		  CheckBoxEnableAutocomplete.Value = CodeEditor.EnableAutocomplete
 		  
 		End Sub
 	#tag EndMethod
@@ -1807,6 +1873,20 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.EnableLineFolding = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxDisplayInvisibleCharacters
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.DisplayInvisibleCharacters = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxEnableAutocomplete
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.EnableAutocomplete = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
