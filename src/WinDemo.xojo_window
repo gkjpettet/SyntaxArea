@@ -178,7 +178,6 @@ Begin DesktopWindow WinDemo
          MaxVisibleLines =   0
          ReadOnly        =   False
          RightMarginAtPixel=   0
-         RightMarginColor=   &c9437FF00
          RightScrollMargin=   150
          Scope           =   0
          ScrollPosition  =   0
@@ -203,6 +202,7 @@ Begin DesktopWindow WinDemo
          Top             =   0
          UseLighterLineFoldingBackColor=   False
          UseSystemTextSelectionColor=   True
+         VerticalRulerColor=   &c000000
          Visible         =   True
          Width           =   765
       End
@@ -642,7 +642,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1056
+      Left            =   1084
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -707,7 +707,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   1024
+      Left            =   1052
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -726,6 +726,32 @@ Begin DesktopWindow WinDemo
       Top             =   67
       Transparent     =   False
       Underline       =   False
+      Visible         =   True
+      Width           =   20
+   End
+   Begin ColorPicker VerticalRulerColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   20
+      Index           =   -2147483648
+      Left            =   1026
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   67
+      Transparent     =   True
       Visible         =   True
       Width           =   20
    End
@@ -902,6 +928,7 @@ End
 		  // Ruler.
 		  CheckBoxVerticalRuler.Value = CodeEditor.DisplayVerticalRuler
 		  VerticalRulerAt.Text = CodeEditor.VerticalRulerPosition.ToString
+		  VerticalRulerColor.SelectedColor = CodeEditor.VerticalRulerColor
 		  
 		  // Line numbers.
 		  CheckBoxDisplayGutter.Value = CodeEditor.DisplayGutter
@@ -1112,6 +1139,18 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.DisplayGutter = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VerticalRulerColor
+	#tag Event
+		Sub Opening()
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.VerticalRulerColor = Me.SelectedColor
 		End Sub
 	#tag EndEvent
 #tag EndEvents

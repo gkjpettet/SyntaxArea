@@ -15,7 +15,7 @@ Protected Class EditorTheme
 		  GutterBackColor = New ColorGroup(Color.White, Color.Black)
 		  GutterSeparationLineColor = New ColorGroup(Color.Black, Color.White)
 		  LineNumbersColor = New ColorGroup(Color.Black, Color.White)
-		  RightMarginColor = New ColorGroup(Color.LightGray, Color.DarkGray)
+		  VerticalRulerColor = New ColorGroup(Color.LightGray, Color.DarkGray)
 		  SuggestionPopupBackColor = New ColorGroup(Color.White, Color.Black)
 		  SuggestionPopupSelectedColor = Color.HighlightColor
 		  SuggestionPopupTextColor = New ColorGroup(Color.Black, Color.White)
@@ -85,10 +85,6 @@ Protected Class EditorTheme
 		LineNumbersFontSize As Integer = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT_SIZE
 	#tag EndProperty
 
-	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206F7074696F6E616C207269676874206D617267696E2072756C65722E
-		RightMarginColor As ColorGroup
-	#tag EndProperty
-
 	#tag Property, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F6620746865206175746F636F6D706C6574696F6E2073756767657374696F6E20706F7075702E
 		SuggestionPopupBackColor As ColorGroup
 	#tag EndProperty
@@ -111,6 +107,10 @@ Protected Class EditorTheme
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E20746865206261636B67726F756E6420636F6C6F7572206F66207468652061726561206F662074686520677574746572207768657265206C696E6520666F6C64696E67732061726520646973706C617965642077696C6C206265206C6967687465722E
 		UseLighterLineFoldingBackColor As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206F7074696F6E616C20726967687420766572746963616C2072756C65722E
+		VerticalRulerColor As ColorGroup
 	#tag EndProperty
 
 
@@ -176,7 +176,7 @@ Protected Class EditorTheme
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -244,7 +244,7 @@ Protected Class EditorTheme
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="RightMarginColor"
+			Name="VerticalRulerColor"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -297,7 +297,7 @@ Protected Class EditorTheme
 			Group="Behavior"
 			InitialValue="System"
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="FontSize"
@@ -321,6 +321,14 @@ Protected Class EditorTheme
 			Group="Behavior"
 			InitialValue="System"
 			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseLighterLineFoldingBackColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

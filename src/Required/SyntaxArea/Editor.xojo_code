@@ -1906,7 +1906,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  // Vertical ruler.
 		  If DisplayVerticalRuler And VerticalRulerPosition > 0 Then
-		    gr.DrawingColor = RightMarginColor
+		    gr.DrawingColor = VerticalRulerColor
 		    gr.FontName = Me.FontName
 		    gr.FontSize = Me.FontSize
 		    Var rightMarginX As Integer = g.TextWidth(mVerticalRulerText) - ScrollPositionX + LeftMarginOffset + LineNumberOffset
@@ -2623,7 +2623,7 @@ Implements MessageCentre.MessageReceiver
 		  Self.GutterBackColor = theme.GutterBackColor
 		  Self.GutterSeparationLineColor = theme.GutterSeparationLineColor
 		  Self.LineNumbersColor = theme.LineNumbersColor
-		  Self.RightMarginColor = theme.RightMarginColor
+		  Self.VerticalRulerColor = theme.VerticalRulerColor
 		  Self.SuggestionPopupBackColor = theme.SuggestionPopupBackColor
 		  Self.SuggestionPopupSelectedColor = theme.SuggestionPopupSelectedColor
 		  Self.SuggestionPopupTextColor = theme.SuggestionPopupTextColor
@@ -4290,7 +4290,7 @@ Implements MessageCentre.MessageReceiver
 		  theme.GutterBackColor = Self.GutterBackColor
 		  theme.GutterSeparationLineColor = Self.GutterSeparationLineColor
 		  theme.LineNumbersColor = Self.LineNumbersColor
-		  theme.RightMarginColor = Self.RightMarginColor
+		  theme.VerticalRulerColor = Self.VerticalRulerColor
 		  theme.SuggestionPopupBackColor = Self.SuggestionPopupBackColor
 		  theme.SuggestionPopupSelectedColor = Self.SuggestionPopupSelectedColor
 		  theme.SuggestionPopupTextColor = Self.SuggestionPopupTextColor
@@ -5887,10 +5887,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mRightMarginColor As ColorGroup
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mScrollPosition As Integer
 	#tag EndProperty
 
@@ -5956,6 +5952,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mUseLighterLineFoldingBackColor As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mVerticalRulerColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6032,23 +6032,6 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		RightMarginAtPixel As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C207269676874206D617267696E2072756C65722E
-		#tag Getter
-			Get
-			  Return mRightMarginColor
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mRightMarginColor = value
-			  InvalidateAllLines
-			  Redraw
-			  
-			End Set
-		#tag EndSetter
-		RightMarginColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -6456,6 +6439,23 @@ Implements MessageCentre.MessageReceiver
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C20757365207468652073797374656D2773207374616E6461726420746578742073656C656374696F6E20636F6C6F7572207768656E2073656C656374696E6720746578742E2049662046616C73652069742077696C6C2075736520605465787453656C656374696F6E436F6C6F72602E
 		UseSystemTextSelectionColor As Boolean = True
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C20726967687420766572746963616C2072756C65722E
+		#tag Getter
+			Get
+			  Return mVerticalRulerColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mVerticalRulerColor = value
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		VerticalRulerColor As ColorGroup
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 496620612072696768742072756C657220697320656E61626C65642C207468697320697320746865206E756D626572206F66206368617261637465727320746F20647261772069742061742E
 		#tag Getter
@@ -7135,7 +7135,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="RightMarginColor"
+			Name="VerticalRulerColor"
 			Visible=true
 			Group="Colours"
 			InitialValue=""

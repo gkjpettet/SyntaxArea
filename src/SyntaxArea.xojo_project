@@ -44,6 +44,7 @@ Class=UndoableDelete;Required/SyntaxArea/UndoableDelete.xojo_code;&h0000000063CF
 Class=Messages;Required/SyntaxArea/Messages.xojo_code;&h000000003C68CFFF;&h00000000435ADFFF;false
 Folder=Demo Specific;Demo Specific;&h000000003B28BFFF;&h0000000000000000;false
 Class=AutocompleteEngine;Demo Specific/AutocompleteEngine.xojo_code;&h000000003ABD97FF;&h000000003B28BFFF;false
+Class=ColorPicker;Demo Specific/ColorPicker.xojo_code;&h0000000016DAFA0C;&h000000003B28BFFF;false
 Class=EditorTheme;Required/SyntaxArea/EditorTheme.xojo_code;&h000000005661FFFF;&h00000000435ADFFF;false
 DefaultWindow=WinDemo
 AppMenuBar=MainMenuBar
