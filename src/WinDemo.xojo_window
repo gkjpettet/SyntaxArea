@@ -139,8 +139,8 @@ Begin DesktopWindow WinDemo
          DirtyLinesColor =   &cFFD47900
          DisableReset    =   False
          DisplayDirtyLines=   True
+         DisplayGutter   =   True
          DisplayInvisibleCharacters=   False
-         DisplayLineNumbers=   True
          DisplayRightMarginMarker=   False
          EnableAutocomplete=   True
          Enabled         =   True
@@ -392,7 +392,7 @@ Begin DesktopWindow WinDemo
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Line Num Font"
+      Text            =   "Gutter Font"
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
@@ -500,6 +500,7 @@ Begin DesktopWindow WinDemo
       Top             =   67
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   107
@@ -529,6 +530,7 @@ Begin DesktopWindow WinDemo
       Top             =   88
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   107
@@ -558,6 +560,7 @@ Begin DesktopWindow WinDemo
       Top             =   109
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   107
@@ -587,6 +590,7 @@ Begin DesktopWindow WinDemo
       Top             =   130
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   107
@@ -616,6 +620,7 @@ Begin DesktopWindow WinDemo
       Top             =   67
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   130
@@ -692,6 +697,36 @@ Begin DesktopWindow WinDemo
       ValidationMask  =   "##"
       Visible         =   True
       Width           =   32
+   End
+   Begin DesktopCheckBox CheckBoxDisplayGutter
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Display Gutter"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   912
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   88
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   110
    End
 End
 #tag EndDesktopWindow
@@ -865,6 +900,8 @@ End
 		  CheckBoxRightMarginRuler.Value = CodeEditor.DisplayRightMarginMarker
 		  RightRulerAt.Text = CodeEditor.RightMarginAtPixel.ToString
 		  
+		  // Line numbers.
+		  CheckBoxDisplayGutter.Value = CodeEditor.DisplayGutter
 		End Sub
 	#tag EndMethod
 
@@ -945,12 +982,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused item
+		  
 		  CodeEditor.FontName = Me.SelectedRowValue
 		  
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events LabelFontSize
 #tag EndEvents
 #tag Events FontSize
 	#tag Event
@@ -990,6 +1027,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused item
+		  
 		  CodeEditor.LineNumbersFontName = Me.SelectedRowValue
 		  
 		End Sub
@@ -1063,6 +1102,13 @@ End
 		Sub FocusLost()
 		  CodeEditor.RightMarginAtPixel = Integer.FromString(Me.Text)
 		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxDisplayGutter
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.DisplayGutter = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

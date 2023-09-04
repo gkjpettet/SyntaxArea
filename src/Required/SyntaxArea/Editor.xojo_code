@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -1568,8 +1568,8 @@ Implements MessageCentre.MessageReceiver
 		  Var gg As Graphics // For the gutter (left frame showing line numbers).
 		  Var gutterWidth As Integer = LineNumberOffset
 		  
-		  // Line numbers.
-		  If Self.DisplayLineNumbers Then
+		  // Gutter & line numbers.
+		  If Self.DisplayGutter Then
 		    // Create the line numbers picture if needed.
 		    If Not createBackBuffers Then
 		      // Draw the gutter directly into the canvas graphics object (Retina requirement).
@@ -1766,7 +1766,7 @@ Implements MessageCentre.MessageReceiver
 		      
 		      // Draw the gutter last so that it overwrites text that was drawn 
 		      // into the gutter area when it's horizontally scrolled.
-		      If displayLineNumbers Then
+		      If DisplayGutter Then
 		        // The caret line is slightly darker.
 		        If EnableLineFoldings Then
 		          If UseLighterLineFoldingBackColor Then
@@ -1862,8 +1862,8 @@ Implements MessageCentre.MessageReceiver
 		    MatchingBlockHighlight = Nil
 		  End If
 		  
-		  // Draw the line numbers.
-		  If DisplayLineNumbers And gg <> gr Then
+		  // Draw the gutter / line numbers.
+		  If DisplayGutter And gg <> gr Then
 		    g.DrawPicture(Gutter, 0, 0)
 		  End If
 		  
@@ -2323,6 +2323,7 @@ Implements MessageCentre.MessageReceiver
 		      // Circle.
 		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
 		    Else
+		      // Highlight.
 		      Var line As Integer = LineNumAtCharPos(pos)
 		      MatchingBlockHighlight = _
 		      New SyntaxArea.CharSelection(pos, 1, line, line, BracketHighlightColor)
@@ -5028,6 +5029,24 @@ Implements MessageCentre.MessageReceiver
 		DisplayDirtyLines As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E20746865206C696E65206E756D62657220616E6420666F6C64696E672067757474657220697320646973706C617965642E
+		#tag Getter
+			Get
+			  Return mDisplayGutter
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mDisplayGutter = value
+			  UpdateDesiredColumn
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		DisplayGutter As Boolean
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -5044,24 +5063,6 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		DisplayInvisibleCharacters As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mDisplayLineNumbers
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mDisplayLineNumbers = value
-			  UpdateDesiredColumn
-			  InvalidateAllLines
-			  Redraw
-			  
-			End Set
-		#tag EndSetter
-		DisplayLineNumbers As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5475,7 +5476,7 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
-			  If Not DisplayLineNumbers Then Return 0
+			  If Not DisplayGutter Then Return 0
 			  
 			  If mLineNumberOffset = 0 Then
 			    Var tmp As Picture = TemporaryPicture
@@ -5704,11 +5705,11 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDisplayInvisibleCharacters As Boolean
+		Private mDisplayGutter As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDisplayLineNumbers As Boolean
+		Private mDisplayInvisibleCharacters As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6788,7 +6789,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DisplayLineNumbers"
+			Name="DisplayGutter"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
