@@ -3432,16 +3432,16 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21, Description = 5061696E7473206120626C756520636972636C65206F7665722074686520686967686C69676874656420626C6F636B206368617261637465722069662060486967686C696768744D61746368696E67427261636B6574736020697320547275652E
+	#tag Method, Flags = &h21, Description = 5061696E7473206120636972636C65206F7665722074686520686967686C69676874656420626C6F636B206368617261637465722069662060486967686C696768744D61746368696E67427261636B6574736020697320547275652E
 		Private Sub PaintHighlightedBlock(g As Graphics)
-		  /// Paints a blue circle over the highlighted block character 
+		  /// Paints a circle over the highlighted block character 
 		  /// if `HighlightMatchingBrackets` is True.
 		  
 		  If Not HighlightMatchingBrackets Then Return
 		  
 		  g.PenSize = 2
-		  g.DrawingColor = SyntaxArea.AdjustColorForDarkMode(&c4444FF)
-		  g.DrawOval(blockBeginPosX - 2 - g.TextWidth("(") / 2, blockBeginPosY - g.TextHeight - 1, g.TextHeight + 4, g.TextHeight + 4)
+		  g.DrawingColor = BracketHighlightColor
+		  g.DrawOval(blockBeginPosX - 2 - g.TextWidth("(") / 2, blockBeginPosY - g.TextHeight - 2, g.TextHeight + 4, g.TextHeight + 4)
 		  g.PenSize = 1
 		  
 		End Sub
@@ -6881,9 +6881,13 @@ Implements MessageCentre.MessageReceiver
 			Name="HighlightMatchingBracketsMode"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
+			InitialValue="SyntaxArea.Editor.BracketsHighlightModes.Circle"
+			Type="SyntaxArea.Editor.BracketsHighlightModes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Circle"
+				"1 - Highlight"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IgnoreRepaint"

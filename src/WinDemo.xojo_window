@@ -1187,6 +1187,62 @@ Begin DesktopWindow WinDemo
       VisualState     =   1
       Width           =   179
    End
+   Begin DesktopPopupMenu PopupBracketHighlightingMode
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   988
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedRowIndex=   0
+      TabIndex        =   34
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   216
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   92
+   End
+   Begin ColorPicker BracketHighlightColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   1105
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   35
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   217
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
 End
 #tag EndDesktopWindow
 
@@ -1382,6 +1438,7 @@ End
 		  
 		  // Brackets.
 		  CheckBoxHighlightMatchingBrackets.Value = CodeEditor.HighlightMatchingBrackets
+		  BracketHighlightColor.SelectedColor = CodeEditor.BracketHighlightColor
 		  
 		End Sub
 	#tag EndMethod
@@ -1667,6 +1724,43 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.HighlightMatchingBrackets = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PopupBracketHighlightingMode
+	#tag Event
+		Sub Opening()
+		  Me.AddRow("Circle")
+		  Me.RowTagAt(Me.LastAddedRowIndex) = SyntaxArea.Editor.BracketsHighlightModes.Circle
+		  Me.AddRow("Highlight")
+		  Me.RowTagAt(Me.LastAddedRowIndex) = SyntaxArea.Editor.BracketsHighlightModes.Highlight
+		  
+		  Select Case CodeEditor.HighlightMatchingBracketsMode
+		  Case SyntaxArea.Editor.BracketsHighlightModes.Circle
+		    Me.SelectedRowIndex = 0
+		    
+		  Case SyntaxArea.Editor.BracketsHighlightModes.Highlight
+		    Me.SelectedRowIndex = 1
+		    
+		  Else
+		    Raise New UnsupportedOperationException("Unknown bracket highlighting mode.")
+		  End Select
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused item
+		  
+		  CodeEditor.HighlightMatchingBracketsMode = Me.RowTagAt(Me.SelectedRowIndex)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BracketHighlightColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.BracketHighlightColor = Me.SelectedColor
 		End Sub
 	#tag EndEvent
 #tag EndEvents
