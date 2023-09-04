@@ -1596,7 +1596,7 @@ Implements MessageCentre.MessageReceiver
 		      gg.FillRectangle LineNumberOffset - FoldingOffset, 0, FoldingOffset, g.Height
 		      gg.DrawingColor = GutterBackColor
 		      gg.FillRectangle 0, 0, gutterWidth - FoldingOffset, g.Height
-		      gg.DrawingColor = GutterSeparationLineColor
+		      gg.DrawingColor = GutterBorderColor
 		      gg.DrawLine(LineNumberOffset - 1, 0, LineNumberOffset - 1, g.Height)
 		      LastDrawnTopLine = ScrollPosition
 		    End If
@@ -2621,7 +2621,7 @@ Implements MessageCentre.MessageReceiver
 		  Self.CaretColor = theme.CaretColor
 		  Self.DirtyLinesColor = theme.DirtyLinesColor
 		  Self.GutterBackColor = theme.GutterBackColor
-		  Self.GutterSeparationLineColor = theme.GutterSeparationLineColor
+		  Self.GutterBorderColor = theme.GutterBorderColor
 		  Self.LineNumbersColor = theme.LineNumbersColor
 		  Self.VerticalRulerColor = theme.VerticalRulerColor
 		  Self.SuggestionPopupBackColor = theme.SuggestionPopupBackColor
@@ -4288,7 +4288,7 @@ Implements MessageCentre.MessageReceiver
 		  theme.CaretColor = Self.CaretColor
 		  theme.DirtyLinesColor = Self.DirtyLinesColor
 		  theme.GutterBackColor = Self.GutterBackColor
-		  theme.GutterSeparationLineColor = Self.GutterSeparationLineColor
+		  theme.GutterBorderColor = Self.GutterBorderColor
 		  theme.LineNumbersColor = Self.LineNumbersColor
 		  theme.VerticalRulerColor = Self.VerticalRulerColor
 		  theme.SuggestionPopupBackColor = Self.SuggestionPopupBackColor
@@ -5208,18 +5208,18 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F66207468652072696768742068616E6420626F72646572206F6620746865206775747465722E
 		#tag Getter
 			Get
-			  Return mGutterSeparationLineColor
+			  Return mGutterBorderColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mGutterSeparationLineColor = value
+			  mGutterBorderColor = value
 			  InvalidateAllLines
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		GutterSeparationLineColor As ColorGroup
+		GutterBorderColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5740,7 +5740,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGutterSeparationLineColor As ColorGroup
+		Private mGutterBorderColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -7119,7 +7119,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GutterSeparationLineColor"
+			Name="GutterBorderColor"
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"

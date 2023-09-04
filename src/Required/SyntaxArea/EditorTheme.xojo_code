@@ -13,7 +13,7 @@ Protected Class EditorTheme
 		  CaretColor = New ColorGroup(Color.Black, Color.White)
 		  DirtyLinesColor = New ColorGroup(Color.Yellow, Color.Yellow)
 		  GutterBackColor = New ColorGroup(Color.White, Color.Black)
-		  GutterSeparationLineColor = New ColorGroup(Color.Black, Color.White)
+		  GutterBorderColor = New ColorGroup(Color.Black, Color.White)
 		  LineNumbersColor = New ColorGroup(Color.Black, Color.White)
 		  VerticalRulerColor = New ColorGroup(Color.LightGray, Color.DarkGray)
 		  SuggestionPopupBackColor = New ColorGroup(Color.White, Color.Black)
@@ -70,7 +70,7 @@ Protected Class EditorTheme
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F7572206F66207468652072696768742068616E6420626F72646572206F6620746865206775747465722E
-		GutterSeparationLineColor As ColorGroup
+		GutterBorderColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206C696E65206E756D626572732E
@@ -220,7 +220,7 @@ Protected Class EditorTheme
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GutterSeparationLineColor"
+			Name="GutterBorderColor"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

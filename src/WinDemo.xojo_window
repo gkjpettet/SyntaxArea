@@ -23,7 +23,7 @@ Begin DesktopWindow WinDemo
    Title           =   "SyntaxArea Demo"
    Type            =   0
    Visible         =   True
-   Width           =   1136
+   Width           =   1168
    Begin DesktopPagePanel Panel
       AllowAutoDeactivate=   True
       Enabled         =   True
@@ -47,7 +47,7 @@ Begin DesktopWindow WinDemo
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   781
+      Width           =   788
       Begin DesktopScrollbar HorizontalScrollBar
          Active          =   False
          AllowAutoDeactivate=   True
@@ -77,7 +77,7 @@ Begin DesktopWindow WinDemo
          Transparent     =   True
          Value           =   0
          Visible         =   True
-         Width           =   765
+         Width           =   772
          _mIndex         =   0
          _mInitialParent =   ""
          _mName          =   ""
@@ -93,7 +93,7 @@ Begin DesktopWindow WinDemo
          Height          =   628
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         Left            =   765
+         Left            =   772
          LineStep        =   1
          LockBottom      =   True
          LockedInPosition=   False
@@ -148,7 +148,7 @@ Begin DesktopWindow WinDemo
          FontName        =   "Source Code Pro"
          FontSize        =   13
          GutterBackColor =   &c91919100
-         GutterSeparationLineColor=   &c00000000
+         GutterBorderColor=   &c000000
          GutterWidth     =   0
          HasBottomBorder =   False
          HasLeftBorder   =   True
@@ -204,7 +204,7 @@ Begin DesktopWindow WinDemo
          UseSystemTextSelectionColor=   True
          VerticalRulerColor=   &c000000
          Visible         =   True
-         Width           =   765
+         Width           =   772
       End
    End
    Begin DesktopPopupMenu PopupFontName
@@ -218,7 +218,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   889
+      Left            =   886
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -230,11 +230,11 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   10
+      Top             =   12
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   140
+      Width           =   135
    End
    Begin DesktopLabel LabelFontName
       AllowAutoDeactivate=   True
@@ -246,7 +246,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   809
+      Left            =   816
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -262,11 +262,11 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   10
+      Top             =   12
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   68
+      Width           =   58
    End
    Begin DesktopLabel LabelFontSize
       AllowAutoDeactivate=   True
@@ -278,7 +278,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1034
+      Left            =   1041
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -294,7 +294,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   10
+      Top             =   12
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -317,7 +317,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1084
+      Left            =   1091
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -334,7 +334,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   10
+      Top             =   12
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   "##"
@@ -352,7 +352,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   889
+      Left            =   886
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -364,11 +364,11 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   35
+      Top             =   37
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   140
+      Width           =   135
    End
    Begin DesktopLabel LabelLineNumFontName
       AllowAutoDeactivate=   True
@@ -380,7 +380,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   793
+      Left            =   800
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -396,11 +396,11 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   35
+      Top             =   37
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   84
+      Width           =   74
    End
    Begin DesktopLabel LabelLineNumFontSize
       AllowAutoDeactivate=   True
@@ -412,7 +412,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1034
+      Left            =   1041
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -428,7 +428,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   35
+      Top             =   37
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -451,7 +451,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1084
+      Left            =   1091
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -468,7 +468,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   35
+      Top             =   37
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   "##"
@@ -486,7 +486,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   793
+      Left            =   800
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -497,7 +497,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   67
+      Top             =   69
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -516,7 +516,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   793
+      Left            =   800
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -527,7 +527,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   90
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -546,7 +546,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   793
+      Left            =   800
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -557,7 +557,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   109
+      Top             =   111
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -576,7 +576,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   793
+      Left            =   800
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -587,7 +587,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   130
+      Top             =   132
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -606,7 +606,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   912
+      Left            =   919
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -617,7 +617,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   67
+      Top             =   69
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -642,7 +642,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1084
+      Left            =   1091
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -659,7 +659,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   67
+      Top             =   69
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   "##"
@@ -677,7 +677,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   912
+      Left            =   919
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -688,7 +688,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   88
+      Top             =   90
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -707,7 +707,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   1052
+      Left            =   1059
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -723,7 +723,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   67
+      Top             =   69
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -736,9 +736,9 @@ Begin DesktopWindow WinDemo
       AllowTabs       =   False
       Backdrop        =   0
       Enabled         =   True
-      Height          =   20
+      Height          =   18
       Index           =   -2147483648
-      Left            =   1026
+      Left            =   1031
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -750,10 +750,324 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   67
+      Top             =   70
       Transparent     =   True
       Visible         =   True
-      Width           =   20
+      Width           =   18
+   End
+   Begin DesktopLabel Label1
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   919
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Gutter Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   111
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   83
+   End
+   Begin ColorPicker GutterColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   1007
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   112
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopLabel LabelGutterBorder
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   919
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Gutter Border"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   132
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   83
+   End
+   Begin ColorPicker GutterBorder
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   1007
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   133
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin ColorPicker LineNumColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   1031
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   37
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin ColorPicker DefaultFontColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   1031
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   12
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopLabel LabelBackColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   25
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Back Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   153
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   83
+   End
+   Begin ColorPicker BackColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   888
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   26
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   154
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopLabel LabelCaretColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   919
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   27
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Caret Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   153
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   83
+   End
+   Begin ColorPicker CaretColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   1007
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   28
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   154
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopCheckBox CheckBoxThickInsertionPoint
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Thick Insertion"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1047
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   29
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   153
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   107
    End
 End
 #tag EndDesktopWindow
@@ -905,10 +1219,11 @@ End
 		    End If
 		  Next i
 		  
-		  // Font size.
+		  // Font size and default colour.
 		  FontSize.Text = CodeEditor.FontSize.ToString
+		  DefaultFontColor.SelectedColor = CodeEditor.TextColor
 		  
-		  // Line number font name.
+		  // Line numbers font name.
 		  For i As Integer = 0 to PopupFontName.LastRowIndex
 		    If PopupLineNumFontName.RowValueAt(i) = CodeEditor.LineNumbersFontName Then
 		      PopupLineNumFontName.SelectedRowIndex = i
@@ -916,8 +1231,9 @@ End
 		    End If
 		  Next i
 		  
-		  // Line number font size.
+		  // Line number font size and colour.
 		  LineNumFontSize.Text = CodeEditor.LineNumbersFontSize.ToString
+		  LineNumColor.SelectedColor = CodeEditor.LineNumbersColor
 		  
 		  // Borders.
 		  CheckBoxTopBorder.Value = CodeEditor.HasTopBorder
@@ -930,8 +1246,18 @@ End
 		  VerticalRulerAt.Text = CodeEditor.VerticalRulerPosition.ToString
 		  VerticalRulerColor.SelectedColor = CodeEditor.VerticalRulerColor
 		  
-		  // Line numbers.
+		  // Gutter.
 		  CheckBoxDisplayGutter.Value = CodeEditor.DisplayGutter
+		  GutterColor.SelectedColor = CodeEditor.GutterBackColor
+		  GutterBorder.SelectedColor = CodeEditor.GutterBorderColor
+		  
+		  // Editor background colour.
+		  BackColor.SelectedColor = CodeEditor.BackColor
+		  
+		  // Caret.
+		  CaretColor.SelectedColor = CodeEditor.CaretColor
+		  CheckBoxThickInsertionPoint.Value = CodeEditor.ThickInsertionPoint
+		  
 		End Sub
 	#tag EndMethod
 
@@ -1144,13 +1470,57 @@ End
 #tag EndEvents
 #tag Events VerticalRulerColor
 	#tag Event
-		Sub Opening()
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub ColorChanged()
 		  CodeEditor.VerticalRulerColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GutterColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.GutterBackColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GutterBorder
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.GutterBorderColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LineNumColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.LineNumbersColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefaultFontColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.TextColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BackColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.BackColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CaretColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.CaretColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxThickInsertionPoint
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.ThickInsertionPoint = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
