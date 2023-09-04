@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
-	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -1904,13 +1904,16 @@ Implements MessageCentre.MessageReceiver
 		    BlockBeginPosY = -1
 		  End If
 		  
-		  // Right margin marker.
-		  #Pragma Warning "TODO: Convert pixels to caret position / column"
-		  If DisplayRightMarginMarker And RightMarginAtPixel > 0 Then
+		  // Vertical ruler.
+		  If DisplayVerticalRuler And VerticalRulerPosition > 0 Then
 		    gr.DrawingColor = RightMarginColor
-		    Var rightMarginX As Integer = RightMarginAtPixel - ScrollPositionX + LeftMarginOffset + LineNumberOffset
+		    gr.FontName = Me.FontName
+		    gr.FontSize = Me.FontSize
+		    Var rightMarginX As Integer = g.TextWidth(mVerticalRulerText) - ScrollPositionX + LeftMarginOffset + LineNumberOffset
 		    gr.DrawLine(rightMarginX, 0, rightMarginX, g.Height)
 		  End If
+		  
+		  
 		  
 		  // Paint the caret.
 		  If DragSource = Nil Then
@@ -5065,20 +5068,20 @@ Implements MessageCentre.MessageReceiver
 		DisplayInvisibleCharacters As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E206120766572746963616C2072756C65722077696C6C20626520647261776E2061742060566572746963616C52756C6572506F736974696F6E602E
 		#tag Getter
 			Get
-			  Return mDisplayRightMarginMarker
+			  Return mDisplayVerticalRuler
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mDisplayRightMarginMarker = value
+			  mDisplayVerticalRuler = value
 			  Redraw
 			  
 			End Set
 		#tag EndSetter
-		DisplayRightMarginMarker As Boolean
+		DisplayVerticalRuler As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -5713,7 +5716,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDisplayRightMarginMarker As Boolean
+		Private mDisplayVerticalRuler As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5953,6 +5956,14 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mUseLighterLineFoldingBackColor As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mVerticalRulerPosition As Integer = 80
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, Description = 4120737472696E67207573656420746F20636F6D707574652074686520776964746820726571756972656420666F7220706F736974696F6E696E6720746865206F7074696F6E616C2072696768742072756C65722E20457373656E7469616C6C79206974277320636F6E746967756F7573207370616365732C20746865206E756D626572203D206D566572746963616C52756C6572506F736974696F6E2E
+		Private mVerticalRulerText As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6446,6 +6457,29 @@ Implements MessageCentre.MessageReceiver
 		UseSystemTextSelectionColor As Boolean = True
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 496620612072696768742072756C657220697320656E61626C65642C207468697320697320746865206E756D626572206F66206368617261637465727320746F20647261772069742061742E
+		#tag Getter
+			Get
+			  Return mVerticalRulerPosition
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mVerticalRulerPosition = value
+			  
+			  mVerticalRulerText = ""
+			  For i As Integer = 1 To mVerticalRulerPosition
+			    mVerticalRulerText = mVerticalRulerText + " "
+			  Next i
+			  
+			  InvalidateAllLines
+			  Redraw
+			  
+			End Set
+		#tag EndSetter
+		VerticalRulerPosition As Integer
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -6797,7 +6831,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DisplayRightMarginMarker"
+			Name="DisplayVerticalRuler"
 			Visible=true
 			Group="Behavior"
 			InitialValue="False"
@@ -7198,6 +7232,14 @@ Implements MessageCentre.MessageReceiver
 			Group="Autocompletion"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="VerticalRulerPosition"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -141,7 +141,7 @@ Begin DesktopWindow WinDemo
          DisplayDirtyLines=   True
          DisplayGutter   =   True
          DisplayInvisibleCharacters=   False
-         DisplayRightMarginMarker=   False
+         DisplayVerticalRuler=   False
          EnableAutocomplete=   True
          Enabled         =   True
          EnableLineFoldings=   True
@@ -595,10 +595,10 @@ Begin DesktopWindow WinDemo
       VisualState     =   1
       Width           =   107
    End
-   Begin DesktopCheckBox CheckBoxRightMarginRuler
+   Begin DesktopCheckBox CheckBoxVerticalRuler
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Right Margin Ruler"
+      Caption         =   "Vertical Ruler"
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -623,41 +623,9 @@ Begin DesktopWindow WinDemo
       Value           =   False
       Visible         =   True
       VisualState     =   1
-      Width           =   130
+      Width           =   102
    End
-   Begin DesktopLabel LabelRightRulerAt
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   1041
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   0
-      Selectable      =   False
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "At"
-      TextAlignment   =   3
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   67
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   31
-   End
-   Begin DesktopTextField RightRulerAt
+   Begin DesktopTextField VerticalRulerAt
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
@@ -674,7 +642,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1084
+      Left            =   1056
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -728,6 +696,39 @@ Begin DesktopWindow WinDemo
       VisualState     =   1
       Width           =   110
    End
+   Begin DesktopLabel LabelVerticalRulerAt
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   1024
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "At"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   67
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   20
+   End
 End
 #tag EndDesktopWindow
 
@@ -762,6 +763,8 @@ End
 		  CodeEditor.SetFocus
 		  
 		  InitialiseControls
+		  
+		  CodeEditor.VerticalRulerPosition = 80
 		End Sub
 	#tag EndEvent
 
@@ -897,8 +900,8 @@ End
 		  CheckBoxRightBorder.Value = CodeEditor.HasRightBorder
 		  
 		  // Ruler.
-		  CheckBoxRightMarginRuler.Value = CodeEditor.DisplayRightMarginMarker
-		  RightRulerAt.Text = CodeEditor.RightMarginAtPixel.ToString
+		  CheckBoxVerticalRuler.Value = CodeEditor.DisplayVerticalRuler
+		  VerticalRulerAt.Text = CodeEditor.VerticalRulerPosition.ToString
 		  
 		  // Line numbers.
 		  CheckBoxDisplayGutter.Value = CodeEditor.DisplayGutter
@@ -1080,19 +1083,19 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events CheckBoxRightMarginRuler
+#tag Events CheckBoxVerticalRuler
 	#tag Event
 		Sub ValueChanged()
-		  CodeEditor.DisplayRightMarginMarker = Me.Value
+		  CodeEditor.DisplayVerticalRuler = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events RightRulerAt
+#tag Events VerticalRulerAt
 	#tag Event
 		Function KeyDown(key As String) As Boolean
 		  Select Case key.Asc
 		  Case 13, 3 // Return
-		    CodeEditor.RightMarginAtPixel = Integer.FromString(Me.Text)
+		    CodeEditor.VerticalRulerPosition = Integer.FromString(Me.Text)
 		    Return True
 		  End Select
 		  
@@ -1100,7 +1103,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub FocusLost()
-		  CodeEditor.RightMarginAtPixel = Integer.FromString(Me.Text)
+		  CodeEditor.VerticalRulerPosition = Integer.FromString(Me.Text)
 		  
 		End Sub
 	#tag EndEvent
