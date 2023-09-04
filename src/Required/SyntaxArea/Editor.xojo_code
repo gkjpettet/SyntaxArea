@@ -2322,15 +2322,15 @@ Implements MessageCentre.MessageReceiver
 		  pos = NextBlockCharacter(s, offset, closeChar)
 		  
 		  If pos >= 0 Then
-		    If HighlightMatchingBracketsMode = 0 Then
-		      // Circle.
+		    If HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Circle Then
 		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
-		    Else
-		      // Highlight.
+		    ElseIf HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Highlight Then
 		      Var line As Integer = LineNumAtCharPos(pos)
 		      MatchingBlockHighlight = _
 		      New SyntaxArea.CharSelection(pos, 1, line, line, BracketHighlightColor)
 		      InvalidateLine(line)
+		    Else
+		      Raise New UnsupportedOperationException("Unknown bracket highlighting mode.")
 		    End If
 		    
 		    RaiseEvent BlockCharsMatched(s, offset, closeChar, pos)
@@ -2362,14 +2362,15 @@ Implements MessageCentre.MessageReceiver
 		  pos = PreviousBlockCharacter(s, offset, openingChar)
 		  
 		  If pos >= 0 Then
-		    If HighlightMatchingBracketsMode = 0 Then
-		      // Circle.
+		    If HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Circle Then
 		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
-		    Else
+		    ElseIf HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Highlight Then
 		      Var line As Integer = LineNumAtCharPos(pos)
 		      MatchingBlockHighlight = _
 		      New SyntaxArea.CharSelection(pos, 1, line, line, BracketHighlightColor)
 		      InvalidateLine(line)
+		    Else
+		      Raise New UnsupportedOperationException("Unknown bracket highlighting mode.")
 		    End If
 		    
 		    BlockCharsMatched(openingChar, pos, s, offset)
@@ -5015,7 +5016,7 @@ Implements MessageCentre.MessageReceiver
 		DisableReset As Boolean = False
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E206120636F6C6F7572656420696E64696361746F722077696C6C20626520646973706C6179656420696E207468652067757474657220626573696465206C696E6573206D61726B656420617320646972747920286368616E676564292E
 		#tag Getter
 			Get
 			  Return mDisplayDirtyLines
@@ -5323,8 +5324,8 @@ Implements MessageCentre.MessageReceiver
 		HighlightMatchingBrackets As Boolean = True
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		HighlightMatchingBracketsMode As Integer
+	#tag Property, Flags = &h0, Description = 4966206D61746368696E6720627261636B657420686967686C69676874696E6720697320656E61626C65642C2074686973206973207468652076697375616C207374796C65207573656420746F20646F20736F2E
+		HighlightMatchingBracketsMode As SyntaxArea.Editor.BracketsHighlightModes = SyntaxArea.Editor.BracketsHighlightModes.Circle
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -6539,6 +6540,12 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Constant, Name = UNDO_EVT_BLOCK_SECS, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
+
+
+	#tag Enum, Name = BracketsHighlightModes, Type = Integer, Flags = &h0, Description = 54686520646966666572656E74207761797320627261636B6574732063616E20626520686967686C6967687465642062792074686520656469746F722E
+		Circle
+		Highlight
+	#tag EndEnum
 
 
 	#tag ViewBehavior

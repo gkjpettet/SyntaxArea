@@ -138,7 +138,7 @@ Begin DesktopWindow WinDemo
          ClearHighlightedRangesOnTextChange=   True
          DirtyLinesColor =   &cFFD47900
          DisableReset    =   False
-         DisplayDirtyLines=   True
+         DisplayDirtyLines=   False
          DisplayGutter   =   True
          DisplayInvisibleCharacters=   False
          DisplayVerticalRuler=   False
@@ -202,7 +202,7 @@ Begin DesktopWindow WinDemo
          Top             =   0
          UseLighterLineFoldingBackColor=   False
          UseSystemTextSelectionColor=   True
-         VerticalRulerColor=   &c000000
+         VerticalRulerColor=   &c00000000
          Visible         =   True
          Width           =   772
       End
@@ -1042,7 +1042,7 @@ Begin DesktopWindow WinDemo
    Begin DesktopCheckBox CheckBoxThickInsertionPoint
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Thick Insertion"
+      Caption         =   "Thick Insertion Point"
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -1050,7 +1050,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1047
+      Left            =   800
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1061,13 +1061,131 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   153
+      Top             =   174
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       VisualState     =   1
-      Width           =   107
+      Width           =   143
+   End
+   Begin DesktopCheckBox CheckBoxDisplayDirtyLines
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Display Dirty Lines"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   30
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   195
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   143
+   End
+   Begin DesktopLabel LabelDirtyLinesColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   941
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   31
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Dirty Lines Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   195
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   103
+   End
+   Begin ColorPicker DirtyLinesColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   1049
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   32
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   196
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopCheckBox CheckBoxHighlightMatchingBrackets
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Highlight Matching Brackets"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   33
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   216
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   179
    End
 End
 #tag EndDesktopWindow
@@ -1257,6 +1375,13 @@ End
 		  // Caret.
 		  CaretColor.SelectedColor = CodeEditor.CaretColor
 		  CheckBoxThickInsertionPoint.Value = CodeEditor.ThickInsertionPoint
+		  
+		  // Dirty lines.
+		  CheckBoxDisplayDirtyLines.Value = CodeEditor.DisplayDirtyLines
+		  DirtyLinesColor.SelectedColor = CodeEditor.DirtyLinesColor
+		  
+		  // Brackets.
+		  CheckBoxHighlightMatchingBrackets.Value = CodeEditor.HighlightMatchingBrackets
 		  
 		End Sub
 	#tag EndMethod
@@ -1521,6 +1646,27 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.ThickInsertionPoint = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxDisplayDirtyLines
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.DisplayDirtyLines = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DirtyLinesColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.DirtyLinesColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxHighlightMatchingBrackets
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.HighlightMatchingBrackets = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
