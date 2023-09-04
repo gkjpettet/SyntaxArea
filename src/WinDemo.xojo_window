@@ -1241,6 +1241,36 @@ Begin DesktopWindow WinDemo
       VisualState     =   1
       Width           =   143
    End
+   Begin DesktopCheckBox CheckBoxEnableLineFolding
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Enable Line Folding"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   37
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   258
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   143
+   End
 End
 #tag EndDesktopWindow
 
@@ -1254,7 +1284,7 @@ End
 		  CodeEditor.SyntaxDefinition = syntaxDefinition
 		  
 		  // Enable line foldings if the definition supports them.
-		  CodeEditor.EnableLineFoldings = syntaxDefinition.SupportsCodeBlocks
+		  CodeEditor.EnableLineFolding = syntaxDefinition.SupportsCodeBlocks
 		  
 		  #If TargetMacOS
 		    CodeEditor.HasBottomBorder = False
@@ -1438,6 +1468,9 @@ End
 		  CheckBoxHighlightMatchingBrackets.Value = CodeEditor.HighlightMatchingBrackets
 		  BracketHighlightColor.SelectedColor = CodeEditor.BracketHighlightColor
 		  CheckBoxAutoCloseBrackets.Value = CodeEditor.AutoCloseBrackets
+		  
+		  // Line folding.
+		  CheckBoxEnableLineFolding.Value = CodeEditor.EnableLineFolding
 		  
 		End Sub
 	#tag EndMethod
@@ -1767,6 +1800,13 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.AutoCloseBrackets = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxEnableLineFolding
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.EnableLineFolding = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

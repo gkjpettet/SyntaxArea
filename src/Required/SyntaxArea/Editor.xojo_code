@@ -401,7 +401,7 @@ Implements MessageCentre.MessageReceiver
 		  ElseIf x < LineNumberOffset Then
 		    SelectedLine = Lines.GetLineNumberForOffset(selStart)
 		    
-		    If EnableLineFoldings And x >= LineNumberOffset - BlockStartImage.Graphics.Width - 2 Then
+		    If EnableLineFolding And x >= LineNumberOffset - BlockStartImage.Graphics.Width - 2 Then
 		      // Toggle foldings.
 		      ToggleLineFold(SelectedLine)
 		      CreateMouseOverBlockHighlight(SelectedLine)
@@ -520,7 +520,7 @@ Implements MessageCentre.MessageReceiver
 		  CursorIsIbeam = False
 		  
 		  // Visual block feedback.
-		  If Not EnableLineFoldings Or Not HighlightBlocksOnMouseOverGutter Then
+		  If Not EnableLineFolding Or Not HighlightBlocksOnMouseOverGutter Then
 		    If MouseOverBlock <> Nil Then
 		      MouseOverBlock = Nil
 		      Redraw
@@ -878,7 +878,7 @@ Implements MessageCentre.MessageReceiver
 		  /// Computes the maximum vertical scrollbar value.
 		  
 		  If mVerticalScrollbar <> Nil Then
-		    If EnableLineFoldings Then
+		    If EnableLineFolding Then
 		      mVerticalScrollbar.MaximumValue = Lines.Count - Lines.invisibleLines - MaxVisibleLines
 		    Else
 		      mVerticalScrollbar.MaximumValue = Lines.Count - MaxVisibleLines
@@ -933,7 +933,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If vertical <> ScrollPosition Then
 		    // Cap values.
-		    If EnableLineFoldings Then
+		    If EnableLineFolding Then
 		      Var v2 As Integer = Max(Min(vertical, Lines.Count - Lines.InvisibleLines - MaxVisibleLines), 0)
 		      If vertical <> v2 Then
 		        vertical = v2
@@ -994,7 +994,7 @@ Implements MessageCentre.MessageReceiver
 		  Var line As TextLine = Lines.GetLine(linenum)
 		  
 		  // Deal with invisible lines.
-		  If EnableLineFoldings Then
+		  If EnableLineFolding Then
 		    Var startLineIdx, endLineIdx As Integer
 		    Var startLine, endLine As SyntaxArea.TextLine
 		    Var update As Boolean
@@ -1192,7 +1192,7 @@ Implements MessageCentre.MessageReceiver
 		  Var lineNum As Integer
 		  
 		  // Find the line.
-		  If EnableLineFoldings Then
+		  If EnableLineFolding Then
 		    lineNum = Lines.GetNumberOfLinesNeededToView(Min(Lines.Count - 1, _
 		    Max(0, Floor((y + (ScrollPosition * TextHeight)) / TextHeight))))
 		  Else
@@ -1636,7 +1636,7 @@ Implements MessageCentre.MessageReceiver
 		  Var lastLine As Integer
 		  
 		  // The lowest possible line to draw is ScrollPosition, so start there.
-		  If EnableLineFoldings Then
+		  If EnableLineFolding Then
 		    firstline = Lines.GetNumberOfLinesNeededToView(ScrollPosition)
 		    lastLine = Lines.Count - 1
 		  Else
@@ -1768,7 +1768,7 @@ Implements MessageCentre.MessageReceiver
 		      // into the gutter area when it's horizontally scrolled.
 		      If DisplayGutter Then
 		        // The caret line is slightly darker.
-		        If EnableLineFoldings Then
+		        If EnableLineFolding Then
 		          If UseLighterLineFoldingBackColor Then
 		            gg.DrawingColor = GutterBackColor.LighterColor(10, True)
 		          Else
@@ -1816,14 +1816,14 @@ Implements MessageCentre.MessageReceiver
 		          End If
 		        End If
 		        
-		        If EnableLineFoldings And line.IsBlockStart Then
+		        If EnableLineFolding And line.IsBlockStart Then
 		          If line.Folded Then
 		            // Draw a line folded marker.
 		            gg.DrawPicture(BlockFoldedImage, LineNumberOffset - BlockFoldedImage.Graphics.Width - 2, sy - TextHeight + (TextHeight - BlockFoldedImage.Graphics.Height) / 2 + 1)
 		          Else
 		            gg.DrawPicture(BlockStartImage, LineNumberOffset - BlockStartImage.Graphics.Width - 2, sy - TextHeight + (TextHeight - BlockStartImage.Graphics.Height) / 2 + 1)
 		          End If
-		        ElseIf EnableLineFoldings And line.IsBlockEnd Then
+		        ElseIf EnableLineFolding And line.IsBlockEnd Then
 		          gg.DrawPicture(BlockEndImage, LineNumberOffset - BlockEndImage.Graphics.Width - 2, sy - TextHeight + (TextHeight - BlockEndImage.Graphics.Height) / 2 + 1)
 		        End If
 		        
@@ -1924,7 +1924,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  #If TargetMacOS
 		    mContentsWidth = mLastLongestLinePixels + LineNumberOffset + RightScrollMargin
-		    If EnableLineFoldings Then
+		    If EnableLineFolding Then
 		      mContentsHeight = (Lines.Count - Lines.invisibleLines) * mLineHeight
 		    Else
 		      mContentsHeight = Lines.Count * mLineHeight
@@ -1995,7 +1995,7 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Method, Flags = &h21
 		Private Function FoldingOffset() As Integer
-		  If Not EnableLineFoldings Then Return 0
+		  If Not EnableLineFolding Then Return 0
 		  
 		  Return BlockStartImage.Graphics.Width + 2
 		  
@@ -3970,7 +3970,7 @@ Implements MessageCentre.MessageReceiver
 		  If IgnoreRepaint And Not forced Then Return
 		  
 		  Var scrollPos As Integer = Self.ScrollPosition
-		  If EnableLineFoldings Then scrollPos = Lines.GetNumberOfLinesNeededToView(scrollPos)
+		  If EnableLineFolding Then scrollPos = Lines.GetNumberOfLinesNeededToView(scrollPos)
 		  
 		  IgnoreRepaint = False
 		  mRedrawEverything = True
@@ -3987,7 +3987,7 @@ Implements MessageCentre.MessageReceiver
 		  If IgnoreRepaint Or mWindowIsClosing Then Return
 		  
 		  Var scrollPos As Integer = Self.ScrollPosition // Since it's computed.
-		  If EnableLineFoldings Then scrollPos = Lines.GetNumberOfLinesNeededToView(scrollPos)
+		  If EnableLineFolding Then scrollPos = Lines.GetNumberOfLinesNeededToView(scrollPos)
 		  If (CaretLine < scrollPos Or CaretLine > scrollPos + VisibleLineRange.Length) Then Return
 		  
 		  // OPTIMISE: Need to find a way to avoid updating the entire
@@ -4248,7 +4248,7 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Method, Flags = &h0
 		Sub ToggleLineFold(lineIndex As Integer)
-		  If Not EnableLineFoldings Then Return
+		  If Not EnableLineFolding Then Return
 		  
 		  Var topLine As Integer = Lines.ToggleLineFolding(lineIndex)
 		  If topLine > -1 Then
@@ -4365,7 +4365,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Var horizontal, vertical As Integer
 		  Var scrollPos As Integer = Self.ScrollPosition
-		  If EnableLineFoldings Then scrollPosition = Lines.getNumberOfLinesNeededToView(scrollPos)
+		  If EnableLineFolding Then scrollPosition = Lines.getNumberOfLinesNeededToView(scrollPos)
 		  
 		  horizontal = ScrollPositionX
 		  vertical = Self.ScrollPosition
@@ -4396,7 +4396,7 @@ Implements MessageCentre.MessageReceiver
 		Private Function VisibleAndHiddenLines() As Integer
 		  /// Returns the number of visible lines and hidden lines.
 		  
-		  If EnableLineFoldings Then
+		  If EnableLineFolding Then
 		    Return Lines.InvisibleLines + MaxVisibleLines
 		  Else
 		    Return MaxVisibleLines
@@ -4439,7 +4439,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  // Y.
 		  Var ypos As Integer
-		  If EnableLineFoldings Then
+		  If EnableLineFolding Then
 		    ypos = (Lines.GetNumberOfVisibleLinesUpToLine(lineNumber) - ScrollPosition) * TextHeight
 		  Else
 		    ypos = (lineNumber - ScrollPosition) * TextHeight
@@ -5106,13 +5106,13 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return mEnableLineFoldings
+			  Return mEnableLineFolding
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If mEnableLineFoldings And Not value Then Lines.UnfoldAll
-			  mEnableLineFoldings = value
+			  If mEnableLineFolding And Not value Then Lines.UnfoldAll
+			  mEnableLineFolding = value
 			  LineNumberOffset = 0
 			  UpdateDesiredColumn
 			  InvalidateAllLines
@@ -5120,7 +5120,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		EnableLineFoldings As Boolean
+		EnableLineFolding As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21, Description = 5573656420696E7465726E616C6C7920746F20747261636B206966206C696E6520666F6C64696E67732061726520656E61626C65642E204C696E6520666F6C64696E677320617265206175746F6D61746963616C6C792064697361626C656420696620746865726520617265206D6F7265207468616E203135303030206C696E6573206F6620636F64652E
@@ -5483,7 +5483,7 @@ Implements MessageCentre.MessageReceiver
 			    tmp.Graphics.Bold = True
 			    mLineNumberOffset = Max(tmp.Graphics.TextWidth(Lines.Count.ToString) + BOOKMARK_WIDTH, MIN_LINENUMBER_OFFSET)
 			    
-			    If EnableLineFoldings Then
+			    If EnableLineFolding Then
 			      mLineNumberOffset = LineNumberOffset + BlockStartImage.Graphics.Width + 2
 			    End If
 			  End If
@@ -5715,7 +5715,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEnableLineFoldings As Boolean
+		Private mEnableLineFolding As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6266,12 +6266,12 @@ Implements MessageCentre.MessageReceiver
 			  
 			  // Disable line folding for text bigger than 15000 lines otherwise it's slow.
 			  If lines.Count > 15000 Then
-			    If Me.EnableLineFoldings Then
+			    If Me.EnableLineFolding Then
 			      EnableLineFoldingSetting = True
 			    End If
-			    Me.EnableLineFoldings = False
+			    Me.EnableLineFolding = False
 			  ElseIf EnableLineFoldingSetting Then
-			    Me.EnableLineFoldings = True
+			    Me.EnableLineFolding = True
 			  End If
 			  
 			  RaiseEvent TextChanged
@@ -6840,7 +6840,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="EnableLineFoldings"
+			Name="EnableLineFolding"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
