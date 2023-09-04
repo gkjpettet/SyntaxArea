@@ -203,6 +203,7 @@ Begin DesktopWindow WinDemo
          UseLighterLineFoldingBackColor=   False
          UseSystemTextSelectionColor=   True
          VerticalRulerColor=   &c00000000
+         VerticalRulerPosition=   0
          Visible         =   True
          Width           =   772
       End
@@ -598,7 +599,7 @@ Begin DesktopWindow WinDemo
    Begin DesktopCheckBox CheckBoxVerticalRuler
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Vertical Ruler"
+      Caption         =   "Display Vertical Ruler At"
       Enabled         =   True
       FontName        =   "SmallSystem"
       FontSize        =   0.0
@@ -623,7 +624,7 @@ Begin DesktopWindow WinDemo
       Value           =   False
       Visible         =   True
       VisualState     =   1
-      Width           =   102
+      Width           =   157
    End
    Begin DesktopTextField VerticalRulerAt
       AllowAutoDeactivate=   True
@@ -696,39 +697,6 @@ Begin DesktopWindow WinDemo
       VisualState     =   1
       Width           =   110
    End
-   Begin DesktopLabel LabelVerticalRulerAt
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   1059
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   0
-      Selectable      =   False
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "At"
-      TextAlignment   =   3
-      TextColor       =   &c000000
-      Tooltip         =   ""
-      Top             =   69
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   20
-   End
    Begin ColorPicker VerticalRulerColor
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -738,7 +706,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1031
+      Left            =   1135
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -750,7 +718,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   70
+      Top             =   71
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1243,6 +1211,36 @@ Begin DesktopWindow WinDemo
       Visible         =   True
       Width           =   18
    End
+   Begin DesktopCheckBox CheckBoxAutoCloseBrackets
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Auto Close Brackets"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   36
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   237
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   143
+   End
 End
 #tag EndDesktopWindow
 
@@ -1439,6 +1437,7 @@ End
 		  // Brackets.
 		  CheckBoxHighlightMatchingBrackets.Value = CodeEditor.HighlightMatchingBrackets
 		  BracketHighlightColor.SelectedColor = CodeEditor.BracketHighlightColor
+		  CheckBoxAutoCloseBrackets.Value = CodeEditor.AutoCloseBrackets
 		  
 		End Sub
 	#tag EndMethod
@@ -1761,6 +1760,13 @@ End
 	#tag Event
 		Sub ColorChanged()
 		  CodeEditor.BracketHighlightColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxAutoCloseBrackets
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.AutoCloseBrackets = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

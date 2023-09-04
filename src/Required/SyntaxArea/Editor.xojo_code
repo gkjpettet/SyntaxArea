@@ -1867,11 +1867,7 @@ Implements MessageCentre.MessageReceiver
 		    g.DrawPicture(Gutter, 0, 0)
 		  End If
 		  
-		  // And their frame.
-		  // If Border Then
-		  // g.DrawingColor = BorderColor
-		  // g.DrawRectangle(0, 0, g.Width, g.Height)
-		  // End If
+		  // Borders.
 		  If HasLeftBorder Then
 		    g.DrawingColor = BorderColor
 		    g.DrawLine(0, 0, 0, g.Height)
@@ -1912,8 +1908,6 @@ Implements MessageCentre.MessageReceiver
 		    Var rightMarginX As Integer = g.TextWidth(mVerticalRulerText) - ScrollPositionX + LeftMarginOffset + LineNumberOffset
 		    gr.DrawLine(rightMarginX, 0, rightMarginX, g.Height)
 		  End If
-		  
-		  
 		  
 		  // Paint the caret.
 		  If DragSource = Nil Then
