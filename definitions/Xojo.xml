@@ -20,7 +20,7 @@
 
 	<lineContinuationMarker indent="2">^((?:"[^"\r\n]*"|(?!'|//|\brem\b)[^\r\n_])*)_[\t\x20]*((?:'|//|\brem\b)[^\r\n]*|)$</lineContinuationMarker>
 
-	<symbols> <!-- these are used to identify declared symbols that are useful for natigation inside larger source file -->
+	<symbols> <!-- these are used to identify declared symbols that are useful for navigation inside larger source file -->
 		<symbol type="Method">
 			<entryRegEx>^\s*(?:public|protected|private)?\b\s*(shared\b)?\s*(?&lt;!end\b)\s*(?:sub|function)\b.+?\([^\)]*\)\s*(?:as\b\s*\w+\s*)?</entryRegEx>
 		</symbol>
