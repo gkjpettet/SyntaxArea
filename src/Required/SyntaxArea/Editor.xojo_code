@@ -4184,11 +4184,21 @@ Implements MessageCentre.MessageReceiver
 		  Var x, y  As Double
 		  XYAtCharPos(CaretPos, CaretLine, x, y)
 		  
-		  Var cx, cy As Integer
-		  cx = x
-		  cy = y
+		  // Compute the maximum height available for the popup. Usually we'll want to display the popup beneath
+		  // the caret but if the available height is too small we'll display it above the caret.
+		  Var availableHeightBelow As Integer = Self.Window.Height - Self.Top - y
+		  Var availableHeightAbove As Integer = Self.Top + y
+		  Var minOptionsToShow As Integer = If(CurrentAutocompleteOptions.Options.Count = 1, 1, 2)
+		  If availableHeightBelow < availableHeightAbove Then
+		    If availableHeightBelow < MyAutocompletePopup.DefaultRowHeight * minOptionsToShow Then
+		      // We need to draw above the caret.
+		      y = y - (CurrentAutocompleteOptions.Options.Count * MyAutocompletePopup.DefaultRowHeight) + Self.Top
+		    End If
+		  End If
 		  
 		  // Give the user the option to offset the suggestion window if needed.
+		  Var cx As Integer = x
+		  Var cy As Integer = y
 		  If ShouldDisplaySuggestionWindowAtPos(cx, cy) Then
 		    x = cx
 		    y = cy
@@ -4197,25 +4207,6 @@ Implements MessageCentre.MessageReceiver
 		  // Show the autocomplete popup.
 		  MyAutocompletePopup.Show(x, y)
 		  
-		  
-		  #Pragma Warning "TODO: Fix y position of popup when at the bottom of the screen"
-		  // // Compute the maximum height available for the popup. Usually we'll want to display the popup beneath
-		  // // the caret but if the available height is too small we'll display it above the caret.
-		  // Var availableHeightBelow As Integer = Self.Window.Height - Self.Top - y
-		  // Var availableHeightAbove As Integer = Self.Top + y
-		  // Var minOptionsToShow As Integer = If(AutocompleteData.Options.Count = 1, 1, 2)
-		  // Var displayBelowCaret As Boolean = True
-		  // Var maxPopupHeight As Integer
-		  // If availableHeightBelow < availableHeightAbove Then
-		  // If availableHeightBelow < mAutocompletePopup.AutocompleteOptionHeight * minOptionsToShow Then
-		  // maxPopupHeight = availableHeightAbove
-		  // displayBelowCaret = False
-		  // Else
-		  // maxPopupHeight = availableHeightBelow
-		  // End If
-		  // Else
-		  // maxPopupHeight = availableHeightBelow
-		  // End If
 		End Sub
 	#tag EndMethod
 
