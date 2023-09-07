@@ -2620,7 +2620,7 @@ Implements MessageCentre.MessageReceiver
 		  Self.LineNumbersColor = theme.LineNumbersColor
 		  Self.VerticalRulerColor = theme.VerticalRulerColor
 		  Self.SuggestionPopupBackColor = theme.SuggestionPopupBackColor
-		  Self.SuggestionPopupSelectedColor = theme.SuggestionPopupSelectedColor
+		  Self.SuggestionPopupSelectedTextColor = theme.SuggestionPopupSelectedTextColor
 		  Self.SuggestionPopupTextColor = theme.SuggestionPopupTextColor
 		  Self.TextColor = theme.TextColor
 		  Self.TextSelectionColor = theme.TextSelectionColor
@@ -4197,6 +4197,25 @@ Implements MessageCentre.MessageReceiver
 		  // Show the autocomplete popup.
 		  MyAutocompletePopup.Show(x, y)
 		  
+		  
+		  #Pragma Warning "TODO: Fix y position of popup when at the bottom of the screen"
+		  // // Compute the maximum height available for the popup. Usually we'll want to display the popup beneath
+		  // // the caret but if the available height is too small we'll display it above the caret.
+		  // Var availableHeightBelow As Integer = Self.Window.Height - Self.Top - y
+		  // Var availableHeightAbove As Integer = Self.Top + y
+		  // Var minOptionsToShow As Integer = If(AutocompleteData.Options.Count = 1, 1, 2)
+		  // Var displayBelowCaret As Boolean = True
+		  // Var maxPopupHeight As Integer
+		  // If availableHeightBelow < availableHeightAbove Then
+		  // If availableHeightBelow < mAutocompletePopup.AutocompleteOptionHeight * minOptionsToShow Then
+		  // maxPopupHeight = availableHeightAbove
+		  // displayBelowCaret = False
+		  // Else
+		  // maxPopupHeight = availableHeightBelow
+		  // End If
+		  // Else
+		  // maxPopupHeight = availableHeightBelow
+		  // End If
 		End Sub
 	#tag EndMethod
 
@@ -4287,7 +4306,7 @@ Implements MessageCentre.MessageReceiver
 		  theme.LineNumbersColor = Self.LineNumbersColor
 		  theme.VerticalRulerColor = Self.VerticalRulerColor
 		  theme.SuggestionPopupBackColor = Self.SuggestionPopupBackColor
-		  theme.SuggestionPopupSelectedColor = Self.SuggestionPopupSelectedColor
+		  theme.SuggestionPopupSelectedTextColor = Self.SuggestionPopupSelectedTextColor
 		  theme.SuggestionPopupTextColor = Self.SuggestionPopupTextColor
 		  theme.TextColor = Self.TextColor
 		  theme.TextSelectionColor = Self.TextSelectionColor
@@ -5902,7 +5921,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSuggestionPopupSelectedColor As ColorGroup
+		Private mSuggestionPopupSelectedTextColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5947,6 +5966,10 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mUseLighterLineFoldingBackColor As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUseSystemTextSelectionColor As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6139,17 +6162,17 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F722073656C6563746564207465787420696E20746865206175746F636F6D706C6574652073756767657374696F6E7320706F7075702E
 		#tag Getter
 			Get
-			  Return mSuggestionPopupSelectedColor
+			  Return mSuggestionPopupSelectedTextColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mSuggestionPopupSelectedColor = value
+			  mSuggestionPopupSelectedTextColor = value
 			  AutocompleteCancelled(True)
 			  
 			End Set
 		#tag EndSetter
-		SuggestionPopupSelectedColor As ColorGroup
+		SuggestionPopupSelectedTextColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662074686520617574636F6D706C6574652073756767657374696F6E7320696E2074686520706F7075702E
@@ -6431,9 +6454,21 @@ Implements MessageCentre.MessageReceiver
 		UseLighterLineFoldingBackColor As Boolean
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C20757365207468652073797374656D2773207374616E6461726420746578742073656C656374696F6E20636F6C6F7572207768656E2073656C656374696E6720746578742E2049662046616C73652069742077696C6C2075736520605465787453656C656374696F6E436F6C6F72602E
-		UseSystemTextSelectionColor As Boolean = True
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return mUseSystemTextSelectionColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mUseSystemTextSelectionColor = value
+			  InvalidateAllLines
+			  Redraw
+			End Set
+		#tag EndSetter
+		UseSystemTextSelectionColor As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C20726967687420766572746963616C2072756C65722E
 		#tag Getter
@@ -7036,6 +7071,14 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="VerticalRulerPosition"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="UseSystemTextSelectionColor"
 			Visible=true
 			Group="Behavior"
@@ -7156,7 +7199,7 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SuggestionPopupSelectedColor"
+			Name="SuggestionPopupSelectedTextColor"
 			Visible=true
 			Group="Colours"
 			InitialValue=""
@@ -7237,14 +7280,6 @@ Implements MessageCentre.MessageReceiver
 			Group="Autocompletion"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="VerticalRulerPosition"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

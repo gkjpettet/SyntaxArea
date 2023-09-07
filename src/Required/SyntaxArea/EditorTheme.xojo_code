@@ -17,7 +17,7 @@ Protected Class EditorTheme
 		  LineNumbersColor = New ColorGroup(Color.Black, Color.White)
 		  VerticalRulerColor = New ColorGroup(Color.LightGray, Color.DarkGray)
 		  SuggestionPopupBackColor = New ColorGroup(Color.White, Color.Black)
-		  SuggestionPopupSelectedColor = Color.HighlightColor
+		  SuggestionPopupSelectedTextColor = New ColorGroup(Color.Black, Color.White)
 		  SuggestionPopupTextColor = New ColorGroup(Color.Black, Color.White)
 		  TextColor = New ColorGroup(Color.Black, Color.White)
 		  TextSelectionColor = Color.HighlightColor
@@ -90,7 +90,7 @@ Protected Class EditorTheme
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F66207468652073656C6563746564206974656D20696E20746865206175746F636F6D706C6574696F6E2073756767657374696F6E20706F7075702E
-		SuggestionPopupSelectedColor As ColorGroup
+		SuggestionPopupSelectedTextColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 546865207465787420636F6C6F757220666F72206F7074696F6E7320696E20746865206175746F636F6D706C6574696F6E2073756767657374696F6E20706F7075702E
@@ -260,7 +260,7 @@ Protected Class EditorTheme
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SuggestionPopupSelectedColor"
+			Name="SuggestionPopupSelectedTextColor"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

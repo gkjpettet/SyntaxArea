@@ -186,7 +186,7 @@ Begin DesktopWindow WinDemo
          SelectionStart  =   0
          SelectionText   =   ""
          SuggestionPopupBackColor=   &cFFFFFF00
-         SuggestionPopupSelectedColor=   &c00000000
+         SuggestionPopupSelectedTextColor=   &c000000
          SuggestionPopupTextColor=   &c00000000
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -932,7 +932,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   888
+      Left            =   895
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -944,7 +944,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   154
+      Top             =   153
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1029,7 +1029,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   174
+      Top             =   198
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1059,7 +1059,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   195
+      Top             =   219
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1093,7 +1093,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   195
+      Top             =   219
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1120,7 +1120,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   196
+      Top             =   220
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1147,7 +1147,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   216
+      Top             =   240
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1178,7 +1178,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   216
+      Top             =   240
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1194,7 +1194,7 @@ Begin DesktopWindow WinDemo
       Height          =   18
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   1105
+      Left            =   1091
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1206,7 +1206,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   217
+      Top             =   241
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1233,7 +1233,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   237
+      Top             =   261
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1263,7 +1263,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   258
+      Top             =   282
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1293,7 +1293,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   279
+      Top             =   303
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1323,13 +1323,275 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   300
+      Top             =   324
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   179
+   End
+   Begin ColorPicker SelectedSuggestionTextColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   979
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   40
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   368
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopLabel LabelSuggestionSelectionTextColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   41
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Selected Suggestion Text Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   368
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   176
+   End
+   Begin DesktopLabel LabelSuggestionColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   42
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Suggestion Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   345
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   157
+   End
+   Begin ColorPicker SuggestionColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   979
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   43
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   346
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopLabel LabelSuggestionSelectionColor1
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   44
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Suggestion Popup Back Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   389
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   167
+   End
+   Begin ColorPicker SuggestionPopupBackColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   979
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   45
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   390
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin ColorPicker SelectionColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   895
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   46
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   176
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopLabel LabelSelectionColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   47
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Selection Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   175
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   92
+   End
+   Begin DesktopCheckBox CheckBoxUseSystemTextSelectionColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Use System Selection Colour"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   919
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   48
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   175
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   183
    End
 End
 #tag EndDesktopWindow
@@ -1535,8 +1797,15 @@ End
 		  // Invisible characters.
 		  CheckBoxDisplayInvisibleCharacters.Value = CodeEditor.DisplayInvisibleCharacters
 		  
+		  // Text selection colour.
+		  SelectionColor.SelectedColor = CodeEditor.TextSelectionColor
+		  CheckBoxUseSystemTextSelectionColor.Value = CodeEditor.UseSystemTextSelectionColor
+		  
 		  // Autocomplete.
 		  CheckBoxEnableAutocomplete.Value = CodeEditor.EnableAutocomplete
+		  SuggestionColor.SelectedColor = CodeEditor.SuggestionPopupTextColor
+		  SelectedSuggestionTextColor.SelectedColor = CodeEditor.SuggestionPopupSelectedTextColor
+		  SuggestionPopupBackColor.SelectedColor = CodeEditor.SuggestionPopupBackColor
 		  
 		End Sub
 	#tag EndMethod
@@ -1887,6 +2156,41 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.EnableAutocomplete = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectedSuggestionTextColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.SuggestionPopupSelectedTextColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SuggestionColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.SuggestionPopupTextColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SuggestionPopupBackColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.SuggestionPopupBackColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectionColor
+	#tag Event
+		Sub ColorChanged()
+		  CodeEditor.TextSelectionColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxUseSystemTextSelectionColor
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.UseSystemTextSelectionColor = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

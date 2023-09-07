@@ -87,7 +87,7 @@ Inherits DesktopListBox
 		  #Pragma Unused column
 		  
 		  If Me.SelectedRowIndex = row Then
-		    g.DrawingColor = Owner.SuggestionPopupSelectedColor
+		    g.DrawingColor = Owner.SuggestionPopupSelectedTextColor
 		  Else
 		    g.DrawingColor = Owner.SuggestionPopupTextColor
 		  End If
