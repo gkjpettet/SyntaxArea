@@ -262,6 +262,12 @@ Protected Class HighlightContext
 		Function Highlight(s As String, subExpression As String, position As Integer, positionB As Integer, scanner As Regex, tokens() As SyntaxArea.TextSegment, placeholders() As SyntaxArea.TextPlaceholder) As Boolean
 		  /// Highlights this context.
 		  
+		  #Pragma Warning "NOTE: If we want to support editor-specified text colours this is the method to alter"
+		  ' If we want to allow an editor to specify the colour to use say for keywords or numbers, rather than the 
+		  ' definition file, we need to give the HighlightContext a weak reference to the editor so it can query if there
+		  ' is already a colour specified for a context of this name or whether it should use the value(s) specified
+		  ' in the definition file.
+		  
 		  #Pragma DisableBackgroundTasks
 		  
 		  Var match As RegExMatch

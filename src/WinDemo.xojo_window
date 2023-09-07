@@ -1593,6 +1593,130 @@ Begin DesktopWindow WinDemo
       VisualState     =   1
       Width           =   183
    End
+   Begin DesktopLabel LabelDefinition
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   49
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Definition"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   421
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   58
+   End
+   Begin DesktopPopupMenu PopupDefinition
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   870
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedRowIndex=   0
+      TabIndex        =   50
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   421
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   127
+   End
+   Begin DesktopLabel LabelDefinitionDetail
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   51
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Select a built-in syntax definition or load your own."
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   442
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   281
+   End
+   Begin DesktopButton ButtonLoadDefinition
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Load Definition..."
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1004
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   52
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   421
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   121
+   End
 End
 #tag EndDesktopWindow
 
@@ -1600,13 +1724,10 @@ End
 	#tag Event
 		Sub Opening()
 		  // Load the bundled Xojo syntax definition file.
-		  Var defFile As FolderItem = SpecialFolder.Resource("Xojo.xml")
-		  Var syntaxDefinition As New SyntaxArea.HighlightDefinition
-		  Call syntaxDefinition.LoadFromXml(defFile)
-		  CodeEditor.SyntaxDefinition = syntaxDefinition
+		  CodeEditor.SyntaxDefinition = PopupDefinition.RowTagAt(0)
 		  
 		  // Enable line foldings if the definition supports them.
-		  CodeEditor.EnableLineFolding = syntaxDefinition.SupportsCodeBlocks
+		  CodeEditor.EnableLineFolding = CodeEditor.SyntaxDefinition.SupportsCodeBlocks
 		  
 		  #If TargetMacOS
 		    CodeEditor.HasBottomBorder = False
@@ -1626,9 +1747,9 @@ End
 		  
 		  CodeEditor.SetFocus
 		  
-		  InitialiseControls
-		  
 		  CodeEditor.VerticalRulerPosition = 80
+		  
+		  InitialiseControls
 		End Sub
 	#tag EndEvent
 
@@ -2191,6 +2312,49 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.UseSystemTextSelectionColor = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PopupDefinition
+	#tag Event
+		Sub Opening()
+		  Var syntaxDefinition As SyntaxArea.HighlightDefinition
+		  
+		  Me.AddRow("Xojo")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition
+		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  
+		  Me.SelectedRowIndex = 0
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused item
+		  
+		  CodeEditor.SyntaxDefinition = Me.RowTagAt(Me.SelectedRowIndex)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ButtonLoadDefinition
+	#tag Event
+		Sub Pressed()
+		  Var f As FolderItem = FolderItem.ShowOpenFileDialog(MyFiles.TextXML)
+		  
+		  If f = Nil Then Return
+		  
+		  Var def As New SyntaxArea.HighlightDefinition
+		  If Not def.LoadFromXml(f) Then
+		    MessageBox("Invalid syntax definition file.")
+		    Return
+		  End If
+		  
+		  PopupDefinition.AddRow(def.Name)
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = def
+		  PopupDefinition.SelectedRowIndex = PopupDefinition.LastAddedRowIndex
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
