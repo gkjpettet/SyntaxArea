@@ -186,7 +186,7 @@ Begin DesktopWindow WinDemo
          SelectionStart  =   0
          SelectionText   =   ""
          SuggestionPopupBackColor=   &cFFFFFF00
-         SuggestionPopupSelectedTextColor=   &c000000
+         SuggestionPopupSelectedTextColor=   &c00000000
          SuggestionPopupTextColor=   &c00000000
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -1989,6 +1989,7 @@ End
 		  SelectedSuggestionTextColor.SelectedColor = CodeEditor.SuggestionPopupSelectedTextColor
 		  SuggestionPopupBackColor.SelectedColor = CodeEditor.SuggestionPopupBackColor
 		  
+		  
 		End Sub
 	#tag EndMethod
 
@@ -2005,6 +2006,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = EXAMPLE_JAVA, Type = String, Dynamic = False, Default = \"package com.thealgorithms.geometry;\n\nimport java.util.Arrays;\nimport java.util.Comparator;\nimport java.util.Stack;\n\n/*\n * A Java program that computes the convex hull using the Graham Scan algorithm\n * In the best case\x2C time complexity is O(n)\x2C while in the worst case\x2C it is log(n).\n * O(n) space complexity\n *\n * This algorithm is only applicable to integral coordinates.\n *\n * Reference:\n * https://github.com/TheAlgorithms/C-Plus-Plus/blob/master/geometry/graham_scan_algorithm.cpp\n * https://github.com/TheAlgorithms/C-Plus-Plus/blob/master/geometry/graham_scan_functions.hpp\n * https://algs4.cs.princeton.edu/99hull/GrahamScan.java.html\n */\npublic class GrahamScan {\n    private final Stack<Point> hull \x3D new Stack<>();\n\n    public GrahamScan(Point[] points) {\n\n        /*\n         * pre-process the points by sorting them with respect to the bottom-most point\x2C then we\'ll\n         * push the first point in the array to be our first extreme point.\n         */\n        Arrays.sort(points);\n        Arrays.sort(points\x2C 1\x2C points.length\x2C points[0].polarOrder());\n        hull.push(points[0]);\n\n        // find index of first point not equal to a[0] (indexPoint1) and the first point that\'s not\n        // collinear with either (indexPoint2).\n        int indexPoint1;\n        for (indexPoint1 \x3D 1; indexPoint1 < points.length; indexPoint1++)\n            if (!points[0].equals(points[indexPoint1])) break;\n        if (indexPoint1 \x3D\x3D points.length) return;\n\n        int indexPoint2;\n        for (indexPoint2 \x3D indexPoint1 + 1; indexPoint2 < points.length; indexPoint2++)\n            if (Point.orientation(points[0]\x2C points[indexPoint1]\x2C points[indexPoint2]) !\x3D 0) break;\n        hull.push(points[indexPoint2 - 1]);\n\n        // Now we simply add the point to the stack based on the orientation.\n        for (int i \x3D indexPoint2; i < points.length; i++) {\n            Point top \x3D hull.pop();\n            while (Point.orientation(hull.peek()\x2C top\x2C points[i]) <\x3D 0) {\n                top \x3D hull.pop();\n            }\n            hull.push(top);\n            hull.push(points[i]);\n        }\n    }\n\n    /**\n     * @return A stack of points representing the convex hull.\n     */\n    public Iterable<Point> hull() {\n        Stack<Point> s \x3D new Stack<>();\n        for (Point p : hull) s.push(p);\n        return s;\n    }\n\n    public record Point(int x\x2C int y) implements Comparable<Point> {\n\n        /**\n         * Default constructor\n         * @param x x-coordinate\n         * @param y y-coordinate\n         */\n        public Point {\n        }\n\n        /**\n         * @return the x-coordinate\n         */\n        @Override\n        public int x() {\n            return x;\n        }\n\n        /**\n         * @return the y-coordinate\n         */\n        @Override\n        public int y() {\n            return y;\n        }\n\n        /**\n         * Finds the orientation of ordered triplet.\n         *\n         * @param a Co-ordinates of point a <int\x2C int>\n         * @param b Co-ordinates of point a <int\x2C int>\n         * @param c Co-ordinates of point a <int\x2C int>\n         * @return { -1\x2C 0\x2C +1 } if a -\xE2\x86\x92 b -\xE2\x86\x92 c is a { clockwise\x2C collinear; counterclockwise }\n         *     turn.\n         */\n        public static int orientation(Point a\x2C Point b\x2C Point c) {\n            int val \x3D (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);\n            if (val \x3D\x3D 0) {\n                return 0;\n            }\n            return (val > 0) \? +1 : -1;\n        }\n\n        /**\n         * @param p2 Co-ordinate of point to compare to.\n         * This function will compare the points and will return a positive integer it the\n         * point is greater than the argument point and a negative integer if the point is\n         * less than the argument point.\n         */\n        public int compareTo(Point p2) {\n            if (this.y < p2.y) return -1;\n            if (this.y > p2.y) return +1;\n            if (this.x < p2.x) return -1;\n            if (this.x > p2.x) return +1;\n            return 0;\n        }\n\n        /**\n         * A helper function that will let us sort points by their polar order\n         * This function will compare the angle between 2 polar Co-ordinates\n         *\n         * @return the comparator\n         */\n        public Comparator<Point> polarOrder() {\n            return new PolarOrder();\n        }\n\n        private class PolarOrder implements Comparator<Point> {\n            public int compare(Point p1\x2C Point p2) {\n                int dx1 \x3D p1.x - x;\n                int dy1 \x3D p1.y - y;\n                int dx2 \x3D p2.x - x;\n                int dy2 \x3D p2.y - y;\n\n                if (dy1 >\x3D 0 && dy2 < 0)\n                    return -1; // q1 above; q2 below\n                else if (dy2 >\x3D 0 && dy1 < 0)\n                    return +1; // q1 below; q2 above\n                else if (dy1 \x3D\x3D 0 && dy2 \x3D\x3D 0) { // 3-collinear and horizontal\n                    if (dx1 >\x3D 0 && dx2 < 0)\n                        return -1;\n                    else if (dx2 >\x3D 0 && dx1 < 0)\n                        return +1;\n                    else\n                        return 0;\n                } else\n                    return -orientation(Point.this\x2C p1\x2C p2); // both above or below\n            }\n        }\n\n        /**\n         * Override of the toString method\x2C necessary to compute the difference\n         * between the expected result and the derived result\n         *\n         * @return a string representation of any given 2D point in the format (x\x2C y)\n         */\n        @Override\n        public String toString() {\n            return \"(\" + x + \"\x2C \" + y + \")\";\n        }\n    }\n}", Scope = Protected, Description = 4578616D706C65204A61766120636F64652E
+	#tag EndConstant
+
+	#tag Constant, Name = EXAMPLE_OBJOSCRIPT, Type = String, Dynamic = False, Default = \"class Person {\n// This is a comment.\n}", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = EXAMPLE_POSTGRESQL, Type = String, Dynamic = False, Default = \"INSERT INTO dinners (name\x2C birthdate\x2C entree\x2C side\x2C dessert) \nVALUES (\'Dolly\'\x2C \'1946-01-19\'\x2C \'steak\'\x2C \'salad\'\x2C \'cake\')\x2C \n(\'Etta\'\x2C \'1938-01-25\'\x2C \'chicken\'\x2C \'fries\'\x2C \'ice cream\')\x2C \n(\'Irma\'\x2C \'1941-02-18\'\x2C \'tofu\'\x2C \'fries\'\x2C \'cake\')\x2C \n(\'Barbara\'\x2C \'1948-12-25\'\x2C \'tofu\'\x2C \'salad\'\x2C \'ice cream\')\x2C \n(\'Gladys\'\x2C \'1944-05-28\'\x2C \'steak\'\x2C \'fries\'\x2C \'ice cream\');", Scope = Protected
@@ -2048,9 +2052,9 @@ End
 		    Me.SetScrollbars(HorizontalScrollBar, VerticalScrollBar)
 		  #EndIf
 		  
-		  Me.Text = EXAMPLE_XOJO
-		  
 		  CodeEditor.BackColor = New ColorGroup(Color.White, Color.Black)
+		  
+		  Me.Text = EXAMPLE_OBJOSCRIPT
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2402,6 +2406,13 @@ End
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
+		  // ObjoScript.
+		  Me.AddRow("ObjoScript")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition
+		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  
+		  
 		  // Java.
 		  Me.AddRow("Java")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition
@@ -2432,7 +2443,7 @@ End
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
-		  Me.SelectedRowIndex = 0
+		  Me.SelectedRowIndex = 1 // ObjoScript.
 		  
 		End Sub
 	#tag EndEvent
@@ -2473,6 +2484,10 @@ End
 		  // Xojo.
 		  Me.AddRow("Xojo")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_XOJO
+		  
+		  // ObjoScript.
+		  Me.AddRow("ObjoScript")
+		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_OBJOSCRIPT
 		  
 		  // Java.
 		  Me.AddRow("Java")

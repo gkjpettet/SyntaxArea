@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<highlightDefinition version="1.4">
+	<name>ObjoScript</name>
+
+	<!-- if conditional block -->
+	<blockStartMarker indent="1">^\s*if\b.*\s\{</blockStartMarker>
+	<blockEndMarker>^\s*\}|else\s*\{</blockEndMarker>
+
+	<!-- generic block -->
+	<blockStartMarker indent="1">\{\s*</blockStartMarker>
+	<blockEndMarker>^\s*\}</blockEndMarker>
+		
+</highlightDefinition>

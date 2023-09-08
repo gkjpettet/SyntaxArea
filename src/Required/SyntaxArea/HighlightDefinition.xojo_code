@@ -373,10 +373,11 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, Description = 52657475726E732074686520696E64656E742076616C75652C20746865206E657720737461746520616E6420746865206D6174636865642072756C652E
 		Function IsBlockStart(lineText As String, stateIn As String, ByRef stateOut As String, ByRef ruleOut As Object) As Integer
-		  /// Returns indent value, new state and the matched rule
-		  /// (opaque, only useful for matching with IsBlockEnd's returned value).
+		  /// Returns the indent value, the new state and the matched rule.
+		  /// 
+		  /// Opaque, only useful for matching with IsBlockEnd's returned value.
 		  
 		  stateOut = stateIn
 		  

@@ -10,10 +10,11 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvQy54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSFRNTC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZVNRTC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWE1MLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
 				End
 			End
 			Begin BuildStepList Mac OS X
@@ -26,11 +27,12 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSFRNTC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvQy54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWE1MLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZVNRTC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
 				End
 				Begin SignProjectStep Sign
 				  DeveloperID=
@@ -47,10 +49,11 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvQy54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSFRNTC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZVNRTC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWE1MLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
 				End
 			End
 #tag EndBuildAutomation
