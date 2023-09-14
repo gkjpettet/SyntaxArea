@@ -38,6 +38,7 @@ Class=AutocompleteOptions;Required/SyntaxArea/AutocompleteOptions.xojo_code;&h00
 Folder=Required;Required;&h000000001A8337FF;&h0000000000000000;false
 Module=MessageCentre;Required/MessageCentre.xojo_code;&h00000000291F37FF;&h000000001A8337FF;false
 Module=SyntaxArea;Required/SyntaxArea.xojo_code;&h00000000435ADFFF;&h000000001A8337FF;false
+Class=EditorInfoPanel;Required/SyntaxArea/EditorInfoPanel.xojo_code;&h00000000092E8DEC;&h00000000435ADFFF;false
 Class=AutocompletePopup;Required/SyntaxArea/AutocompletePopup.xojo_code;&h000000002492E7FF;&h00000000435ADFFF;false
 Module=UndoKit;Required/UndoKit.xojo_code;&h00000000098147FF;&h000000001A8337FF;false
 Class=UndoableDelete;Required/SyntaxArea/UndoableDelete.xojo_code;&h0000000063CF9C98;&h00000000435ADFFF;false

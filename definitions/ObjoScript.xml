@@ -2,8 +2,21 @@
 <highlightDefinition version="1.4">
 	<name>ObjoScript</name>
 
-	<!-- generic block -->
+	<!-- Generic block -->
 	<blockStartMarker indent="1">\{\s*(?:$|//|\'|\rem)</blockStartMarker>
 	<blockEndMarker>^\s*\}</blockEndMarker>
-		
+	
+	<!-- Symbol definitions -->
+	<symbols>
+		<symbol type="Class">
+			<entryRegEx>^\s*class [^ {]*</entryRegEx>
+		</symbol>
+		<symbol type="Constructor">
+			<entryRegEx>^\s*constructor\s*\((?:\w|,|\s)*\)\s*(?=\{)</entryRegEx>
+		</symbol>
+		<symbol type="Method">
+			<entryRegEx>^\s*(static\s*)?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*(?=\{)</entryRegEx>
+		</symbol>							
+	</symbols>
+	
 </highlightDefinition>

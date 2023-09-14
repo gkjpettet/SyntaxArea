@@ -1503,6 +1503,26 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E7320616E7920646F63756D656E742073796D626F6C7320646566696E656420666F72207468697320656469746F722E
+		Function DocumentSymbols() As DocumentSymbol()
+		  /// Returns any document symbols defined for this editor.
+		  
+		  Var symbols() As SyntaxArea.DocumentSymbol
+		  
+		  // Quick exit if there are defined symbols.
+		  If CurrentDocumentSymbols = Nil Then Return symbols
+		  
+		  For Each line As SyntaxArea.TextLine In CurrentDocumentSymbols.Keys
+		    For Each symbol As SyntaxArea.DocumentSymbol In line.LineSymbols.Values
+		      symbols.Add(New SyntaxArea.DocumentSymbol(symbol.Name, line.Offset + symbol.Offset, symbol.Type))
+		    Next symbol
+		  Next line
+		  
+		  Return symbols
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub DrawContents(gr As Graphics, parentWindow As DesktopWindow)
 		  #If Not DebugBuild
@@ -4222,6 +4242,74 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E732074686520646F63756D656E742073796D626F6C2061742074686520737065636966696564206C696E6520696E646578206F72206E696C2069662074686572652069736E2774206F6E652E
+		Function SymbolAtLine(index As Integer) As SyntaxArea.DocumentSymbol
+		  /// Returns the document symbol at the specified line index or nil if there isn't one.
+		  
+		  // Sanity check.
+		  If index < 0 Then Return Nil
+		  
+		  // Check the line first.
+		  Var line As SyntaxArea.TextLine = lines.GetLine(index)
+		  Var symbol As SyntaxArea.DocumentSymbol
+		  If line <> Nil And line.LineSymbols <> Nil And line.LineSymbols.KeyCount > 0 Then
+		    symbol = line.LineSymbols.Value(line.LineSymbols.Key(0))
+		    Return New SyntaxArea.DocumentSymbol(symbol.Name, symbol.Offset + line.Offset, symbol.Type)
+		    
+		    // If it's an opening block, check line above...
+		  ElseIf line <> Nil And line.IsBlockStart Then
+		    line = lines.GetLine(index - 1)
+		    If line <> Nil And line.LineSymbols <> Nil And line.LineSymbols.KeyCount > 0 Then
+		      symbol = line.LineSymbols.Value(line.LineSymbols.Key(0))
+		      Return New SyntaxArea.DocumentSymbol(symbol.Name, symbol.Offset + line.Offset, symbol.Type)
+		    End If
+		  End If
+		  
+		  // Otherwise start looking upwards...
+		  // Find the opening block for this line.
+		  Var blockIdx As Integer = OpeningBlockLineForLine(index)
+		  
+		  If blockIdx < 0 Then
+		    // No opening block found.
+		    Return Nil
+		  End If
+		  
+		  // Get the line.
+		  line = lines.GetLine(blockIdx)
+		  If line = Nil Then Return Nil
+		  
+		  // If the line doesn't contain any symbols then move one line up.
+		  If line.LineSymbols = Nil Or line.LineSymbols.KeyCount = 0 Then
+		    line = lines.GetLine(blockIdx - 1)
+		  Else
+		    symbol = line.LineSymbols.Value(line.LineSymbols.Key(0))
+		    Return New SyntaxArea.DocumentSymbol(symbol.Name, symbol.Offset + line.Offset, symbol.Type)
+		  End If
+		  
+		  // Recurse and search the next enclosing block.
+		  If line = Nil Or line.LineSymbols = Nil Or line.LineSymbols.KeyCount = 0 Then
+		    Return SymbolAtLine(blockIdx - 1)
+		  End If
+		  
+		  symbol = line.LineSymbols.Value(line.LineSymbols.Key(0))
+		  Return New SyntaxArea.DocumentSymbol(symbol.Name, symbol.Offset + line.Offset, symbol.Type)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E7320746865206E756D626572206F662073796D626F6C7320696E2074686520646F63756D656E742E
+		Function SymbolCount() As Integer
+		  /// Returns the number of symbols in the document.
+		  
+		  If CurrentDocumentSymbols = Nil Then
+		    Return 0
+		  Else
+		    Return CurrentDocumentSymbols.KeyCount
+		  End If
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 52657475726E20612074656D706F72617279207069637475726520746861742063616E206265207573656420666F722067726170686963732063616C63756C6174696F6E732C206574632E
 		Private Function TemporaryPicture() As Picture
 		  /// Return a temporary picture that can be used for graphics calculations, etc.
@@ -4977,6 +5065,16 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		CaretPos As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return SymbolAtline(CaretLine)
+			  
+			End Get
+		#tag EndGetter
+		CaretSymbol As SyntaxArea.DocumentSymbol
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

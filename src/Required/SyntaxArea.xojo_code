@@ -239,6 +239,9 @@ Protected Module SyntaxArea
 	#tag Constant, Name = TEXT_STORAGE_MEMORYBLOCK, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = Version, Type = String, Dynamic = False, Default = \"1.0.0", Scope = Protected
+	#tag EndConstant
+
 
 	#tag Enum, Name = AutocompleteCombos, Flags = &h0, Description = 5468652061636365707461626C65206B657920636F6D62696E6174696F6E7320666F722074726967676572696E67206175746F636F6D706C6574696F6E2E
 		CtrlSpace

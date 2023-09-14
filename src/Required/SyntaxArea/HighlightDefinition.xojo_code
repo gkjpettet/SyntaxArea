@@ -669,7 +669,7 @@ Protected Class HighlightDefinition
 		  
 		  match = mSymbolRegex.Search(forText)
 		  While match <> Nil
-		    Symbol = match.SubExpressionString(0)
+		    symbol = match.SubExpressionString(0)
 		    pos = forText.LeftBytes(match.SubExpressionStartB(0)).Length
 		    
 		    For i As Integer = 1 To match.SubExpressionCount - 1
@@ -689,7 +689,7 @@ Protected Class HighlightDefinition
 		    // Strip spaces.
 		    symbol = symbol.Trim
 		    
-		    If Symbol <> "" Then
+		    If symbol <> "" Then
 		      local.Value(symbol) = New SyntaxArea.DocumentSymbol(symbol, pos, symbolDef.Type)
 		    End If
 		    
