@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="1.4">
+<highlightDefinition version="1.5">
 	<name>ObjoScript</name>
 
 	<!-- Generic block -->
@@ -7,6 +7,9 @@
 	<blockEndMarker>^\s*\}</blockEndMarker>
 	
 	<!-- Symbol definitions -->
+	<!-- We take advantage of the fact that SyntaxArea will strip a trailing `{` from
+	symbol names so we don't need to do a positive lookahead and we can include `{` in the
+	regex -->
 	<symbols>
 		<symbol type="Class">
 			<entryRegEx>^\s*class [^ {]*</entryRegEx>
