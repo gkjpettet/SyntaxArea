@@ -2161,6 +2161,7 @@ End
 		  InfoBorderColor.SelectedColor = New ColorGroup(&cB7B7B7, &c4F4F4F)
 		  Info.BorderColor = InfoBorderColor.SelectedColor
 		  Info.TextColor = DefaultFontColor.SelectedColor
+		  Info.BackColor = BackColor.SelectedColor
 		  
 		End Sub
 	#tag EndMethod
@@ -2466,6 +2467,7 @@ End
 	#tag Event
 		Sub ColorChanged()
 		  CodeEditor.BackColor = Me.SelectedColor
+		  Info.BackColor = Me.SelectedColor
 		End Sub
 	#tag EndEvent
 #tag EndEvents

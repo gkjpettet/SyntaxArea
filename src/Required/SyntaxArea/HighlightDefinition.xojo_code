@@ -670,6 +670,7 @@ Protected Class HighlightDefinition
 		  match = mSymbolRegex.Search(forText)
 		  While match <> Nil
 		    symbol = match.SubExpressionString(0)
+		    
 		    pos = forText.LeftBytes(match.SubExpressionStartB(0)).Length
 		    
 		    For i As Integer = 1 To match.SubExpressionCount - 1
@@ -688,6 +689,11 @@ Protected Class HighlightDefinition
 		    
 		    // Strip spaces.
 		    symbol = symbol.Trim
+		    
+		    // HACK: Many symbol definitions would ideally include a positive lookahead for an 
+		    // opening brace when looking for symbols but this is slow. Instead, I'm just going
+		    // to remove any trailing opening brace in the symbol.
+		    If symbol.Length > 0 And symbol.Right(1) = "{" Then symbol = symbol.Left(symbol.Length - 1).Trim
 		    
 		    If symbol <> "" Then
 		      local.Value(symbol) = New SyntaxArea.DocumentSymbol(symbol, pos, symbolDef.Type)
