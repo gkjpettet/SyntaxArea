@@ -16,7 +16,24 @@
 		</symbol>
 		<symbol type="Method">
 			<entryRegEx>^\s*(static\s*)?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*(?=\{)</entryRegEx>
-		</symbol>							
+		</symbol>
+		
+		<symbol type="PrefixOperator">
+			<entryRegEx>^\s*(static\s*)?([-~]|not)\s*\(\)\s*(?=\{)</entryRegEx>
+		</symbol>
+		
+		<!--
+		<symbol type="InfixOperator">
+			<entryRegEx>^\s*(static\s*)?(\&|\.\.|\.\.\.|\/|\>|\>\=|\>\>|is|\<|\<\=|\<\<|\-|\<\<|\%|\||\+|\*)\s*\(\w+\)\s*(?=\{)</entryRegEx>
+		</symbol>
+		<symbol type="SubscriptOperator">
+			<entryRegEx>^\s*(static\s*)?\[\w(?:\w|\,\s)+\]\s*(?=\{)</entryRegEx>
+		</symbol>
+		<symbol type="SubscriptSetter">
+			<entryRegEx>^\s*(static\s*)?\[\w+\]\=\(\w+\)\s*(?=\{)</entryRegEx>
+		</symbol>
+	-->
+	
 	</symbols>
 	
 </highlightDefinition>
