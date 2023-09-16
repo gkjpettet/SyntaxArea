@@ -38,4 +38,40 @@
 		</symbol>
 	</symbols>
 	
+	<contexts defaultColor="#000000" caseSensitive="yes">		
+		<highlightContext name="Doubles" highlightColor="#006532">
+			<entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?=\d+\.|\.\d+|\d+e(?:\d|\b))(\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
+		</highlightContext>    	
+		
+		<highlightContext name="Integers" highlightColor="#326598">
+			<entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?:\d+|&amp;h[[:xdigit:]]*\b|&amp;o[0-7]*\b|&amp;b[01]*\b)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
+		</highlightContext>       
+		
+		<highlightContext name="Comment" highlightColor="#7F0000" italic="true">
+			<startRegEx>#</startRegEx>
+			<endRegEx>[\n\r]</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="String" highlightColor="#6500FE">
+			<entryRegEx>"[^"\r\n]*["\r\n]|&amp;u[[:xdigit:]]*\b</entryRegEx>
+		</highlightContext>
+	
+		<highlightContext name="IntrinsicTypes" highlightColor="#0000FF" bold="false">
+			<keywords>
+				<string>Boolean</string>
+				<string>KeyValue</string>
+				<string>List</string>
+				<string>Nothing</string>
+				<string>Number</string>
+				<string>String</string>
+			</keywords>
+		</highlightContext>
+	
+		<highlightContext name="Keywords" highlightColor="#0000FF" bold="false">
+			<keywords>
+				<string>if</string>
+			</keywords>
+		</highlightContext>
+	</contexts>
+	
 </highlightDefinition>
