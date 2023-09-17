@@ -44,11 +44,15 @@
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="Numbers" highlightColor="#00FF00" caseSensitive="no">
+		<highlightContext name="Number" highlightColor="#00FF00" caseSensitive="no">
 			<entryRegEx>(?&lt;=[^\w.]|^)(?=\d+|\d+\.|\.\d+|\d+e(?:\d|\b))((?:\d+_\d+)+|\d+|\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.]|$)|(?&lt;=[^\w.]|^)(?:\d+|0x[[:xdigit:]]*\b|0b[01]*\b)(?=[^\w.]|$)</entryRegEx>
 		</highlightContext>
+		
+		<highlightContext name="String" highlightColor="#6500FE">
+			<entryRegEx>"[^"\r\n]*["\r\n]</entryRegEx>
+		</highlightContext>
 	
-		<highlightContext name="IntrinsicTypes" highlightColor="#0000FF" bold="false">
+		<highlightContext name="IntrinsicType" highlightColor="#0000FF" bold="false">
 			<keywords>
 				<string>Boolean</string>
 				<string>KeyValue</string>
@@ -59,7 +63,7 @@
 			</keywords>
 		</highlightContext>
 	
-		<highlightContext name="Keywords" highlightColor="#0000FF" bold="false">
+		<highlightContext name="Keyword" highlightColor="#0000FF" bold="false">
 			<keywords>
 				<string>and</string>
 				<string>as</string>
