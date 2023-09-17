@@ -3,7 +3,7 @@
 	<name>ObjoScript</name>
 
 	<!-- Generic block -->
-	<blockStartMarker indent="1">\{\s*(?:$|//|\'|\rem)</blockStartMarker>
+	<blockStartMarker indent="1">\{\s*(?:$|#)</blockStartMarker>
 	<blockEndMarker>^\s*\}</blockEndMarker>
 	
 	<!-- Symbol definitions -->
@@ -39,21 +39,13 @@
 	</symbols>
 	
 	<contexts defaultColor="#000000" caseSensitive="yes">		
-		<highlightContext name="Doubles" highlightColor="#006532">
-			<entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?=\d+\.|\.\d+|\d+e(?:\d|\b))(\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
-		</highlightContext>    	
-		
-		<highlightContext name="Integers" highlightColor="#326598">
-			<entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?:\d+|&amp;h[[:xdigit:]]*\b|&amp;o[0-7]*\b|&amp;b[01]*\b)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
-		</highlightContext>       
-		
 		<highlightContext name="Comment" highlightColor="#7F0000" italic="true">
 			<startRegEx>#</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="String" highlightColor="#6500FE">
-			<entryRegEx>"[^"\r\n]*["\r\n]|&amp;u[[:xdigit:]]*\b</entryRegEx>
+		<highlightContext name="Numbers" highlightColor="#00FF00" caseSensitive="no">
+			<entryRegEx>(?&lt;=[^\w.]|^)(?=\d+|\d+\.|\.\d+|\d+e(?:\d|\b))((?:\d+_\d+)+|\d+|\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.]|$)|(?&lt;=[^\w.]|^)(?:\d+|0x[[:xdigit:]]*\b|0b[01]*\b)(?=[^\w.]|$)</entryRegEx>
 		</highlightContext>
 	
 		<highlightContext name="IntrinsicTypes" highlightColor="#0000FF" bold="false">
@@ -69,7 +61,42 @@
 	
 		<highlightContext name="Keywords" highlightColor="#0000FF" bold="false">
 			<keywords>
+				<string>and</string>
+				<string>as</string>
+				<string>assert</string>
+				<string>breakpoint</string>
+				<string>case</string>
+				<string>class</string>
+				<string>continue</string>
+				<string>constructor</string>
+				<string>do</string>
+				<string>else</string>
+				<string>exit</string>
+				<string>export</string>
+				<string>false</string>
+				<string>for</string>
+				<string>foreach</string>
+				<string>foreign</string>
+				<string>function</string>
 				<string>if</string>
+				<string>import</string>
+				<string>in</string>
+				<string>is</string>
+				<string>loop</string>
+				<string>not</string>
+				<string>nothing</string>
+				<string>or</string>
+				<string>return</string>
+				<string>static</string>
+				<string>super</string>
+				<string>switch</string>
+				<string>then</string>
+				<string>this</string>
+				<string>true</string>
+				<string>until</string>
+				<string>var</string>
+				<string>while</string>
+				<string>xor</string>
 			</keywords>
 		</highlightContext>
 	</contexts>
