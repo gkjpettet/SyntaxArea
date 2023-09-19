@@ -1988,6 +1988,9 @@ End
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&cADB5BD, &c62707D), False, True)
 		  CodeEditor.AddTokenStyle("comment", style)
 		  
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&cADB5BD, &c62707D), False, True)
+		  CodeEditor.AddTokenStyle("multiLinecomment", style)
+		  
 		  // Keywords.
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c3B2BFE, &c4DD1EE))
 		  CodeEditor.AddTokenStyle("keyword", style)
@@ -2014,6 +2017,9 @@ End
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
 		  CodeEditor.AddTokenStyle("lowercaseIdentifier", style)
 		  
+		  // Directives.
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c945200, &c945200))
+		  CodeEditor.AddTokenStyle("directive", style)
 		End Sub
 	#tag EndMethod
 
@@ -2653,11 +2659,11 @@ End
 		Sub Opening()
 		  Var syntaxDefinition As SyntaxArea.HighlightDefinition
 		  
-		  // // Xojo.
-		  // Me.AddRow("Xojo")
-		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
-		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // Xojo.
+		  Me.AddRow("Xojo")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // ObjoScript.
 		  Me.AddRow("ObjoScript")
@@ -2665,7 +2671,7 @@ End
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
-		  Me.SelectedRowIndex = 0 // ObjoScript.
+		  Me.SelectedRowIndex = 1 // ObjoScript.
 		  
 		  // // Java.
 		  // Me.AddRow("Java")
@@ -2691,11 +2697,11 @@ End
 		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml"))
 		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  // 
-		  // // C.
-		  // Me.AddRow("C")
-		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
-		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // C.
+		  Me.AddRow("C")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		End Sub
 	#tag EndEvent

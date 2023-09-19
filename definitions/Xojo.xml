@@ -38,7 +38,7 @@
 		</symbol>		
 	</symbols>
 	
-	<contexts defaultColor="#000000" caseSensitive="no">
+	<contexts caseSensitive="no">
 		<highlightContext name="type">
 			<keywords>
 				<string>Boolean</string>
