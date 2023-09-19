@@ -4,7 +4,7 @@ Protected Class HighlightDefinition
 		Private Sub AddBlankSpaceContext()
 		  /// Adds a blank space context, this will tokenise strings.
 		  
-		  Var blankSpaceContext As New SyntaxArea.HighlightContext(False)
+		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self, False)
 		  blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))"
 		  blankSpaceContext.Name = "fieldwhitespace"
 		  
@@ -64,21 +64,9 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E73206120737472696E6720726570726573656E746174696F6E206F66206120436F6C6F7220696E2074686520666F726D2022525247474242222E
-		Shared Function ColorToText(c As Color) As String
-		  /// Returns a string representation of a Color in the form "RRGGBB".
-		  
-		  Var v As Variant = c
-		  
-		  Var cc As String = "0000000" + Hex(v.IntegerValue)
-		  
-		  Return cc.Right(6) // `IntegerValue` doesn't include a Color's transparency, so this is OK.
-		  
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(owner As SyntaxArea.Editor)
+		  Self.Owner = owner
 		  mContextRegex = New RegEx
 		  mContextRegex.Options.DotMatchAll = True
 		  mSymbolRegex = New RegEx
@@ -231,6 +219,8 @@ Protected Class HighlightDefinition
 		  
 		  If s.Encoding <> Nil Then s = s.ConvertEncoding(SyntaxArea.InternalEncoding)
 		  
+		  Var style As SyntaxArea.TokenStyle
+		  
 		  If forceMatch = Nil Then
 		    // Perform the initial search.
 		    match = mContextRegex.Search(s)
@@ -262,6 +252,8 @@ Protected Class HighlightDefinition
 		          Exit
 		        End If
 		      Next i
+		      
+		      style = Owner.StyleForToken(context.Name)
 		      
 		      If tknIndex < 0 Then
 		        // The definition can't handle source!?
@@ -298,7 +290,7 @@ Protected Class HighlightDefinition
 		    ElseIf context <> Nil And context.IsPlaceholder Then
 		      Var label As String = match.SubExpressionString(match.SubExpressionCount - 1)
 		      Var tmp As Integer = s.LeftBytes(match.SubExpressionStartB(match.SubExpressionCount - 1)).Length
-		      Var placeholder As New SyntaxArea.TextPlaceholder(startPos, subExpression.Length, tmp, label.Length, context.HighlightColor, context.BackgroundColor, context.Bold, context.Italic, context.Underline)
+		      Var placeholder As New SyntaxArea.TextPlaceholder(startPos, subExpression.Length, tmp, label.Length, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline)
 		      tokens.Add(placeholder)
 		      placeholders.Add(placeholder)
 		      
@@ -556,35 +548,35 @@ Protected Class HighlightDefinition
 		        Next j
 		        
 		      Case "placeholders"
-		        PlaceholderContextDef = New SyntaxArea.HighlightContext(False, False)
+		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self, False, False)
 		        PlaceholderContextDef.EntryRegEx = node.FirstChild.Value
 		        PlaceholderContextDef.IsPlaceholder = True
 		        PlaceholderContextDef.Name = "Placeholders"
 		        
-		        Var tmpObj As Variant
-		        If node.GetAttribute("highlightColor") <> "" Then
-		          tmpObj = "&h" + node.GetAttribute("highlightColor").Middle(0)
-		          PlaceholderContextDef.HighlightColor = tmpObj.ColorValue
-		        End If
+		        // Var tmpObj As Variant
+		        // If node.GetAttribute("highlightColor") <> "" Then
+		        // tmpObj = "&h" + node.GetAttribute("highlightColor").Middle(0)
+		        // PlaceholderContextDef.HighlightColor = tmpObj.ColorValue
+		        // End If
 		        
-		        If node.GetAttribute("backgroundColor") <> "" Then
-		          tmpObj = "&h" + node.GetAttribute("backgroundColor").Middle(0)
-		          PlaceholderContextDef.BackgroundColor = tmpObj.ColorValue
-		        End If
+		        // If node.GetAttribute("backgroundColor") <> "" Then
+		        // tmpObj = "&h" + node.GetAttribute("backgroundColor").Middle(0)
+		        // PlaceholderContextDef.BackgroundColor = tmpObj.ColorValue
+		        // End If
 		        
 		        Var tmp As String
 		        
-		        // Bold.
-		        tmp = node.GetAttribute("bold")
-		        If tmp <> "" Then PlaceholderContextDef.Bold = tmp = "true"
-		        
-		        // Italic.
-		        tmp = node.GetAttribute("italic")
-		        If tmp <> "" Then PlaceholderContextDef.Italic = tmp = "true"
-		        
-		        // Underline.
-		        tmp = node.GetAttribute("underline")
-		        If tmp <> "" Then PlaceholderContextDef.Underline = tmp = "true"
+		        // // Bold.
+		        // tmp = node.GetAttribute("bold")
+		        // If tmp <> "" Then PlaceholderContextDef.Bold = tmp = "true"
+		        // 
+		        // // Italic.
+		        // tmp = node.GetAttribute("italic")
+		        // If tmp <> "" Then PlaceholderContextDef.Italic = tmp = "true"
+		        // 
+		        // // Underline.
+		        // tmp = node.GetAttribute("underline")
+		        // If tmp <> "" Then PlaceholderContextDef.Underline = tmp = "true"
 		        
 		        // Enabled.
 		        tmp = node.GetAttribute("enabled")
@@ -594,14 +586,11 @@ Protected Class HighlightDefinition
 		        
 		      Case "contexts"
 		        // Contexts.
-		        Var tmpObj As Variant
-		        tmpObj = "&h" + node.GetAttribute("defaultColor").Middle(0)
-		        DefaultColor = tmpObj.ColorValue
 		        CaseSensitive = YN2Bool(node.GetAttribute("caseSensitive"))
 		        For j = 0 To node.ChildCount-1
-		          context = New SyntaxArea.HighlightContext(CaseSensitive)
+		          context = New SyntaxArea.HighlightContext(Self, CaseSensitive)
 		          context.LoadFromXmlNode(node.Child(j))
-		          addContext(context)
+		          AddContext(context)
 		        Next j
 		      End Select
 		    Next i
@@ -642,7 +631,7 @@ Protected Class HighlightDefinition
 		  
 		  Try
 		    Var tos As TextOutputStream = TextOutputStream.Create(file)
-		    tos.Write(toXml)
+		    tos.Write(ToXML)
 		    tos.Close
 		    Return True
 		  Catch
@@ -791,29 +780,6 @@ Protected Class HighlightDefinition
 		  If PlaceholderContextDef <> Nil Then
 		    node = root.AppendChild(xml.CreateElement("placeholders"))
 		    
-		    // Highlight colour.
-		    node.SetAttribute("highlightColor", "#" + ColorToText(Color.HighlightColor))
-		    
-		    // Background colour.
-		    If PlaceholderContextDef.HasBackgroundColor Then
-		      node.SetAttribute("backgroundColor", "#" + ColorToText(PlaceholderContextDef.BackgroundColor))
-		    End If
-		    
-		    // Bold.
-		    If PlaceholderContextDef.Bold Then
-		      node.SetAttribute("bold", "true")
-		    End If
-		    
-		    // Italic.
-		    If PlaceholderContextDef.Italic Then
-		      node.SetAttribute("italic", "true")
-		    End If
-		    
-		    // Underline.
-		    If PlaceholderContextDef.Underline Then
-		      node.SetAttribute("underline", "true")
-		    End If
-		    
 		    // Enabled.
 		    If Not PlaceholderContextDef.Enabled Then
 		      node.SetAttribute("enabled", "false")
@@ -825,7 +791,6 @@ Protected Class HighlightDefinition
 		  End If
 		  
 		  node = root.AppendChild(xml.CreateElement("contexts"))
-		  node.SetAttribute("defaultColor", "#" + ColorToText(defaultColor))
 		  node.SetAttribute("caseSensitive", Bool2YN(caseSensitive))
 		  
 		  // Process contexts.
@@ -910,14 +875,9 @@ Protected Class HighlightDefinition
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return mDefaultColor
+			  Return Owner.TextColor
 			End Get
 		#tag EndGetter
-		#tag Setter
-			Set
-			  mDefaultColor = value
-			End Set
-		#tag EndSetter
 		DefaultColor As Color
 	#tag EndComputedProperty
 
@@ -934,11 +894,11 @@ Protected Class HighlightDefinition
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDefaultColor As Color
+		Private mName As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mName As String
+	#tag Property, Flags = &h21, Description = 41207765616B207265666572656E636520746F207468697320646566696E6974696F6E2773206F776E696E6720656469746F722E
+		Private mOwner As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -957,6 +917,28 @@ Protected Class HighlightDefinition
 			End Set
 		#tag EndSetter
 		Name As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520656469746F722074686174206F776E73207468697320646566696E6974696F6E2E
+		#tag Getter
+			Get
+			  If mOwner = Nil Or mOwner.Value = Nil Then
+			    Return Nil
+			  Else
+			    Return SyntaxArea.Editor(mOwner.Value)
+			  End If
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value <> Nil Then
+			    mOwner = New WeakRef(value)
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		Owner As SyntaxArea.Editor
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -992,7 +974,7 @@ Protected Class HighlightDefinition
 	#tag EndProperty
 
 
-	#tag Constant, Name = VERSION, Type = Double, Dynamic = False, Default = \"1.5", Scope = Public
+	#tag Constant, Name = VERSION, Type = Double, Dynamic = False, Default = \"2.0", Scope = Public
 	#tag EndConstant
 
 

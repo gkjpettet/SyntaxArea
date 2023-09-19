@@ -1968,11 +1968,54 @@ End
 		  InitialiseControls
 		  
 		  // DEBUGGING: For ObjoScript as the syntax.
-		  CodeEditor.SyntaxDefinition = PopupDefinition.RowTagAt(1)
+		  CodeEditor.SyntaxDefinition = PopupDefinition.RowTagAt(0)
 		  InitialiseControls
+		  
+		  // Add some token styles.
+		  AddTokenStyles
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21, Description = 4164647320736F6D6520746F6B656E207374796C65732E2049742069732065787065637465642074686174206D6F7374207468656D65732077696C6C20737570706F727420746865736520746F6B656E2074797065732E
+		Private Sub AddTokenStyles()
+		  /// Adds some token styles.
+		  /// It is expected that most themes will support these token types.
+		  
+		  Var style As SyntaxArea.TokenStyle
+		  
+		  // Comments.
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&cADB5BD, &c62707D), False, True)
+		  CodeEditor.AddTokenStyle("comment", style)
+		  
+		  // Keywords.
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c3B2BFE, &c4DD1EE))
+		  CodeEditor.AddTokenStyle("keyword", style)
+		  
+		  // Numbers.
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c1C00CF, &c5BA5FF))
+		  CodeEditor.AddTokenStyle("number", style)
+		  
+		  // Strings.
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c813AA8, &cB285E2))
+		  CodeEditor.AddTokenStyle("string", style)
+		  
+		  // Types.
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
+		  CodeEditor.AddTokenStyle("type", style)
+		  
+		  // Identifiers.
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
+		  CodeEditor.AddTokenStyle("identifier", style)
+		  
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
+		  CodeEditor.AddTokenStyle("uppercaseIdentifier", style)
+		  
+		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
+		  CodeEditor.AddTokenStyle("lowercaseIdentifier", style)
+		  
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub InitialiseAutocompleteEngine()
@@ -2231,7 +2274,6 @@ End
 		  
 		  CodeEditor.BackColor = New ColorGroup(Color.White, Color.Black)
 		  
-		  Me.Text = EXAMPLE_OBJOSCRIPT
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -2611,50 +2653,49 @@ End
 		Sub Opening()
 		  Var syntaxDefinition As SyntaxArea.HighlightDefinition
 		  
-		  // Xojo.
-		  Me.AddRow("Xojo")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // // Xojo.
+		  // Me.AddRow("Xojo")
+		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
+		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // ObjoScript.
 		  Me.AddRow("ObjoScript")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
+		  Me.SelectedRowIndex = 0 // ObjoScript.
 		  
-		  // Java.
-		  Me.AddRow("Java")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // HTML.
-		  Me.AddRow("HTML")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // PostgreSQL.
-		  Me.AddRow("PostgreSQL")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // XML.
-		  Me.AddRow("XML")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // C.
-		  Me.AddRow("C")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  Me.SelectedRowIndex = 1 // ObjoScript.
+		  // // Java.
+		  // Me.AddRow("Java")
+		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml"))
+		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // 
+		  // // HTML.
+		  // Me.AddRow("HTML")
+		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml"))
+		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // 
+		  // // PostgreSQL.
+		  // Me.AddRow("PostgreSQL")
+		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml"))
+		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // 
+		  // // XML.
+		  // Me.AddRow("XML")
+		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml"))
+		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // 
+		  // // C.
+		  // Me.AddRow("C")
+		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
+		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		End Sub
 	#tag EndEvent
@@ -2674,7 +2715,7 @@ End
 		  
 		  If f = Nil Then Return
 		  
-		  Var def As New SyntaxArea.HighlightDefinition
+		  Var def As New SyntaxArea.HighlightDefinition(CodeEditor)
 		  If Not def.LoadFromXml(f) Then
 		    MessageBox("Invalid syntax definition file.")
 		    Return
@@ -2718,7 +2759,7 @@ End
 		  Me.AddRow("C")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_C
 		  
-		  Me.SelectedRowIndex = 0
+		  'Me.SelectedRowIndex = 1
 		  
 		End Sub
 	#tag EndEvent

@@ -768,6 +768,21 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 416464732061206E657720746F6B656E207374796C6520746F2074686520656469746F722E204966206120746F6B656E207374796C652077697468206E616D65642060746F6B656E4E616D656020616C726561647920657869737473207468656E206974206973206F7665727772697474656E2E
+		Sub AddTokenStyle(tokenName As String, style As SyntaxArea.TokenStyle)
+		  /// Adds a new token style to the editor. If a token style with named `tokenName` already exists then it is overwritten.
+		  
+		  If style = Nil Then
+		    Raise New NilObjectException("Cannot assign a Nil token style.")
+		  End If
+		  
+		  TokenStyles.Value(tokenName) = style
+		  
+		  InvalidateAllLines
+		  Redraw(True)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 54686520757365722063616E63656C6C6564206175746F636F6D706C6574696F6E2E
 		Private Sub AutocompleteCancelled(requestFocus As Boolean)
 		  /// The user cancelled autocompletion.
@@ -1325,6 +1340,10 @@ Implements MessageCentre.MessageReceiver
 		  Super.Constructor
 		  
 		  IgnoreRepaint = True
+		  
+		  // Initialise the token styles dictionary and ensure we have a default style.
+		  TokenStyles = New Dictionary
+		  AddTokenStyle("*default", New SyntaxArea.TokenStyle(New ColorGroup(Color.Black, Color.White)))
 		  
 		  MyAutocompletePopup = New SyntaxArea.AutocompletePopup(Self)
 		  Self.RegisterForMessage(MyAutocompletePopup)
@@ -2653,6 +2672,8 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Self.UseLighterLineFoldingBackColor = theme.UseLighterLineFoldingBackColor
 		  
+		  InvalidateAllLines
+		  Redraw(True)
 		End Sub
 	#tag EndMethod
 
@@ -4242,6 +4263,15 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E7320746865207374796C6520746F2075736520666F7220746865206E616D656420746F6B656E2E204966206E6F207374796C6520657869737473207468656E207468652064656661756C74207374796C652069732072657475726E65642E
+		Function StyleForToken(tokenName As String) As SyntaxArea.TokenStyle
+		  /// Returns the style to use for the named token. If no style exists then the default style is returned.
+		  
+		  Return TokenStyles.Lookup(tokenName, DefaultTokenStyle)
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 52657475726E732074686520646F63756D656E742073796D626F6C2061742074686520737065636966696564206C696E6520696E646578206F72206E696C2069662074686572652069736E2774206F6E652E
 		Function SymbolAtLine(index As Integer) As SyntaxArea.DocumentSymbol
 		  /// Returns the document symbol at the specified line index or nil if there isn't one.
@@ -4328,46 +4358,9 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 49662074686520737065636966696564206C696E6520686173206120626F6F6B6D61726B2C2069742069732072656D6F7665642C206F746865727769736520697420697320656E61626C65642E
-		Sub ToggleBookmark(lineIndex As Integer)
-		  /// If the specified line has a bookmark, it is removed, otherwise it is enabled.
-		  
-		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineIndex)
-		  If line = Nil Then Return
-		  
-		  If BookmarkTable.HasKey(lineIndex) Then
-		    ClearBookmark(lineIndex)
-		  Else
-		    AddBookmark(lineIndex)
-		  End If
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ToggleLineFold(lineIndex As Integer)
-		  If Not EnableLineFolding Then Return
-		  
-		  Var topLine As Integer = Lines.ToggleLineFolding(lineIndex)
-		  If topLine > -1 Then
-		    // Check if the caret is in an invisible line.
-		    Var line As SyntaxArea.TextLine = Lines.GetLine(Lines.GetLineNumberForOffset(CaretPos))
-		    // If it's invisible, move the caret to the folded line.
-		    If Not line.Visible Then
-		      line = Lines.GetLine(topLine)
-		      If line <> Nil Then ChangeSelection(line.Offset, 0)
-		    End If
-		    InvalidateAllLines
-		  Else
-		    InvalidateLine(lineIndex)
-		  End If
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 4578706F727473207468697320656469746F72277320637573746F6D697361626C65207374796C657320616E642070726F706572746965732061732061207468656D652E
-		Function ToTheme() As SyntaxArea.EditorTheme
-		  /// Exports this editor's customisable styles and properties as a theme.
+	#tag Method, Flags = &h0, Description = 4578706F727473207468697320656469746F72277320637573746F6D697361626C65207374796C657320616E642070726F7065727469657320617320616E20656469746F72207468656D652E
+		Function ToEditorTheme() As SyntaxArea.EditorTheme
+		  /// Exports this editor's customisable styles and properties as an editor theme.
 		  
 		  Var theme As New SyntaxArea.EditorTheme
 		  
@@ -4404,6 +4397,43 @@ Implements MessageCentre.MessageReceiver
 		  Return theme
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 49662074686520737065636966696564206C696E6520686173206120626F6F6B6D61726B2C2069742069732072656D6F7665642C206F746865727769736520697420697320656E61626C65642E
+		Sub ToggleBookmark(lineIndex As Integer)
+		  /// If the specified line has a bookmark, it is removed, otherwise it is enabled.
+		  
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineIndex)
+		  If line = Nil Then Return
+		  
+		  If BookmarkTable.HasKey(lineIndex) Then
+		    ClearBookmark(lineIndex)
+		  Else
+		    AddBookmark(lineIndex)
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ToggleLineFold(lineIndex As Integer)
+		  If Not EnableLineFolding Then Return
+		  
+		  Var topLine As Integer = Lines.ToggleLineFolding(lineIndex)
+		  If topLine > -1 Then
+		    // Check if the caret is in an invisible line.
+		    Var line As SyntaxArea.TextLine = Lines.GetLine(Lines.GetLineNumberForOffset(CaretPos))
+		    // If it's invisible, move the caret to the folded line.
+		    If Not line.Visible Then
+		      line = Lines.GetLine(topLine)
+		      If line <> Nil Then ChangeSelection(line.Offset, 0)
+		    End If
+		    InvalidateAllLines
+		  Else
+		    InvalidateLine(lineIndex)
+		  End If
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 5361766573207468652073637265656E20706F736974696F6E206F662074686520676976656E206F66667365742E
@@ -5096,6 +5126,23 @@ Implements MessageCentre.MessageReceiver
 	#tag Property, Flags = &h21
 		Private CursorIsIbeam As Boolean = True
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return TokenStyles.Value("*default")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value <> Nil Then
+			    TokenStyles.Value("*default") = value
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		DefaultTokenStyle As SyntaxArea.TokenStyle
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520746F20686967686C696768742022646972747922206C696E65732E
 		#tag Getter
@@ -6030,10 +6077,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTextColor As ColorGroup
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mTextHeight As Integer
 	#tag EndProperty
 
@@ -6402,14 +6445,15 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0, Description = 5468652064656661756C74207465787420636F6C6F75722E
 		#tag Getter
 			Get
-			  Return mTextColor
+			  Return SyntaxArea.TokenStyle(TokenStyles.Value("*default")).TextColor
+			  
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mTextColor = value
+			  SyntaxArea.TokenStyle(TokenStyles.Value("*default")).TextColor = value
 			  InvalidateAllLines
-			  Redraw
+			  Redraw(True)
 			  
 			End Set
 		#tag EndSetter
@@ -6500,6 +6544,10 @@ Implements MessageCentre.MessageReceiver
 		#tag EndSetter
 		ThickInsertionPoint As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21, Description = 4B6579203D20546F6B656E206E616D652028537472696E67292C2056616C7565203D20546F6B656E5374796C652E
+		Private TokenStyles As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private TrailingSuggestion As String

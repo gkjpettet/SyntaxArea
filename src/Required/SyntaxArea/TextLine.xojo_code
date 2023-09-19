@@ -267,12 +267,8 @@ Inherits SyntaxArea.TextSegment
 		      
 		    ElseIf word.TYPE = TYPE_PLACEHOLDER Then
 		      wordFound = True
-		      // Determine the highlight colour
-		      If highlighted Then
-		        g.DrawingColor = SyntaxArea.AdjustColorForDarkMode(word.TextColor)
-		      Else
-		        g.DrawingColor = defaultColor
-		      End If
+		      
+		      g.DrawingColor = word.TextColor
 		      
 		      // `Graphics.DrawText()` can't handle UTF-32 (on OSX, at least)...
 		      TheText = storage.GetText(SyntaxArea.TextPlaceholder(word).TextRange.Offset + offset, SyntaxArea.TextPlaceholder(word).TextRange.Length).ConvertEncoding(Encodings.UTF8)
@@ -280,12 +276,8 @@ Inherits SyntaxArea.TextSegment
 		      
 		    Else
 		      wordFound = True
-		      // Determine the highlight colour.
-		      If highlighted Then
-		        g.DrawingColor = SyntaxArea.AdjustColorForDarkMode(word.TextColor)
-		      Else
-		        g.DrawingColor = defaultColor
-		      End If
+		      
+		      g.DrawingColor = word.TextColor
 		      TheText = storage.GetText(selfWordOfs, word.Length)
 		      
 		      // Convert Chr(1), which we use for original NUL chars, to a "NUL" character for display.

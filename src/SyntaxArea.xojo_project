@@ -48,6 +48,7 @@ Class=AutocompleteEngine;Just for the demo/AutocompleteEngine.xojo_code;&h000000
 Class=ColorPicker;Just for the demo/ColorPicker.xojo_code;&h0000000016DAFA0C;&h000000003B28BFFF;false
 Class=EditorTheme;Required/SyntaxArea/EditorTheme.xojo_code;&h000000005661FFFF;&h00000000435ADFFF;false
 FileTypeSet=MyFiles;Just for the demo/MyFiles.xojo_filetypeset;&h00000000762C3FFF;&h000000003B28BFFF;false
+Class=TokenStyle;Required/SyntaxArea/TokenStyle.xojo_code;&h00000000687F2FFF;&h00000000435ADFFF;false
 DefaultWindow=WinDemo
 AppMenuBar=MainMenuBar
 MajorVersion=1

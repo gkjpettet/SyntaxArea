@@ -52,31 +52,6 @@ Protected Class HighlightContext
 		  // Name.
 		  context.SetAttribute("name", Name)
 		  
-		  // Highlight colour.
-		  context.SetAttribute("highlightColor", "#" + _
-		  SyntaxArea.HighlightDefinition.ColorToText(HighlightColor))
-		  
-		  // Background colour.
-		  If HasBackgroundColor Then
-		    context.SetAttribute("backgroundColor", "#" + _
-		    SyntaxArea.HighlightDefinition.ColorToText(BackgroundColor))
-		  End If
-		  
-		  // Bold.
-		  If Bold Then
-		    context.SetAttribute("bold", "true")
-		  End If
-		  
-		  // Italic.
-		  If Italic Then
-		    context.SetAttribute("italic", "true")
-		  End If
-		  
-		  // Underline.
-		  If Underline Then
-		    context.SetAttribute("underline", "true")
-		  End If
-		  
 		  // Enabled.
 		  If Not Enabled Then
 		    context.SetAttribute("enabled", "false")
@@ -142,7 +117,9 @@ Protected Class HighlightContext
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(caseSensitive As Boolean, createBlank As Boolean = True)
+		Sub Constructor(owner As SyntaxArea.HighlightDefinition, caseSensitive As Boolean, createBlank As Boolean = True)
+		  Self.Owner = owner
+		  
 		  mScanner = New RegEx
 		  mScanner.Options.DotMatchAll = True
 		  mScanner.Options.CaseSensitive = caseSensitive
@@ -151,7 +128,7 @@ Protected Class HighlightContext
 		  
 		  // Whitespace tokeniser?
 		  If createBlank Then
-		    Var blankSpaceContext As New SyntaxArea.HighlightContext(False, False)
+		    Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False)
 		    blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))" '"([\s])"
 		    blankSpaceContext.Name = "fieldwhitespace"
 		    AddSubContext(blankSpaceContext)
@@ -297,6 +274,8 @@ Protected Class HighlightContext
 		  Var substring As String
 		  Var startPos, startPosB, charPos, charPosB As Integer
 		  
+		  Var style As SyntaxArea.TokenStyle = Owner.Owner.StyleForToken(Self.Name)
+		  
 		  // Scan subcontexts.
 		  substring = mSearchPattern
 		  If substring = "" Then
@@ -304,20 +283,20 @@ Protected Class HighlightContext
 		    Select Case subExpression
 		    Case " "
 		      tokens.Add(New SyntaxArea.TextSegment(position, 1, _
-		      SyntaxArea.TextSegment.TYPE_SPACE, HighlightColor, BackgroundColor))
+		      SyntaxArea.TextSegment.TYPE_SPACE, style.TextColor, style.BackColor))
 		      
 		    Case Chr(9)
 		      tokens.Add(New SyntaxArea.TextSegment(position, 1, _
-		      SyntaxArea.TextSegment.TYPE_TAB, HighlightColor, BackgroundColor))
+		      SyntaxArea.TextSegment.TYPE_TAB, style.TextColor, style.BackColor))
 		      
 		    Case Chr(10), Chr(13), Chr(13) + Chr(10)
 		      tokens.Add(New SyntaxArea.TextSegment(position, subExpression.Length, _
-		      SyntaxArea.TextSegment.TYPE_EOL, HighlightColor, BackgroundColor))
+		      SyntaxArea.TextSegment.TYPE_EOL, style.TextColor, style.BackColor))
 		      
 		    Else
 		      If subExpression.Length > 0 Then _
 		      tokens.Add(New SyntaxArea.TextSegment(position, subExpression.Length, _
-		      SyntaxArea.TextSegment.TYPE_WORD, HighlightColor, BackgroundColor, bold, italic, underline))
+		      SyntaxArea.TextSegment.TYPE_WORD, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline))
 		    End Select
 		    
 		  Else
@@ -348,12 +327,13 @@ Protected Class HighlightContext
 		      
 		      If charPos - startPos > 0 Then _
 		      tokens.Add(New SyntaxArea.TextSegment(startPos + position, charPos - startPos, _
-		      SyntaxArea.TextSegment.TYPE_WORD, HighlightColor, BackgroundColor, bold, italic, underline))
+		      SyntaxArea.TextSegment.TYPE_WORD, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline))
 		      
 		      startPos = charPos
 		      startPosB = charPosB
 		      
 		      entry = subContexts(tknIndex)
+		      Var entryStyle As SyntaxArea.TokenStyle = Owner.Owner.StyleForToken(entry.Name)
 		      
 		      // Forward execution to subcontext...
 		      If entry <> Nil And Not entry.isPlaceholder Then
@@ -366,8 +346,8 @@ Protected Class HighlightContext
 		        Var tmp As Integer = s.LeftBytes(match.SubExpressionStartB(match.SubExpressionCount - 1)).Length
 		        
 		        Var placeholder As New SyntaxArea.TextPlaceholder(startPos + position, _
-		        substring.Length, tmp + position, label.Length, entry.HighlightColor, _
-		        entry.BackgroundColor, entry.Bold, entry.Italic, entry.Underline)
+		        substring.Length, tmp + position, label.Length, entryStyle.TextColor, _
+		        entryStyle.BackColor, entryStyle.Bold, entryStyle.Italic, entryStyle.Underline)
 		        tokens.Add(placeholder)
 		        placeholders.Add(placeholder)
 		        
@@ -379,8 +359,8 @@ Protected Class HighlightContext
 		    
 		    If subExpression.Length - startPos > 0 Then _
 		    tokens.Add(New SyntaxArea.TextSegment(startPos + position, _
-		    subExpression.Length - startPos, TextSegment.TYPE_WORD, HighlightColor, _
-		    BackgroundColor, bold, italic, underline))
+		    subExpression.Length - startPos, TextSegment.TYPE_WORD, style.TextColor, _
+		    style.BackColor, style.Bold, style.Italic, style.Underline))
 		  End If
 		  
 		  Return scanNextLine
@@ -426,33 +406,10 @@ Protected Class HighlightContext
 		Sub LoadFromXmlNode(node As XmlNode)
 		  /// Loads the context out of an XML node.
 		  
-		  Var tmpObj As Variant
 		  Var tmp As String
 		  
 		  // Highlight colour.
 		  Name = node.GetAttribute("name")
-		  
-		  tmpObj = "&h" + node.GetAttribute("highlightColor").Middle(0)
-		  HighlightColor = tmpObj.ColorValue
-		  
-		  // Background colour.
-		  tmp = node.GetAttribute("backgroundColor")
-		  If tmp <> "" Then
-		    tmpObj = "&h" + tmp
-		    BackgroundColor = tmpObj.ColorValue
-		  End If
-		  
-		  // Bold.
-		  tmp = node.GetAttribute("bold")
-		  If tmp <> "" Then Bold = tmp = "true"
-		  
-		  // Italic.
-		  tmp = node.GetAttribute("italic")
-		  If tmp <> "" Then Italic = tmp = "true"
-		  
-		  // Underline.
-		  tmp = node.GetAttribute("underline")
-		  If tmp <> "" Then Underline = tmp = "true"
 		  
 		  // Enabled.
 		  tmp = node.GetAttribute("enabled")
@@ -484,7 +441,7 @@ Protected Class HighlightContext
 		        AddRegEx(subNode.Child(j).FirstChild.Value)
 		      Next
 		    Case "highlightContext"
-		      subContext = New HighlightContext(mScanner.Options.CaseSensitive)
+		      subContext = New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive)
 		      subContext.loadFromXmlNode(subNode)
 		      AddSubContext(subContext)
 		    End Select
@@ -572,43 +529,6 @@ Protected Class HighlightContext
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return mBackgroundcolor
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mBackgroundcolor = value
-			  
-			  // This is to make whitespaces the same color as the "parent" context.
-			  // Whitespace should always be subcontext(0) - if it's available at all.
-			  If subContexts.LastIndex > -1 And subContexts(0).Name = "fieldwhitespace" Then
-			    subContexts(0).BackgroundColor = value
-			  End If
-			  
-			  mHasBackgroundColor = value <> Color.Black
-			  
-			End Set
-		#tag EndSetter
-		BackgroundColor As Color
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mBold
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mBold = value
-			End Set
-		#tag EndSetter
-		Bold As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
 			  Return mEnabled
 			End Get
 		#tag EndGetter
@@ -661,54 +581,18 @@ Protected Class HighlightContext
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return mHasbackgroundcolor
+			  Return mHasBackgroundColor
 			End Get
 		#tag EndGetter
 		HasBackgroundColor As Boolean
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mForeColor
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mForeColor = value
-			End Set
-		#tag EndSetter
-		HighlightColor As Color
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
 		IsPlaceholder As Boolean
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mItalic
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mItalic = value
-			End Set
-		#tag EndSetter
-		Italic As Boolean
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private Keywords() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBackgroundColor As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBold As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -732,15 +616,15 @@ Protected Class HighlightContext
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHasBackgroundColor As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mItalic As Boolean
+		Private mHasBackgroundColor As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, Description = 41207765616B207265666572656E636520746F20746865206F776E696E6720686967686C6967687420646566696E6974696F6E2E
+		Private mOwner As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -763,10 +647,6 @@ Protected Class HighlightContext
 		Private mSubContextPattern As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUnderline As Boolean
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -779,6 +659,30 @@ Protected Class HighlightContext
 			End Set
 		#tag EndSetter
 		Name As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520686967686C6967687420646566696E6974696F6E207468697320636F6E746578742062656C6F6E677320746F2E
+		#tag Getter
+			Get
+			  If mOwner = Nil Or mOwner.Value = Nil Then
+			    Return Nil
+			  Else
+			    Return SyntaxArea.HighlightDefinition(mOwner.Value)
+			  End If
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value = Nil Then
+			    Return
+			  Else
+			    mOwner = New WeakRef(value)
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		Owner As SyntaxArea.HighlightDefinition
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -834,38 +738,8 @@ Protected Class HighlightContext
 		Private SubExpressionIndex() As Integer
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mUnderline
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mUnderline = value
-			End Set
-		#tag EndSetter
-		Underline As boolean
-	#tag EndComputedProperty
-
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="BackgroundColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue="&h000000"
-			Type="Color"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Bold"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
 			Visible=false
@@ -899,14 +773,6 @@ Protected Class HighlightContext
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="HighlightColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue="&h000000"
-			Type="Color"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -916,14 +782,6 @@ Protected Class HighlightContext
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsPlaceholder"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Italic"
 			Visible=false
 			Group="Behavior"
 			InitialValue="0"
@@ -968,14 +826,6 @@ Protected Class HighlightContext
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Underline"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

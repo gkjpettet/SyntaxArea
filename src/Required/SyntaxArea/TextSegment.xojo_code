@@ -32,12 +32,12 @@ Inherits SyntaxArea.DataRange
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(offset As Integer, length As Integer, type As Integer, highlightColor As Color = &c0, backgroundColor As Color = &c0, bold As Boolean = False, italic As Boolean = False, underline As Boolean = False)
+		Sub Constructor(offset As Integer, length As Integer, type As Integer, highlightColor As Color = &c0, backgroundColor As Color = &c000001, bold As Boolean = False, italic As Boolean = False, underline As Boolean = False)
 		  Super.Constructor(offset, length)
 		  Self.Type = type
 		  Self.TextColor = highlightColor
 		  Self.BackgroundColor = backgroundColor
-		  HasBackgroundColor = backgroundColor <> &c000000
+		  HasBackgroundColor = backgroundColor <> &c000001
 		  Self.Bold = bold
 		  Self.Italic = italic
 		  Self.Underline = underline
@@ -70,7 +70,7 @@ Inherits SyntaxArea.DataRange
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		HasBackgroundColor As Boolean
+		HasBackgroundColor As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
