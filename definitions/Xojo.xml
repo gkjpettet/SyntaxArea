@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="1.4">
+<highlightDefinition version="2.0">
 	<name>Xojo</name>
 
 <!-- Module block -->
@@ -10,9 +10,9 @@
 	<blockStartMarker indent="1">^\s*(protected\b|private\b)?\s*class\b</blockStartMarker>
 	<blockEndMarker>^\s*end\s+class\b</blockEndMarker>
 
-<!-- Interface block - prevents anything inside an interface from being indented (beyond level 1 indentation): -->
-	<blockStartMarker indent="1" newstate="inside_interface">^\s*(protected\b|private\b)?\s*interface\b</blockStartMarker>
-	<blockEndMarker condition="inside_interface" newstate="">^\s*end\s+interface\b</blockEndMarker>
+<!-- Interface block - prevents anything inside an interface from being indented (beyond level 1 indentation). -->
+	<blockStartMarker indent="1" newstate="insideInterface">^\s*(protected\b|private\b)?\s*interface\b</blockStartMarker>
+	<blockEndMarker condition="insideInterface" newstate="">^\s*end\s+interface\b</blockEndMarker>
 	
 <!-- Everything else -->
 	<blockStartMarker indent="1">^\s*(?:(if|elseif)\b.*\sthen\b\s*(('|//)|(?!.+?))|if\s(?!.*\sthen\b)|^\s*(public\b|protected\b|private\b)?\s*(shared\b)?\s*(?&lt;!end\b)\s*(sub|function|property)\b|(do|for|while|select|case|try|catch|else|enum|Get|Set|#if|#elseif|#else)\b)</blockStartMarker>
@@ -21,69 +21,26 @@
 	<lineContinuationMarker indent="2">^((?:"[^"\r\n]*"|(?!'|//|\brem\b)[^\r\n_])*)_[\t\x20]*((?:'|//|\brem\b)[^\r\n]*|)$</lineContinuationMarker>
 
 	<symbols> <!-- these are used to identify declared symbols that are useful for navigation inside larger source file -->
-		<symbol type="Method">
+		<symbol type="method">
 			<entryRegEx>^\s*(?:public|protected|private)?\b\s*(shared\b)?\s*(?&lt;!end\b)\s*(?:sub|function)\b.+?\([^\)]*\)\s*(?:as\b\s*\w+\s*)?</entryRegEx>
 		</symbol>
-		<symbol type="Property">
+		<symbol type="property">
 			<entryRegEx>^\s*(?:public|protected|private)?\b\s*(shared\b)?\s*(?&lt;!end\b)\s*(property\b).+</entryRegEx>
 		</symbol>
-		<symbol type="Class">
+		<symbol type="class">
 			<entryRegEx>^\s*(?:protected\b|private\b)?\s*class\s+\w+\s*</entryRegEx>
 		</symbol>
-		<symbol type="Module">
+		<symbol type="module">
 			<entryRegEx>^\s*(?:protected\b|private\b)?\s*module\s+\w+\s*</entryRegEx>
 		</symbol>		
-		<symbol type="Interface">
+		<symbol type="interface">
 			<entryRegEx>^\s*(?:protected\b|private\b)?\s*interface\s+\w+\s*</entryRegEx>
 		</symbol>		
 	</symbols>
 	
-	<contexts defaultColor="#000000" caseSensitive="no">		
-        <highlightContext name="Doubles" highlightColor="#006532">
-            <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?=\d+\.|\.\d+|\d+e(?:\d|\b))(\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
-        </highlightContext>    	
-        
-        <highlightContext name="Integers" highlightColor="#326598">
-            <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?:\d+|&amp;h[[:xdigit:]]*\b|&amp;o[0-7]*\b|&amp;b[01]*\b)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
-        </highlightContext>
-
-		<highlightContext name="PreProcessor" highlightColor="#0000FF">
-            <entryRegEx>#(?:if|elseif|else|endif|pragma)</entryRegEx>
-        </highlightContext>        
-		
-		<highlightContext name="Comment" highlightColor="#7F0000" italic="true">
-			<startRegEx>'</startRegEx>
-			<endRegEx>[\n\r]</endRegEx>
-		</highlightContext>
-		
-		<highlightContext name="C-Comment" highlightColor="#7F0000" italic="true">
-			<startRegEx>//</startRegEx>
-			<endRegEx>[\n\r]</endRegEx>
-		</highlightContext>
-		
-		<highlightContext name="REM-Comment" highlightColor="#7F0000" italic="true">
-			<startRegEx>\brem\b</startRegEx>
-			<endRegEx>[\n\r]</endRegEx>
-		</highlightContext>
-		
-		<highlightContext name="String" highlightColor="#6500FE">
-			<entryRegEx>"[^"\r\n]*["\r\n]|&amp;u[[:xdigit:]]*\b</entryRegEx>
-		</highlightContext>
-
-		<highlightContext name="color_red" highlightColor="#FF0000">
-				<entryRegEx>(?&lt;=&amp;c)[[:xdigit:]]{1,2}</entryRegEx>
-		</highlightContext>
-
-		<highlightContext name="color_green" highlightColor="#00FF00">
-				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{2})[[:xdigit:]]{1,2}</entryRegEx>
-		</highlightContext>
-
-		<highlightContext name="color_blue" highlightColor="#0000FF">
-				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{4})[[:xdigit:]]{1,2}</entryRegEx>
-		</highlightContext>
-
-        <highlightContext name="BasicTypes" highlightColor="#0000FF" bold="false">
-            <keywords>
+	<contexts defaultColor="#000000" caseSensitive="no">
+		<highlightContext name="type">
+			<keywords>
 				<string>Boolean</string>
 				<string>Color</string>
 				<string>Double</string>
@@ -100,11 +57,11 @@
 				<string>String</string>
 				<string>CFString</string>
 				<string>Ptr</string>
-            </keywords>
-        </highlightContext>
-
-        <highlightContext name="Keywords" highlightColor="#0000FF" bold="false">
-            <keywords>
+			</keywords>
+		</highlightContext>
+		
+		<highlightContext name="keyword">
+			<keywords>
 				<string>#Else</string>
 				<string>#ElseIf</string>
 				<string>#EndIf</string>
@@ -199,7 +156,40 @@
 				<string>Wend</string>
 				<string>While</string>
 				<string>With</string>
-            </keywords>
+			</keywords>
+		</highlightContext>
+			
+        <highlightContext name="double">
+            <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?=\d+\.|\.\d+|\d+e(?:\d|\b))(\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
+        </highlightContext>    	
+        
+        <highlightContext name="integer">
+            <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?:\d+|&amp;h[[:xdigit:]]*\b|&amp;o[0-7]*\b|&amp;b[01]*\b)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
         </highlightContext>
+
+		<highlightContext name="preprocessor">
+            <entryRegEx>#(?:if|elseif|else|endif|pragma)</entryRegEx>
+        </highlightContext>        
+		
+		<highlightContext name="comment">
+			<startRegEx>'|\/\/|\brem\b</startRegEx>
+			<endRegEx>[\n\r]</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="string">
+			<entryRegEx>"[^"\r\n]*["\r\n]|&amp;u[[:xdigit:]]*\b</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="colorRed">
+				<entryRegEx>(?&lt;=&amp;c)[[:xdigit:]]{1,2}</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="colorGreen">
+				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{2})[[:xdigit:]]{1,2}</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="colorBlue">
+				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{4})[[:xdigit:]]{1,2}</entryRegEx>
+		</highlightContext>
 	</contexts>
 </highlightDefinition>

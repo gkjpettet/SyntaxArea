@@ -3500,7 +3500,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  InvalidateAllLines
 		  
-		  Redraw
+		  Redraw(True)
 		  
 		End Sub
 	#tag EndMethod
