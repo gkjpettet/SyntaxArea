@@ -17,7 +17,7 @@
 			<entryRegEx>^\s*constructor\s*\((?:\w|,|\s)*\)\s*\{</entryRegEx>
 		</symbol>
 		<symbol type="method" rTrim="{">
-			<entryRegEx>^\s*(static\s*)?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*\{</entryRegEx>
+			<entryRegEx>^\s*(?!for\b|foreach|while|do|switch)(static\s*)?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*\{</entryRegEx>
 		</symbol>
 		
 		<symbol type="prefixOperator" rTrim="{">
