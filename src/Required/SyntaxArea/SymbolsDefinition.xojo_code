@@ -51,6 +51,10 @@ Protected Class SymbolsDefinition
 		  // Type.
 		  Type = node.GetAttribute("type")
 		  
+		  // Should we optionally trim any characters from symbols after the regex match?
+		  LTrim = node.GetAttribute("lTrim")
+		  RTrim = node.GetAttribute("rTrim")
+		  
 		  Var subNode As XmlNode
 		  
 		  For i As Integer = 0 To node.ChildCount-1
@@ -79,13 +83,49 @@ Protected Class SymbolsDefinition
 		EntryRegex As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 5468697320737472696E672077696C6C206265206C656674207472696D6D65642066726F6D207468652073796D626F6C2773206E616D652E
+		#tag Getter
+			Get
+			  Return mLTrim
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mLTrim = value
+			End Set
+		#tag EndSetter
+		LTrim As String
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mLTrim As String
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mRegex As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRTrim As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mType As String
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 5468697320737472696E672077696C6C206265207269676874207472696D6D65642066726F6D207468652073796D626F6C2773206E616D652E
+		#tag Getter
+			Get
+			  Return mRTrim
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mRTrim = value
+			End Set
+		#tag EndSetter
+		RTrim As String
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

@@ -679,10 +679,15 @@ Protected Class HighlightDefinition
 		    // Strip spaces.
 		    symbol = symbol.Trim
 		    
-		    // HACK: Many symbol definitions would ideally include a positive lookahead for an 
-		    // opening brace when looking for symbols but this is slow. Instead, I'm just going
-		    // to remove any trailing opening brace in the symbol.
-		    If symbol.Length > 0 And symbol.Right(1) = "{" Then symbol = symbol.Left(symbol.Length - 1).Trim
+		    // Do we need to trim any specific characters from the symbol?
+		    If symbol.Length > 0 Then
+		      If symbolDef.LTrim <> "" Then
+		        symbol = symbol.TrimLeft(symbolDef.LTrim)
+		      End If
+		      If symbolDef.RTrim <> "" Then
+		        symbol = symbol.TrimRight(symbolDef.RTrim)
+		      End If
+		    End If
 		    
 		    If symbol <> "" Then
 		      local.Value(symbol) = New SyntaxArea.DocumentSymbol(symbol, pos, symbolDef.Type)

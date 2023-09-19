@@ -7,33 +7,32 @@
 	<blockEndMarker>^\s*\}</blockEndMarker>
 	
 	<!-- Symbol definitions -->
-	<!-- We take advantage of the fact that SyntaxArea will strip a trailing `{` from
-	symbol names so we don't need to do a positive lookahead and we can include `{` in the
-	regex -->
+	<!-- Note that we strip `{` from the matched symbol name. We use the rTrim attribute to tell the
+    editor to do this so we can avoid using expensive forward lookaheads in the regex patterns. -->
 	<symbols>
 		<symbol type="class">
 			<entryRegEx>^\s*class [^ {]*</entryRegEx>
 		</symbol>
-		<symbol type="constructor">
+		<symbol type="constructor" rTrim="{">
 			<entryRegEx>^\s*constructor\s*\((?:\w|,|\s)*\)\s*\{</entryRegEx>
 		</symbol>
-		<symbol type="method">
+		<symbol type="method" rTrim="{">
 			<entryRegEx>^\s*(static\s*)?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*\{</entryRegEx>
 		</symbol>
 		
-		<symbol type="prefixOperator">
+		<symbol type="prefixOperator" rTrim="{">
 			<entryRegEx>^\s*(static\s*)?([-~]|not)\s*\(\)\s*\{</entryRegEx>
 		</symbol>
 	
-		<symbol type="infixOperator">
+		<symbol type="infixOperator" rTrim="{">
 			<entryRegEx>^\s*(static\s*)?(\&amp;|\.\.|\.\.\.|\/|\&gt;|\&gt;\=|\&gt;\&gt;|is|\&lt;|\&lt;\=|\&lt;\&lt;|\-|\&lt;\&lt;|\%|\||\+|\*)\s*\(\w+\)\s*\{</entryRegEx>
 		</symbol>
 	
-		<symbol type="subscriptOperator">
+		<symbol type="subscriptOperator" rTrim="{">
 			<entryRegEx>^\s*(static\s*)?\[\w(?:\w|\,\s)+\]\s*\{</entryRegEx>
 		</symbol>
 		
-		<symbol type="subscriptSetter">
+		<symbol type="subscriptSetter" rTrim="{">
 			<entryRegEx>^\s*(static\s*)?\[\w+\]\=\(\w+\)\s*\{</entryRegEx>
 		</symbol>
 	</symbols>
