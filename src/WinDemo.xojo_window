@@ -1988,9 +1988,6 @@ End
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&cADB5BD, &c62707D), False, True)
 		  CodeEditor.AddTokenStyle("comment", style)
 		  
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&cADB5BD, &c62707D), False, True)
-		  CodeEditor.AddTokenStyle("multiLinecomment", style)
-		  
 		  // Keywords.
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c3B2BFE, &c4DD1EE))
 		  CodeEditor.AddTokenStyle("keyword", style)
