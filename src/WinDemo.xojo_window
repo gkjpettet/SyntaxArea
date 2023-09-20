@@ -2011,12 +2011,10 @@ End
 		  // Directives.
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c945200, &c945200))
 		  CodeEditor.AddTokenStyle("directive", style)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AppearanceChanged()
-		  CodeEditor.MarkAllLinesAsChanged
+		  
+		  // Placeholders.
+		  style = New SyntaxArea.TokenStyle(Color.Black, True, False, False, Color.Yellow)
+		  CodeEditor.AddTokenStyle("placeholder", style)
 		End Sub
 	#tag EndMethod
 

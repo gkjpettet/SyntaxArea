@@ -3,7 +3,7 @@ Protected Class App
 Inherits DesktopApplication
 	#tag Event
 		Sub AppearanceChanged()
-		  WinDemo.AppearanceChanged
+		  WinDemo.CodeEditor.MarkAllLinesAsChanged
 		End Sub
 	#tag EndEvent
 

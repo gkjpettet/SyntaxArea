@@ -13,7 +13,7 @@
 		</symbol>							
 	</symbols>
 	
-	<placeholders highlightColor="#000000" backgroundColor="#e9effa" bold = "true">&lt;#(.+?)#&gt;</placeholders>
+	<placeholders>&lt;#(.+?)#&gt;</placeholders>
 		
 	<contexts caseSensitive="yes">				
 		<highlightContext name="JavadocComment" fallback="comment">

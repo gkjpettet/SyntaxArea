@@ -551,34 +551,10 @@ Protected Class HighlightDefinition
 		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self, False, False)
 		        PlaceholderContextDef.EntryRegEx = node.FirstChild.Value
 		        PlaceholderContextDef.IsPlaceholder = True
-		        PlaceholderContextDef.Name = "Placeholders"
+		        PlaceholderContextDef.Name = "placeholder"
 		        
-		        // Var tmpObj As Variant
-		        // If node.GetAttribute("highlightColor") <> "" Then
-		        // tmpObj = "&h" + node.GetAttribute("highlightColor").Middle(0)
-		        // PlaceholderContextDef.HighlightColor = tmpObj.ColorValue
-		        // End If
-		        
-		        // If node.GetAttribute("backgroundColor") <> "" Then
-		        // tmpObj = "&h" + node.GetAttribute("backgroundColor").Middle(0)
-		        // PlaceholderContextDef.BackgroundColor = tmpObj.ColorValue
-		        // End If
-		        
+		        // Enabled?
 		        Var tmp As String
-		        
-		        // // Bold.
-		        // tmp = node.GetAttribute("bold")
-		        // If tmp <> "" Then PlaceholderContextDef.Bold = tmp = "true"
-		        // 
-		        // // Italic.
-		        // tmp = node.GetAttribute("italic")
-		        // If tmp <> "" Then PlaceholderContextDef.Italic = tmp = "true"
-		        // 
-		        // // Underline.
-		        // tmp = node.GetAttribute("underline")
-		        // If tmp <> "" Then PlaceholderContextDef.Underline = tmp = "true"
-		        
-		        // Enabled.
 		        tmp = node.GetAttribute("enabled")
 		        placeholderContextDef.Enabled = tmp <> "false"
 		        

@@ -237,7 +237,7 @@ Inherits SyntaxArea.TextSegment
 		  If indentVisually Then x = Self.Indent + x
 		  
 		  Width = 0
-		  Var TheText As String
+		  Var theText As String
 		  Var word As SyntaxArea.TextSegment
 		  Var wordFound As Boolean
 		  Var darkerHighlightColor As Color = Color.HighlightColor.DarkerColor(50, True)
@@ -250,18 +250,18 @@ Inherits SyntaxArea.TextSegment
 		    Var selfWordOfs As Integer = word.Offset + Self.Offset
 		    
 		    If word.TYPE = TYPE_SPACE Then
-		      TheText = " "
+		      theText = " "
 		      If Not showLeadingSpace And Not wordFound Then Continue For
 		      
 		    ElseIf Word.TYPE = TYPE_TAB Then
-		      TheText = TABCHAR
+		      theText = TABCHAR
 		      If Not showLeadingSpace And Not wordFound Then Continue For
 		      
 		    ElseIf Word.TYPE = TYPE_EOL Then
 		      If displayInvisible Then
-		        TheText = VISIBLE_EOL_CHAR
+		        theText = VISIBLE_EOL_CHAR
 		      Else
-		        TheText = ""
+		        theText = ""
 		      End If
 		      If Not showLeadingSpace And Not wordFound Then Continue For
 		      
@@ -271,17 +271,17 @@ Inherits SyntaxArea.TextSegment
 		      g.DrawingColor = word.TextColor
 		      
 		      // `Graphics.DrawText()` can't handle UTF-32 (on OSX, at least)...
-		      TheText = storage.GetText(SyntaxArea.TextPlaceholder(word).TextRange.Offset + offset, SyntaxArea.TextPlaceholder(word).TextRange.Length).ConvertEncoding(Encodings.UTF8)
-		      TheText = PLACEHOLDER_PADDING_STRING + TheText + PLACEHOLDER_PADDING_STRING
+		      theText = storage.GetText(SyntaxArea.TextPlaceholder(word).TextRange.Offset + offset, SyntaxArea.TextPlaceholder(word).TextRange.Length).ConvertEncoding(Encodings.UTF8)
+		      theText = PLACEHOLDER_PADDING_STRING + theText + PLACEHOLDER_PADDING_STRING
 		      
 		    Else
 		      wordFound = True
 		      
 		      g.DrawingColor = word.TextColor
-		      TheText = storage.GetText(selfWordOfs, word.Length)
+		      theText = storage.GetText(selfWordOfs, word.Length)
 		      
 		      // Convert Chr(1), which we use for original NUL chars, to a "NUL" character for display.
-		      TheText = TheText.ReplaceAll(Chr(1), "␀")
+		      theText = theText.ReplaceAll(Chr(1), "␀")
 		    End If
 		    
 		    g.Bold = Word.Bold Or bold
@@ -293,30 +293,30 @@ Inherits SyntaxArea.TextSegment
 		      word.Width = -1
 		    End If
 		    If word.Width < 0 Then
-		      word.Width = g.TextWidth(TheText)
+		      word.Width = g.TextWidth(theText)
 		    End If
 		    
 		    // Draw the text.
 		    If(word.Type = TYPE_WORD Or word.Type = TYPE_PLACEHOLDER Or displayInvisible) And x + word.Width >= 0 And x < g.Width And y >= 0 And y <= g.Height + g.TextHeight Then
 		      If Word.TYPE = TYPE_TAB Then
 		        // A hack to make the visible character the same width as the tab.
-		        TheText = VISIBLE_TAB_CHAR
+		        theText = VISIBLE_TAB_CHAR
 		      ElseIf Word.TYPE = TYPE_SPACE Then
-		        TheText = VISIBLE_SPACE_CHAR
+		        theText = VISIBLE_SPACE_CHAR
 		      End If
 		      
 		      If word.TYPE = TYPE_PLACEHOLDER Then
 		        Var oldc As Color = g.DrawingColor
 		        Var colorOffset As Integer = 0
 		        
-		        // Make the colour darker if the placeholder is in selection.
+		        // Make the text colour darker if the placeholder is in selection.
 		        If selfWordOfs >= selStart And selfWordOfs + Word.Length <= selStart + selLength Then
 		          colorOffset = 50
 		          oldc = oldc.InvertColor
 		        End If
 		        
 		        Var baseCol As Color = SyntaxArea.TextPlaceholder(word).PlaceholderBackgroundColor
-		        g.DrawingColor = baseCol.DarkerColor(colorOffset, True)
+		        g.DrawingColor = baseCol.DarkerColor(colorOffset, True) // The colour of the placeholder pill.
 		        g.FillRoundRectangle(x, y - g.FontAscent, word.Width, g.TextHeight + 1, g.TextHeight, g.TextHeight)
 		        
 		        g.DrawingColor = baseCol.DarkerColor(30, True).DarkerColor(colorOffset, True)
@@ -327,7 +327,7 @@ Inherits SyntaxArea.TextSegment
 		      
 		      #If TargetMacOS
 		        // Draw the word normally
-		        g.DrawText(TheText, x, y)
+		        g.DrawText(theText, x, y)
 		        
 		      #Else
 		        // On Windows and Linux, selection colours are usually rather dark, which
@@ -353,9 +353,9 @@ Inherits SyntaxArea.TextSegment
 		          // The part after the selection.
 		          l3 = word.Length - (l1 + l2)
 		          
-		          t1 = TheText.Left(l1)
-		          t2 = TheText.Middle(l1, l2)
-		          t3 = TheText.Middle(l1 + l2)
+		          t1 = theText.Left(l1)
+		          t2 = theText.Middle(l1, l2)
+		          t3 = theText.Middle(l1 + l2)
 		          
 		          If t1 <> "" Then
 		            g.DrawText(t1, x, y)
@@ -373,7 +373,7 @@ Inherits SyntaxArea.TextSegment
 		          
 		        Else
 		          // Draw the word normally.
-		          g.DrawText(TheText, x, y)
+		          g.DrawText(theText, x, y)
 		        End If
 		      #EndIf
 		      

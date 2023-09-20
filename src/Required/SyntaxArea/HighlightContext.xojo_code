@@ -589,15 +589,6 @@ Protected Class HighlightContext
 		Fallback As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mHasBackgroundColor
-			End Get
-		#tag EndGetter
-		HasBackgroundColor As Boolean
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h0
 		IsPlaceholder As Boolean
 	#tag EndProperty
@@ -624,10 +615,6 @@ Protected Class HighlightContext
 
 	#tag Property, Flags = &h21
 		Private mFallback As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mHasBackgroundColor As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -776,14 +763,6 @@ Protected Class HighlightContext
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="HasBackgroundColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -838,6 +817,14 @@ Protected Class HighlightContext
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Fallback"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
