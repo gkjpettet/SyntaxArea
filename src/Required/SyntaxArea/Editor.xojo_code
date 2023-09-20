@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
-	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -2674,6 +2674,19 @@ Implements MessageCentre.MessageReceiver
 		  
 		  InvalidateAllLines
 		  Redraw(True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4D61726B7320616C6C206C696E65732061732064697274792E
+		Sub MarkAllLinesAsChanged()
+		  /// Marks all lines as dirty.
+		  
+		  Var textLength As Integer = Self.Text.Length
+		  If textLength = 0 Then Return
+		  
+		  ModifiedLines.Clear
+		  ModifiedLines.AddRange(0, textLength)
+		  Highlight
 		End Sub
 	#tag EndMethod
 
@@ -6338,27 +6351,28 @@ Implements MessageCentre.MessageReceiver
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If mSyntaxDefinition <> value Then
-			    mSyntaxDefinition = value
-			    Lines.UnfoldAll
-			    InvalidateAllLines
+			  mSyntaxDefinition = value
+			  Lines.UnfoldAll
+			  InvalidateAllLines
+			  
+			  If CurrentDocumentSymbols <> Nil Then CurrentDocumentSymbols.RemoveAll
+			  
+			  ModifiedLines.Clear
+			  
+			  If mHighlighter <> Nil Then
+			    // Stop the highlighter.
+			    StopHighlighter
 			    
-			    If CurrentDocumentSymbols <> Nil Then CurrentDocumentSymbols.RemoveAll
-			    ModifiedLines.Clear
+			    mHighlighter.Definition = value
+			    Lines.MarkAllLinesAsChanged
+			    VisibleLineRange.Length = -1
 			    
-			    If mHighlighter <> Nil Then
-			      // Stop the highlighter.
-			      StopHighlighter
-			      
-			      mHighlighter.Definition = value
-			      Lines.MarkAllLinesAsChanged
-			      VisibleLineRange.Length = -1
-			      
-			      Highlight
-			    End If
-			    
-			    If value = Nil Then HighlightingComplete
+			    Highlight
 			  End If
+			  
+			  ReIndentText
+			  
+			  If value = Nil Then HighlightingComplete
 			  
 			End Set
 		#tag EndSetter

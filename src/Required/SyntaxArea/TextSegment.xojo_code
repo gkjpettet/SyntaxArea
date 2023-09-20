@@ -1,7 +1,7 @@
 #tag Class
 Protected Class TextSegment
 Inherits SyntaxArea.DataRange
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0, Description = 52657475726E73206120636C6F6E65206F6620746869732074657874207365676D656E742E
 		Function Clone() As SyntaxArea.TextSegment
 		  /// Returns a clone of this text segment.
@@ -175,7 +175,7 @@ Inherits SyntaxArea.DataRange
 			Name="HasBackgroundColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -225,14 +225,6 @@ Inherits SyntaxArea.DataRange
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextColor"
-			Visible=false
-			Group="Behavior"
-			InitialValue="&h000000"
-			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
