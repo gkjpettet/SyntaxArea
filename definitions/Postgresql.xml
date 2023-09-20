@@ -1,58 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="1.1">
-	<!--
-		Created by
-		Arndt Weinmann
-	-->
+<highlightDefinition version="2.0">
+	<!-- Adapted from the CEF original definition by Arndt Weinmann -->
 	<name>PostgreSQL</name>	
 	
 	<blockStartMarker indent="1">\s*\(\s*$</blockStartMarker>
 	<blockEndMarker>^\s*\)</blockEndMarker>
 	
-	<contexts defaultColor="#0" caseSensitive="no">
-	   <highlightContext name="Comment" highlightColor="#7F0000">
+	<contexts caseSensitive="no">
+	   <highlightContext name="comment">
 			<startRegEx>--</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
-		<highlightContext name="SQL-Comment" highlightColor="#7F0000">
+		<highlightContext name="sqlComment" fallback="comment">
 			<startRegEx>//</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
-		<highlightContext name="square-bracket-command" highlightColor="#FF8000" bold="true">
+		<highlightContext name="squareBracketCommand">
 			<startRegEx>\[:</startRegEx>
 			<endRegEx>\]</endRegEx>
 		</highlightContext>
-		<highlightContext name="view" highlightColor="#008080" underline="true">
+		<highlightContext name="view">
 			<startRegEx>\[view</startRegEx>
 			<endRegEx>\]</endRegEx>
 		</highlightContext>			
-		<highlightContext name="SQL-Comment-multi" highlightColor="#7F0000">
+		<highlightContext name="sqlCommentMulti" fallback="comment">
 			<startRegEx>/\*</startRegEx>
 			<endRegEx>\*/</endRegEx>
 		</highlightContext>
-		<highlightContext name="String" highlightColor="#6500FE">
+		<highlightContext name="string">
             		<startRegEx>"</startRegEx>
 			<endRegEx>[^"]*"</endRegEx>
-			<highlightContext name="square-bracket-command-in-string" highlightColor="#FF8000" bold="true">
+			<highlightContext name="squareBracketCommandInString">
 				<startRegEx>\[:</startRegEx>
 				<endRegEx>\]</endRegEx>
 			</highlightContext>
 		</highlightContext>
-		<highlightContext name="StringB" highlightColor="#6500FE">
-            			<startRegEx>'</startRegEx>
+		<highlightContext name="stringB" fallback="string">
+			<startRegEx>'</startRegEx>
 			<endRegEx>[^']*'</endRegEx>
-			<highlightContext name="square-bracket-command-in-stringb" highlightColor="#FF8000" bold="true">
+			<highlightContext name="squareBracketCommandInStringB">
 				<startRegEx>\[:</startRegEx>
 				<endRegEx>\]</endRegEx>
 			</highlightContext>
 		</highlightContext>
-		<highlightContext name="Doubles" highlightColor="#006532">
+		<highlightContext name="double" fallback="number">
 			<entryRegEx>(?&lt;=[^\w\d]|^)(([0-9]+\.[0-9]*)|([0-9]{11,}))(?=[^\w\d]|$)</entryRegEx>
 		</highlightContext>
-		<highlightContext name="Integers" highlightColor="#326598">
+		<highlightContext name="integer" fallback="number">
 			<entryRegEx>(?&lt;=[^\w\d]|^)([0-9]{1,10})(?=[^\w\d]|$)</entryRegEx>
 		</highlightContext>        
-		<highlightContext name="redstring" highlightColor="#EE1155" bold="true">
+		<highlightContext name="redString">
 			<keywords>
 				<string>DELETE</string>
 				<string>UPDATE</string>
@@ -60,7 +57,7 @@
 				<string>ALTER</string>
 			</keywords>
 		</highlightContext>        		
-		<highlightContext name="datatypes" highlightColor="#7F1155">
+		<highlightContext name="dataType" fallback="type">
 			<keywords>
 				<string>varchar</string>
 				<string>integer</string>
@@ -75,7 +72,7 @@
 				<string>timestamp</string>
 			</keywords>
 		</highlightContext>
-		<highlightContext name="Keywords" highlightColor="#000000" bold="true">
+		<highlightContext name="keyword">
 			<keywords>
 				<string>abort</string>
 				<string>abs</string>

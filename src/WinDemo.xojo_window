@@ -1965,14 +1965,13 @@ End
 		  
 		  CodeEditor.VerticalRulerPosition = 80
 		  
-		  InitialiseControls
-		  
-		  // DEBUGGING: For ObjoScript as the syntax.
-		  CodeEditor.SyntaxDefinition = PopupDefinition.RowTagAt(0)
-		  InitialiseControls
-		  
 		  // Add some token styles.
 		  AddTokenStyles
+		  
+		  InitialiseControls
+		  
+		  // Force an update.
+		  CodeEditor.MarkAllLinesAsChanged
 		End Sub
 	#tag EndEvent
 
@@ -2666,8 +2665,6 @@ End
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
-		  Me.SelectedRowIndex = 1 // ObjoScript.
-		  
 		  // Java.
 		  Me.AddRow("Java")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
@@ -2679,24 +2676,27 @@ End
 		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
 		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml"))
 		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  // 
-		  // // PostgreSQL.
-		  // Me.AddRow("PostgreSQL")
-		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml"))
-		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  // 
+		  
+		  // PostgreSQL.
+		  Me.AddRow("PostgreSQL")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  
 		  // // XML.
 		  // Me.AddRow("XML")
 		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
 		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml"))
 		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  // 
+		  
 		  // C.
 		  Me.AddRow("C")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // Start with the Xojo definition.
+		  Me.SelectedRowIndex = 0
 		  
 		End Sub
 	#tag EndEvent
@@ -2760,7 +2760,8 @@ End
 		  Me.AddRow("C")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_C
 		  
-		  'Me.SelectedRowIndex = 1
+		  // Start with Xojo text.
+		  Me.SelectedRowIndex = 0
 		  
 		End Sub
 	#tag EndEvent
