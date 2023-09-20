@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="1.1">
+<highlightDefinition version="2.0">
 	<name>HTML</name>
 
 	<blockStartMarker indent="1">(?x)
@@ -19,52 +19,51 @@
 		|^[^{]*\}
 		)</blockEndMarker>
 
-	<contexts defaultColor="#0" caseSensitive="no">		
-		<highlightContext name="Comment" highlightColor="#236E25">
+	<contexts caseSensitive="no">		
+		<highlightContext name="comment">
 			<startRegEx>&lt;!--</startRegEx>
 			<endRegEx>--&gt;</endRegEx>
-			<highlightContext name="todos" highlightColor="#FF0000" backgroundColor="#FFFF00">
+			<highlightContext name="todos">
 				<keywords>
-                		<string>TODO</string>
-				<string>HACK</string>
+					<string>TODO</string>
+					<string>HACK</string>
 				</keywords>
 			</highlightContext>	
 		</highlightContext>
 
-		<highlightContext name="CDATA" highlightColor="#FF0000">
+		<highlightContext name="cdata">
 			<startRegEx>&lt;!\s*\[CDATA\s*\[</startRegEx>
 			<endRegEx>\]\s*\]\s*&gt;</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="Doctype" highlightColor="#236E25">
+		<highlightContext name="docType">
 			<startRegEx>&lt;!</startRegEx>
 			<endRegEx>&gt;</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="Escape" highlightColor="#236E25">
+		<highlightContext name="escape">
 			<startRegEx>&lt;\?</startRegEx>
 			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 					
-        <highlightContext name="Tags" highlightColor="#881280">
-            <entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
-            
-            <highlightContext name="Strings in Tags" highlightColor="#1A1AA6">
-                <entryRegEx>("[^"&gt;&lt;]*")</entryRegEx>
-            </highlightContext>
-            
-            <highlightContext name="Single Strings in Tags" highlightColor="#1A1AA6">
-                <entryRegEx>('[^'&gt;&lt;]*')</entryRegEx>
-            </highlightContext>
-            
-            <highlightContext name="Attributes in Tags" highlightColor="#994500">
-                <entryRegEx>([\w-]*)[ \t]*=(?=[ \t]*"[^"&gt;&lt;]*")</entryRegEx>
-            </highlightContext>    
-        </highlightContext>
-        
-        <highlightContext name="Entities" highlightColor="#881280" backgroundColor="#FFFF00">
-            <entryRegEx>(&amp;\w{1,8};)</entryRegEx>
-        </highlightContext>
+		<highlightContext name="tag">
+			<entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
 
+			<highlightContext name="stringInTag" fallback="string">
+				<entryRegEx>("[^"&gt;&lt;]*")</entryRegEx>
+			</highlightContext>
+
+			<highlightContext name="singleStringInTag" fallback="string">
+				<entryRegEx>('[^'&gt;&lt;]*')</entryRegEx>
+			</highlightContext>
+
+			<highlightContext name="attributeInTag">
+				<entryRegEx>([\w-]*)[ \t]*=(?=[ \t]*"[^"&gt;&lt;]*")</entryRegEx>
+			</highlightContext>
+		</highlightContext>
+
+		<highlightContext name="entity">
+			<entryRegEx>(&amp;\w{1,8};)</entryRegEx>
+		</highlightContext>
 	</contexts>
 </highlightDefinition>

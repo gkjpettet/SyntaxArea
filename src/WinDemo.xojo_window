@@ -2671,11 +2671,11 @@ End
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
-		  // // HTML.
-		  // Me.AddRow("HTML")
-		  // syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  // Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml"))
-		  // Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  // HTML.
+		  Me.AddRow("HTML")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // PostgreSQL.
 		  Me.AddRow("PostgreSQL")
