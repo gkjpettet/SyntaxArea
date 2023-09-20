@@ -268,7 +268,7 @@ Protected Class HighlightContext
 		  Var substring As String
 		  Var startPos, startPosB, charPos, charPosB As Integer
 		  
-		  Var style As SyntaxArea.TokenStyle = Owner.Owner.StyleForToken(Self.Name)
+		  Var style As SyntaxArea.TokenStyle = Owner.Owner.StyleForToken(Self.Style)
 		  
 		  // Scan subcontexts.
 		  substring = mSearchPattern
@@ -402,10 +402,14 @@ Protected Class HighlightContext
 		  
 		  Var tmp As String
 		  
-		  // Highlight colour.
+		  // Context name.
 		  Name = node.GetAttribute("name")
 		  
-		  // Enabled.
+		  // Context style name. Defaults to the context's name if not provided.
+		  Style = node.GetAttribute("style")
+		  Style = If(Style = "", Name, Style)
+		  
+		  // Enabled?
 		  tmp = node.GetAttribute("enabled")
 		  Enabled = tmp <> "false"
 		  
@@ -606,10 +610,6 @@ Protected Class HighlightContext
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mForeColor As Color = &c000000
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mHasBackgroundColor As Boolean = False
 	#tag EndProperty
 
@@ -638,10 +638,14 @@ Protected Class HighlightContext
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mStyle As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSubContextPattern As String
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 5468697320636F6E746578742773206E616D652E
 		#tag Getter
 			Get
 			  Return mName
@@ -718,6 +722,20 @@ Protected Class HighlightContext
 			End Set
 		#tag EndSetter
 		StartRegEx As string
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 546865206E616D65206F6620746865207374796C6520746F2075736520666F72207468697320636F6E746578742E
+		#tag Getter
+			Get
+			  Return mStyle
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mStyle = value
+			End Set
+		#tag EndSetter
+		Style As String
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

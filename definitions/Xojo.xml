@@ -159,15 +159,15 @@
 			</keywords>
 		</highlightContext>
 			
-        <highlightContext name="double">
+        <highlightContext name="double" style="number">
             <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?=\d+\.|\.\d+|\d+e(?:\d|\b))(\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
         </highlightContext>    	
         
-        <highlightContext name="integer">
+        <highlightContext name="integer" style="number">
             <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?:\d+|&amp;h[[:xdigit:]]*\b|&amp;o[0-7]*\b|&amp;b[01]*\b)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
         </highlightContext>
 
-		<highlightContext name="preprocessor">
+		<highlightContext name="pragma" style="directive">
             <entryRegEx>#(?:if|elseif|else|endif|pragma)</entryRegEx>
         </highlightContext>        
 		

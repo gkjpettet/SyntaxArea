@@ -24,26 +24,12 @@
 	
 	</symbols>
 
-	<contexts caseSensitive="yes">		
-		<highlightContext name="multiLineComment">
-			<startRegEx>/\*</startRegEx>
-			<endRegEx>\*/</endRegEx>
-		</highlightContext>
-		
-		<highlightContext name="comment">
-			<startRegEx>//</startRegEx>
-			<endRegEx>[\n\r]</endRegEx>
-		</highlightContext>
-	
-		<highlightContext name="character">
-			<startRegEx>'</startRegEx>
-			<endRegEx>(\\'')|(.')</endRegEx>
-		</highlightContext>
-		
-		<highlightContext name="directive"> <!-- preprocessor -->
+	<contexts caseSensitive="yes">				
+		<highlightContext name="preprocessor" style="directive">
 			<startRegEx>^#</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 			<highlightContext name="number">
+			<!-- Highlight numbers within single line preprocessor directives -->
 				<entryRegEx>(?&lt;=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)</entryRegEx>
 			</highlightContext>
 		</highlightContext>
@@ -51,6 +37,11 @@
 		<highlightContext name="string">
 			<startRegEx>"</startRegEx>
 			<endRegEx>(((?&lt;!\\)(\\\\)*)|^)"</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="character" style="string">
+			<startRegEx>'</startRegEx>
+			<endRegEx>(\\'')|(.')</endRegEx>
 		</highlightContext>
 
         <highlightContext name="keyword">
@@ -107,5 +98,15 @@
         <highlightContext name="identifier">
             <entryRegEx>([A-Za-z0-9_]+ *)\(</entryRegEx>
         </highlightContext>
+		
+		<highlightContext name="comment">
+			<startRegEx>//</startRegEx>
+			<endRegEx>[\n\r]</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="multiLineComment" style="comment">
+			<startRegEx>/\*</startRegEx>
+			<endRegEx>\*/</endRegEx>
+		</highlightContext>
 	</contexts>
 </highlightDefinition>
