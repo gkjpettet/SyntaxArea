@@ -25,7 +25,7 @@
 	</symbols>
 
 	<contexts caseSensitive="yes">				
-		<highlightContext name="preprocessor" style="directive">
+		<highlightContext name="preprocessor" fallback="directive">
 			<startRegEx>^#</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 			<highlightContext name="number">
@@ -39,7 +39,7 @@
 			<endRegEx>(((?&lt;!\\)(\\\\)*)|^)"</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="character" style="string">
+		<highlightContext name="character" fallback="string">
 			<startRegEx>'</startRegEx>
 			<endRegEx>(\\'')|(.')</endRegEx>
 		</highlightContext>
@@ -104,7 +104,7 @@
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="multiLineComment" style="comment">
+		<highlightContext name="multiLineComment" fallback="comment">
 			<startRegEx>/\*</startRegEx>
 			<endRegEx>\*/</endRegEx>
 		</highlightContext>

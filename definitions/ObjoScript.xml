@@ -38,7 +38,7 @@
 	</symbols>
 	
 	<contexts caseSensitive="yes">		
-		<highlightContext name="intrinsicType" style="type">
+		<highlightContext name="intrinsicType" fallback="type">
 			<keywords>
 				<string>Boolean</string>
 				<string>KeyValue</string>
@@ -103,12 +103,12 @@
 			<entryRegEx>"[^"\r\n]*["\r\n]</entryRegEx>
 		</highlightContext>
 		
-		<highlightContext name="uppercaseIdentifier" style="identifier">
+		<highlightContext name="uppercaseIdentifier" fallback="identifier">
 			<entryRegEx>\b[A-Z]\w*</entryRegEx>
 		</highlightContext>
 		
-		<highlightContext name="lowercaseIdentifier" style="identifier">
-			<entryRegEx>\b[a-z_]\w+</entryRegEx>
+		<highlightContext name="lowercaseIdentifier" fallback="identifier">
+			<entryRegEx>\b[a-z]\w*</entryRegEx>
 		</highlightContext>	
 	</contexts>
 	

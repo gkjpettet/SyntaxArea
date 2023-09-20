@@ -2011,12 +2011,6 @@ End
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
 		  CodeEditor.AddTokenStyle("identifier", style)
 		  
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
-		  CodeEditor.AddTokenStyle("uppercaseIdentifier", style)
-		  
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
-		  CodeEditor.AddTokenStyle("lowercaseIdentifier", style)
-		  
 		  // Directives.
 		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c945200, &c945200))
 		  CodeEditor.AddTokenStyle("directive", style)

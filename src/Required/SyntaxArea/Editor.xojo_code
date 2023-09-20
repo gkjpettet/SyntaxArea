@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -4263,11 +4263,18 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E7320746865207374796C6520746F2075736520666F7220746865206E616D656420746F6B656E2E204966206E6F207374796C6520657869737473207468656E207468652064656661756C74207374796C652069732072657475726E65642E
-		Function StyleForToken(tokenName As String) As SyntaxArea.TokenStyle
-		  /// Returns the style to use for the named token. If no style exists then the default style is returned.
+	#tag Method, Flags = &h0, Description = 52657475726E7320746865207374796C6520746F2075736520666F7220746865206E616D656420746F6B656E2E20466972737420747269657320746F2066696E642061207374796C65206E616D656420607072696D617279602E204966207468617420646F65736E2774206578697374207468656E206C6F6F6B7320666F722061207374796C65206E616D6564206066616C6C6261636B602E204966206E6F206D61746368696E67207374796C6520657869737473207468656E207468652064656661756C74207374796C652069732072657475726E65642E
+		Function StyleForToken(primary As String, fallbackName As String = "") As SyntaxArea.TokenStyle
+		  /// Returns the style to use for the named token. 
+		  /// First tries to find a style named `primary`. If that doesn't exist then looks for a 
+		  /// style named `fallback`. If no matching style exists then the default style is returned.
 		  
-		  Return TokenStyles.Lookup(tokenName, DefaultTokenStyle)
+		  Var style As SyntaxArea.TokenStyle = TokenStyles.Lookup(primary, Nil)
+		  If style = Nil Then
+		    Return TokenStyles.Lookup(fallbackName, DefaultTokenStyle)
+		  Else
+		    Return style
+		  End If
 		  
 		End Function
 	#tag EndMethod
