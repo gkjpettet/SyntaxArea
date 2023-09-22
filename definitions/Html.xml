@@ -3,31 +3,21 @@
 	<name>HTML</name>
 
 	<blockStartMarker indent="1">(?x)
-		(&lt;(?i:head|body|table|thead|tbody|tfoot|tr|div|select|fieldset|style|script|ul|ol|li|form|dl)\b.*?&gt;
+		(&lt;(?i:div|p|span|h1|h2|h3|h4|h5|h6|a|ul|ol|li(?!n)|head|html|body|dl|dt|dd|table|tr|td|th|form|textarea|button|select|label|fieldset|legend|iframe|video|audio|canvas|script|style|header|footer|article|section|nav|aside|main|figure|figcaption|blockquote|address|pre|code|em|strong|small)(?:[^\n\r&lt;])*(?!&lt;)>(?!&lt;)
 		|&lt;!--(?!.*--\s*&gt;)
-		|^&lt;!--\ \#tminclude\ (?&gt;.*?--&gt;)$
-		|&lt;\?(?:php)?.*\b(if|for(each)?|while)\b.+:
-		|\{\{?(if|foreach|capture|literal|foreach|php|section|strip)
-		|\{\s*($|\?&gt;\s*$|//|/\*(.*\*/\s*$|(?!.*?\*/)))
-		)</blockStartMarker>
+		)
+	</blockStartMarker>
 	<blockEndMarker>(?x)
-		(&lt;/(?i:head|body|table|thead|tbody|tfoot|tr|div|select|fieldset|style|script|ul|ol|li|form|dl)&gt;
-		|^(?!.*?&lt;!--).*?--\s*&gt;
-		|^&lt;!--\ end\ tminclude\ --&gt;$
-		|&lt;\?(?:php)?.*\bend(if|for(each)?|while)\b
-		|\{\{?/(if|foreach|capture|literal|foreach|php|section|strip)
-		|^[^{]*\}
-		)</blockEndMarker>
+		(^\s*&lt;\/(?i:div|p|span|h1|h2|h3|h4|h5|h6|a|ul|ol|li|head|html|body|dl|dt|dd|table|tr|td|th|form|textarea|button|select|label|fieldset|legend|iframe|video|audio|canvas|script|style|header|footer|article|section|nav|aside|main|figure|figcaption|blockquote|address|pre|code|em|strong|small)&gt;
+		|^(?!.*?&lt;!--).*?--\s*&gt;)
+	</blockEndMarker>
 
 	<contexts caseSensitive="no">		
 		<highlightContext name="comment">
 			<startRegEx>&lt;!--</startRegEx>
 			<endRegEx>--&gt;</endRegEx>
 			<highlightContext name="todos">
-				<keywords>
-					<string>TODO</string>
-					<string>HACK</string>
-				</keywords>
+				<entryRegEx>(?-i)TODO:|HACK:</entryRegEx> <!-- Note case sensitive -->
 			</highlightContext>	
 		</highlightContext>
 
