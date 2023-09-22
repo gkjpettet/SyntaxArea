@@ -3,13 +3,12 @@
 	<name>HTML</name>
 
 	<blockStartMarker indent="1">(?x)
-		(&lt;(?i:div|p|span|h1|h2|h3|h4|h5|h6|a|ul|ol|li(?!n)|head|html|body|dl|dt|dd|table|tr|td|th|form|textarea|button|select|label|fieldset|legend|iframe|video|audio|canvas|script|style|header|footer|article|section|nav|aside|main|figure|figcaption|blockquote|address|pre|code|em|strong|small)(?:[^\n\r&lt;])*(?!&lt;)>(?!&lt;)
+		(?!&lt;link|&lt;meta)&lt;((?:\w|-)+)(?:[ ]+(?:\w|[-"'=\/ ])+)?&gt;(?!.*&lt;\/(\1)&gt;)
 		|&lt;!--(?!.*--\s*&gt;)
-		)
 	</blockStartMarker>
 	<blockEndMarker>(?x)
-		(^\s*&lt;\/(?i:div|p|span|h1|h2|h3|h4|h5|h6|a|ul|ol|li|head|html|body|dl|dt|dd|table|tr|td|th|form|textarea|button|select|label|fieldset|legend|iframe|video|audio|canvas|script|style|header|footer|article|section|nav|aside|main|figure|figcaption|blockquote|address|pre|code|em|strong|small)&gt;
-		|^(?!.*?&lt;!--).*?--\s*&gt;)
+		(?x)(?&lt;=^|[^\w&gt;])(&lt;\/\w+&gt;)
+		|^(?!.*?&lt;!--).*?--\s*&gt;
 	</blockEndMarker>
 
 	<contexts caseSensitive="no">		
