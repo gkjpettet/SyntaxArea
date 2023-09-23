@@ -15,6 +15,10 @@ Protected Class EditorTheme
 		  
 		  Var theme As New SyntaxArea.EditorTheme
 		  
+		  theme.Name = "Default Dark"
+		  theme.Author = "Garry Pettet"
+		  theme.Version = "1.0.0"
+		  
 		  // =================
 		  // Editor colours.
 		  // =================
@@ -79,6 +83,10 @@ Protected Class EditorTheme
 		  
 		  Var theme As New SyntaxArea.EditorTheme
 		  
+		  theme.Name = "Default Light"
+		  theme.Author = "Garry Pettet"
+		  theme.Version = "1.0.0"
+		  
 		  // =================
 		  // Editor colours.
 		  // =================
@@ -137,6 +145,72 @@ Protected Class EditorTheme
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 4C6F6164732061204A534F4E20726570726573656E746174696F6E206F662061207468656D652E
+		Shared Function FromJSON(json As String) As SyntaxArea.EditorTheme
+		  /// Loads a JSON representation of a theme.
+		  
+		  #Pragma Warning "TODO"
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732061204A534F4E20726570726573656E746174696F6E206F662074686973207468656D652E
+		Function ToJSON() As String
+		  /// Returns a JSON representation of this theme.
+		  
+		  Var d As New Dictionary
+		  
+		  // Metadata.
+		  d.Value("name") = Name
+		  d.Value("author") = Author
+		  d.Value("version") = Version
+		  
+		  // Default token style.
+		  Var defaultStyle As SyntaxArea.TokenStyle = DefaultTokenStyle
+		  If defaultStyle = Nil Then
+		    Raise New UnsupportedOperationException("Unable to convert theme to JSON as there is no default token style.")
+		  End If
+		  d.Value("defaultStyle") = defaultStyle
+		  
+		  // The remaining token styles.
+		  Var tokenStyles As New Dictionary
+		  For Each entry As DictionaryEntry In TokenStyles
+		    Var styleName As String = entry.Key
+		    Var style As SyntaxArea.TokenStyle = entry.Value
+		    If styleName <> "*default" Then
+		      tokenStyles.Value(styleName) = style
+		    End If
+		  Next entry
+		  d.Value("styles") = tokenStyles
+		  
+		  // Editor colours.
+		  d.Value("backColor") = BackColor
+		  d.Value("blockFoldedColor") = BlockFoldedColor
+		  d.Value("blockFolderEllipsisColor") = BlockFoldedEllipsisColor
+		  d.Value("blockFoldMarkerColor") = BlockFoldMarkerColor
+		  d.Value("bookmarkColor") = BookmarkColor
+		  d.Value("bracketHighlightColor") = BracketHighlightColor
+		  d.Value("caretColor") = CaretColor
+		  d.Value("dirtyLinesColor") = DirtyLinesColor
+		  d.Value("gutterBackColor") = GutterBackColor
+		  d.Value("gutterBorderColor") = GutterBorderColor
+		  d.Value("lineNumbersColor") = LineNumbersColor
+		  d.Value("verticalRulerColor") = VerticalRulerColor
+		  d.Value("suggestionPopupBackColor") = SuggestionPopupBackColor
+		  d.Value("suggestionPopupSelectedTextColor") = SuggestionPopupSelectedTextColor
+		  d.Value("suggestionPopupTextColor") = SuggestionPopupTextColor
+		  d.Value("textColor") = TextColor
+		  d.Value("textSelectionColor") = TextSelectionColor
+		  
+		  Return GenerateJSON(d)
+		  
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0, Description = 54686520617574686F72206F662074686973207468656D652E
+		Author As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F662074686520656469746F722E
 		BackColor As Color
@@ -199,6 +273,10 @@ Protected Class EditorTheme
 		LineNumbersColor As Color
 	#tag EndProperty
 
+	#tag Property, Flags = &h0, Description = 546865206E616D65206F662074686973207468656D652E
+		Name As String
+	#tag EndProperty
+
 	#tag Property, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F6620746865206175746F636F6D706C6574696F6E2073756767657374696F6E20706F7075702E
 		SuggestionPopupBackColor As Color
 	#tag EndProperty
@@ -225,6 +303,10 @@ Protected Class EditorTheme
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E20746865206261636B67726F756E6420636F6C6F7572206F66207468652061726561206F662074686520677574746572207768657265206C696E6520666F6C64696E67732061726520646973706C617965642077696C6C206265206C6967687465722E
 		UseLighterLineFoldingBackColor As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 5468652076657273696F6E206F662074686973207468656D652E
+		Version As String = "1.0.0"
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206F7074696F6E616C20726967687420766572746963616C2072756C65722E
