@@ -2678,13 +2678,6 @@ Implements MessageCentre.MessageReceiver
 		  Self.SuggestionPopupTextColor = theme.SuggestionPopupTextColor
 		  Self.TextColor = theme.TextColor
 		  Self.TextSelectionColor = theme.TextSelectionColor
-		  
-		  Self.FontName = theme.FontName
-		  Self.FontSize = theme.FontSize
-		  
-		  Self.LineNumbersFontName = theme.LineNumbersFontName
-		  Self.LineNumbersFontSize = theme.LineNumbersFontSize
-		  
 		  Self.UseLighterLineFoldingBackColor = theme.UseLighterLineFoldingBackColor
 		  
 		  InvalidateAllLines
@@ -4418,16 +4411,18 @@ Implements MessageCentre.MessageReceiver
 		  theme.TextColor = Self.TextColor
 		  theme.TextSelectionColor = Self.TextSelectionColor
 		  
-		  // Font family and text size.
-		  theme.FontName = Self.FontName
-		  theme.FontSize = Self.FontSize
-		  
-		  // Line number font family and text size.
-		  theme.LineNumbersFontName = Self.LineNumbersFontName
-		  theme.LineNumbersFontSize = Self.LineNumbersFontSize
-		  
-		  // Other properties.
 		  theme.UseLighterLineFoldingBackColor = Self.UseLighterLineFoldingBackColor
+		  
+		  // Token styles.
+		  For Each entry As DictionaryEntry In TokenStyles
+		    Var key As String = entry.Key
+		    Var style As SyntaxArea.TokenStyle = entry.Value
+		    If key = "*default" Then
+		      theme.DefaultTokenStyle = style
+		    Else
+		      theme.TokenStyles.Value(key) = style
+		    End If
+		  Next entry
 		  
 		  Return theme
 		  
@@ -7264,31 +7259,31 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldedColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldedEllipsisColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldMarkerColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7296,15 +7291,15 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BookmarkColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7312,7 +7307,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7320,7 +7315,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7328,7 +7323,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7336,7 +7331,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7344,7 +7339,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7352,39 +7347,39 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="VerticalRulerColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SuggestionPopupBackColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SuggestionPopupSelectedTextColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SuggestionPopupTextColor"
 			Visible=true
 			Group="Colours"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7392,7 +7387,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7400,7 +7395,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
-			Type="ColorGroup"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

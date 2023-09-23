@@ -1,6 +1,12 @@
 #tag Class
 Protected Class TokenStyle
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(textColor As Color, bold As Boolean = False, italic As Boolean = False, underline As Boolean = False, backColor As Color = &c0, hasBackColor As Boolean = False)
 		  Self.TextColor = textColor
 		  Self.Bold = bold
@@ -12,9 +18,9 @@ Protected Class TokenStyle
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E732061204A534F4E206F626A65637420726570726573656E746174696F6E206F66207468697320746F6B656E207374796C652E
-		Function ToJSON() As String
-		  /// Returns a JSON object representation of this token style.
+	#tag Method, Flags = &h0, Description = 52657475726E73206120546F6B656E5374796C652066726F6D20697473204A534F4E20726570726573656E746174696F6E2E
+		Shared Function FromJSON(json As String) As SyntaxArea.TokenStyle
+		  /// Returns a TokenStyle from its JSON representation.
 		  ///
 		  /// All keys are optional.
 		  ///
@@ -28,6 +34,54 @@ Protected Class TokenStyle
 		  /// "underline" : BOOLEAN
 		  /// }
 		  /// ```
+		  
+		  Var d As Dictionary
+		  Try
+		    d = ParseJSON(json)
+		  Catch e As JSONException
+		    Raise New InvalidArgumentException("Invalid JSON: " + e.Message)
+		  End Try
+		  
+		  Var style As New SyntaxArea.TokenStyle
+		  
+		  style.TextColor = d.Lookup("textColor", Color.Black)
+		  style.BackColor = d.Lookup("backColor", Color.Black)
+		  style.HasBackColor = d.Lookup("hasBackgroundColor", False)
+		  style.Bold = d.Lookup("bold", False)
+		  style.Italic = d.Lookup("italic", False)
+		  style.Underline = d.Lookup("underline", False)
+		  
+		  Return style
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732061204A534F4E206F626A65637420726570726573656E746174696F6E206F66207468697320746F6B656E207374796C652E
+		Function ToJSON() As String
+		  /// Returns a JSON object representation of this token style.
+		  ///
+		  ///
+		  /// ```json
+		  /// {
+		  /// "textColor" : COLOR,
+		  /// "backColor" : COLOR,
+		  /// "hasBackColor" : BOOLEAN,
+		  /// "bold" : BOOLEAN,
+		  /// "italic" : BOOLEAN,
+		  /// "underline" : BOOLEAN
+		  /// }
+		  /// ```
+		  
+		  Var json As New Dictionary( _
+		  "textColor" : Self.TextColor.ToString, _
+		  "backColor" : Self.BackColor.ToString, _
+		  "hasBackColor" : HasBackColor, _
+		  "bold" : Self.Bold, _
+		  "italic" : Self.Italic, _
+		  "underline" : Self.Underline _
+		  )
+		  
+		  Return GenerateJSON(json)
 		  
 		End Function
 	#tag EndMethod

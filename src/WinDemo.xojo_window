@@ -2252,9 +2252,17 @@ End
 		  InitialiseAutocompleteEngine
 		  
 		  // Load the default theme.
-		  CodeEditor.LoadTheme(New SyntaxArea.EditorTheme)
+		  If Color.IsDarkMode Then
+		    CodeEditor.LoadTheme(SyntaxArea.EditorTheme.DefaultDark)
+		  Else
+		    CodeEditor.LoadTheme(SyntaxArea.EditorTheme.DefaultLight)
+		  End If
+		  
+		  // Default font family and sizes.
 		  CodeEditor.FontName = SyntaxArea.Editor.DEFAULT_FONT
+		  CodeEditor.FontSize = SyntaxArea.Editor.DEFAULT_FONT_SIZE
 		  CodeEditor.LineNumbersFontName = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT
+		  CodeEditor.LineNumbersFontSize = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT_SIZE
 		  
 		  CodeEditor.FontSize = 13
 		  
@@ -2321,8 +2329,7 @@ End
 		  CodeEditor.AddTokenStyle("keyword", style)
 		  
 		  // Numbers.
-		  // style = New SyntaxArea.TokenStyle(&cE4CE88)
-		  style = New SyntaxArea.TokenStyle(Color.Green)
+		  style = New SyntaxArea.TokenStyle(&cE4CE88)
 		  CodeEditor.AddTokenStyle("number", style)
 		  
 		  // Strings.
@@ -2613,8 +2620,7 @@ End
 		  CodeEditor.AddTokenStyle("keyword", style)
 		  
 		  // Numbers.
-		  // style = New SyntaxArea.TokenStyle(&cC43B64)
-		  style = New SyntaxArea.TokenStyle(Color.Orange)
+		  style = New SyntaxArea.TokenStyle(&cC43B64)
 		  CodeEditor.AddTokenStyle("number", style)
 		  
 		  // Strings.

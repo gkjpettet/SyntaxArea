@@ -1,27 +1,140 @@
 #tag Class
 Protected Class EditorTheme
-	#tag Method, Flags = &h0, Description = 437265617465732061206E6577207468656D6520696E7374616E6365207769746820736F6D6520726561736F6E61626C652064656661756C74732E
+	#tag Method, Flags = &h0, Description = 437265617465732061206E6577207468656D6520696E7374616E63652E
 		Sub Constructor()
-		  /// Creates a new theme instance with some reasonable defaults.
+		  /// Creates a new theme instance.
 		  
-		  BackColor = New ColorGroup(Color.White, Color.Black)
-		  BlockFoldedColor = New ColorGroup(Color.Orange, Color.Orange)
-		  BlockFoldedEllipsisColor = New ColorGroup(Color.LightGray, Color.LightGray)
-		  BlockFoldMarkerColor = New ColorGroup(Color.DarkGray, Color.DarkGray)
-		  BookmarkColor = New ColorGroup(Color.Blue, Color.Blue)
-		  BracketHighlightColor = New ColorGroup(Color.Blue, Color.Blue)
-		  CaretColor = New ColorGroup(Color.Black, Color.White)
-		  DirtyLinesColor = New ColorGroup(Color.Yellow, Color.Yellow)
-		  GutterBackColor = New ColorGroup(Color.White, Color.Black)
-		  GutterBorderColor = New ColorGroup(Color.Black, Color.White)
-		  LineNumbersColor = New ColorGroup(Color.Black, Color.White)
-		  VerticalRulerColor = New ColorGroup(Color.LightGray, Color.DarkGray)
-		  SuggestionPopupBackColor = New ColorGroup(Color.White, Color.Black)
-		  SuggestionPopupSelectedTextColor = New ColorGroup(Color.Black, Color.White)
-		  SuggestionPopupTextColor = New ColorGroup(Color.Black, Color.White)
-		  TextColor = New ColorGroup(Color.Black, Color.White)
-		  TextSelectionColor = Color.HighlightColor
+		  TokenStyles = New Dictionary
+		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E7320612064656661756C74206461726B207468656D652E
+		Shared Function DefaultDark() As SyntaxArea.EditorTheme
+		  /// Returns a default dark theme.
+		  
+		  Var theme As New SyntaxArea.EditorTheme
+		  
+		  // =================
+		  // Editor colours.
+		  // =================
+		  theme.BackColor = Color.Black
+		  theme.BlockFoldedColor = Color.Orange
+		  theme.BlockFoldedEllipsisColor = Color.LightGray
+		  theme.BlockFoldMarkerColor = Color.DarkGray
+		  theme.BookmarkColor = Color.Blue
+		  theme.BracketHighlightColor = Color.Blue
+		  theme.CaretColor = Color.White
+		  theme.DirtyLinesColor = Color.Yellow
+		  theme.GutterBackColor = Color.Black
+		  theme.GutterBorderColor = Color.White
+		  theme.LineNumbersColor = Color.White
+		  theme.VerticalRulerColor =Color.DarkGray
+		  theme.SuggestionPopupBackColor = Color.Black
+		  theme.SuggestionPopupSelectedTextColor = Color.White
+		  theme.SuggestionPopupTextColor = Color.White
+		  theme.TextColor = Color.White
+		  theme.TextSelectionColor = Color.HighlightColor
+		  
+		  // =================
+		  // Tokens
+		  // =================
+		  // Default.
+		  theme.DefaultTokenStyle = New SyntaxArea.TokenStyle(&cDBE5F1)
+		  
+		  // Comments.
+		  theme.TokenStyles.Value("comment") = New SyntaxArea.TokenStyle(&c798BA1, False, True)
+		  
+		  // Keywords.
+		  theme.TokenStyles.Value("keyword") = New SyntaxArea.TokenStyle(&c78B1F9)
+		  
+		  // Numbers.
+		  theme.TokenStyles.Value("number") = New SyntaxArea.TokenStyle(&cE4CE88)
+		  
+		  // Strings.
+		  theme.TokenStyles.Value("string") = New SyntaxArea.TokenStyle(&cEF8F84)
+		  
+		  // Types.
+		  theme.TokenStyles.Value("type") = New SyntaxArea.TokenStyle(&cC8C8C8)
+		  
+		  // Identifiers.
+		  theme.TokenStyles.Value("identifier") = New SyntaxArea.TokenStyle(&cDBE5F1)
+		  theme.TokenStyles.Value("uppercaseIndentifier") = New SyntaxArea.TokenStyle(&c71E5E7)
+		  theme.TokenStyles.Value("lowercaseIdentifier") = New SyntaxArea.TokenStyle(&c73E5AF)
+		  
+		  // Directives.
+		  theme.TokenStyles.Value("directive") = New SyntaxArea.TokenStyle(&c945200)
+		  
+		  // Placeholders.
+		  theme.TokenStyles.Value("placeholder") = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
+		  
+		  Return theme
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E7320612064656661756C74206C69676874207468656D652E
+		Shared Function DefaultLight() As SyntaxArea.EditorTheme
+		  /// Returns a default light theme.
+		  
+		  Var theme As New SyntaxArea.EditorTheme
+		  
+		  // =================
+		  // Editor colours.
+		  // =================
+		  theme.BackColor = Color.White
+		  theme.BlockFoldedColor = Color.Orange
+		  theme.BlockFoldedEllipsisColor = Color.LightGray
+		  theme.BlockFoldMarkerColor = Color.DarkGray
+		  theme.BookmarkColor = Color.Blue
+		  theme.BracketHighlightColor = Color.Blue
+		  theme.CaretColor = Color.Black
+		  theme.DirtyLinesColor = Color.Yellow
+		  theme.GutterBackColor = Color.White
+		  theme.GutterBorderColor = Color.Black
+		  theme.LineNumbersColor = Color.Black
+		  theme.VerticalRulerColor = Color.LightGray
+		  theme.SuggestionPopupBackColor = Color.White
+		  theme.SuggestionPopupSelectedTextColor = Color.Black
+		  theme.SuggestionPopupTextColor = Color.Black
+		  theme.TextColor = Color.Black
+		  theme.TextSelectionColor = Color.HighlightColor
+		  
+		  // =================
+		  // Tokens
+		  // =================
+		  // Default.
+		  theme.DefaultTokenStyle = New SyntaxArea.TokenStyle(&c262627)
+		  
+		  // Comments.
+		  theme.TokenStyles.Value("comment") = New SyntaxArea.TokenStyle(&c737373, False, True)
+		  
+		  // Keywords.
+		  theme.TokenStyles.Value("keyword") = New SyntaxArea.TokenStyle(&c255BB2)
+		  
+		  // Numbers.
+		  theme.TokenStyles.Value("number") = New SyntaxArea.TokenStyle(&cC43B64)
+		  
+		  // Strings.
+		  theme.TokenStyles.Value("string") = New SyntaxArea.TokenStyle(&cBC391D)
+		  
+		  // Types.
+		  theme.TokenStyles.Value("type") = New SyntaxArea.TokenStyle(&c262626)
+		  
+		  // Identifiers.
+		  theme.TokenStyles.Value("identifier") = New SyntaxArea.TokenStyle(&c262627)
+		  theme.TokenStyles.Value("uppercaseIndentifier") = New SyntaxArea.TokenStyle(&c40822E)
+		  theme.TokenStyles.Value("lowercaseIdentifier") = New SyntaxArea.TokenStyle(&c337172)
+		  
+		  // Directives.
+		  theme.TokenStyles.Value("directive") = New SyntaxArea.TokenStyle(&c945200)
+		  
+		  // Placeholders.
+		  theme.TokenStyles.Value("placeholder") = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
+		  
+		  Return theme
+		  
+		End Function
 	#tag EndMethod
 
 
@@ -53,16 +166,25 @@ Protected Class EditorTheme
 		CaretColor As Color
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return TokenStyles.Value("*default")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value <> Nil Then
+			    TokenStyles.Value("*default") = value
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		DefaultTokenStyle As SyntaxArea.TokenStyle
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520746F20696E6469636174652061206469727479206C696E652E
 		DirtyLinesColor As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h0, Description = 54686520666F6E7420746F2075736520666F722074686520656469746F7220636F6E74656E74732E
-		FontName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0, Description = 5468652073697A65206F66207468652074657874206F662074686520656469746F72277320636F6E74656E74732E
-		FontSize As Integer = SyntaxArea.Editor.DEFAULT_FONT_SIZE
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F6620746865206775747465722E
@@ -75,14 +197,6 @@ Protected Class EditorTheme
 
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206C696E65206E756D626572732E
 		LineNumbersColor As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h0, Description = 54686520666F6E7420746F2075736520666F72206C696E65206E756D626572732E
-		LineNumbersFontName As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h0, Description = 5468652073697A6520746F2075736520666F72206C696E65206E756D626572732E20466F72206265737420726573756C74732C20757365207468652073616D65206F7220736D616C6C6572207468616E2074686520656469746F72277320466F6E7453697A652E
-		LineNumbersFontSize As Integer = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT_SIZE
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 546865206261636B67726F756E6420636F6C6F7572206F6620746865206175746F636F6D706C6574696F6E2073756767657374696F6E20706F7075702E
@@ -103,6 +217,10 @@ Protected Class EditorTheme
 
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F722073656C656374696F6E20696E2074686520656469746F722E
 		TextSelectionColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 4B6579203D20746F6B656E206E616D652028537472696E67292C2056616C7565203D2053796E746178417265612E546F6B656E5374796C652E
+		TokenStyles As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E20746865206261636B67726F756E6420636F6C6F7572206F66207468652061726561206F662074686520677574746572207768657265206C696E6520666F6C64696E67732061726520646973706C617965642077696C6C206265206C6967687465722E
@@ -159,169 +277,137 @@ Protected Class EditorTheme
 			Name="BackColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldedColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldedEllipsisColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BlockFoldMarkerColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BracketHighlightColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BookmarkColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CaretColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DirtyLinesColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GutterBorderColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GutterBackColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LineNumbersColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="VerticalRulerColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SuggestionPopupBackColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SuggestionPopupSelectedTextColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SuggestionPopupTextColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TextColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TextSelectionColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontName"
-			Visible=false
-			Group="Behavior"
-			InitialValue="System"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontSize"
-			Visible=false
-			Group="Behavior"
-			InitialValue="12"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersFontSize"
-			Visible=false
-			Group="Behavior"
-			InitialValue="12"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LineNumbersFontName"
-			Visible=false
-			Group="Behavior"
-			InitialValue="System"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseLighterLineFoldingBackColor"
