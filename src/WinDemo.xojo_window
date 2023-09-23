@@ -1489,7 +1489,7 @@ Begin DesktopWindow WinDemo
       Visible         =   True
       Width           =   18
    End
-   Begin DesktopLabel LabelSuggestionSelectionColor1
+   Begin DesktopLabel LabelSuggestionPopupBackColor
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -2454,8 +2454,8 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 496E697469616C6973657320616C6C206F662074686520636F6E74726F6C7320746F206D617463682074686520696E697469616C2073657474696E6773206F662074686520636F646520656469746F722E
-		Sub InitialiseControls()
+	#tag Method, Flags = &h21, Description = 496E697469616C6973657320616C6C206F662074686520636F6E74726F6C7320746F206D617463682074686520696E697469616C2073657474696E6773206F662074686520636F646520656469746F722E
+		Private Sub InitialiseControls()
 		  /// Initialises all of the controls to match the initial settings of the code editor.
 		  
 		  // Font name.

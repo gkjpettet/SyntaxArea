@@ -1,14 +1,36 @@
 #tag Class
 Protected Class TokenStyle
 	#tag Method, Flags = &h0
-		Sub Constructor(textColor As ColorGroup, bold As Boolean = False, italic As Boolean = False, underline As Boolean = False, backColor As ColorGroup = Nil)
+		Sub Constructor(textColor As ColorGroup, bold As Boolean = False, italic As Boolean = False, underline As Boolean = False, backColor As ColorGroup = &c0, hasBackColor As Boolean = False)
 		  Self.TextColor = textColor
 		  Self.Bold = bold
 		  Self.Italic = italic
 		  Self.Underline = underline
-		  Self.BackColor = If(backColor = Nil, New ColorGroup(&c000001, &c000001), backColor)
+		  Self.BackColor = backColor
+		  Self.HasBackColor = hasBackColor
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732061204A534F4E206F626A65637420726570726573656E746174696F6E206F66207468697320746F6B656E207374796C652E
+		Function ToJSON() As String
+		  /// Returns a JSON object representation of this token style.
+		  ///
+		  /// All keys are optional. Colors will default to black and booleans to false.
+		  ///
+		  /// ```json
+		  /// {
+		  /// "textColor" : COLOR,
+		  /// "backColor" : COLOR,
+		  /// "hasBackColor" : BOOLEAN,
+		  /// "bold" : BOOLEAN,
+		  /// "italic" : BOOLEAN,
+		  /// "underline" : BOOLEAN
+		  /// }
+		  /// ```
+		  
+		  
+		End Function
 	#tag EndMethod
 
 
@@ -31,6 +53,10 @@ Protected Class TokenStyle
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E207468697320746F6B656E2077696C6C20626520626F6C642E
 		Bold As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 49662054727565207468656E207468697320746F6B656E2077696C6C207573652069747320737065636966696564206261636B67726F756E6420636F6C6F75722E
+		HasBackColor As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E207468697320746F6B656E2077696C6C206265206974616C6963697365642E
@@ -85,6 +111,46 @@ Protected Class TokenStyle
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BackColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bold"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Italic"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Underline"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
