@@ -148,7 +148,7 @@ Begin DesktopWindow WinDemo
          FontName        =   "Source Code Pro"
          FontSize        =   13
          GutterBackColor =   &c91919100
-         GutterBorderColor=   &c000000
+         GutterBorderColor=   &c00000000
          GutterWidth     =   0
          HasBottomBorder =   False
          HasLeftBorder   =   True
@@ -907,7 +907,7 @@ Begin DesktopWindow WinDemo
       Visible         =   True
       Width           =   18
    End
-   Begin ColorPicker DefaultFontColor
+   Begin ColorPicker DefaultTextColor
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
@@ -2262,8 +2262,11 @@ End
 		  
 		  CodeEditor.VerticalRulerPosition = 80
 		  
-		  // Add some token styles.
-		  AddTokenStyles
+		  If Color.IsDarkMode Then
+		    DarkStyle
+		  Else
+		    LightStyle
+		  End If
 		  
 		  InitialiseControls
 		  
@@ -2279,79 +2282,110 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21, Description = 4164647320736F6D6520746F6B656E207374796C65732E2049742069732065787065637465642074686174206D6F7374207468656D65732077696C6C20737570706F727420746865736520746F6B656E2074797065732E
-		Private Sub AddTokenStyles()
-		  /// Adds some token styles.
-		  /// It is expected that most themes will support these token types.
+	#tag Method, Flags = &h0, Description = 54686520617070277320617070656172616E636520686173206368616E6765642028652E672E206120737769746368206265747765656E206C696768742F6461726B206D6F6465292E
+		Sub AppearanceChanged()
+		  /// The app's appearance has changed (e.g. a switch between light/dark mode).
 		  
+		  If Color.IsDarkMode Then
+		    DarkStyle
+		  Else
+		    LightStyle
+		  End If
+		  
+		  UpdateControls
+		  
+		  // Force the editor to update and re-highlight.
+		  CodeEditor.MarkAllLinesAsChanged
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DarkStyle()
+		  CodeEditor.ClearTokenStyles
+		  
+		  // ==================
+		  // TOKENS
+		  // ==================
 		  Var style As SyntaxArea.TokenStyle
 		  
 		  // Default.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262627, &cDBE5F1))
+		  style = New SyntaxArea.TokenStyle(&cDBE5F1)
 		  CodeEditor.DefaultTokenStyle = style
 		  
 		  // Comments.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c737373, &c798BA1), False, True)
+		  style = New SyntaxArea.TokenStyle(&c798BA1, False, True)
 		  CodeEditor.AddTokenStyle("comment", style)
 		  
 		  // Keywords.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c255BB2, &c78B1F9))
+		  style = New SyntaxArea.TokenStyle(&c78B1F9)
 		  CodeEditor.AddTokenStyle("keyword", style)
 		  
 		  // Numbers.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&cC43B64, &cE4CE88))
+		  // style = New SyntaxArea.TokenStyle(&cE4CE88)
+		  style = New SyntaxArea.TokenStyle(Color.Green)
 		  CodeEditor.AddTokenStyle("number", style)
 		  
 		  // Strings.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&cBC391D, &cEF8F84))
+		  style = New SyntaxArea.TokenStyle(&cEF8F84)
 		  CodeEditor.AddTokenStyle("string", style)
 		  
 		  // Types.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262626, &cC8C8C8))
+		  style = New SyntaxArea.TokenStyle(&cC8C8C8)
 		  CodeEditor.AddTokenStyle("type", style)
 		  
 		  // Identifiers.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c262627, &cDBE5F1))
+		  style = New SyntaxArea.TokenStyle(&cDBE5F1)
 		  CodeEditor.AddTokenStyle("identifier", style)
 		  
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c40822E, &c71E5E7))
+		  style = New SyntaxArea.TokenStyle(&c71E5E7)
 		  CodeEditor.AddTokenStyle("uppercaseIdentifier", style)
 		  
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c337172, &c73E5AF))
+		  style = New SyntaxArea.TokenStyle(&c73E5AF)
 		  CodeEditor.AddTokenStyle("lowercaseIdentifier", style)
 		  
 		  // Directives.
-		  style = New SyntaxArea.TokenStyle(New ColorGroup(&c945200, &c945200))
+		  style = New SyntaxArea.TokenStyle(&c945200)
 		  CodeEditor.AddTokenStyle("directive", style)
 		  
 		  // Placeholders.
 		  style = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
 		  CodeEditor.AddTokenStyle("placeholder", style)
 		  
-		  // =========================
-		  // DEBUGGING HTML DEFINITION
-		  // =========================
-		  style = New SyntaxArea.TokenStyle(Color.Red)
-		  CodeEditor.AddTokenStyle("todos", style)
+		  // ==================
+		  // EDITOR COLOURS
+		  // ==================
+		  // Line number colour.
+		  CodeEditor.LineNumbersColor = Color.White
 		  
-		  style = New SyntaxArea.TokenStyle(Color.Yellow)
-		  CodeEditor.AddTokenStyle("cdata", style)
+		  // Editor border colour.
+		  CodeEditor.BorderColor = Color.Black
 		  
-		  style = New SyntaxArea.TokenStyle(Color.Orange)
-		  CodeEditor.AddTokenStyle("docType", style)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 54686520617070277320617070656172616E636520686173206368616E6765642028652E672E206120737769746368206265747765656E206C696768742F6461726B206D6F6465292E
-		Sub AppearanceChanged()
-		  /// The app's appearance has changed (e.g. a switch between light/dark mode).
+		  // Vertical ruler.
+		  CodeEditor.VerticalRulerColor = Color.Red
 		  
-		  CodeEditor.MarkAllLinesAsChanged
+		  // Gutter.
+		  CodeEditor.GutterBackColor = Color.Black
+		  CodeEditor.GutterBorderColor = Color.White
 		  
-		  InitialiseControls
+		  // Editor background colour.
+		  CodeEditor.BackColor = Color.Black
 		  
-		  // Info.TextColor = DefaultFontColor.SelectedColor
-		  // Info.BackColor = BackColor.SelectedColor
+		  // Caret.
+		  CodeEditor.CaretColor = Color.White
+		  
+		  // Dirty lines.
+		  CodeEditor.DirtyLinesColor = Color.Yellow
+		  
+		  // Brackets.
+		  CodeEditor.BracketHighlightColor = Color.Blue
+		  
+		  // Text selection colour.
+		  CodeEditor.TextSelectionColor = Color.HighlightColor
+		  
+		  // Autocomplete.
+		  CodeEditor.SuggestionPopupTextColor = Color.White
+		  CodeEditor.SuggestionPopupSelectedTextColor = Color.White
+		  CodeEditor.SuggestionPopupBackColor = Color.Black
 		  
 		End Sub
 	#tag EndMethod
@@ -2468,7 +2502,7 @@ End
 		  
 		  // Font size and default colour.
 		  FontSize.Text = CodeEditor.FontSize.ToString
-		  DefaultFontColor.SelectedColor = CodeEditor.TextColor
+		  DefaultTextColor.SelectedColor = CodeEditor.TextColor
 		  
 		  // Line numbers font name.
 		  For i As Integer = 0 to PopupFontName.LastRowIndex
@@ -2542,7 +2576,7 @@ End
 		  // ===========
 		  // Info panel.
 		  // ===========
-		  InfoTopBorderColor.SelectedColor = DefaultFontColor.SelectedColor
+		  InfoTopBorderColor.SelectedColor = DefaultTextColor.SelectedColor
 		  Info.TopBorderColor = InfoTopBorderColor.SelectedColor
 		  CheckBoxInfoTopBorder.Value = Info.HasTopBorder
 		  Info.BottomBorderColor = InfoBottomBorderColor.SelectedColor
@@ -2551,7 +2585,152 @@ End
 		  CheckBoxInfoLeftBorder.Value = Info.HasLeftBorder
 		  Info.RightBorderColor = InfoRightBorderColor.SelectedColor
 		  CheckBoxInfoRightBorder.Value = Info.HasRightBorder
-		  Info.TextColor = DefaultFontColor.SelectedColor
+		  Info.TextColor = DefaultTextColor.SelectedColor
+		  Info.BackColor = BackColor.SelectedColor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LightStyle()
+		  CodeEditor.ClearTokenStyles
+		  
+		  // ==================
+		  // TOKENS
+		  // ==================
+		  Var style As SyntaxArea.TokenStyle
+		  
+		  // Default.
+		  style = New SyntaxArea.TokenStyle(&c262627)
+		  CodeEditor.DefaultTokenStyle = style
+		  
+		  // Comments.
+		  style = New SyntaxArea.TokenStyle(&c737373, False, True)
+		  CodeEditor.AddTokenStyle("comment", style)
+		  
+		  // Keywords.
+		  style = New SyntaxArea.TokenStyle(&c255BB2)
+		  CodeEditor.AddTokenStyle("keyword", style)
+		  
+		  // Numbers.
+		  // style = New SyntaxArea.TokenStyle(&cC43B64)
+		  style = New SyntaxArea.TokenStyle(Color.Orange)
+		  CodeEditor.AddTokenStyle("number", style)
+		  
+		  // Strings.
+		  style = New SyntaxArea.TokenStyle(&cBC391D)
+		  CodeEditor.AddTokenStyle("string", style)
+		  
+		  // Types.
+		  style = New SyntaxArea.TokenStyle(&c262626)
+		  CodeEditor.AddTokenStyle("type", style)
+		  
+		  // Identifiers.
+		  style = New SyntaxArea.TokenStyle(&c262627)
+		  CodeEditor.AddTokenStyle("identifier", style)
+		  
+		  style = New SyntaxArea.TokenStyle(&c40822E)
+		  CodeEditor.AddTokenStyle("uppercaseIdentifier", style)
+		  
+		  style = New SyntaxArea.TokenStyle(&c337172)
+		  CodeEditor.AddTokenStyle("lowercaseIdentifier", style)
+		  
+		  // Directives.
+		  style = New SyntaxArea.TokenStyle(&c945200)
+		  CodeEditor.AddTokenStyle("directive", style)
+		  
+		  // Placeholders.
+		  style = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
+		  CodeEditor.AddTokenStyle("placeholder", style)
+		  
+		  // ==================
+		  // EDITOR COLOURS
+		  // ==================
+		  // Line number colour.
+		  CodeEditor.LineNumbersColor = Color.Black
+		  
+		  // Editor border colour.
+		  CodeEditor.BorderColor = Color.Black
+		  
+		  // Vertical ruler.
+		  CodeEditor.VerticalRulerColor = Color.Red
+		  
+		  // Gutter.
+		  CodeEditor.GutterBackColor = Color.White
+		  CodeEditor.GutterBorderColor = Color.Black
+		  
+		  // Editor background colour.
+		  CodeEditor.BackColor = Color.White
+		  
+		  // Caret.
+		  CodeEditor.CaretColor = Color.Black
+		  
+		  // Dirty lines.
+		  CodeEditor.DirtyLinesColor = Color.Orange
+		  
+		  // Brackets.
+		  CodeEditor.BracketHighlightColor = Color.Blue
+		  
+		  // Text selection colour.
+		  CodeEditor.TextSelectionColor = Color.HighlightColor
+		  
+		  // Autocomplete.
+		  CodeEditor.SuggestionPopupTextColor = Color.Black
+		  CodeEditor.SuggestionPopupSelectedTextColor = Color.Black
+		  CodeEditor.SuggestionPopupBackColor = Color.White
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 5570646174657320616C6C206F662074686520636F6E74726F6C7320746F206D61746368207468652073657474696E6773206F662074686520636F646520656469746F722E
+		Private Sub UpdateControls()
+		  /// Updates all of the controls to match the settings of the code editor.
+		  
+		  // Default text colour.
+		  DefaultTextColor.SelectedColor = CodeEditor.TextColor
+		  
+		  // Line number colour.
+		  LineNumColor.SelectedColor = CodeEditor.LineNumbersColor
+		  
+		  // Editor border colour.
+		  BorderColor.SelectedColor = CodeEditor.BorderColor
+		  
+		  // Vertical ruler.
+		  VerticalRulerColor.SelectedColor = CodeEditor.VerticalRulerColor
+		  
+		  // Gutter.
+		  GutterColor.SelectedColor = CodeEditor.GutterBackColor
+		  GutterBorder.SelectedColor = CodeEditor.GutterBorderColor
+		  
+		  // Editor background colour.
+		  BackColor.SelectedColor = CodeEditor.BackColor
+		  
+		  // Caret.
+		  CaretColor.SelectedColor = CodeEditor.CaretColor
+		  
+		  // Dirty lines.
+		  DirtyLinesColor.SelectedColor = CodeEditor.DirtyLinesColor
+		  
+		  // Brackets.
+		  BracketHighlightColor.SelectedColor = CodeEditor.BracketHighlightColor
+		  
+		  // Text selection colour.
+		  SelectionColor.SelectedColor = CodeEditor.TextSelectionColor
+		  
+		  // Autocomplete.
+		  SuggestionColor.SelectedColor = CodeEditor.SuggestionPopupTextColor
+		  SelectedSuggestionTextColor.SelectedColor = CodeEditor.SuggestionPopupSelectedTextColor
+		  SuggestionPopupBackColor.SelectedColor = CodeEditor.SuggestionPopupBackColor
+		  
+		  // ===========
+		  // Info panel.
+		  // ===========
+		  InfoTopBorderColor.SelectedColor = DefaultTextColor.SelectedColor
+		  Info.TopBorderColor = InfoTopBorderColor.SelectedColor
+		  Info.BottomBorderColor = InfoBottomBorderColor.SelectedColor
+		  Info.LeftBorderColor = InfoLeftBorderColor.SelectedColor
+		  Info.RightBorderColor = InfoRightBorderColor.SelectedColor
+		  Info.TextColor = DefaultTextColor.SelectedColor
 		  Info.BackColor = BackColor.SelectedColor
 		  
 		End Sub
@@ -2844,7 +3023,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DefaultFontColor
+#tag Events DefaultTextColor
 	#tag Event
 		Sub ColorChanged()
 		  CodeEditor.TextColor = Me.SelectedColor

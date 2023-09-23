@@ -1,7 +1,7 @@
 #tag Class
 Protected Class TokenStyle
 	#tag Method, Flags = &h0
-		Sub Constructor(textColor As ColorGroup, bold As Boolean = False, italic As Boolean = False, underline As Boolean = False, backColor As ColorGroup = &c0, hasBackColor As Boolean = False)
+		Sub Constructor(textColor As Color, bold As Boolean = False, italic As Boolean = False, underline As Boolean = False, backColor As Color = &c0, hasBackColor As Boolean = False)
 		  Self.TextColor = textColor
 		  Self.Bold = bold
 		  Self.Italic = italic
@@ -47,7 +47,7 @@ Protected Class TokenStyle
 
 
 	#tag Property, Flags = &h0, Description = 5468697320746F6B656E2773206261636B67726F756E6420636F6C6F75722E
-		BackColor As ColorGroup
+		BackColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E207468697320746F6B656E2077696C6C20626520626F6C642E
@@ -63,7 +63,7 @@ Protected Class TokenStyle
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 5468697320746F6B656E2773207465787420636F6C6F75722E
-		TextColor As ColorGroup
+		TextColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 49662054727565207468656E207468697320746F6B656E2077696C6C20626520756E6465726C696E65642E

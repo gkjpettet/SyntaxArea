@@ -1335,6 +1335,21 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 436C6561727320616C6C20746F6B656E207374796C65732E
+		Sub ClearTokenStyles()
+		  /// Clears all token styles.
+		  
+		  // We need to preserve the default style.
+		  Var style As SyntaxArea.TokenStyle = DefaultTokenStyle
+		  
+		  TokenStyles.RemoveAll
+		  
+		  // Add back the default token style.
+		  Self.DefaultTokenStyle = style
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor
@@ -4766,7 +4781,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		BackColor As ColorGroup
+		BackColor As Color
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -4826,7 +4841,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		BlockFoldedColor As ColorGroup
+		BlockFoldedColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F722074686520656C6C697073697320696E6469636174696E67206120626C6F636B20697320666F6C6465642E
@@ -4843,7 +4858,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		BlockFoldedEllipsisColor As ColorGroup
+		BlockFoldedEllipsisColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D616765207573656420696E207468652067757474657220746F20726570726573656E74206120666F6C646564206C696E652E
@@ -4923,7 +4938,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		BlockFoldMarkerColor As ColorGroup
+		BlockFoldMarkerColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21, Description = 54686520696D61676520746F2075736520666F722074686520626C6F636B20737461727420696D61676520696E20746865206775747465722E
@@ -4971,7 +4986,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		BookmarkColor As ColorGroup
+		BookmarkColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -5040,7 +5055,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		BorderColor As ColorGroup
+		BorderColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7220746F20757365207768656E20686967686C69676874696E6720627261636B6574732E
@@ -5055,7 +5070,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		BracketHighlightColor As ColorGroup
+		BracketHighlightColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F72207468652063617265742E
@@ -5071,7 +5086,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		CaretColor As ColorGroup
+		CaretColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -5178,7 +5193,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		DirtyLinesColor As ColorGroup
+		DirtyLinesColor As Color
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -5372,7 +5387,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		GutterBackColor As ColorGroup
+		GutterBackColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F66207468652072696768742068616E6420626F72646572206F6620746865206775747465722E
@@ -5389,7 +5404,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		GutterBorderColor As ColorGroup
+		GutterBorderColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5691,7 +5706,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		LineNumbersColor As ColorGroup
+		LineNumbersColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5786,7 +5801,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBackColor As ColorGroup
+		Private mBackColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5794,11 +5809,11 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBlockFoldedColor As ColorGroup
+		Private mBlockFoldedColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBlockFoldedEllipsisColor As ColorGroup
+		Private mBlockFoldedEllipsisColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5810,7 +5825,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBlockFoldMarkerColor As ColorGroup
+		Private mBlockFoldMarkerColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5818,7 +5833,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBookmarkColor As ColorGroup
+		Private mBookmarkColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5830,11 +5845,11 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBorderColor As ColorGroup
+		Private mBorderColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBracketHighlightColor As ColorGroup
+		Private mBracketHighlightColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5842,7 +5857,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCaretColor As ColorGroup
+		Private mCaretColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5870,7 +5885,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDirtyLinesColor As ColorGroup
+		Private mDirtyLinesColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5906,11 +5921,11 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGutterBackColor As ColorGroup
+		Private mGutterBackColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGutterBorderColor As ColorGroup
+		Private mGutterBorderColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5990,7 +6005,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLineNumbersColor As ColorGroup
+		Private mLineNumbersColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6073,15 +6088,15 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSuggestionPopupBackColor As ColorGroup
+		Private mSuggestionPopupBackColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSuggestionPopupSelectedTextColor As ColorGroup
+		Private mSuggestionPopupSelectedTextColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSuggestionPopupTextColor As ColorGroup
+		Private mSuggestionPopupTextColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6101,7 +6116,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTextSelectionColor As ColorGroup
+		Private mTextSelectionColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6125,7 +6140,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mVerticalRulerColor As ColorGroup
+		Private mVerticalRulerColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6308,7 +6323,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		SuggestionPopupBackColor As ColorGroup
+		SuggestionPopupBackColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F722073656C6563746564207465787420696E20746865206175746F636F6D706C6574652073756767657374696F6E7320706F7075702E
@@ -6324,7 +6339,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		SuggestionPopupSelectedTextColor As ColorGroup
+		SuggestionPopupSelectedTextColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662074686520617574636F6D706C6574652073756767657374696F6E7320696E2074686520706F7075702E
@@ -6340,7 +6355,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		SuggestionPopupTextColor As ColorGroup
+		SuggestionPopupTextColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -6478,7 +6493,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		TextColor As ColorGroup
+		TextColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -6526,7 +6541,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		TextSelectionColor As ColorGroup
+		TextSelectionColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -6642,7 +6657,7 @@ Implements MessageCentre.MessageReceiver
 			  
 			End Set
 		#tag EndSetter
-		VerticalRulerColor As ColorGroup
+		VerticalRulerColor As Color
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 496620612072696768742072756C657220697320656E61626C65642C207468697320697320746865206E756D626572206F66206368617261637465727320746F20647261772069742061742E

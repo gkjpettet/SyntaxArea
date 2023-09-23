@@ -1,7 +1,7 @@
 #tag Class
 Protected Class TextPlaceholder
 Inherits SyntaxArea.TextSegment
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0, Description = 52657475726E73206120636C6F6E65206F662074686973207465787420706C616365686F6C6465722E
 		Function Clone() As textsegment
 		  /// Returns a clone of this text placeholder.
@@ -41,7 +41,7 @@ Inherits SyntaxArea.TextSegment
 
 
 	#tag Property, Flags = &h0
-		PlaceholderBackgroundColor As Color = Color.Black
+		PlaceholderBackgroundColor As Color = &c0
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
