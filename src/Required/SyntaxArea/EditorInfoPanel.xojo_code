@@ -1,7 +1,7 @@
 #tag Class
 Protected Class EditorInfoPanel
 Inherits DesktopCanvas
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Function MouseDown(x As Integer, y As Integer) As Boolean
 		  If SymbolHitBounds.Contains(x, y) Then
@@ -32,21 +32,6 @@ Inherits DesktopCanvas
 		  // Background.
 		  g.DrawingColor = BackColor
 		  g.FillRectangle(0, 0, g.Width, g.Height)
-		  
-		  // Borders.
-		  g.DrawingColor = BorderColor
-		  If HasTopBorder Then
-		    g.DrawLine(0, 0, g.Width, 0)
-		  End If
-		  If HasBottomBorder Then
-		    g.DrawLine(0, g.Height - 1, g.Width, g.Height - 1)
-		  End If
-		  If HasLeftBorder Then
-		    g.DrawLine(0, 0, 0, g.Height)
-		  End If
-		  If HasRightBorder Then
-		    g.DrawLine(g.Width - 1, 0, g.Width - 1, g.Height)
-		  End If
 		  
 		  g.FontName = FontName
 		  g.FontSize = FontSize
@@ -81,13 +66,30 @@ Inherits DesktopCanvas
 		  g.DrawText(Self.Text, symbolX, y)
 		  
 		  // Draw vertical bars either side of the symbol name.
-		  g.DrawingColor = BorderColor
+		  g.DrawingColor = TextColor
 		  g.DrawLine(symbolX - HPADDING, 0, symbolX - HPADDING, g.Height) // Left.
 		  g.DrawLine(cursorX - HPADDING, 0, cursorX - HPADDING, g.Height) // Right.
 		  
 		  // Compute the hit bounds for the symbol name.
 		  SymbolHitBounds = New Rect(symbolX - HPADDING, 0, symbolW + (2 * HPADDING), g.Height)
 		  
+		  // Borders.
+		  If HasTopBorder Then
+		    g.DrawingColor = TopBorderColor
+		    g.DrawLine(0, 0, g.Width, 0)
+		  End If
+		  If HasBottomBorder Then
+		    g.DrawingColor = BottomBorderColor
+		    g.DrawLine(0, g.Height - 1, g.Width, g.Height - 1)
+		  End If
+		  If HasLeftBorder Then
+		    g.DrawingColor = LeftBorderColor
+		    g.DrawLine(0, 0, 0, g.Height)
+		  End If
+		  If HasRightBorder Then
+		    g.DrawingColor = RightBorderColor
+		    g.DrawLine(g.Width - 1, 0, g.Width - 1, g.Height)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -179,21 +181,20 @@ Inherits DesktopCanvas
 		BackColor As ColorGroup
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C20626F72646572732E
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C20626F74746F6D20626F726465722E
 		#tag Getter
 			Get
-			  Return mBorderColor
-			  
+			  Return mBottomBorderColor
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  mBorderColor = value
+			  mBottomBorderColor = value
 			  Self.Refresh
 			  
 			End Set
 		#tag EndSetter
-		BorderColor As ColorGroup
+		BottomBorderColor As ColorGroup
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -313,12 +314,28 @@ Inherits DesktopCanvas
 		HasTopBorder As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C206C65667420626F726465722E
+		#tag Getter
+			Get
+			  Return mLeftBorderColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mLeftBorderColor = value
+			  Self.Refresh
+			  
+			End Set
+		#tag EndSetter
+		LeftBorderColor As ColorGroup
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mBackColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBorderColor As ColorGroup
+		Private mBottomBorderColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -350,6 +367,14 @@ Inherits DesktopCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLeftBorderColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRightBorderColor As ColorGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectionLength As Integer
 	#tag EndProperty
 
@@ -364,6 +389,26 @@ Inherits DesktopCanvas
 	#tag Property, Flags = &h21
 		Private mTextColor As ColorGroup
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTopBorderColor As ColorGroup
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C20726967687420626F726465722E
+		#tag Getter
+			Get
+			  Return mRightBorderColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mRightBorderColor = value
+			  Self.Refresh
+			  
+			End Set
+		#tag EndSetter
+		RightBorderColor As ColorGroup
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 546865206C656E6774682028696E206368617261637465727329206F66207468652063757272656E742073656C656374696F6E20696E2074686520656469746F722E
 		#tag Getter
@@ -446,6 +491,23 @@ Inherits DesktopCanvas
 			End Set
 		#tag EndSetter
 		TextColor As ColorGroup
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C20746F7020626F726465722E
+		#tag Getter
+			Get
+			  Return mTopBorderColor
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mTopBorderColor = value
+			  Self.Refresh
+			  
+			End Set
+		#tag EndSetter
+		TopBorderColor As ColorGroup
 	#tag EndComputedProperty
 
 
@@ -643,14 +705,6 @@ Inherits DesktopCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="BorderColor"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="ColorGroup"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="FontName"
 			Visible=true
 			Group="Appearance"
@@ -664,6 +718,38 @@ Inherits DesktopCanvas
 			Group="Appearance"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TopBorderColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BottomBorderColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LeftBorderColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="ColorGroup"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RightBorderColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="ColorGroup"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
