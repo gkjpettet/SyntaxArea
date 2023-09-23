@@ -16,7 +16,7 @@ Protected Class TokenStyle
 		Function ToJSON() As String
 		  /// Returns a JSON object representation of this token style.
 		  ///
-		  /// All keys are optional. Colors will default to black and booleans to false.
+		  /// All keys are optional.
 		  ///
 		  /// ```json
 		  /// {
@@ -28,7 +28,6 @@ Protected Class TokenStyle
 		  /// "underline" : BOOLEAN
 		  /// }
 		  /// ```
-		  
 		  
 		End Function
 	#tag EndMethod
