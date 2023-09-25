@@ -18,6 +18,25 @@ Protected Class TokenStyle
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 437265617465732061206E657720746F6B656E207374796C652066726F6D20612064696374696F6E6172792E20546865206C61796F7574206F66207468652064696374696F6E6172792073686F756C64206D61746368207468617420697320637265617465642062792070617273696E67204A534F4E2066726F6D2060546F6B656E5374796C652E546F4A534F4E2829602E
+		Shared Function FromDictionary(d As Dictionary) As SyntaxArea.TokenStyle
+		  /// Creates a new token style from a dictionary.
+		  /// The layout of the dictionary should match that is created by parsing JSON from `TokenStyle.ToJSON()`.
+		  
+		  Var style As New SyntaxArea.TokenStyle
+		  
+		  style.TextColor = d.Lookup("textColor", Color.Black)
+		  style.BackColor = d.Lookup("backColor", Color.Black)
+		  style.HasBackColor = d.Lookup("hasBackColor", False)
+		  style.Bold = d.Lookup("bold", False)
+		  style.Italic = d.Lookup("italic", False)
+		  style.Underline = d.Lookup("underline", False)
+		  
+		  Return style
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 52657475726E73206120546F6B656E5374796C652066726F6D20697473204A534F4E20726570726573656E746174696F6E2E
 		Shared Function FromJSON(json As String) As SyntaxArea.TokenStyle
 		  /// Returns a TokenStyle from its JSON representation.
@@ -52,6 +71,24 @@ Protected Class TokenStyle
 		  style.Underline = d.Lookup("underline", False)
 		  
 		  Return style
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E7320612064696374696F6E61727920726570726573656E746174696F6E206F662074686973207374796C6520666F72207573652077697468204A534F4E2073657269616C69736174696F6E2E
+		Function ToDictionary() As Dictionary
+		  /// Returns a dictionary representation of this style for use with JSON serialisation.
+		  
+		  Var d As New Dictionary
+		  
+		  d.Value("textColor") = TextColor
+		  d.Value("backColor") = BackColor
+		  d.Value("hasBackColor") = HasBackColor
+		  d.Value("bold") = Bold
+		  d.Value("italic") = Italic
+		  d.Value("underline") = Underline
+		  
+		  Return d
 		  
 		End Function
 	#tag EndMethod

@@ -145,11 +145,95 @@ Protected Class EditorTheme
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 4C6F6164732061204A534F4E207468656D652066696C6520616E642072657475726E7320697420617320616E20456469746F725468656D652E
+		Shared Function FromFile(f As FolderItem) As SyntaxArea.EditorTheme
+		  /// Loads a JSON theme file and returns it as an EditorTheme.
+		  
+		  // Sanity checks.
+		  If f = Nil Or Not f.Exists Then
+		    Raise New InvalidArgumentException("Cannot load theme as the file does not exist.")
+		  ElseIf f.IsFolder Then
+		    Raise New InvalidArgumentException("Invalid theme file (received a folder, expected a file).")
+		  End If
+		  
+		  Try
+		    Var tin As TextInputStream = TextInputStream.Open(f)
+		    
+		  Catch e As IOException
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 4C6F6164732061204A534F4E20726570726573656E746174696F6E206F662061207468656D652E
 		Shared Function FromJSON(json As String) As SyntaxArea.EditorTheme
 		  /// Loads a JSON representation of a theme.
 		  
-		  #Pragma Warning "TODO"
+		  Var d As Dictionary
+		  Try
+		    d = ParseJSON(json)
+		  Catch e As JSONException
+		    Raise New InvalidArgumentException("Invalid JSON. Cannot load theme.")
+		  End Try
+		  
+		  Var theme As New SyntaxArea.EditorTheme
+		  
+		  // Metadata.
+		  theme.Name = d.Lookup("name", "Untitled Theme")
+		  theme.Author = d.Lookup("author", "Unknown Author")
+		  theme.Version = d.Lookup("version", "1.0.0")
+		  
+		  // Default token style.
+		  If d.HasKey("defaultStyle") Then
+		    theme.DefaultTokenStyle = SyntaxArea.TokenStyle.FromDictionary(d.Value("defaultStyle"))
+		  End If
+		  
+		  // Any other token styles.
+		  If d.HasKey("styles") Then
+		    Var styles As Dictionary = d.Value("styles")
+		    For Each entry As DictionaryEntry In styles
+		      Var styleName As String = entry.Key
+		      Var styleDict As Dictionary = entry.Value
+		      theme.TokenStyles.Value(styleName) = SyntaxArea.TokenStyle.FromDictionary(styleDict)
+		    Next entry
+		  End If
+		  
+		  // Editor colours.
+		  If d.HasKey("backColor") Then theme.BackColor = d.Value("backColor")
+		  If d.HasKey("blockFoldedColor") Then theme.BlockFoldedColor = d.Value("blockFoldedColor")
+		  If d.HasKey("blockFoldedEllipsisColor") Then theme.BlockFoldedEllipsisColor = d.Value("blockFoldedEllipsisColor")
+		  If d.HasKey("blockFoldMarkerColor") Then theme.BlockFoldMarkerColor = d.Value("blockFoldMarkerColor")
+		  If d.HasKey("bookmarkColor") Then theme.BookmarkColor = d.Value("bookmarkColor")
+		  If d.HasKey("bracketHighlightColor") Then theme.BracketHighlightColor = d.Value("bracketHighlightColor")
+		  If d.HasKey("caretColor") Then theme.CaretColor = d.Value("caretColor")
+		  If d.HasKey("dirtyLinesColor") Then theme.DirtyLinesColor = d.Value("dirtyLinesColor")
+		  If d.HasKey("gutterBackColor") Then theme.GutterBackColor = d.Value("gutterBackColor")
+		  If d.HasKey("gutterBorderColor") Then theme.GutterBorderColor = d.Value("gutterBorderColor")
+		  If d.HasKey("lineNumbersColor") Then theme.LineNumbersColor = d.Value("lineNumbersColor")
+		  If d.HasKey("verticalRulerColor") Then theme.VerticalRulerColor = d.Value("verticalRulerColor")
+		  If d.HasKey("suggestionPopupBackColor") Then theme.SuggestionPopupBackColor = d.Value("suggestionPopupBackColor")
+		  If d.HasKey("suggestionPopupSelectedTextColor") Then theme.SuggestionPopupSelectedTextColor = d.Value("suggestionPopupSelectedTextColor")
+		  If d.HasKey("suggestionPopupTextColor") Then theme.SuggestionPopupTextColor = d.Value("suggestionPopupTextColor")
+		  If d.HasKey("textColor") Then theme.TextColor = d.Value("textColor")
+		  If d.HasKey("textSelectionColor") Then theme.TextSelectionColor = d.Value("textSelectionColor")
+		  
+		  Return theme
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 52657475726E7320606B65796020616E64206076616C7565602061732061204A534F4E20666F726D6174746564206B65792D76616C756520706169722E
+		Private Function JSONKeyValue(key As String, value As Color) As String
+		  /// Returns `key` and `value` as a JSON formatted key-value pair.
+		  
+		  Return GenerateJSON(key) + ":" + GenerateJSON(value.ToString)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 52657475726E7320606B65796020616E64206076616C7565602061732061204A534F4E20666F726D6174746564206B65792D76616C756520706169722E
+		Private Function JSONKeyValue(key As String, value As String) As String
+		  /// Returns `key` and `value` as a JSON formatted key-value pair.
+		  
+		  Return GenerateJSON(key) + ":" + GenerateJSON(value)
 		  
 		End Function
 	#tag EndMethod
@@ -158,52 +242,54 @@ Protected Class EditorTheme
 		Function ToJSON() As String
 		  /// Returns a JSON representation of this theme.
 		  
-		  Var d As New Dictionary
+		  Var json() As String = Array("{")
 		  
 		  // Metadata.
-		  d.Value("name") = Name
-		  d.Value("author") = Author
-		  d.Value("version") = Version
+		  json.Add(JSONKeyValue("name", Name) + ",")
+		  json.Add(JSONKeyValue("author", Author) + ",")
+		  json.Add(JSONKeyValue("version", Version) + ",")
 		  
 		  // Default token style.
 		  Var defaultStyle As SyntaxArea.TokenStyle = DefaultTokenStyle
 		  If defaultStyle = Nil Then
 		    Raise New UnsupportedOperationException("Unable to convert theme to JSON as there is no default token style.")
 		  End If
-		  d.Value("defaultStyle") = defaultStyle
+		  json.Add(GenerateJSON("defaultStyle") + ":" + defaultStyle.ToJSON + ",")
 		  
 		  // The remaining token styles.
-		  Var tokenStyles As New Dictionary
+		  json.Add("""styles"": " + " {")
 		  For Each entry As DictionaryEntry In TokenStyles
 		    Var styleName As String = entry.Key
 		    Var style As SyntaxArea.TokenStyle = entry.Value
 		    If styleName <> "*default" Then
-		      tokenStyles.Value(styleName) = style
+		      json.Add(GenerateJSON(styleName) + ":" + style.ToJSON + ",")
 		    End If
 		  Next entry
-		  d.Value("styles") = tokenStyles
+		  json(json.LastIndex) = json(json.LastIndex).TrimRight(",")
+		  json.Add("},")
 		  
 		  // Editor colours.
-		  d.Value("backColor") = BackColor
-		  d.Value("blockFoldedColor") = BlockFoldedColor
-		  d.Value("blockFolderEllipsisColor") = BlockFoldedEllipsisColor
-		  d.Value("blockFoldMarkerColor") = BlockFoldMarkerColor
-		  d.Value("bookmarkColor") = BookmarkColor
-		  d.Value("bracketHighlightColor") = BracketHighlightColor
-		  d.Value("caretColor") = CaretColor
-		  d.Value("dirtyLinesColor") = DirtyLinesColor
-		  d.Value("gutterBackColor") = GutterBackColor
-		  d.Value("gutterBorderColor") = GutterBorderColor
-		  d.Value("lineNumbersColor") = LineNumbersColor
-		  d.Value("verticalRulerColor") = VerticalRulerColor
-		  d.Value("suggestionPopupBackColor") = SuggestionPopupBackColor
-		  d.Value("suggestionPopupSelectedTextColor") = SuggestionPopupSelectedTextColor
-		  d.Value("suggestionPopupTextColor") = SuggestionPopupTextColor
-		  d.Value("textColor") = TextColor
-		  d.Value("textSelectionColor") = TextSelectionColor
+		  json.Add(JSONKeyValue("backColor", BackColor) + ",")
+		  json.Add(JSONKeyValue("blockFoldedColor", BlockFoldedColor) + ",")
+		  json.Add(JSONKeyValue("blockFoldedEllipsisColor", BlockFoldedEllipsisColor) + ",")
+		  json.Add(JSONKeyValue("blockFoldMarkerColor", BlockFoldMarkerColor) + ",")
+		  json.Add(JSONKeyValue("bookmarkColor", BookmarkColor) + ",")
+		  json.Add(JSONKeyValue("bracketHighlightColor", BracketHighlightColor) + ",")
+		  json.Add(JSONKeyValue("caretColor", CaretColor) + ",")
+		  json.Add(JSONKeyValue("dirtyLinesColor", DirtyLinesColor) + ",")
+		  json.Add(JSONKeyValue("gutterBackColor", GutterBackColor) + ",")
+		  json.Add(JSONKeyValue("gutterBorderColor", GutterBorderColor) + ",")
+		  json.Add(JSONKeyValue("lineNumbersColor", LineNumbersColor) + ",")
+		  json.Add(JSONKeyValue("verticalRulerColor", VerticalRulerColor) + ",")
+		  json.Add(JSONKeyValue("suggestionPopupBackColor", SuggestionPopupBackColor) + ",")
+		  json.Add(JSONKeyValue("suggestionPopupSelectedTextColor", SuggestionPopupSelectedTextColor) + ",")
+		  json.Add(JSONKeyValue("suggestionPopupTextColor", SuggestionPopupTextColor) + ",")
+		  json.Add(JSONKeyValue("textColor", TextColor) + ",")
+		  json.Add(JSONKeyValue("textSelectionColor", TextSelectionColor))
 		  
-		  Return GenerateJSON(d)
+		  json.Add("}")
 		  
+		  Return String.FromArray(json, "")
 		End Function
 	#tag EndMethod
 

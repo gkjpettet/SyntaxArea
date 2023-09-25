@@ -2242,6 +2242,7 @@ End
 		  // Enable line foldings if the definition supports them.
 		  CodeEditor.EnableLineFolding = CodeEditor.SyntaxDefinition.SupportsCodeBlocks
 		  
+		  // Give the editor a bottom border on Windows.
 		  #If TargetMacOS
 		    CodeEditor.HasBottomBorder = False
 		  #Else
@@ -2260,14 +2261,11 @@ End
 		  
 		  // Default font family and sizes.
 		  CodeEditor.FontName = SyntaxArea.Editor.DEFAULT_FONT
-		  CodeEditor.FontSize = SyntaxArea.Editor.DEFAULT_FONT_SIZE
+		  CodeEditor.FontSize = 13
 		  CodeEditor.LineNumbersFontName = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT
 		  CodeEditor.LineNumbersFontSize = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT_SIZE
 		  
-		  CodeEditor.FontSize = 13
-		  
-		  CodeEditor.SetFocus
-		  
+		  // Put the ruler at 80 columns.
 		  CodeEditor.VerticalRulerPosition = 80
 		  
 		  If Color.IsDarkMode Then
@@ -2286,6 +2284,13 @@ End
 		  
 		  // Force an update.
 		  CodeEditor.MarkAllLinesAsChanged
+		  
+		  // Ensure the editor has the focus.
+		  CodeEditor.SetFocus
+		  
+		  Var json As String = SyntaxArea.EditorTheme.DefaultDark.ToJSON
+		  Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromJSON(json)
+		  Break
 		End Sub
 	#tag EndEvent
 
