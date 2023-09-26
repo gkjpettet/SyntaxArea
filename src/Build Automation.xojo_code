@@ -10,11 +10,20 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvQy54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSFRNTC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZVNRTC54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWE1MLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
+				End
+				Begin CopyFilesBuildStep CopyThemesLinux
+					AppliesTo = 0
+					Architecture = 0
+					Target = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vLi4vdGhlbWVzL25vdmEtZGFyay5qc29u
+					FolderItem = Li4vLi4vdGhlbWVzL25vdmEtbGlnaHQuanNvbg==
 				End
 			End
 			Begin BuildStepList Mac OS X
@@ -27,12 +36,21 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSFRNTC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvQy54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWE1MLnhtbA==
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZVNRTC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
+				End
+				Begin CopyFilesBuildStep CopyThemesMac
+					AppliesTo = 0
+					Architecture = 0
+					Target = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vLi4vdGhlbWVzL25vdmEtZGFyay5qc29u
+					FolderItem = Li4vLi4vdGhlbWVzL25vdmEtbGlnaHQuanNvbg==
 				End
 				Begin SignProjectStep Sign
 				  DeveloperID=
@@ -49,11 +67,20 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvQy54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSFRNTC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZVNRTC54bWw=
-					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWE1MLnhtbA==
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
+				End
+				Begin CopyFilesBuildStep CopyThemesWindows
+					AppliesTo = 0
+					Architecture = 0
+					Target = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vLi4vdGhlbWVzL25vdmEtZGFyay5qc29u
+					FolderItem = Li4vLi4vdGhlbWVzL25vdmEtbGlnaHQuanNvbg==
 				End
 			End
 #tag EndBuildAutomation

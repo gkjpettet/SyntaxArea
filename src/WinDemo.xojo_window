@@ -2236,6 +2236,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
+		  // Var dark As String = SyntaxArea.EditorTheme.DefaultDark.ToJSON
+		  // Var light As String = SyntaxArea.EditorTheme.DefaultLight.ToJSON
+		  // Break
+		  
 		  // Load the bundled Xojo syntax definition file.
 		  CodeEditor.SyntaxDefinition = PopupDefinition.RowTagAt(0)
 		  
@@ -2252,12 +2256,17 @@ End
 		  // Setup up our simple demonstration autocomplete engine.
 		  InitialiseAutocompleteEngine
 		  
-		  // Load the default theme.
+		  // Get the correct bundled theme.
+		  Var themeFile As FolderItem
 		  If Color.IsDarkMode Then
-		    CodeEditor.LoadTheme(SyntaxArea.EditorTheme.DefaultDark)
+		    themeFile = SpecialFolder.Resource("nova-dark.json")
 		  Else
-		    CodeEditor.LoadTheme(SyntaxArea.EditorTheme.DefaultLight)
+		    themeFile = SpecialFolder.Resource("nova-light.json")
 		  End If
+		  Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
+		  
+		  // Load the theme.
+		  CodeEditor.LoadTheme(theme)
 		  
 		  // Default font family and sizes.
 		  CodeEditor.FontName = SyntaxArea.Editor.DEFAULT_FONT
@@ -2268,6 +2277,7 @@ End
 		  // Put the ruler at 80 columns.
 		  CodeEditor.VerticalRulerPosition = 80
 		  
+		  #Pragma Error "Sort this"
 		  If Color.IsDarkMode Then
 		    DarkStyle
 		  Else
@@ -2288,9 +2298,6 @@ End
 		  // Ensure the editor has the focus.
 		  CodeEditor.SetFocus
 		  
-		  // Var json As String = SyntaxArea.EditorTheme.DefaultDark.ToJSON
-		  // Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromJSON(json)
-		  // Break
 		End Sub
 	#tag EndEvent
 
@@ -2300,15 +2307,21 @@ End
 		  /// The app's appearance has changed (e.g. a switch between light/dark mode).
 		  
 		  If Color.IsDarkMode Then
-		    DarkStyle
+		    // Get the correct bundled theme.
+		    Var themeFile As FolderItem = SpecialFolder.Resource("nova-dark.json")
+		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
+		    CodeEditor.LoadTheme(theme)
 		  Else
-		    LightStyle
+		    Var themeFile As FolderItem = SpecialFolder.Resource("nova-light.json")
+		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
+		    CodeEditor.LoadTheme(theme)
 		  End If
 		  
 		  UpdateControls
 		  
 		  // Force the editor to update and re-highlight.
 		  CodeEditor.MarkAllLinesAsChanged
+		  
 		End Sub
 	#tag EndMethod
 
