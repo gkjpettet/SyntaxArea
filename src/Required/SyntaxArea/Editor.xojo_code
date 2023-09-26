@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
-	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -3959,8 +3959,8 @@ Implements MessageCentre.MessageReceiver
 		    #Pragma DisableBoundsChecking
 		  #EndIf
 		  
-		  // 1 is the message type in this particular scheme.
-		  Var type As Integer = m.Info(1)
+		  // Messages.MessageType is the message type in this particular scheme.
+		  Var type As Integer = m.Info(Messages.MessageType)
 		  
 		  If m.Sender = lines Then
 		    Select Case type

@@ -38,9 +38,9 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub DoneWithScreenLines()
-		  If Not MessageCentre.IsMessageInQueue(Self, 1, Messages.ScreenLinesHighlighted) Then
+		  If Not MessageCentre.IsMessageInQueue(Self, Messages.MessageType, Messages.ScreenLinesHighlighted) Then
 		    Var msg As New MessageCentre.Message(Self, Self)
-		    msg.AddInfo(1, Messages.ScreenLinesHighlighted)
+		    msg.AddInfo(Messages.MessageType, Messages.ScreenLinesHighlighted)
 		    MessageCentre.sendMessage(msg)
 		  End If
 		  
@@ -49,9 +49,9 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub HighlightingDone()
-		  If Not MessageCentre.IsMessageInQueue(Self, 1, Messages.HighlightDone) Then
+		  If Not MessageCentre.IsMessageInQueue(Self, Messages.MessageType, Messages.HighlightDone) Then
 		    Var msg As New MessageCentre.Message(Self, Self)
-		    msg.AddInfo(1, Messages.HighlightDone)
+		    msg.AddInfo(Messages.MessageType, Messages.HighlightDone)
 		    MessageCentre.QueueMessage(msg)
 		  End If
 		  
@@ -147,7 +147,7 @@ Inherits Thread
 	#tag Method, Flags = &h21
 		Private Sub LineHighlighted(index As Integer)
 		  Var msg As New MessageCentre.Message(Self, Self)
-		  msg.AddInfo(1, Messages.LineHighlighted)
+		  msg.AddInfo(Messages.MessageType, Messages.LineHighlighted)
 		  msg.AddInfo(2, index)
 		  MessageCentre.SendMessage(msg)
 		  
