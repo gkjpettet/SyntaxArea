@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -3951,7 +3951,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 50617274206F6620746865204D65737361676543656E7472652E4D657373616765526563656976657220696E746572666163652E
-		Protected Sub ReceiveMessage(theMessage As MessageCentre.Message)
+		Protected Sub ReceiveMessage(m As MessageCentre.Message)
 		  /// Part of the MessageCentre.MessageReceiver interface.
 		  
 		  #If Not DebugBuild
@@ -3960,18 +3960,18 @@ Implements MessageCentre.MessageReceiver
 		  #EndIf
 		  
 		  // 1 is the message type in this particular scheme.
-		  Var type As Integer = theMessage.Info(1)
+		  Var type As Integer = m.Info(1)
 		  
-		  If theMessage.Sender = lines Then
+		  If m.Sender = lines Then
 		    Select Case type
 		    Case Messages.LineCountChanged
-		      Var count As Integer = theMessage.Info(2) // 2 holds the number of lines.
-		      Var invisible As Integer = theMessage.Info(3) // 3 holds the number of invisible lines.
+		      Var count As Integer = m.Info(2) // 2 holds the number of lines.
+		      Var invisible As Integer = m.Info(3) // 3 holds the number of invisible lines.
 		      Self.LineCountChanged(count - invisible)
 		      
 		    Case Messages.LineChanged
-		      Var index As Integer = theMessage.Info(2)
-		      Var length As Integer = theMessage.Info(3)
+		      Var index As Integer = m.Info(2)
+		      Var length As Integer = m.Info(3)
 		      
 		      If index = CaretLine And mHighlighter <> Nil And _
 		        mHighlighter.ThreadState <> Thread.ThreadStates.NotRunning Then
@@ -3983,39 +3983,39 @@ Implements MessageCentre.MessageReceiver
 		      Call ModifiedLines.AddRange(index, length)
 		      
 		    Case Messages.MaxLineLengthChanged
-		      Var index As Integer = theMessage.Info(2)
+		      Var index As Integer = m.Info(2)
 		      Self.MaxLineLengthChanged(index)
 		      
 		    Case Messages.LineSymbolsRemoved
-		      LineSymbolsRemoved(theMessage.Info(2))
+		      LineSymbolsRemoved(m.Info(2))
 		    End Select
 		    
-		  ElseIf theMessage.Sender = MyAutocompletePopup Then
+		  ElseIf m.Sender = MyAutocompletePopup Then
 		    
 		    Select Case Type
 		    Case Messages.AutocompleteCancelled
-		      Var requestFocus As Boolean = theMessage.Info(2)
+		      Var requestFocus As Boolean = m.Info(2)
 		      AutocompleteCancelled(requestFocus)
 		      
 		    Case Messages.SuggestionWindowKeyDown
-		      Var key As String = theMessage.Info(2)
+		      Var key As String = m.Info(2)
 		      Call HandleInsertText(key)
 		      
 		    Case Messages.CurrentAutocompleteOptions
-		      theMessage.AddInfo(3, CurrentAutocompleteOptions)
+		      m.AddInfo(3, CurrentAutocompleteOptions)
 		      
 		    Case Messages.SuggestionWindowOptionSelected
-		      Var option As String = theMessage.Info(2)
+		      Var option As String = m.Info(2)
 		      AutocompleteOptionSelected(option)
 		    End Select
 		    
-		  ElseIf theMessage.Sender = mHighlighter Then
+		  ElseIf m.Sender = mHighlighter Then
 		    Select Case type
 		    Case Messages.HighlightDone
 		      RaiseEvent HighlightingComplete
 		      
 		    Case Messages.LineHighlighted
-		      LineHighlighted(theMessage.Info(2))
+		      LineHighlighted(m.Info(2))
 		      
 		    Case Messages.ScreenLinesHighlighted
 		      Redraw

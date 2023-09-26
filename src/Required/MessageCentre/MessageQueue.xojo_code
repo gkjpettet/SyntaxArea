@@ -1,10 +1,10 @@
 #tag Class
 Protected Class MessageQueue
 Inherits Timer
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub Action()
-		  // Send the next queued message.
+		  /// Sends the next queued message.
 		  
 		  If Queue.LastIndex < 0 Then Return
 		  
@@ -25,9 +25,11 @@ Inherits Timer
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0
-		Sub AddMessage(theMessage As MessageCentre.Message)
-		  Queue.Add(theMessage)
+	#tag Method, Flags = &h0, Description = 416464732061206D65737361676520746F207468652071756575652E
+		Sub AddMessage(m As MessageCentre.Message)
+		  /// Adds a message to the queue.
+		  
+		  Queue.Add(m)
 		  
 		  If Me.RunMode = Timer.RunModes.Off Then
 		    Me.RunMode = Timer.RunModes.Single
@@ -39,25 +41,29 @@ Inherits Timer
 	#tag Method, Flags = &h1000
 		Sub Constructor()
 		  Me.RunMode = Timer.RunModes.Off
-		  Me.Period = 0 // Delivers as soon as possible, after the current event.
+		  
+		  // Delivers as soon as possible, after the current event.
+		  Me.Period = 0
 		  
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function FindMessageInQueue(type As Variant, matchInfoKey As Variant, matchInfoValue As Variant) As MessageCentre.Message
+	#tag Method, Flags = &h0, Description = 46696E647320746865206669727374206D65737361676520696E207468652071756575652074686174206D617463686573207468652070617373656420706172616D65746572732E2052657475726E73204E696C206966206E6F206D61746368696E67206D65737361676520697320666F756E642E
+		Function FindMessageInQueue(type As Variant, infoKey As Variant, infoValue As Variant) As MessageCentre.Message
+		  /// Finds the first message in the queue that matches the passed parameters.
+		  /// Returns Nil if no matching message is found.
+		  
 		  For Each m As MessageCentre.Message In Queue
-		    If m.MessageType = type And m.Info(matchInfoKey) = matchInfoValue Then
+		    If m.MessageType = type And m.Info(infoKey) = infoValue Then
 		      Return m
 		    End If
 		  Next m
-		  
 		  
 		End Function
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
+	#tag Property, Flags = &h21, Description = 546865206D6573736167657320746F2073656E642E20546865206C6F7765737420696E646578206D6573736167652069732073656E742066697273742E
 		Private Queue(-1) As MessageCentre.Message
 	#tag EndProperty
 
