@@ -1,7 +1,7 @@
 #tag Interface
 Protected Interface MessageReceiver
-	#tag Method, Flags = &h0
-		Sub ReceiveMessage(theMessage As MessageCentre.Message)
+	#tag Method, Flags = &h0, Description = 546865207265636569766572206861732072656365697665642061206D6573736167652E
+		Sub ReceiveMessage(m As MessageCentre.Message)
 		  
 		End Sub
 	#tag EndMethod
