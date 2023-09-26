@@ -635,8 +635,8 @@ Protected Class LineManager
 		  
 		  Var msg As New MessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, Messages.LineChanged)
-		  msg.AddInfo(2, startIndex)
-		  msg.AddInfo(3, length)
+		  msg.AddInfo(Messages.LineChangedStartIndex, startIndex)
+		  msg.AddInfo(Messages.LineChangedLength, length)
 		  
 		  MessageCentre.SendMessage(msg)
 		  
@@ -647,7 +647,7 @@ Protected Class LineManager
 		Protected Sub NotifyLineCountChanged()
 		  Var msg As New MessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, Messages.LineCountChanged)
-		  msg.AddInfo(2, count)
+		  msg.AddInfo(Messages.LineCount, count)
 		  
 		  MessageCentre.SendMessage(msg)
 		  

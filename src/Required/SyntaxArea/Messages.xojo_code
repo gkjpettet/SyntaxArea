@@ -19,6 +19,15 @@ Protected Class Messages
 	#tag Constant, Name = LineChanged, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = LineChangedLength, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = LineChangedStartIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = LineCount, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = LineCountChanged, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 

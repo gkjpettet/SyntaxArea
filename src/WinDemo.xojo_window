@@ -2288,9 +2288,9 @@ End
 		  // Ensure the editor has the focus.
 		  CodeEditor.SetFocus
 		  
-		  Var json As String = SyntaxArea.EditorTheme.DefaultDark.ToJSON
-		  Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromJSON(json)
-		  Break
+		  // Var json As String = SyntaxArea.EditorTheme.DefaultDark.ToJSON
+		  // Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromJSON(json)
+		  // Break
 		End Sub
 	#tag EndEvent
 

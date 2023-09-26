@@ -3965,13 +3965,13 @@ Implements MessageCentre.MessageReceiver
 		  If m.Sender = lines Then
 		    Select Case type
 		    Case Messages.LineCountChanged
-		      Var count As Integer = m.Info(2) // 2 holds the number of lines.
+		      Var count As Integer = m.Info(Messages.LineCount)
 		      Var invisible As Integer = m.Info(3) // 3 holds the number of invisible lines.
 		      Self.LineCountChanged(count - invisible)
 		      
 		    Case Messages.LineChanged
-		      Var index As Integer = m.Info(2)
-		      Var length As Integer = m.Info(3)
+		      Var index As Integer = m.Info(Messages.LineChangedStartIndex)
+		      Var length As Integer = m.Info(Messages.LineChangedLength) // length
 		      
 		      If index = CaretLine And mHighlighter <> Nil And _
 		        mHighlighter.ThreadState <> Thread.ThreadStates.NotRunning Then
