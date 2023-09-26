@@ -145,9 +145,9 @@ Protected Class EditorTheme
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 4C6F6164732061204A534F4E207468656D652066696C6520616E642072657475726E7320697420617320616E20456469746F725468656D652E
+	#tag Method, Flags = &h0, Description = 4C6F6164732061204A534F4E207468656D652066696C6520616E642072657475726E7320697420617320616E2060456469746F725468656D65602E
 		Shared Function FromFile(f As FolderItem) As SyntaxArea.EditorTheme
-		  /// Loads a JSON theme file and returns it as an EditorTheme.
+		  /// Loads a JSON theme file and returns it as an `EditorTheme`.
 		  
 		  // Sanity checks.
 		  If f = Nil Or Not f.Exists Then
@@ -156,10 +156,17 @@ Protected Class EditorTheme
 		    Raise New InvalidArgumentException("Invalid theme file (received a folder, expected a file).")
 		  End If
 		  
+		  Var json As String
 		  Try
 		    Var tin As TextInputStream = TextInputStream.Open(f)
-		    
+		    json = tin.ReadAll
+		    tin.Close
 		  Catch e As IOException
+		    Raise New InvalidArgumentException("Unable to read the theme file.")
+		  End Try
+		  
+		  Return SyntaxArea.EditorTheme.FromJSON(json)
+		  
 		End Function
 	#tag EndMethod
 
@@ -583,6 +590,22 @@ Protected Class EditorTheme
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Author"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Version"
+			Visible=false
+			Group="Behavior"
+			InitialValue="1.0.0"
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
