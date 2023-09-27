@@ -118,95 +118,6 @@ Begin DesktopWindow WinDemo
          _mName          =   ""
          _mPanelIndex    =   0
       End
-      Begin SyntaxArea.Editor CodeEditor
-         AllowFocusRing  =   False
-         AutoCloseBrackets=   False
-         AutocompleteAppliesStandardCase=   False
-         AutocompleteCombo=   1
-         AutoDeactivate  =   True
-         AutoIndentNewLines=   True
-         BackColor       =   &cFFFFFF00
-         BlockFoldedColor=   &cFF930000
-         BlockFoldedEllipsisColor=   &cC0C0C000
-         BlockFoldMarkerColor=   &c92929200
-         BookmarkColor   =   &c0096FF00
-         BorderColor     =   &c00000000
-         BracketHighlightColor=   &c76D6FF00
-         CaretColor      =   &c00000000
-         CaretLine       =   0
-         CaretPos        =   0
-         ClearHighlightedRangesOnTextChange=   True
-         DirtyLinesColor =   &cFFD47900
-         DisableReset    =   False
-         DisplayDirtyLines=   False
-         DisplayGutter   =   True
-         DisplayInvisibleCharacters=   False
-         DisplayVerticalRuler=   False
-         EnableAutocomplete=   True
-         Enabled         =   True
-         EnableLineFolding=   True
-         FontName        =   "Source Code Pro"
-         FontSize        =   13
-         GutterBackColor =   &c91919100
-         GutterBorderColor=   &c00000000
-         GutterWidth     =   0
-         HasBottomBorder =   False
-         HasLeftBorder   =   True
-         HasRightBorder  =   True
-         HasTopBorder    =   True
-         Height          =   610
-         HighlightBlocksOnMouseOverGutter=   False
-         HighlightMatchingBrackets=   True
-         HighlightMatchingBracketsMode=   0
-         IgnoreRepaint   =   False
-         IndentPixels    =   16
-         IndentVisually  =   True
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         KeepEntireTextIndented=   True
-         Left            =   0
-         LeftMarginOffset=   5
-         LineHeight      =   0.0
-         LineNumbersColor=   &c00000000
-         LineNumbersFontName=   "Source Code Pro"
-         LineNumbersFontSize=   11
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MaxVisibleLines =   0
-         ReadOnly        =   False
-         RightMarginAtPixel=   0
-         RightScrollMargin=   150
-         Scope           =   0
-         ScrollPosition  =   0
-         ScrollPositionX =   0
-         SelectionLength =   0
-         SelectionStart  =   0
-         SelectionText   =   ""
-         SuggestionPopupBackColor=   &cFFFFFF00
-         SuggestionPopupSelectedTextColor=   &c00000000
-         SuggestionPopupTextColor=   &c00000000
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TabWidth        =   0
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextHeight      =   0.0
-         TextLength      =   0
-         TextSelectionColor=   &cD783FF00
-         ThickInsertionPoint=   False
-         Tooltip         =   ""
-         Top             =   0
-         UseLighterLineFoldingBackColor=   False
-         UseSystemTextSelectionColor=   True
-         VerticalRulerColor=   &c00000000
-         VerticalRulerPosition=   0
-         Visible         =   True
-         Width           =   772
-      End
       Begin SyntaxArea.EditorInfoPanel Info
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -248,6 +159,95 @@ Begin DesktopWindow WinDemo
          Transparent     =   True
          Visible         =   True
          Width           =   788
+      End
+      Begin SyntaxArea.Editor CodeEditor
+         AllowFocusRing  =   False
+         AutoCloseBrackets=   False
+         AutocompleteAppliesStandardCase=   False
+         AutocompleteCombo=   1
+         AutoDeactivate  =   True
+         AutoIndentNewLines=   True
+         BackColor       =   &cFFFFFF00
+         BlockFoldedColor=   &cFF930000
+         BlockFoldedEllipsisColor=   &cC0C0C000
+         BlockFoldMarkerColor=   &c92929200
+         BookmarkColor   =   &c0096FF00
+         BorderColor     =   &c00000000
+         BracketHighlightColor=   &c76D6FF00
+         CaretColor      =   &c00000000
+         CaretLine       =   0
+         CaretPos        =   0
+         ClearHighlightedRangesOnTextChange=   True
+         DirtyLinesColor =   &cFFD47900
+         DisableReset    =   False
+         DisplayDirtyLines=   False
+         DisplayGutter   =   True
+         DisplayInvisibleCharacters=   False
+         DisplayVerticalRuler=   False
+         EnableAutocomplete=   True
+         Enabled         =   True
+         EnableLineFolding=   True
+         FontName        =   ""
+         FontSize        =   0
+         GutterBackColor =   &c91919100
+         GutterBorderColor=   &c00000000
+         GutterWidth     =   0
+         HasBottomBorder =   False
+         HasLeftBorder   =   True
+         HasRightBorder  =   True
+         HasTopBorder    =   True
+         Height          =   610
+         HighlightBlocksOnMouseOverGutter=   False
+         HighlightMatchingBrackets=   True
+         HighlightMatchingBracketsMode=   0
+         IgnoreRepaint   =   False
+         IndentPixels    =   16
+         IndentVisually  =   True
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         KeepEntireTextIndented=   True
+         Left            =   0
+         LeftMarginOffset=   5
+         LineHeight      =   0.0
+         LineNumbersColor=   &c00000000
+         LineNumbersFontName=   ""
+         LineNumbersFontSize=   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaxVisibleLines =   0
+         ReadOnly        =   False
+         RightMarginAtPixel=   0
+         RightScrollMargin=   150
+         Scope           =   0
+         ScrollPosition  =   0
+         ScrollPositionX =   0
+         SelectionLength =   0
+         SelectionStart  =   0
+         SelectionText   =   ""
+         SuggestionPopupBackColor=   &cFFFFFF00
+         SuggestionPopupSelectedTextColor=   &c00000000
+         SuggestionPopupTextColor=   &c00000000
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TabWidth        =   0
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextHeight      =   0.0
+         TextLength      =   0
+         TextSelectionColor=   &cD783FF00
+         ThickInsertionPoint=   False
+         Tooltip         =   ""
+         Top             =   0
+         UseLighterLineFoldingBackColor=   False
+         UseSystemTextSelectionColor=   True
+         VerticalRulerColor=   &c00000000
+         VerticalRulerPosition=   80
+         Visible         =   True
+         Width           =   772
       End
    End
    Begin DesktopPopupMenu PopupFontName
@@ -2236,10 +2236,6 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  // Var dark As String = SyntaxArea.EditorTheme.DefaultDark.ToJSON
-		  // Var light As String = SyntaxArea.EditorTheme.DefaultLight.ToJSON
-		  // Break
-		  
 		  // Load the bundled Xojo syntax definition file.
 		  CodeEditor.SyntaxDefinition = PopupDefinition.RowTagAt(0)
 		  
@@ -2256,35 +2252,8 @@ End
 		  // Setup up our simple demonstration autocomplete engine.
 		  InitialiseAutocompleteEngine
 		  
-		  // Get the correct bundled theme.
-		  Var themeFile As FolderItem
-		  If Color.IsDarkMode Then
-		    themeFile = SpecialFolder.Resource("nova-dark.json")
-		  Else
-		    themeFile = SpecialFolder.Resource("nova-light.json")
-		  End If
-		  Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
-		  
-		  // Load the theme.
-		  CodeEditor.LoadTheme(theme)
-		  
-		  // Default font family and sizes.
-		  CodeEditor.FontName = SyntaxArea.Editor.DEFAULT_FONT
-		  CodeEditor.FontSize = 13
-		  CodeEditor.LineNumbersFontName = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT
-		  CodeEditor.LineNumbersFontSize = SyntaxArea.Editor.DEFAULT_LINE_NUMBERS_FONT_SIZE
-		  
-		  // Put the ruler at 80 columns.
-		  CodeEditor.VerticalRulerPosition = 80
-		  
-		  #Pragma Error "Sort this"
-		  If Color.IsDarkMode Then
-		    DarkStyle
-		  Else
-		    LightStyle
-		  End If
-		  
-		  InitialiseControls
+		  // Manually call the `AppearanceChanged` event which will load the correct theme.
+		  AppearanceChanged(True)
 		  
 		  // Initialise the info panel border separately.
 		  InfoTopBorderColor.SelectedColor = CodeEditor.BorderColor
@@ -2292,7 +2261,7 @@ End
 		  InfoLeftBorderColor.SelectedColor = CodeEditor.BorderColor
 		  InfoRightBorderColor.SelectedColor = CodeEditor.BorderColor
 		  
-		  // Force an update.
+		  // Force the editor to update to reflect all these changes.
 		  CodeEditor.MarkAllLinesAsChanged
 		  
 		  // Ensure the editor has the focus.
@@ -2303,7 +2272,7 @@ End
 
 
 	#tag Method, Flags = &h0, Description = 54686520617070277320617070656172616E636520686173206368616E6765642028652E672E206120737769746368206265747765656E206C696768742F6461726B206D6F6465292E
-		Sub AppearanceChanged()
+		Sub AppearanceChanged(alsoInitialiseControls As Boolean = False)
 		  /// The app's appearance has changed (e.g. a switch between light/dark mode).
 		  
 		  If Color.IsDarkMode Then
@@ -2317,7 +2286,12 @@ End
 		    CodeEditor.LoadTheme(theme)
 		  End If
 		  
-		  UpdateControls
+		  If alsoInitialiseControls Then
+		    InitialiseControls
+		  Else
+		    // The controls have already been initialised but they need updating.
+		    UpdateControls
+		  End If
 		  
 		  // Force the editor to update and re-highlight.
 		  CodeEditor.MarkAllLinesAsChanged
@@ -2326,98 +2300,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DarkStyle()
-		  CodeEditor.ClearTokenStyles
-		  
-		  // ==================
-		  // TOKENS
-		  // ==================
-		  Var style As SyntaxArea.TokenStyle
-		  
-		  // Default.
-		  style = New SyntaxArea.TokenStyle(&cDBE5F1)
-		  CodeEditor.DefaultTokenStyle = style
-		  
-		  // Comments.
-		  style = New SyntaxArea.TokenStyle(&c798BA1, False, True)
-		  CodeEditor.AddTokenStyle("comment", style)
-		  
-		  // Keywords.
-		  style = New SyntaxArea.TokenStyle(&c78B1F9)
-		  CodeEditor.AddTokenStyle("keyword", style)
-		  
-		  // Numbers.
-		  style = New SyntaxArea.TokenStyle(&cE4CE88)
-		  CodeEditor.AddTokenStyle("number", style)
-		  
-		  // Strings.
-		  style = New SyntaxArea.TokenStyle(&cEF8F84)
-		  CodeEditor.AddTokenStyle("string", style)
-		  
-		  // Types.
-		  style = New SyntaxArea.TokenStyle(&cC8C8C8)
-		  CodeEditor.AddTokenStyle("type", style)
-		  
-		  // Identifiers.
-		  style = New SyntaxArea.TokenStyle(&cDBE5F1)
-		  CodeEditor.AddTokenStyle("identifier", style)
-		  
-		  style = New SyntaxArea.TokenStyle(&c71E5E7)
-		  CodeEditor.AddTokenStyle("uppercaseIdentifier", style)
-		  
-		  style = New SyntaxArea.TokenStyle(&c73E5AF)
-		  CodeEditor.AddTokenStyle("lowercaseIdentifier", style)
-		  
-		  // Directives.
-		  style = New SyntaxArea.TokenStyle(&c945200)
-		  CodeEditor.AddTokenStyle("directive", style)
-		  
-		  // Placeholders.
-		  style = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
-		  CodeEditor.AddTokenStyle("placeholder", style)
-		  
-		  // ==================
-		  // EDITOR COLOURS
-		  // ==================
-		  // Line number colour.
-		  CodeEditor.LineNumbersColor = Color.White
-		  
-		  // Editor border colour.
-		  CodeEditor.BorderColor = Color.Black
-		  
-		  // Vertical ruler.
-		  CodeEditor.VerticalRulerColor = Color.Red
-		  
-		  // Gutter.
-		  CodeEditor.GutterBackColor = Color.Black
-		  CodeEditor.GutterBorderColor = Color.White
-		  
-		  // Editor background colour.
-		  CodeEditor.BackColor = Color.Black
-		  
-		  // Caret.
-		  CodeEditor.CaretColor = Color.White
-		  
-		  // Dirty lines.
-		  CodeEditor.DirtyLinesColor = Color.Yellow
-		  
-		  // Brackets.
-		  CodeEditor.BracketHighlightColor = Color.Blue
-		  
-		  // Text selection colour.
-		  CodeEditor.TextSelectionColor = Color.HighlightColor
-		  
-		  // Autocomplete.
-		  CodeEditor.SuggestionPopupTextColor = Color.White
-		  CodeEditor.SuggestionPopupSelectedTextColor = Color.White
-		  CodeEditor.SuggestionPopupBackColor = Color.Black
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub InitialiseAutocompleteEngine()
 		  /// Initialises our basic autocomplete engine for Xojo keywords.
+		  ///
+		  /// You'll likely want to create a better one...
 		  
 		  MyAutocompleteEngine = New AutocompleteEngine(False)
 		  
@@ -2616,96 +2502,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub LightStyle()
-		  CodeEditor.ClearTokenStyles
-		  
-		  // ==================
-		  // TOKENS
-		  // ==================
-		  Var style As SyntaxArea.TokenStyle
-		  
-		  // Default.
-		  style = New SyntaxArea.TokenStyle(&c262627)
-		  CodeEditor.DefaultTokenStyle = style
-		  
-		  // Comments.
-		  style = New SyntaxArea.TokenStyle(&c737373, False, True)
-		  CodeEditor.AddTokenStyle("comment", style)
-		  
-		  // Keywords.
-		  style = New SyntaxArea.TokenStyle(&c255BB2)
-		  CodeEditor.AddTokenStyle("keyword", style)
-		  
-		  // Numbers.
-		  style = New SyntaxArea.TokenStyle(&cC43B64)
-		  CodeEditor.AddTokenStyle("number", style)
-		  
-		  // Strings.
-		  style = New SyntaxArea.TokenStyle(&cBC391D)
-		  CodeEditor.AddTokenStyle("string", style)
-		  
-		  // Types.
-		  style = New SyntaxArea.TokenStyle(&c262626)
-		  CodeEditor.AddTokenStyle("type", style)
-		  
-		  // Identifiers.
-		  style = New SyntaxArea.TokenStyle(&c262627)
-		  CodeEditor.AddTokenStyle("identifier", style)
-		  
-		  style = New SyntaxArea.TokenStyle(&c40822E)
-		  CodeEditor.AddTokenStyle("uppercaseIdentifier", style)
-		  
-		  style = New SyntaxArea.TokenStyle(&c337172)
-		  CodeEditor.AddTokenStyle("lowercaseIdentifier", style)
-		  
-		  // Directives.
-		  style = New SyntaxArea.TokenStyle(&c945200)
-		  CodeEditor.AddTokenStyle("directive", style)
-		  
-		  // Placeholders.
-		  style = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
-		  CodeEditor.AddTokenStyle("placeholder", style)
-		  
-		  // ==================
-		  // EDITOR COLOURS
-		  // ==================
-		  // Line number colour.
-		  CodeEditor.LineNumbersColor = Color.Black
-		  
-		  // Editor border colour.
-		  CodeEditor.BorderColor = Color.Black
-		  
-		  // Vertical ruler.
-		  CodeEditor.VerticalRulerColor = Color.Red
-		  
-		  // Gutter.
-		  CodeEditor.GutterBackColor = Color.White
-		  CodeEditor.GutterBorderColor = Color.Black
-		  
-		  // Editor background colour.
-		  CodeEditor.BackColor = Color.White
-		  
-		  // Caret.
-		  CodeEditor.CaretColor = Color.Black
-		  
-		  // Dirty lines.
-		  CodeEditor.DirtyLinesColor = Color.Orange
-		  
-		  // Brackets.
-		  CodeEditor.BracketHighlightColor = Color.Blue
-		  
-		  // Text selection colour.
-		  CodeEditor.TextSelectionColor = Color.HighlightColor
-		  
-		  // Autocomplete.
-		  CodeEditor.SuggestionPopupTextColor = Color.Black
-		  CodeEditor.SuggestionPopupSelectedTextColor = Color.Black
-		  CodeEditor.SuggestionPopupBackColor = Color.White
-		  
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21, Description = 5570646174657320616C6C206F662074686520636F6E74726F6C7320746F206D61746368207468652073657474696E6773206F662074686520636F646520656469746F722E
 		Private Sub UpdateControls()
 		  /// Updates all of the controls to match the settings of the code editor.
@@ -2808,6 +2604,21 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events Info
+	#tag Event , Description = 412073796D626F6C207761732073656C656374656420696E2074686520636F6E74726F6C2E
+		Sub SymbolSelected(symbol as SyntaxArea.DocumentSymbol)
+		  If symbol = Nil Then Return
+		  CodeEditor.SelectLine(CodeEditor.LineNumAtCharPos(symbol.Offset))
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event , Description = 54686520636F6E74726F6C2069732072657175657374696E6720616E206172726179206F6620646F63756D656E742073796D626F6C7320746F20646973706C61792E
+		Function GetSymbols() As SyntaxArea.DocumentSymbol()
+		  Return CodeEditor.DocumentSymbols
+		  
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag Events CodeEditor
 	#tag Event , Description = 54686520656469746F72206973206F70656E696E672E
 		Sub Opening()
@@ -2852,21 +2663,6 @@ End
 		  LastSelectionChangedLine = line
 		  
 		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Info
-	#tag Event , Description = 412073796D626F6C207761732073656C656374656420696E2074686520636F6E74726F6C2E
-		Sub SymbolSelected(symbol as SyntaxArea.DocumentSymbol)
-		  If symbol = Nil Then Return
-		  CodeEditor.SelectLine(CodeEditor.LineNumAtCharPos(symbol.Offset))
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event , Description = 54686520636F6E74726F6C2069732072657175657374696E6720616E206172726179206F6620646F63756D656E742073796D626F6C7320746F20646973706C61792E
-		Function GetSymbols() As SyntaxArea.DocumentSymbol()
-		  Return CodeEditor.DocumentSymbols
-		  
-		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events PopupFontName

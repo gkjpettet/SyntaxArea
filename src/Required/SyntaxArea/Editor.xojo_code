@@ -2661,6 +2661,16 @@ Implements MessageCentre.MessageReceiver
 		Sub LoadTheme(theme As SyntaxArea.EditorTheme)
 		  /// Loads a theme.
 		  
+		  // Load the token styles.
+		  ClearTokenStyles
+		  
+		  Self.DefaultTokenStyle = theme.DefaultTokenStyle
+		  
+		  For Each entry As DictionaryEntry In theme.TokenStyles
+		    AddTokenStyle(entry.Key, entry.Value)
+		  Next entry
+		  
+		  // Now load the editor properties.
 		  Self.BackColor = theme.BackColor
 		  Self.BlockFoldedColor = theme.BlockFoldedColor
 		  Self.BlockFoldedEllipsisColor = theme.BlockFoldedEllipsisColor
@@ -2680,6 +2690,7 @@ Implements MessageCentre.MessageReceiver
 		  Self.TextSelectionColor = theme.TextSelectionColor
 		  Self.UseLighterLineFoldingBackColor = theme.UseLighterLineFoldingBackColor
 		  
+		  // We'll need to refresh the editor.
 		  InvalidateAllLines
 		  Redraw(True)
 		End Sub
@@ -6971,6 +6982,54 @@ Implements MessageCentre.MessageReceiver
 			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="DisplayVerticalRuler"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="VerticalRulerPosition"
+			Visible=true
+			Group="Appearance"
+			InitialValue="80"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayDirtyLines"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayInvisibleCharacters"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayGutter"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EnableLineFolding"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="TabPanelIndex"
 			Visible=false
 			Group="Behavior"
@@ -7007,46 +7066,6 @@ Implements MessageCentre.MessageReceiver
 			Visible=false
 			Group="Behavior"
 			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DisplayDirtyLines"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DisplayInvisibleCharacters"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DisplayGutter"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DisplayVerticalRuler"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EnableLineFolding"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -7236,14 +7255,6 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="VerticalRulerPosition"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
