@@ -2235,6 +2235,14 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub MenuBarSelected()
+		  EditUndo.Enabled = App.UndoManager.CanUndo
+		  EditRedo.Enabled = App.UndoManager.CanRedo
+		  
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Opening()
 		  // Load the bundled Xojo syntax definition file.
 		  CodeEditor.SyntaxDefinition = PopupDefinition.RowTagAt(0)
@@ -2264,11 +2272,60 @@ End
 		  // Force the editor to update to reflect all these changes.
 		  CodeEditor.MarkAllLinesAsChanged
 		  
+		  // Clear the undo manager since we don't want the user to be able to undo the example text insertion.
+		  App.UndoManager.Reset
+		  
 		  // Ensure the editor has the focus.
 		  CodeEditor.SetFocus
 		  
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function CodeFoldingFoldAll() As Boolean Handles CodeFoldingFoldAll.Action
+		  CodeEditor.FoldAll
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function CodeFoldingFoldCurrentBlock() As Boolean Handles CodeFoldingFoldCurrentBlock.Action
+		  CodeEditor.FoldBlockAtCaretPosition
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function CodeFoldingUnfoldAll() As Boolean Handles CodeFoldingUnfoldAll.Action
+		  CodeEditor.UnfoldAll
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function EditRedo() As Boolean Handles EditRedo.Action
+		  If CodeEditor.CanRedo Then CodeEditor.Redo
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function EditUndo() As Boolean Handles EditUndo.Action
+		  If CodeEditor.CanUndo Then CodeEditor.Undo
+		  
+		  Return True
+		  
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h0, Description = 54686520617070277320617070656172616E636520686173206368616E6765642028652E672E206120737769746368206265747765656E206C696768742F6461726B206D6F6465292E
@@ -2622,19 +2679,19 @@ End
 #tag Events CodeEditor
 	#tag Event , Description = 54686520656469746F72206973206F70656E696E672E
 		Sub Opening()
-		  // Set the scrollbars on Windows and Linux (they are native on macOS).
+		  Me.UndoManager = App.UndoManager
 		  
+		  // Set the scrollbars on Windows and Linux (they are native on macOS).
 		  #If TargetMacOS
 		    HorizontalScrollBar.Visible = False
 		    VerticalScrollBar.Visible = False
 		    CodeEditor.Width = CodeEditor.Width + VerticalScrollBar.Width
 		    CodeEditor.Height = CodeEditor.Height + HorizontalScrollBar.Height
-		    
 		  #Else
 		    Me.SetScrollbars(HorizontalScrollBar, VerticalScrollBar)
 		  #EndIf
 		  
-		  CodeEditor.BackColor = New ColorGroup(Color.White, Color.Black)
+		  
 		  
 		End Sub
 	#tag EndEvent

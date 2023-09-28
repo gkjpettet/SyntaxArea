@@ -7,6 +7,18 @@ Inherits DesktopApplication
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Opening()
+		  /// Create a new global undo manager for the application.
+		  UndoManager = New UndoKit.UndoManager
+		End Sub
+	#tag EndEvent
+
+
+	#tag Property, Flags = &h0
+		UndoManager As UndoKit.UndoManager
+	#tag EndProperty
+
 
 	#tag Constant, Name = kEditClear, Type = String, Dynamic = False, Default = \"&Delete", Scope = Public
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"&Delete"

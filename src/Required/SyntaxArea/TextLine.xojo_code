@@ -176,8 +176,10 @@ Inherits SyntaxArea.TextSegment
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, Description = 52657475726E7320547275652069662074686973206C696E65206973206120626C6F636B2073746172742E
 		Function IsBlockStart(forRule As Object = Nil) As Boolean
+		  /// Returns True if this line is a block start.
+		  
 		  Return mIsBlkStart And mBlockIndent <> 0 And(forRule = Nil Or forRule = mBlockStartRule)
 		End Function
 	#tag EndMethod

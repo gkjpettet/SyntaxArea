@@ -403,7 +403,7 @@ Implements MessageCentre.MessageReceiver
 		    
 		    If EnableLineFolding And x >= LineNumberOffset - BlockStartImage.Graphics.Width - 2 Then
 		      // Toggle foldings.
-		      ToggleLineFold(SelectedLine)
+		      ToggleLineFolding(SelectedLine)
 		      CreateMouseOverBlockHighlight(SelectedLine)
 		      
 		    Else
@@ -906,6 +906,26 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E732054727565206966207468697320656469746F72277320756E646F206D616E616765722063616E207265646F2E
+		Function CanRedo() As Boolean
+		  /// Returns True if this editor's undo manager can redo.
+		  ///
+		  /// Note: Just because the undo manager has an available redo event doesn't mean that event applies to this editor!
+		  
+		  Return UndoManager.CanRedo
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732054727565206966207468697320656469746F72277320756E646F206D616E616765722063616E20756E646F2E
+		Function CanUndo() As Boolean
+		  /// Returns True if this editor's undo manager can undo.
+		  ///
+		  /// Note: Just because the undo manager has an available undo event doesn't mean that event applies to this editor!
+		  
+		  Return UndoManager.CanUndo
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function CaretColumn() As Integer
 		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
@@ -1173,7 +1193,7 @@ Implements MessageCentre.MessageReceiver
 		  // Blink only if no selection.
 		  EnableBlinker(selLength = 0)
 		  
-		  If Not UndoMgr.IsUndoing Then
+		  If UndoManager <> Nil And Not UndoManager.IsUndoing Then
 		    // Raise the SelectionChanged event
 		    RaiseEvent SelectionChanged(linenum + 1, selStart - line.Offset, selLength)
 		    
@@ -2045,6 +2065,33 @@ Implements MessageCentre.MessageReceiver
 		  Return True
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 466F6C647320616C6C20746865206C696E65732E
+		Sub FoldAll()
+		  /// Folds all the lines.
+		  
+		  If Not EnableLineFolding Then Return
+		  
+		  Lines.FoldAll
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 466F6C64732074686520626C6F636B207768657265207468652063617265742063757272656E746C792069732E
+		Sub FoldBlockAtCaretPosition()
+		  /// Folds the block where the caret currently is.
+		  
+		  If Not EnableLineFolding Then Return
+		  
+		  /// Find the index of the line at the start of the block that the caret is currently in.
+		  Var index As Integer = OpeningBlockLineForLine(CaretLine)
+		  If index < 0 Then Return
+		  
+		  ToggleLineFolding(index)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -3432,16 +3479,20 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
+	#tag Method, Flags = &h21, Description = 52657475726E732074686520696E646578206F6620746865206C696E652074686174207374617274732074686520626C6F636B20636F6E7461696E696E6720746865206C696E65207769746820696E64657820606C696E65496E646578602E2052657475726E277320602D3160206966206E6F6E6520697320666F756E642E
 		Private Function OpeningBlockLineForLine(lineIndex As Integer) As Integer
-		  Var temp_value As Integer
-		  temp_value = Lines.PreviousBlockStartLine(lineIndex, True)
+		  /// Returns the index of the line that starts the block containing the line with index `lineIndex`.
+		  /// Return's `-1` if none is found.
 		  
-		  If temp_value <= 0 Then
-		    If Lines.GetLine(lineIndex).IsBlockStart Then temp_value = lineIndex
+		  Var i As Integer
+		  i = Lines.PreviousBlockStartLine(lineIndex, True)
+		  
+		  If i <= 0 Then
+		    // Could the specified line itself be a block start?
+		    If Lines.GetLine(lineIndex).IsBlockStart Then i = lineIndex
 		  End If
 		  
-		  Return temp_value
+		  Return i
 		  
 		End Function
 	#tag EndMethod
@@ -3864,7 +3915,9 @@ Implements MessageCentre.MessageReceiver
 		  
 		  If TextStorage.Remove(offset, length) Then
 		    RaiseEvent TextRemoved(offset, undoText)
-		    UndoMgr.Push(New SyntaxArea.UndoableDelete(Self, offset, length, undoText, undoAttrs, CaretPos, CurrentEventID))
+		    If UndoManager <> Nil Then 
+		      UndoManager.Push(New SyntaxArea.UndoableDelete(Self, offset, length, undoText, undoAttrs, CaretPos, CurrentEventID))
+		    End If
 		    Lines.Remove(offset, length)
 		    If updateCaret Then ChangeSelection(SelectionStart - length, 0)
 		    Highlight
@@ -3902,8 +3955,10 @@ Implements MessageCentre.MessageReceiver
 		  Lines.GetAttributesOfLinesInRange(offset, length)
 		  
 		  If eventID < 0 Then eventID = CurrentEventID
-		  UndoMgr.Push(New SyntaxArea.UndoableReplace(Self, offset, length, removedText, s, _
-		  removedAttrs, CaretPos, eventID))
+		  If UndoManager <> Nil Then
+		    UndoManager.Push(New SyntaxArea.UndoableReplace(Self, offset, length, removedText, s, _
+		    removedAttrs, CaretPos, eventID))
+		  End If
 		  
 		  // Modify the buffer and rescan the lines.
 		  TextStorage.Replace(offset, length, s)
@@ -3936,7 +3991,7 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Highlight
 		  
-		  If Not UndoMgr.IsUndoing Then
+		  If UndoManager <> Nil And Not UndoManager.IsUndoing Then
 		    // Fire the text changed events.
 		    HandleTextChanged
 		    If removedText <> "" Then RaiseEvent TextRemoved(offset, removedText)
@@ -4032,6 +4087,38 @@ Implements MessageCentre.MessageReceiver
 		      Redraw
 		    End Select
 		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 506572666F726D207468697320656469746F72277320756E646F206D616E616765722773206C617374207265646F20616374696F6E20616E64207570646174652074686520656469746F722E
+		Sub Redo()
+		  /// Perform this editor's undo manager's last redo action and update the editor.
+		  ///
+		  /// Note: This assumes that the last redo event in the undo manager's redo stack applies to this editor!
+		  
+		  If UndoManager = Nil Then Return
+		  
+		  // Prevent the line highlighter from interfering while we're modifying the lines.
+		  Var lock As New LinesLock(Self)
+		  #Pragma Unused lock
+		  
+		  ignoreRepaint = True
+		  
+		  UndoManager.Redo
+		  
+		  // Raise events.
+		  Var line As SyntaxArea.TextLine = lines.GetLine(CaretLine)
+		  If line <> Nil Then
+		    RaiseEvent SelectionChanged(CaretLine + 1, SelectionStart - line.Offset, SelectionLength)
+		  End If
+		  HandleTextChanged
+		  
+		  If Not UndoManager.IsDirty Then ClearDirtyLines
+		  
+		  ignoreRepaint = False
+		  
+		  Redraw
 		  
 		End Sub
 	#tag EndMethod
@@ -4456,8 +4543,10 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub ToggleLineFold(lineIndex As Integer)
+	#tag Method, Flags = &h0, Description = 546F67676C65732074686520666F6C64696E6720737461747573206F6620746865206C696E6520617420606C696E65496E646578602E
+		Sub ToggleLineFolding(lineIndex As Integer)
+		  /// Toggles the folding status of the line at `lineIndex`.
+		  
 		  If Not EnableLineFolding Then Return
 		  
 		  Var topLine As Integer = Lines.ToggleLineFolding(lineIndex)
@@ -4473,6 +4562,51 @@ Implements MessageCentre.MessageReceiver
 		  Else
 		    InvalidateLine(lineIndex)
 		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 506572666F726D207468697320656469746F72277320756E646F206D616E616765722773206C61737420756E646F20616374696F6E20616E64207570646174652074686520656469746F722E
+		Sub Undo()
+		  /// Perform this editor's undo manager's last undo action and update the editor.
+		  ///
+		  /// Note: This assumes that the last undo event in the undo manager's undo stack applies to this editor!
+		  
+		  If UndoManager = Nil Then Return
+		  
+		  // Prevent the line highlighter from interfering while we're modifying the lines.
+		  Var lock As New LinesLock(Self)
+		  #Pragma Unused lock
+		  
+		  ignoreRepaint = True
+		  
+		  UndoManager.Undo
+		  
+		  // Raise events.
+		  Var line As SyntaxArea.TextLine = lines.GetLine(CaretLine)
+		  If line <> Nil Then
+		    RaiseEvent SelectionChanged(CaretLine + 1, SelectionStart - line.Offset, SelectionLength)
+		  End If
+		  HandleTextChanged
+		  
+		  If Not UndoManager.IsDirty Then ClearDirtyLines
+		  
+		  ignoreRepaint = False
+		  
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 556E666F6C647320616C6C206C696E65732E
+		Sub UnfoldAll()
+		  /// Unfolds all lines.
+		  
+		  If Not EnableLineFolding Then Return
+		  
+		  Lines.UnfoldAll
+		  
+		  Redraw
 		  
 		End Sub
 	#tag EndMethod
@@ -6134,10 +6268,6 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUndoMgr As UndoKit.UndoManager
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mUseLighterLineFoldingBackColor As Boolean
 	#tag EndProperty
 
@@ -6449,10 +6579,12 @@ Implements MessageCentre.MessageReceiver
 			  // where it is faster to do a replace in the text and replace the whole text by
 			  // the replaced text
 			  If Not DisableReset Then
-			    UndoMgr.Reset
+			    If UndoManager <> Nil Then UndoManager.Reset
 			  Else
 			    Var lineAttrs() As SyntaxArea.TextLineAttributes
-			    UndoMgr.Push(New SyntaxArea.UndoableReplace(Self, 0, Self.Text.Length, Self.Text, value, lineAttrs, CaretPos, CurrentEventID))
+			    If UndoManager <> Nil Then 
+			      UndoManager.Push(New SyntaxArea.UndoableReplace(Self, 0, Self.Text.Length, Self.Text, value, lineAttrs, CaretPos, CurrentEventID))
+			    End If
 			    disableReset = False
 			  End If
 			  
@@ -6599,24 +6731,9 @@ Implements MessageCentre.MessageReceiver
 		Private Typing As Boolean
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mUndoMgr = Nil Then
-			    mUndoMgr = New UndoKit.UndoManager
-			  End If
-			  
-			  Return mUndoMgr
-			  
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mUndoMgr = value
-			End Set
-		#tag EndSetter
-		UndoMgr As UndoKit.UndoManager
-	#tag EndComputedProperty
+	#tag Property, Flags = &h0, Description = 5468697320656469746F72277320756E646F206D616E616765722E
+		UndoManager As UndoKit.UndoManager
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 4966205472756520616E64206C696E6520666F6C64696E67732061726520656E61626C6564207468656E2061206C69676874657220636F6C6F7572207468616E2074686520677574746572206261636B20636F6C6F75722077696C6C206265207573656420666F7220746865206261636B67726F756E6420626568696E6420746865206C696E6520666F6C64696E67206D61726B65727320696E20746865206775747465722E
 		#tag Getter

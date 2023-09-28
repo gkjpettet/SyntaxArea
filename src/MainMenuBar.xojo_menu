@@ -36,6 +36,18 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin DesktopMenuItem EditRedo
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Redo"
+         ShortcutKey = "Z"
+         Shortcut = "Cmd+Shift+Z"
+         MenuModifier = True
+         AltMenuModifier = True
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
       Begin DesktopMenuItem EditSeparator1
          SpecialMenu = 0
          Index = -2147483648
@@ -103,6 +115,47 @@ Begin Menu MainMenuBar
          AutoEnabled = True
          AutoEnable = True
          Visible = True
+      End
+   End
+   Begin DesktopMenuItem EditorMenu
+      SpecialMenu = 0
+      Index = -2147483648
+      Text = "Editor"
+      AutoEnabled = True
+      AutoEnable = True
+      Visible = True
+      Begin DesktopMenuItem EditorCodeFolding
+         SpecialMenu = 0
+         Index = -2147483648
+         Text = "Code Folding"
+         AutoEnabled = True
+         AutoEnable = True
+         SubMenu = True
+         Visible = True
+         Begin DesktopMenuItem CodeFoldingFoldCurrentBlock
+            SpecialMenu = 0
+            Index = -2147483648
+            Text = "Fold Current Block"
+            AutoEnabled = True
+            AutoEnable = True
+            Visible = True
+         End
+         Begin DesktopMenuItem CodeFoldingFoldAll
+            SpecialMenu = 0
+            Index = -2147483648
+            Text = "Fold All"
+            AutoEnabled = True
+            AutoEnable = True
+            Visible = True
+         End
+         Begin DesktopMenuItem CodeFoldingUnfoldAll
+            SpecialMenu = 0
+            Index = -2147483648
+            Text = "Unfold All"
+            AutoEnabled = True
+            AutoEnable = True
+            Visible = True
+         End
       End
    End
    Begin DesktopMenuItem HelpMenu
