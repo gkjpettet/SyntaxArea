@@ -3906,7 +3906,7 @@ Implements MessageCentre.MessageReceiver
 		    Return
 		  End If
 		  
-		  // Nothing to delete?e
+		  // Nothing to delete?
 		  If length = 0 Then Return
 		  
 		  Var undoText As String = TextStorage.GetText(Max(offset, 0), length)
@@ -3916,7 +3916,8 @@ Implements MessageCentre.MessageReceiver
 		  If TextStorage.Remove(offset, length) Then
 		    RaiseEvent TextRemoved(offset, undoText)
 		    If UndoManager <> Nil Then 
-		      UndoManager.Push(New SyntaxArea.UndoableDelete(Self, offset, length, undoText, undoAttrs, CaretPos, CurrentEventID))
+		      UndoManager.Push(New SyntaxArea.UndoableDelete(Self, offset, length, undoText, undoAttrs, CaretPos, CurrentEventID, _
+		      "Delete Text"))
 		    End If
 		    Lines.Remove(offset, length)
 		    If updateCaret Then ChangeSelection(SelectionStart - length, 0)
@@ -3957,7 +3958,7 @@ Implements MessageCentre.MessageReceiver
 		  If eventID < 0 Then eventID = CurrentEventID
 		  If UndoManager <> Nil Then
 		    UndoManager.Push(New SyntaxArea.UndoableReplace(Self, offset, length, removedText, s, _
-		    removedAttrs, CaretPos, eventID))
+		    removedAttrs, CaretPos, eventID, "Insert Text"))
 		  End If
 		  
 		  // Modify the buffer and rescan the lines.
@@ -6583,7 +6584,8 @@ Implements MessageCentre.MessageReceiver
 			  Else
 			    Var lineAttrs() As SyntaxArea.TextLineAttributes
 			    If UndoManager <> Nil Then 
-			      UndoManager.Push(New SyntaxArea.UndoableReplace(Self, 0, Self.Text.Length, Self.Text, value, lineAttrs, CaretPos, CurrentEventID))
+			      UndoManager.Push(New SyntaxArea.UndoableReplace(Self, 0, Self.Text.Length, Self.Text, value, _
+			      lineAttrs, CaretPos, CurrentEventID, "Change Text"))
 			    End If
 			    disableReset = False
 			  End If

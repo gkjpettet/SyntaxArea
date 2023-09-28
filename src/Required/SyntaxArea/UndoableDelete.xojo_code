@@ -2,7 +2,7 @@
 Protected Class UndoableDelete
 Implements UndoKit.UndoableAction
 	#tag Method, Flags = &h0
-		Sub Constructor(field As SyntaxArea.Editor, offset As Integer, length As Integer, s As String, attrs() As SyntaxArea.TextLineAttributes, oldCaretPos As Integer, ID As Integer)
+		Sub Constructor(field As SyntaxArea.Editor, offset As Integer, length As Integer, s As String, attrs() As SyntaxArea.TextLineAttributes, oldCaretPos As Integer, ID As Integer, description As String)
 		  Reference = New WeakRef(field)
 		  Self.Offset = offset
 		  Self.Length = length
@@ -10,6 +10,28 @@ Implements UndoKit.UndoableAction
 		  Self.Attrs = attrs
 		  Self.OldCaretPos = oldCaretPos
 		  EventID = ID
+		  mDescription = description
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 5468697320616374696F6E2773206465736372697074696F6E2E
+		Function Description() As String
+		  /// This action's description.
+		  ///
+		  /// Part of the `UndoKit.UndoableAction` interface.
+		  
+		  Return mDescription
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 53657473207468697320616374696F6E2773206465736372697074696F6E2E
+		Sub Description(Assigns s As String)
+		  /// Sets this action's description.
+		  ///
+		  /// Part of the `UndoKit.UndoableAction` interface.
+		  
+		  mDescription = s
 		  
 		End Sub
 	#tag EndMethod
@@ -65,6 +87,10 @@ Implements UndoKit.UndoableAction
 
 	#tag Property, Flags = &h1
 		Protected Length As integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDescription As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

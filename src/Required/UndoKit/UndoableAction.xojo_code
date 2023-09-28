@@ -1,5 +1,17 @@
 #tag Interface
 Protected Interface UndoableAction
+	#tag Method, Flags = &h0, Description = 41206465736372697074696F6E206F66207468697320616374696F6E2E
+		Function Description() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 5365747320746865206465736372697074696F6E206F66207468697320616374696F6E2E
+		Sub Description(Assigns s As String)
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function EventID() As Integer
 		  

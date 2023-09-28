@@ -2236,8 +2236,23 @@ End
 #tag WindowCode
 	#tag Event
 		Sub MenuBarSelected()
+		  // Undo.
 		  EditUndo.Enabled = App.UndoManager.CanUndo
+		  If App.UndoManager.CanUndo Then
+		    Var action As UndoKit.UndoableAction = App.UndoManager.NextUndo
+		    EditUndo.Text = "Undo" + If(action.Description = "", "", " " + action.Description)
+		  Else
+		    EditUndo.Text = "Undo"
+		  End If
+		  
+		  // Redo.
 		  EditRedo.Enabled = App.UndoManager.CanRedo
+		  If App.UndoManager.CanRedo Then
+		    Var action As UndoKit.UndoableAction = App.UndoManager.NextRedo
+		    EditRedo.Text = "Redo" + If(action.Description = "", "", " " + action.Description)
+		  Else
+		    EditRedo.Text = "Redo"
+		  End If
 		  
 		End Sub
 	#tag EndEvent

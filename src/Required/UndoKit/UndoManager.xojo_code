@@ -190,6 +190,34 @@ Protected Class UndoManager
 		Private mEnabled As Boolean
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 52657475726E7320746865206E657874207265646F20616374696F6E206F72204E696C206966207468657265206973206E6F6E652E
+		#tag Getter
+			Get
+			  If CanRedo Then
+			    Return RedoStack(RedoStack.LastIndex)
+			  Else
+			    Return Nil
+			  End If
+			  
+			End Get
+		#tag EndGetter
+		NextRedo As UndoKit.UndoableAction
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 52657475726E7320746865206E65787420756E646F20616374696F6E206F72204E696C206966207468657265206973206E6F6E652E
+		#tag Getter
+			Get
+			  If CanUndo Then
+			    Return UndoStack(UndoStack.LastIndex)
+			  Else
+			    Return Nil
+			  End If
+			  
+			End Get
+		#tag EndGetter
+		NextUndo As UndoKit.UndoableAction
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h1
 		Protected RedoStack() As UndoKit.UndoableAction
 	#tag EndProperty
