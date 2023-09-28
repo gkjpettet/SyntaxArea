@@ -1,7 +1,7 @@
 #tag Class
 Protected Class LinesLock
 	#tag Method, Flags = &h0, Description = 41637175697265732061206C6F636B206F6E20746865206C696E65206D616E616765722E
-		Sub Constructor(editor As SyntaxArea.Editor)
+		Sub Constructor(editor As SyntaxArea.IEditor)
 		  /// Acquires a lock on the line manager.
 		  
 		  Var lineMgr As SyntaxArea.LineManager = editor.PrivateLines

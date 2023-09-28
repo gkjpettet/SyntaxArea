@@ -248,6 +248,11 @@ Protected Module SyntaxArea
 		Tab
 	#tag EndEnum
 
+	#tag Enum, Name = BracketsHighlightModes, Flags = &h0, Description = 54686520646966666572656E74207761797320627261636B6574732063616E20626520686967686C6967687465642062792074686520656469746F722E
+		Circle
+		Highlight
+	#tag EndEnum
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

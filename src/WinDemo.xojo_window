@@ -2971,15 +2971,15 @@ End
 	#tag Event
 		Sub Opening()
 		  Me.AddRow("Circle")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = SyntaxArea.Editor.BracketsHighlightModes.Circle
+		  Me.RowTagAt(Me.LastAddedRowIndex) = SyntaxArea.BracketsHighlightModes.Circle
 		  Me.AddRow("Highlight")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = SyntaxArea.Editor.BracketsHighlightModes.Highlight
+		  Me.RowTagAt(Me.LastAddedRowIndex) = SyntaxArea.BracketsHighlightModes.Highlight
 		  
 		  Select Case CodeEditor.HighlightMatchingBracketsMode
-		  Case SyntaxArea.Editor.BracketsHighlightModes.Circle
+		  Case SyntaxArea.BracketsHighlightModes.Circle
 		    Me.SelectedRowIndex = 0
 		    
-		  Case SyntaxArea.Editor.BracketsHighlightModes.Highlight
+		  Case SyntaxArea.BracketsHighlightModes.Highlight
 		    Me.SelectedRowIndex = 1
 		    
 		  Else

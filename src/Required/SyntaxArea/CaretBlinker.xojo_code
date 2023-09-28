@@ -11,7 +11,7 @@ Inherits Timer
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(owner As SyntaxArea.Editor)
+		Sub Constructor(owner As SyntaxArea.IEditor)
 		  mReference = New WeakRef(owner)
 		  Me.Period = 500
 		  Me.RunMode = Timer.RunModes.Multiple
@@ -32,7 +32,7 @@ Inherits Timer
 			  
 			End Get
 		#tag EndGetter
-		Private mOwner As SyntaxArea.Editor
+		Private mOwner As SyntaxArea.IEditor
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

@@ -4,7 +4,7 @@ Inherits Thread
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub Run()
-		  Var owner As SyntaxArea.Editor = Self.Owner
+		  Var owner As SyntaxArea.IEditor = Self.Owner
 		  If owner = Nil Then Return
 		  
 		  Var lock As SyntaxArea.LinesLock
@@ -25,7 +25,7 @@ Inherits Thread
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(owner As SyntaxArea.Editor, definition As SyntaxArea.HighlightDefinition, changedLines As SyntaxArea.ModifiedLineRangeManager, buffer As SyntaxArea.GapBuffer, lines As SyntaxArea.LineManager)
+		Sub Constructor(owner As SyntaxArea.IEditor, definition As SyntaxArea.HighlightDefinition, changedLines As SyntaxArea.ModifiedLineRangeManager, buffer As SyntaxArea.GapBuffer, lines As SyntaxArea.LineManager)
 		  Self.Definition = definition
 		  Self.ChangedLines = changedLines
 		  Self.Buffer = buffer
@@ -254,7 +254,7 @@ Inherits Thread
 			  
 			End Get
 		#tag EndGetter
-		Private Owner As SyntaxArea.Editor
+		Private Owner As SyntaxArea.IEditor
 	#tag EndComputedProperty
 
 

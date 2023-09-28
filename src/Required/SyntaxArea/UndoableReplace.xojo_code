@@ -2,7 +2,7 @@
 Protected Class UndoableReplace
 Implements UndoKit.UndoableAction
 	#tag Method, Flags = &h0
-		Sub Constructor(editor As SyntaxArea.Editor, offset As Integer, length As Integer, originalText As String, text As String, attrs() As SyntaxArea.TextLineAttributes, oldCaretPos As Integer, id As Integer, description As String)
+		Sub Constructor(editor As SyntaxArea.IEditor, offset As Integer, length As Integer, originalText As String, text As String, attrs() As SyntaxArea.TextLineAttributes, oldCaretPos As Integer, id As Integer, description As String)
 		  Reference = New WeakRef(editor)
 		  Self.Offset = offset
 		  Self.Length = length
@@ -108,14 +108,14 @@ Implements UndoKit.UndoableAction
 		#tag Getter
 			Get
 			  If Me.Reference <> Nil Then
-			    Return SyntaxArea.Editor(Me.Reference.Value)
+			    Return SyntaxArea.IEditor(Me.Reference.Value)
 			  Else
 			    Return Nil
 			  End If
 			  
 			End Get
 		#tag EndGetter
-		Protected Owner As SyntaxArea.Editor
+		Protected Owner As SyntaxArea.IEditor
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h1

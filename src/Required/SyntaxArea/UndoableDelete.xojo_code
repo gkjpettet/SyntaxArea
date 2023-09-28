@@ -2,7 +2,7 @@
 Protected Class UndoableDelete
 Implements UndoKit.UndoableAction
 	#tag Method, Flags = &h0
-		Sub Constructor(field As SyntaxArea.Editor, offset As Integer, length As Integer, s As String, attrs() As SyntaxArea.TextLineAttributes, oldCaretPos As Integer, ID As Integer, description As String)
+		Sub Constructor(field As SyntaxArea.IEditor, offset As Integer, length As Integer, s As String, attrs() As SyntaxArea.TextLineAttributes, oldCaretPos As Integer, ID As Integer, description As String)
 		  Reference = New WeakRef(field)
 		  Self.Offset = offset
 		  Self.Length = length
@@ -105,14 +105,14 @@ Implements UndoKit.UndoableAction
 		#tag Getter
 			Get
 			  If Me.Reference <> Nil Then
-			    Return SyntaxArea.Editor(Me.Reference.Value)
+			    Return SyntaxArea.IEditor(Me.Reference.Value)
 			  Else
 			    Return Nil
 			  End If
 			  
 			End Get
 		#tag EndGetter
-		Protected Owner As SyntaxArea.Editor
+		Protected Owner As SyntaxArea.IEditor
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h1

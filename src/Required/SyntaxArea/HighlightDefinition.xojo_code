@@ -65,7 +65,7 @@ Protected Class HighlightDefinition
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(owner As SyntaxArea.Editor)
+		Sub Constructor(owner As SyntaxArea.IEditor)
 		  Self.Owner = owner
 		  mContextRegex = New RegEx
 		  mContextRegex.Options.DotMatchAll = True
@@ -919,7 +919,7 @@ Protected Class HighlightDefinition
 			  
 			End Set
 		#tag EndSetter
-		Owner As SyntaxArea.Editor
+		Owner As SyntaxArea.IEditor
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

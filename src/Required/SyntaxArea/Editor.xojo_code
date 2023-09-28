@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
-Implements MessageCentre.MessageReceiver
+Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
@@ -934,6 +934,27 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732074686520706F736974696F6E206F66207468652063617265742E
+		Function CaretPos() As Integer
+		  /// Returns the position of the caret.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  Return mCaretPos
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 536574732074686520706F736974696F6E206F662074686520636172657420696E2074686520656469746F722E
+		Sub CaretPos(Assigns value As Integer)
+		  /// Sets the position of the caret in the editor.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  If value = mCaretPos Then Return
+		  ChangeSelection(value, 0)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 5363726F6C6C7320746865207669657720746F2060686F72697A6F6E74616C6020706978656C7320616E642060766572746963616C60206C696E65206E756D6265722E
@@ -2027,6 +2048,25 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function EnableLineFolding() As Boolean
+		  Return mEnableLineFolding
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EnableLineFolding(Assigns value As Boolean)
+		  If mEnableLineFolding And Not value Then Lines.UnfoldAll
+		  mEnableLineFolding = value
+		  LineNumberOffset = 0
+		  UpdateDesiredColumn
+		  InvalidateAllLines
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 41736B732074686520636C69656E742077696E646F7720666F72206175746F636F6D706C657465206F7074696F6E7320666F72207468652063757272656E7420776F72642E
 		Private Function FetchAutocompleteOptions() As Boolean
 		  /// Asks the client window for autocomplete options for the current word.
@@ -2417,9 +2457,9 @@ Implements MessageCentre.MessageReceiver
 		  pos = NextBlockCharacter(s, offset, closeChar)
 		  
 		  If pos >= 0 Then
-		    If HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Circle Then
+		    If HighlightMatchingBracketsMode = SyntaxArea.BracketsHighlightModes.Circle Then
 		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
-		    ElseIf HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Highlight Then
+		    ElseIf HighlightMatchingBracketsMode = SyntaxArea.BracketsHighlightModes.Highlight Then
 		      Var line As Integer = LineNumAtCharPos(pos)
 		      MatchingBlockHighlight = _
 		      New SyntaxArea.CharSelection(pos, 1, line, line, BracketHighlightColor)
@@ -2457,9 +2497,9 @@ Implements MessageCentre.MessageReceiver
 		  pos = PreviousBlockCharacter(s, offset, openingChar)
 		  
 		  If pos >= 0 Then
-		    If HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Circle Then
+		    If HighlightMatchingBracketsMode = SyntaxArea.BracketsHighlightModes.Circle Then
 		      XYAtCharPos(pos, BlockBeginPosX, BlockBeginPosY)
-		    ElseIf HighlightMatchingBracketsMode = Editor.BracketsHighlightModes.Highlight Then
+		    ElseIf HighlightMatchingBracketsMode = SyntaxArea.BracketsHighlightModes.Highlight Then
 		      Var line As Integer = LineNumAtCharPos(pos)
 		      MatchingBlockHighlight = _
 		      New SyntaxArea.CharSelection(pos, 1, line, line, BracketHighlightColor)
@@ -2492,7 +2532,27 @@ Implements MessageCentre.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IndentVisually() As Boolean
+		  Return mIndentVisually
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub IndentVisually(Assigns value As Boolean)
+		  If mIndentVisually <> value Then
+		    mIndentVisually = value
+		    Self.ReindentText
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 496E736572747320746578742060736020617420606F6666736574602E
 		Sub Insert(offset As Integer, s As String)
+		  /// Inserts text `s` at `offset`.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
 		  PrivateReplace(offset, 0, s, True)
 		  
 		End Sub
@@ -2510,6 +2570,8 @@ Implements MessageCentre.MessageReceiver
 		Sub InvalidateLine(index As Integer)
 		  /// Invalidates the given line (marks it for re-drawing).
 		  /// If `index` < 0 then a full refresh will occur.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
 		  
 		  mFullRefresh = index < 0 Or mFullRefresh
 		  
@@ -2806,6 +2868,24 @@ Implements MessageCentre.MessageReceiver
 		  CalculateMaxHorizontalSB
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E7320746865206E756D626572206F6620726F777320746861742066697420696E746F207468652043616E7661732E
+		Function MaxVisibleLines() As Integer
+		  /// Returns the number of rows that fit into the Canvas.
+		  /// 
+		  /// This is not the same as the number of text lines that may be appearing in
+		  /// the Canvas if line folding is used! (Get that value from `Self.VisibleAndHiddenLines`).
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  // This check prevents `ThreadAccessingUIException` when called from a thread.
+		  If Thread.Current = Nil Then
+		    mMaxVisibleLines = Min(Me.Height / TextHeight, Lines.Count)
+		  End
+		  
+		  Return mMaxVisibleLines
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 4D6F7665732074686520636172657420646F776E2E
@@ -3886,15 +3966,19 @@ Implements MessageCentre.MessageReceiver
 	#tag Method, Flags = &h0, Description = 496E7465726E616C20757365206F6E6C792E2052657475726E732074686520656469746F722773206C696E65206D616E616765722E
 		Function PrivateLines() As SyntaxArea.LineManager
 		  /// Internal use only. Returns the editor's line manager.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
 		  
 		  Return Self.Lines
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2E20596F752073686F756C646E277420757365206974206469726563746C792E20496E737465616420757365206053656C53746172746020616E64206053656C54657874602E
+	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2E20596F752073686F756C646E277420757365206974206469726563746C792E20496E737465616420757365206053656C53746172746020616E64206053656C656374696F6E54657874602E
 		Sub PrivateRemove(offset As Integer, length As Integer, updateCaret As Boolean = True)
 		  /// This method is used internally by the control, and externally by the undo mechanism.
 		  /// You shouldn't use it directly. Instead use `SelStart` and `SelectionText`.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
 		  
 		  // Prevent the LineHighlighter from interfering while we're modifying the lines.
 		  Var lock As New SyntaxArea.LinesLock(Self)
@@ -3928,15 +4012,17 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2C20796F752073686F756C646E277420757365206974206469726563746C792C2075736520696E73746561642053656C656374696F6E537461727420616E642053656C546578742E
+	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2C20796F752073686F756C646E277420757365206974206469726563746C792C2075736520696E73746561642053656C656374696F6E537461727420616E642053656C656374696F6E546578742E
 		Sub PrivateReplace(offset As Integer, length As Integer, s As String, alwaysMarkChanged As Boolean = True, eventID As Integer = -1, keepSelection As Boolean = False, beSilent As Boolean = False)
 		  /// This method is used internally by the control, and externally by the undo mechanism, 
 		  /// you shouldn't use it directly, use instead SelectionStart and SelectionText.
-		  
-		  // If keepSelection = False, it means that the selection+caret is reset to the end of 
-		  // the replaced text
-		  // If keepSelection = True, then the previous selection+caret remains intact, but 
-		  // selection pointers get shifted accordingly.
+		  ///
+		  /// If keepSelection = False, it means that the selection+caret is reset to the end of 
+		  /// the replaced text
+		  /// If keepSelection = True, then the previous selection+caret remains intact, but 
+		  /// selection pointers get shifted accordingly.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
 		  
 		  If ReadOnly Then
 		    System.Beep
@@ -4141,9 +4227,13 @@ Implements MessageCentre.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 43616C6C656420627920604361726574426C696E6B65726020746F2075706461746520746865207465787420637572736F72206265616D2E
+	#tag Method, Flags = &h0, Description = 54686520656469746F722073686F756C6420726564726177207468652063617265742E
 		Sub RedrawCaret()
+		  /// The editor should redraw the caret.
+		  ///
 		  /// Called by `CaretBlinker` to update the text cursor beam.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
 		  
 		  If IgnoreRepaint Or mWindowIsClosing Then Return
 		  
@@ -4276,6 +4366,28 @@ Implements MessageCentre.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E7320746865207374617274206F66207468652063757272656E742073656C656374696F6E2E
+		Function SelectionStart() As Integer
+		  /// Returns the start of the current selection.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  Return mSelectionStart
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 5365747320746865207374617274206F66207468652073656C656374696F6E2E
+		Sub SelectionStart(Assigns value As Integer)
+		  /// Sets the start of the selection.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  ChangeSelection(value, 0)
+		  Redraw
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 53656C656374732074686520676976656E206C696E652E
 		Sub SelectLine(lineNumber As Integer, refresh As Boolean = True)
 		  /// Selects the given line.
@@ -4388,6 +4500,8 @@ Implements MessageCentre.MessageReceiver
 		  /// Returns the style to use for the named token. 
 		  /// First tries to find a style named `primary`. If that doesn't exist then looks for a 
 		  /// style named `fallback`. If no matching style exists then the default style is returned.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
 		  
 		  Var style As SyntaxArea.TokenStyle = TokenStyles.Lookup(primary, Nil)
 		  If style = Nil Then
@@ -4482,6 +4596,40 @@ Implements MessageCentre.MessageReceiver
 		  
 		  Return mTempPicture
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732074686520656469746F7227732064656661756C74207465787420636F6C6F75722E
+		Function TextColor() As Color
+		  /// Returns the editor's default text colour.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  Return SyntaxArea.TokenStyle(TokenStyles.Value("*default")).TextColor
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 53657473207468652064656661756C74207465787420636F6C6F757220666F722074686520656469746F722E
+		Sub TextColor(Assigns c As Color)
+		  /// Sets the default text colour for the editor.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  SyntaxArea.TokenStyle(TokenStyles.Value("*default")).TextColor = c
+		  InvalidateAllLines
+		  Redraw(True)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E7320746865206C656E677468206F6620746865207465787420696E207468697320656469746F722E
+		Function TextLength() As Integer
+		  /// Returns the length of the text in this editor.
+		  ///
+		  /// Part of the `SyntaxArea.IEditor` interface.
+		  
+		  Return TextStorage.Length
 		End Function
 	#tag EndMethod
 
@@ -4707,6 +4855,28 @@ Implements MessageCentre.MessageReceiver
 		  End If
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function VisibleLineRange() As SyntaxArea.DataRange
+		  // Part of the `SyntaxArea.IEditor` interface.
+		  
+		  If mVisibleLineRange = Nil Then
+		    mVisibleLineRange = New SyntaxArea.DataRange
+		  End If
+		  
+		  Return mVisibleLineRange
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub VisibleLineRange(Assigns value As SyntaxArea.DataRange)
+		  // Part of the `SyntaxArea.IEditor` interface.
+		  
+		  mVisibleLineRange = value
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 52657475726E73207468652073637265656E20706F736974696F6E20666F722074686520676976656E206063686172506F73602E
@@ -5261,21 +5431,6 @@ Implements MessageCentre.MessageReceiver
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return mCaretPos
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If value = mCaretPos Then Return
-			  ChangeSelection(value, 0)
-			End Set
-		#tag EndSetter
-		CaretPos As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
 			  Return SymbolAtline(CaretLine)
 			  
 			End Get
@@ -5415,7 +5570,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private DragSource As SyntaxArea.Editor
+		Private DragSource As SyntaxArea.IEditor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5433,26 +5588,6 @@ Implements MessageCentre.MessageReceiver
 	#tag Property, Flags = &h0
 		EnableAutocomplete As Boolean = False
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mEnableLineFolding
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If mEnableLineFolding And Not value Then Lines.UnfoldAll
-			  mEnableLineFolding = value
-			  LineNumberOffset = 0
-			  UpdateDesiredColumn
-			  InvalidateAllLines
-			  Redraw
-			  
-			End Set
-		#tag EndSetter
-		EnableLineFolding As Boolean
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21, Description = 5573656420696E7465726E616C6C7920746F20747261636B206966206C696E6520666F6C64696E67732061726520656E61626C65642E204C696E6520666F6C64696E677320617265206175746F6D61746963616C6C792064697361626C656420696620746865726520617265206D6F7265207468616E203135303030206C696E6573206F6620636F64652E
 		Private EnableLineFoldingSetting As Boolean
@@ -5650,7 +5785,7 @@ Implements MessageCentre.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 4966206D61746368696E6720627261636B657420686967686C69676874696E6720697320656E61626C65642C2074686973206973207468652076697375616C207374796C65207573656420746F20646F20736F2E
-		HighlightMatchingBracketsMode As SyntaxArea.Editor.BracketsHighlightModes = SyntaxArea.Editor.BracketsHighlightModes.Circle
+		HighlightMatchingBracketsMode As SyntaxArea.BracketsHighlightModes = SyntaxArea.BracketsHighlightModes.Circle
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -5680,24 +5815,6 @@ Implements MessageCentre.MessageReceiver
 	#tag Property, Flags = &h0
 		IndentPixels As Integer = 16
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mIndentVisually
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If mIndentVisually <> value Then
-			    mIndentVisually = value
-			    Self.ReindentText
-			  End If
-			  
-			End Set
-		#tag EndSetter
-		IndentVisually As Boolean
-	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
@@ -5915,27 +6032,6 @@ Implements MessageCentre.MessageReceiver
 	#tag Property, Flags = &h21
 		Private MatchingBlockHighlight As SyntaxArea.CharSelection
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Note
-			Careful:
-			This returns just the number of rows that fit into the Canvas.
-			This is not the same as the number of text lines that may be appearing in
-			the Canvas if line folding is used! (Get that value from `Self.VisibleAndHiddenLines`).
-		#tag EndNote
-		#tag Getter
-			Get
-			  // This check prevents `ThreadAccessingUIException` when called from a thread.
-			  If Thread.Current = Nil Then
-			    mMaxVisibleLines = Min(Me.Height / TextHeight, Lines.Count)
-			  End
-			  
-			  Return mMaxVisibleLines
-			  
-			End Get
-		#tag EndGetter
-		MaxVisibleLines As Integer
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mBackBuffer As Picture
@@ -6412,22 +6508,6 @@ Implements MessageCentre.MessageReceiver
 		SelectionLength As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return mSelectionStart
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  ChangeSelection(value, 0)
-			  Redraw
-			  
-			End Set
-		#tag EndSetter
-		SelectionStart As Integer
-	#tag EndComputedProperty
-
 	#tag ComputedProperty, Flags = &h0, Description = 47657473206F72207365747320746865207465787420696E207468652063757272656E742073656C656374696F6E2E204966207468657265206973206E6F2063757272656E742073656C656374696F6E207468656E2074657874206973207365742F7265747269657665642066726F6D207468652063757272656E7420636172657420706F736974696F6E2E
 		#tag Getter
 			Get
@@ -6618,24 +6698,6 @@ Implements MessageCentre.MessageReceiver
 		Text As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0, Description = 5468652064656661756C74207465787420636F6C6F75722E
-		#tag Getter
-			Get
-			  Return SyntaxArea.TokenStyle(TokenStyles.Value("*default")).TextColor
-			  
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  SyntaxArea.TokenStyle(TokenStyles.Value("*default")).TextColor = value
-			  InvalidateAllLines
-			  Redraw(True)
-			  
-			End Set
-		#tag EndSetter
-		TextColor As Color
-	#tag EndComputedProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -6654,15 +6716,6 @@ Implements MessageCentre.MessageReceiver
 			End Set
 		#tag EndSetter
 		TextHeight As Double
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return TextStorage.Length
-			End Get
-		#tag EndGetter
-		TextLength As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662073656C656374656420746578742E
@@ -6808,26 +6861,6 @@ Implements MessageCentre.MessageReceiver
 		VerticalRulerPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If mVisibleLineRange = Nil Then
-			    mVisibleLineRange = New SyntaxArea.DataRange
-			  End If
-			  
-			  Return mVisibleLineRange
-			  
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  mVisibleLineRange = value
-			  
-			End Set
-		#tag EndSetter
-		VisibleLineRange As SyntaxArea.DataRange
-	#tag EndComputedProperty
-
 
 	#tag Constant, Name = BLOCK_CLOSE_CHARS, Type = String, Dynamic = False, Default = \")]}", Scope = Private
 	#tag EndConstant
@@ -6867,12 +6900,6 @@ Implements MessageCentre.MessageReceiver
 
 	#tag Constant, Name = UNDO_EVT_BLOCK_SECS, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
-
-
-	#tag Enum, Name = BracketsHighlightModes, Type = Integer, Flags = &h0, Description = 54686520646966666572656E74207761797320627261636B6574732063616E20626520686967686C6967687465642062792074686520656469746F722E
-		Circle
-		Highlight
-	#tag EndEnum
 
 
 	#tag ViewBehavior
@@ -7061,14 +7088,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="IndentVisually"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="LineNumbersFontName"
 			Visible=true
 			Group="Appearance"
@@ -7141,14 +7160,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="EnableLineFolding"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabPanelIndex"
 			Visible=false
 			Group="Behavior"
@@ -7158,14 +7169,6 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CaretLine"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="CaretPos"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -7217,7 +7220,7 @@ Implements MessageCentre.MessageReceiver
 			Visible=false
 			Group="Behavior"
 			InitialValue="SyntaxArea.Editor.BracketsHighlightModes.Circle"
-			Type="SyntaxArea.Editor.BracketsHighlightModes"
+			Type="SyntaxArea.BracketsHighlightModes"
 			EditorType="Enum"
 			#tag EnumValues
 				"0 - Circle"
@@ -7254,14 +7257,6 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MaxVisibleLines"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7313,14 +7308,6 @@ Implements MessageCentre.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SelectionStart"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="SelectionText"
 			Visible=false
 			Group="Behavior"
@@ -7350,14 +7337,6 @@ Implements MessageCentre.MessageReceiver
 			Group="Behavior"
 			InitialValue=""
 			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextLength"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -7506,14 +7485,6 @@ Implements MessageCentre.MessageReceiver
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SuggestionPopupTextColor"
-			Visible=true
-			Group="Colours"
-			InitialValue="&c000000"
-			Type="Color"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextColor"
 			Visible=true
 			Group="Colours"
 			InitialValue="&c000000"
