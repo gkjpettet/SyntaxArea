@@ -6587,7 +6587,7 @@ Implements MessageCentre.MessageReceiver
 			      UndoManager.Push(New SyntaxArea.UndoableReplace(Self, 0, Self.Text.Length, Self.Text, value, _
 			      lineAttrs, CaretPos, CurrentEventID, "Change Text"))
 			    End If
-			    disableReset = False
+			    DisableReset = False
 			  End If
 			  
 			  ModifiedLines.Clear
@@ -6596,7 +6596,7 @@ Implements MessageCentre.MessageReceiver
 			  Lines.SetText(value.Length)
 			  
 			  // Disable line folding for text bigger than 15000 lines otherwise it's slow.
-			  If lines.Count > 15000 Then
+			  If Lines.Count > 15000 Then
 			    If Me.EnableLineFolding Then
 			      EnableLineFoldingSetting = True
 			    End If
