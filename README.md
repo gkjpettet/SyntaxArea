@@ -38,5 +38,16 @@ The editor is a `TextInputCanvas` subclass and is found within the `SyntaxArea` 
 ## Feedback
 I welcome feedback, bug reports and feature requests. Please open a GitHub issue. I'm also happy to take pull requests - if you make one please make sure you stick to the formatting styles used throughout the project.
 
+## License
+This software is provided "as-is" under the MIT license.
+
+## Acknowledgements
+- [Alex Restrepo][alexr], the author of the original `CustomEditField`.
+- [Thomas Tempelmann][thomast] who has acted as a steward for `CustomEditField` for several years.
+- [Matthew Combatti][matthewc] who shared an early port of `CustomEditField` to API 2.0.
+
 [tic]: https://einhugur.com/Html/opensource.html 
 [cef]: https://github.com/tempelmann/custom-editfield
+[alexr]: https://github.com/alexrestrepo
+[thomast]: https://www.tempel.org
+[matthewc]: https://github.com/simulanics
