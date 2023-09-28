@@ -815,7 +815,7 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		  ElseIf maxIndex = 0 And Text <> firstMatch Then
 		    // Just one.
 		    OptionForTrailingSuggestion = firstMatch
-		    trailingSuggestion = firstMatch.Middle(firstMatch.LongestCommonPrefixIndex(currentPathComponent))
+		    TrailingSuggestion = firstMatch.Middle(firstMatch.LongestCommonPrefixIndex(currentPathComponent))
 		    
 		  Else
 		    // The word is already fully typed.
@@ -1851,11 +1851,7 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		      
 		      // Autocomplete suggestion.
 		      If SelectionLength = 0 And lineIdx = CaretLine And TrailingSuggestion <> "" Then
-		        g.DrawingColor = SyntaxArea.AdjustColorForDarkMode(&cAAAAAA)
-		        Var c As Color = g.DrawingColor
-		        If Color.IsDarkMode Then
-		          g.DrawingColor = Color.RGB(c.Red + 75, c.Green + 75, c.Blue + 75)
-		        End If
+		        g.DrawingColor = StyleForToken("autocomplete").TextColor
 		        g.DrawText(trailingSuggestion, AutocompleteSuggestionInsertionX, sy - (g.TextHeight - g.FontAscent))
 		      End If
 		      

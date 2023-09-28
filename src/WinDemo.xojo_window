@@ -2341,12 +2341,15 @@ End
 		  /// The app's appearance has changed (e.g. a switch between light/dark mode).
 		  
 		  If Color.IsDarkMode Then
+		    #Pragma Warning "TODO: Include Xojo dark theme"
 		    // Get the correct bundled theme.
 		    Var themeFile As FolderItem = SpecialFolder.Resource("nova-dark.json")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  Else
-		    Var themeFile As FolderItem = SpecialFolder.Resource("nova-light.json")
+		    // Var themeFile As FolderItem = SpecialFolder.Resource("nova-light.json")
+		    #Pragma Warning "TODO: Finish Xojo light theme"
+		    Var themeFile As FolderItem = SpecialFolder.Resource("xojo-light.json")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  End If

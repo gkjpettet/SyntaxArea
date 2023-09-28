@@ -11,6 +11,14 @@
 	"underline": false
   },
   "styles": {
+	"autocomplete": {
+		"textColor": "&h40AAAAAA",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": true,
+		"underline": false
+	},
 	"comment": {
 	  "textColor": "&h00737373",
 	  "backColor": "&h00000000",
