@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="1.2">
+<highlightDefinition version="2.0">
 	<name>Markdown</name>
 
-	<contexts defaultColor="#000000" caseSensitive="no">		
-		<highlightContext name="BoldUnderscore" highlightColor="#326510">
+	<contexts caseSensitive="no">		
+		<highlightContext name="boldUnderscore">
 			<startRegEx>\s__[^ \t]</startRegEx>
 			<endRegEx>__</endRegEx>
 		</highlightContext>
