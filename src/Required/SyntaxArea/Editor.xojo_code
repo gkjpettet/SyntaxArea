@@ -2531,13 +2531,13 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, Description = 547275652069662074686520636F646520697320696E64656E7465642076697375616C6C79206F6E6C792028692E652E206E6F74207573696E6720707265666978696E6720737061636573292E
 		Function IndentVisually() As Boolean
 		  Return mIndentVisually
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, Description = 53657420746F20547275652069662074686520636F64652073686F756C6420626520696E64656E7465642076697375616C6C79206F6E6C792028692E652E206E6F74207573696E6720707265666978696E6720737061636573292E
 		Sub IndentVisually(Assigns value As Boolean)
 		  If mIndentVisually <> value Then
 		    mIndentVisually = value
@@ -6210,7 +6210,7 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIndentVisually As Boolean
+		Private mIndentVisually As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
