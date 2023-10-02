@@ -35,6 +35,8 @@ The editor is a `TextInputCanvas` subclass and is found within the `SyntaxArea` 
 - `UndoKit`: Contains classes to support undo/redo. This is in a separate module so that you can use it in other projects.
 - `MessageCentre`: Supports sending and receiving messages between components in a project. It's used internally within `SyntaxArea` but you can also use it for your own purposes within your own projects.
 
+For more detailed information, [see the Wiki][wiki].
+
 ## Feedback
 I welcome feedback, bug reports and feature requests. Please open a GitHub issue. I'm also happy to take pull requests - if you make one please make sure you stick to the formatting styles used throughout the project.
 
@@ -51,3 +53,4 @@ This software is provided "as-is" under the MIT license.
 [alexr]: https://github.com/alexrestrepo
 [thomast]: https://www.tempel.org
 [matthewc]: https://github.com/simulanics
+[wiki]: https://github.com/gkjpettet/SyntaxArea/wiki
