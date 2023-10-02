@@ -5871,7 +5871,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		Private IsDoubleClick As Boolean = False
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E20696E64656E746174696F6E20697320656E61626C65642E
 		#tag Getter
 			Get
 			  Return mKeepEntireTextIndented
@@ -6254,7 +6254,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKeepEntireTextIndented As Boolean
+		Private mKeepEntireTextIndented As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -7589,9 +7589,9 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="KeepEntireTextIndented"
-			Visible=true
+			Visible=false
 			Group="Autocompletion"
-			InitialValue="True"
+			InitialValue=""
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

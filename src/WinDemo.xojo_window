@@ -203,7 +203,7 @@ Begin DesktopWindow WinDemo
          Index           =   -2147483648
          InitialParent   =   "Panel"
          InvisibleCharacterColor=   &c00000000
-         KeepEntireTextIndented=   False
+         KeepEntireTextIndented=   True
          Left            =   0
          LeftMarginOffset=   5
          LineHeight      =   0.0
