@@ -32,6 +32,7 @@ Protected Class EditorTheme
 		  theme.DirtyLinesColor = Color.Yellow
 		  theme.GutterBackColor = Color.Black
 		  theme.GutterBorderColor = Color.White
+		  theme.InvisibleCharacterColor = Color.DarkGray
 		  theme.LineNumbersColor = Color.White
 		  theme.VerticalRulerColor =Color.DarkGray
 		  theme.SuggestionPopupBackColor = Color.Black
@@ -100,6 +101,7 @@ Protected Class EditorTheme
 		  theme.DirtyLinesColor = Color.Yellow
 		  theme.GutterBackColor = Color.White
 		  theme.GutterBorderColor = Color.Black
+		  theme.InvisibleCharacterColor = Color.Gray
 		  theme.LineNumbersColor = Color.Black
 		  theme.VerticalRulerColor = Color.LightGray
 		  theme.SuggestionPopupBackColor = Color.White
@@ -193,6 +195,11 @@ Protected Class EditorTheme
 		    theme.DefaultTokenStyle = SyntaxArea.TokenStyle.FromDictionary(d.Value("defaultStyle"))
 		  End If
 		  
+		  // Invisible character colour.
+		  If d.HasKey("invisibleCharacterColor") Then
+		    theme.InvisibleCharacterColor = Color.FromString(d.Value("invisibleCharacterColor"))
+		  End If
+		  
 		  // Any other token styles.
 		  If d.HasKey("styles") Then
 		    Var styles As Dictionary = d.Value("styles")
@@ -262,6 +269,9 @@ Protected Class EditorTheme
 		    Raise New UnsupportedOperationException("Unable to convert theme to JSON as there is no default token style.")
 		  End If
 		  json.Add(GenerateJSON("defaultStyle") + ":" + defaultStyle.ToJSON + ",")
+		  
+		  // Invisible characters colour.
+		  json.Add(JSONKeyValue("invisibleCharacterColor", InvisibleCharacterColor) + ",")
 		  
 		  // The remaining token styles.
 		  json.Add("""styles"": " + " {")
@@ -360,6 +370,10 @@ Protected Class EditorTheme
 
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F7572206F66207468652072696768742068616E6420626F72646572206F6620746865206775747465722E
 		GutterBorderColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220696E76697369626C6520636861726163746572732E
+		InvisibleCharacterColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h0, Description = 54686520636F6C6F757220746F2075736520666F7220746865206C696E65206E756D626572732E
@@ -598,7 +612,7 @@ Protected Class EditorTheme
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Version"
@@ -606,7 +620,7 @@ Protected Class EditorTheme
 			Group="Behavior"
 			InitialValue="1.0.0"
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

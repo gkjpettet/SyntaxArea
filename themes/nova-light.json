@@ -10,6 +10,7 @@
 	"italic": false,
 	"underline": false
   },
+  "invisibleCharacterColor" : "&h00C1C6CC",
   "styles": {
 	"autocomplete": {
 		"textColor": "&h40AAAAAA",

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class TextLine
 Inherits SyntaxArea.TextSegment
-	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
+	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Event
 		Sub LengthChanged()
 		  IsDirty = true
@@ -222,7 +222,7 @@ Inherits SyntaxArea.TextSegment
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 44726177732074686973206C696E652E
-		Sub Paint(storage As SyntaxArea.GapBuffer, g As Graphics, x As Double, y As Double, defaultColor As Color, displayInvisible As Boolean, selStart As Integer, selLength As Integer, showLeadingSpace As Boolean, indentVisually As Boolean, foldedTrailImage As Picture)
+		Sub Paint(storage As SyntaxArea.GapBuffer, g As Graphics, x As Double, y As Double, defaultColor As Color, displayInvisible As Boolean, invisibleColor As Color, selStart As Integer, selLength As Integer, showLeadingSpace As Boolean, indentVisually As Boolean, foldedTrailImage As Picture)
 		  /// Draws this line.
 		  
 		  #If Not DebugBuild
@@ -242,12 +242,13 @@ Inherits SyntaxArea.TextSegment
 		  Var theText As String
 		  Var word As SyntaxArea.TextSegment
 		  Var wordFound As Boolean
-		  Var darkerHighlightColor As Color = Color.HighlightColor.DarkerColor(50, True)
+		  'Var darkerHighlightColor As Color = Color.HighlightColor.DarkerColor(50, True)
 		  
 		  // Paint the tokens.
 		  For i As Integer = 0 To Words.LastIndex
 		    word = Words(i)
-		    g.DrawingColor = darkerHighlightColor
+		    'g.DrawingColor = darkerHighlightColor
+		    g.DrawingColor = invisibleColor
 		    
 		    Var selfWordOfs As Integer = word.Offset + Self.Offset
 		    

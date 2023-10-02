@@ -1833,7 +1833,8 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		      PaintBelowLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
 		      
 		      // Paint the line.
-		      line.Paint(TextStorage, g, sx, sy - (g.TextHeight - g.FontAscent), TextColor, DisplayInvisibleCharacters, SelectionStart, SelectionLength, True, Self.IndentVisually, BlockFoldedTrailImage)
+		      line.Paint(TextStorage, g, sx, sy - (g.TextHeight - g.FontAscent), TextColor, _
+		      DisplayInvisibleCharacters, InvisibleCharacterColor, SelectionStart, SelectionLength, True, Self.IndentVisually, BlockFoldedTrailImage)
 		      
 		      // Line overlay?
 		      PaintAboveLine(lineIdx, g, LineNumberOffset, sy - g.TextHeight, g.Width - LineNumberOffset - 1, TextHeight)
@@ -1844,7 +1845,9 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		        If tmp <> Nil Then
 		          // Make italic and paint after the current line.
 		          tmp.Italic = True
-		          tmp.Paint(TextStorage, g, sx + line.TotalWidth + BlockFoldedTrailImage.Graphics.Width + 6, sy - (g.TextHeight - g.FontAscent), TextColor, False, SelectionStart, SelectionLength, False, Self.IndentVisually, BlockFoldedTrailImage)
+		          tmp.Paint(TextStorage, g, sx + line.TotalWidth + BlockFoldedTrailImage.Graphics.Width + 6, _
+		          sy - (g.TextHeight - g.FontAscent), TextColor, False, InvisibleCharacterColor, _
+		          SelectionStart, SelectionLength, False, Self.IndentVisually, BlockFoldedTrailImage)
 		          tmp.Italic = False
 		        End If
 		      End If
@@ -2774,6 +2777,8 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		  For Each entry As DictionaryEntry In theme.TokenStyles
 		    AddTokenStyle(entry.Key, entry.Value)
 		  Next entry
+		  
+		  Self.InvisibleCharacterColor = theme.InvisibleCharacterColor
 		  
 		  // Now load the editor properties.
 		  Self.BackColor = theme.BackColor
@@ -5831,6 +5836,23 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		Private InvalidLines As Dictionary
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7220746F2075736520666F7220696E76697369626C6520636861726163746572732E
+		#tag Getter
+			Get
+			  Return mInvisibleCharacterColor
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mInvisibleCharacterColor = value
+			  InvalidateAllLines
+			  Redraw(True)
+			End Set
+		#tag EndSetter
+		InvisibleCharacterColor As Color
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private IsDoubleClick As Boolean = False
 	#tag EndProperty
@@ -6211,6 +6233,10 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 
 	#tag Property, Flags = &h21
 		Private mInvalidLines As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInvisibleCharacterColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
