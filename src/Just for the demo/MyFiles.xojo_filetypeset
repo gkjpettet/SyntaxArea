@@ -7,7 +7,23 @@
 		MacType=TEXT
 		Name=text/xml
 		UTI=public.xml
-		UTIConformsTo=,public.data
+		UTIConformsTo=public.data
+		Description=
+		MimeType=
+		Imported=True
+		HandlerRank=&h9
+		UTIPhysicalType=public.data
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=TextJSON
+		Extension=.json
+		Flags=&h2
+		MacCreator=
+		MacType=TEXT
+		Name=text/json
+		UTI=public.json
+		UTIConformsTo=public.data
 		Description=
 		MimeType=
 		Imported=True

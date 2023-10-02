@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
-Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
+Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
@@ -2800,9 +2800,10 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		  Self.TextSelectionColor = theme.TextSelectionColor
 		  Self.UseLighterLineFoldingBackColor = theme.UseLighterLineFoldingBackColor
 		  
-		  // We'll need to refresh the editor.
-		  InvalidateAllLines
-		  Redraw(True)
+		  // Self.Text = Self.Text
+		  // InvalidateAllLines
+		  // Redraw
+		  
 		End Sub
 	#tag EndMethod
 
@@ -3662,8 +3663,21 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		  
 		  Me.SelectionText = t
 		  
-		  InvalidateAllLines
+		  // ModifiedLines.Clear
+		  // 
+		  // If mHighlighter <> Nil Then
+		  // // Stop the highlighter.
+		  // StopHighlighter
+		  // 
+		  // Lines.MarkAllLinesAsChanged
+		  // VisibleLineRange.Length = -1
+		  // 
+		  // Highlight
+		  // End If
+		  // 
+		  // ReIndentText
 		  
+		  InvalidateAllLines
 		  Redraw(True)
 		  
 		End Sub
@@ -4014,7 +4028,7 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2C20796F752073686F756C646E277420757365206974206469726563746C792C2075736520696E73746561642053656C656374696F6E537461727420616E642053656C656374696F6E546578742E
-		Sub PrivateReplace(offset As Integer, length As Integer, s As String, alwaysMarkChanged As Boolean = True, eventID As Integer = -1, keepSelection As Boolean = False, beSilent As Boolean = False)
+		Sub PrivateReplace(offset As Integer, length As Integer, s As String, alwaysMarkChanged As Boolean = True, eventID As Integer = -1, keepSelection As Boolean = False, beSilent As Boolean = False, undoable As Boolean = True)
 		  /// This method is used internally by the control, and externally by the undo mechanism, 
 		  /// you shouldn't use it directly, use instead SelectionStart and SelectionText.
 		  ///
@@ -4043,7 +4057,7 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 		  Lines.GetAttributesOfLinesInRange(offset, length)
 		  
 		  If eventID < 0 Then eventID = CurrentEventID
-		  If UndoManager <> Nil Then
+		  If UndoManager <> Nil And undoable Then
 		    UndoManager.Push(New SyntaxArea.UndoableReplace(Self, offset, length, removedText, s, _
 		    removedAttrs, CaretPos, eventID, "Insert Text"))
 		  End If
@@ -6685,7 +6699,7 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 			    If UndoManager <> Nil Then UndoManager.Reset
 			  Else
 			    Var lineAttrs() As SyntaxArea.TextLineAttributes
-			    If UndoManager <> Nil Then 
+			    If UndoManager <> Nil Then
 			      UndoManager.Push(New SyntaxArea.UndoableReplace(Self, 0, Self.Text.Length, Self.Text, value, _
 			      lineAttrs, CaretPos, CurrentEventID, "Change Text"))
 			    End If
@@ -7383,6 +7397,14 @@ Implements MessageCentre.MessageReceiver, SyntaxArea.IEditor
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InvisibleCharacterColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

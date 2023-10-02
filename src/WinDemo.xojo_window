@@ -10,7 +10,7 @@ Begin DesktopWindow WinDemo
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   644
+   Height          =   692
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -27,7 +27,7 @@ Begin DesktopWindow WinDemo
    Begin DesktopPagePanel Panel
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   644
+      Height          =   692
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
@@ -73,7 +73,7 @@ Begin DesktopWindow WinDemo
          TabIndex        =   1
          TabPanelIndex   =   1
          Tooltip         =   ""
-         Top             =   610
+         Top             =   658
          Transparent     =   True
          Value           =   0
          Visible         =   True
@@ -90,7 +90,7 @@ Begin DesktopWindow WinDemo
          AllowLiveScrolling=   True
          AllowTabStop    =   True
          Enabled         =   True
-         Height          =   610
+         Height          =   658
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   772
@@ -154,7 +154,7 @@ Begin DesktopWindow WinDemo
          Text            =   ""
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   626
+         Top             =   674
          TopBorderColor  =   &c00000000
          Transparent     =   True
          Visible         =   True
@@ -194,7 +194,7 @@ Begin DesktopWindow WinDemo
          HasLeftBorder   =   True
          HasRightBorder  =   True
          HasTopBorder    =   True
-         Height          =   610
+         Height          =   658
          HighlightBlocksOnMouseOverGutter=   False
          HighlightMatchingBrackets=   True
          HighlightMatchingBracketsMode=   0
@@ -202,6 +202,7 @@ Begin DesktopWindow WinDemo
          IndentPixels    =   16
          Index           =   -2147483648
          InitialParent   =   "Panel"
+         InvisibleCharacterColor=   &c00000000
          KeepEntireTextIndented=   False
          Left            =   0
          LeftMarginOffset=   5
@@ -2223,6 +2224,130 @@ Begin DesktopWindow WinDemo
       Visible         =   True
       Width           =   18
    End
+   Begin DesktopButton ButtonLoadTheme
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Load Theme..."
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1020
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   69
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   611
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   121
+   End
+   Begin DesktopLabel LabelTheme
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   70
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Theme"
+      TextAlignment   =   3
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   611
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   74
+   End
+   Begin DesktopLabel LabelThemeDetail
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   800
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   71
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Select a built-in theme or load your own."
+      TextAlignment   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   632
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   281
+   End
+   Begin DesktopPopupMenu PopupTheme
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   886
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedRowIndex=   0
+      TabIndex        =   72
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   611
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   127
+   End
 End
 #tag EndDesktopWindow
 
@@ -2286,6 +2411,7 @@ End
 		  // Ensure the editor has the focus.
 		  CodeEditor.SetFocus
 		  
+		  mFinishedInitialising = True
 		End Sub
 	#tag EndEvent
 
@@ -2341,15 +2467,12 @@ End
 		  /// The app's appearance has changed (e.g. a switch between light/dark mode).
 		  
 		  If Color.IsDarkMode Then
-		    #Pragma Warning "TODO: Include Xojo dark theme"
 		    // Get the correct bundled theme.
-		    Var themeFile As FolderItem = SpecialFolder.Resource("nova-dark.json")
+		    Var themeFile As FolderItem = SpecialFolder.Resource("Xojo Dark.json")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  Else
-		    // Var themeFile As FolderItem = SpecialFolder.Resource("nova-light.json")
-		    #Pragma Warning "TODO: Finish Xojo light theme"
-		    Var themeFile As FolderItem = SpecialFolder.Resource("xojo-light.json")
+		    Var themeFile As FolderItem = SpecialFolder.Resource("Xojo Light.json")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  End If
@@ -2552,6 +2675,18 @@ End
 		    End If
 		  Next i
 		  
+		  // Themes.
+		  PopupTheme.SelectedRowIndex = -1
+		  For i As Integer = 0 To PopupTheme.LastRowIndex
+		    If Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Xojo Dark" Then
+		      PopupTheme.SelectedRowIndex = i
+		      Exit
+		    ElseIf Not Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Xojo Light" Then
+		      PopupTheme.SelectedRowIndex = i
+		      Exit
+		    End If
+		  Next i
+		  
 		  // ===========
 		  // Info panel.
 		  // ===========
@@ -2627,6 +2762,10 @@ End
 
 	#tag Property, Flags = &h21, Description = 4361636865732074686520696E646578206F6620746865206C696E65207468617420776173206C61737420616666656374656420627920612073656C656374696F6E206368616E676564206576656E742E
 		Private LastSelectionChangedLine As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFinishedInitialising As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -2710,7 +2849,9 @@ End
 		Function AutocompleteOptionsForPrefix(prefix As String) As SyntaxArea.AutocompleteOptions
 		  Var data As SyntaxArea.AutocompleteOptions
 		  
-		  data = MyAutocompleteEngine.OptionsForPrefix(prefix)
+		  If MyAutocompleteEngine <> Nil Then
+		    data = MyAutocompleteEngine.OptionsForPrefix(prefix)
+		  End If
 		  
 		  Return data
 		  
@@ -3249,6 +3390,59 @@ End
 	#tag Event
 		Sub ColorChanged()
 		  Info.LeftBorderColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ButtonLoadTheme
+	#tag Event
+		Sub Pressed()
+		  Var f As FolderItem = FolderItem.ShowOpenFileDialog(MyFiles.TextJSON)
+		  
+		  If f = Nil Then Return
+		  
+		  Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(f)
+		  PopupTheme.AddRow(theme.Name)
+		  PopupTheme.RowTagAt(PopupTheme.LastAddedRowIndex) = theme
+		  PopupTheme.SelectedRowIndex = PopupTheme.LastAddedRowIndex
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PopupTheme
+	#tag Event
+		Sub Opening()
+		  Var theme As SyntaxArea.EditorTheme
+		  
+		  // Xojo Light.
+		  Me.AddRow("Xojo Light")
+		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Xojo Light.json"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
+		  
+		  // Xojo Dark.
+		  Me.AddRow("Xojo Dark")
+		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Xojo Dark.json"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
+		  
+		  // Nova Light.
+		  Me.AddRow("Nova Light")
+		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Nova Light.json"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
+		  
+		  // Nova Dark.
+		  Me.AddRow("Nova Dark")
+		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Nova Dark.json"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelectionChanged(item As DesktopMenuItem)
+		  #Pragma Unused item
+		  
+		  If mFinishedInitialising Then
+		    CodeEditor.LoadTheme(Me.RowTagAt(Me.SelectedRowIndex))
+		  End If
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
