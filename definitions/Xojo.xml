@@ -190,5 +190,9 @@
 		<highlightContext name="colorBlue">
 				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{4})[[:xdigit:]]{1,2}</entryRegEx>
 		</highlightContext>
+		
+		<highlightContext name="url">
+			<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
+		</highlightContext>
 	</contexts>
 </highlightDefinition>
