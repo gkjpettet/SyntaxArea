@@ -2800,9 +2800,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  Self.TextSelectionColor = theme.TextSelectionColor
 		  Self.UseLighterLineFoldingBackColor = theme.UseLighterLineFoldingBackColor
 		  
-		  // Self.Text = Self.Text
-		  // InvalidateAllLines
-		  // Redraw
+		  Self.Text = Self.Text
 		  
 		End Sub
 	#tag EndMethod
