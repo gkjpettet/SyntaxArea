@@ -2844,8 +2844,6 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    #Pragma DisableBoundsChecking
 		  #EndIf
 		  
-		  // OPTIMISE: For starters we can get the screen width by reading all the word lengths 
-		  // in this line.
 		  If longestLineIndex < 0 Then Return
 		  Var maxLine As SyntaxArea.TextLine = Lines.GetLine(longestLineIndex)
 		  If maxline = Nil Or abs(maxLine.length - mlastLongestLineLength) < 2 Then Return
