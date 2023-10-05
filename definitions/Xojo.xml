@@ -173,6 +173,9 @@
 		<highlightContext name="comment">
 			<startRegEx>'|\/\/|\brem\b</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
+				<highlightContext name="url" fallback="comment">
+					<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
+				</highlightContext>
 		</highlightContext>
 		
 		<highlightContext name="string">
@@ -189,10 +192,6 @@
 
 		<highlightContext name="colorBlue">
 				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{4})[[:xdigit:]]{1,2}</entryRegEx>
-		</highlightContext>
-		
-		<highlightContext name="url">
-			<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
 		</highlightContext>
 	</contexts>
 </highlightDefinition>
