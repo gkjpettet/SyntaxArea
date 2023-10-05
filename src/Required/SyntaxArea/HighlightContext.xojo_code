@@ -277,20 +277,20 @@ Protected Class HighlightContext
 		    Select Case subExpression
 		    Case " "
 		      tokens.Add(New SyntaxArea.TextSegment(position, 1, _
-		      SyntaxArea.TextSegment.TYPE_SPACE, style.TextColor, style.BackColor))
+		      SyntaxArea.TextSegment.TYPE_SPACE, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline, style.HasBackColor))
 		      
 		    Case Chr(9)
 		      tokens.Add(New SyntaxArea.TextSegment(position, 1, _
-		      SyntaxArea.TextSegment.TYPE_TAB, style.TextColor, style.BackColor))
+		      SyntaxArea.TextSegment.TYPE_TAB, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline, style.HasBackColor))
 		      
 		    Case Chr(10), Chr(13), Chr(13) + Chr(10)
 		      tokens.Add(New SyntaxArea.TextSegment(position, subExpression.Length, _
-		      SyntaxArea.TextSegment.TYPE_EOL, style.TextColor, style.BackColor))
+		      SyntaxArea.TextSegment.TYPE_EOL, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline, style.HasBackColor))
 		      
 		    Else
 		      If subExpression.Length > 0 Then _
 		      tokens.Add(New SyntaxArea.TextSegment(position, subExpression.Length, _
-		      SyntaxArea.TextSegment.TYPE_WORD, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline))
+		      SyntaxArea.TextSegment.TYPE_WORD, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline, style.HasBackColor))
 		    End Select
 		    
 		  Else
@@ -321,7 +321,7 @@ Protected Class HighlightContext
 		      
 		      If charPos - startPos > 0 Then _
 		      tokens.Add(New SyntaxArea.TextSegment(startPos + position, charPos - startPos, _
-		      SyntaxArea.TextSegment.TYPE_WORD, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline))
+		      SyntaxArea.TextSegment.TYPE_WORD, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline, style.HasBackColor))
 		      
 		      startPos = charPos
 		      startPosB = charPosB
@@ -341,7 +341,7 @@ Protected Class HighlightContext
 		        
 		        Var placeholder As New SyntaxArea.TextPlaceholder(startPos + position, _
 		        substring.Length, tmp + position, label.Length, entryStyle.TextColor, _
-		        entryStyle.BackColor, entryStyle.Bold, entryStyle.Italic, entryStyle.Underline)
+		        entryStyle.BackColor, entryStyle.Bold, entryStyle.Italic, entryStyle.Underline, entryStyle.HasBackColor)
 		        tokens.Add(placeholder)
 		        placeholders.Add(placeholder)
 		        
@@ -354,7 +354,7 @@ Protected Class HighlightContext
 		    If subExpression.Length - startPos > 0 Then _
 		    tokens.Add(New SyntaxArea.TextSegment(startPos + position, _
 		    subExpression.Length - startPos, TextSegment.TYPE_WORD, style.TextColor, _
-		    style.BackColor, style.Bold, style.Italic, style.Underline))
+		    style.BackColor, style.Bold, style.Italic, style.Underline, style.HasBackColor))
 		  End If
 		  
 		  Return scanNextLine

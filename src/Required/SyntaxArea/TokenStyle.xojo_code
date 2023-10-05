@@ -65,7 +65,7 @@ Protected Class TokenStyle
 		  
 		  style.TextColor = d.Lookup("textColor", Color.Black)
 		  style.BackColor = d.Lookup("backColor", Color.Black)
-		  style.HasBackColor = d.Lookup("hasBackgroundColor", False)
+		  style.HasBackColor = d.Lookup("hasBackColor", False)
 		  style.Bold = d.Lookup("bold", False)
 		  style.Italic = d.Lookup("italic", False)
 		  style.Underline = d.Lookup("underline", False)
@@ -207,8 +207,8 @@ Protected Class TokenStyle
 			Name="BackColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -231,12 +231,20 @@ Protected Class TokenStyle
 			Name="TextColor"
 			Visible=false
 			Group="Behavior"
-			InitialValue=""
-			Type="ColorGroup"
+			InitialValue="&c000000"
+			Type="Color"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Underline"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBackColor"
 			Visible=false
 			Group="Behavior"
 			InitialValue="False"

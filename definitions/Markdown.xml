@@ -2,10 +2,49 @@
 <highlightDefinition version="2.0">
 	<name>Markdown</name>
 
-	<contexts caseSensitive="no">		
-		<highlightContext name="boldUnderscore">
-			<startRegEx>\s__[^ \t]</startRegEx>
+	<contexts caseSensitive="no">
+		<highlightContext name="inlineCode" fallback="code">
+			<entryRegEx>\`[^\n]+\`</entryRegEx>
+		</highlightContext>
+		
+		<highlightContext name="doubleUnderscoreEmphasis" fallback="strongEmphasis">
+			<startRegEx>__[^ \t\n]</startRegEx>
 			<endRegEx>__</endRegEx>
+			
+			<highlightContext name="starEmphasisWithinDoubleUnderscoreEmphasis" fallback="mixedEmphasis">
+				<startRegEx>\*[^ \t\n]</startRegEx>
+				<endRegEx>\*</endRegEx>
+			</highlightContext>
+		</highlightContext>
+		
+		<highlightContext name="doubleStarEmphasis" fallback="strongEmphasis">
+			<startRegEx>\*\*[^ \t\n]</startRegEx>
+			<endRegEx>\*\*</endRegEx>
+			
+			<highlightContext name="underscoreEmphasisWithinDoubleStarEmphasis" fallback="mixedEmphasis">
+				<startRegEx>_[^ \t\n]</startRegEx>
+				<endRegEx>_</endRegEx>
+			</highlightContext>
+		</highlightContext>
+		
+		<highlightContext name="singleUnderscoreEmphasis" fallback="emphasis">
+			<startRegEx>_[^ \t\n]</startRegEx>
+			<endRegEx>_</endRegEx>
+			
+			<highlightContext name="doubleStarEmphasisWithinSingleUnderscoreEmphasis" fallback="mixedEmphasis">
+				<startRegEx>\*\*[^ \t\n]</startRegEx>
+				<endRegEx>\*\*</endRegEx>
+			</highlightContext>
+		</highlightContext>
+		
+		<highlightContext name="singleStarEmphasis" fallback="emphasis">
+			<startRegEx>\*[^ \t\n]</startRegEx>
+			<endRegEx>\*</endRegEx>
+			
+			<highlightContext name="doubleUnderscoreEmphasisWithinSingleStarEmphasis" fallback="mixedEmphasis">
+				<startRegEx>__[^ \t\n]</startRegEx>
+				<endRegEx>__</endRegEx>
+			</highlightContext>
 		</highlightContext>
 	</contexts>
 		

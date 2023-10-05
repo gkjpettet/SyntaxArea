@@ -19,8 +19,8 @@ Inherits SyntaxArea.TextSegment
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(offset as integer, length as integer, labelOffset as integer, labelLength as Integer, highlightColor as color, backgroundColor as color, bold as boolean = false, italic as boolean = false, underline as boolean = false)
-		  Super.Constructor(offset, length, TextSegment.TYPE_PLACEHOLDER, highlightColor, Color.Black, bold, italic, underline, False)
+		Sub Constructor(offset As Integer, length As Integer, labelOffset As Integer, labelLength As Integer, highlightColor As Color, backgroundColor As Color, bold As Boolean = False, italic As Boolean = False, underline As Boolean = false, hasBackColor As Boolean = False)
+		  Super.Constructor(offset, length, TextSegment.TYPE_PLACEHOLDER, highlightColor, Color.Black, bold, italic, underline, hasBackColor)
 		  
 		  Self.PlaceholderBackgroundColor = backgroundColor
 		  If Self.PlaceholderBackgroundColor = Color.Black Then

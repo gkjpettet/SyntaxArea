@@ -290,7 +290,8 @@ Protected Class HighlightDefinition
 		    ElseIf context <> Nil And context.IsPlaceholder Then
 		      Var label As String = match.SubExpressionString(match.SubExpressionCount - 1)
 		      Var tmp As Integer = s.LeftBytes(match.SubExpressionStartB(match.SubExpressionCount - 1)).Length
-		      Var placeholder As New SyntaxArea.TextPlaceholder(startPos, subExpression.Length, tmp, label.Length, style.TextColor, style.BackColor, style.Bold, style.Italic, style.Underline)
+		      Var placeholder As New SyntaxArea.TextPlaceholder(startPos, subExpression.Length, tmp, label.Length, style.TextColor, _
+		      style.BackColor, style.Bold, style.Italic, style.Underline, style.HasBackColor)
 		      tokens.Add(placeholder)
 		      placeholders.Add(placeholder)
 		      
