@@ -21,6 +21,9 @@ Protected Class HighlightContext
 	#tag Method, Flags = &h21
 		Private Sub AddSubContext(entry As SyntaxArea.HighlightContext)
 		  If entry = Nil Then Return
+		  
+		  entry.ParentContext = Self
+		  
 		  SubContexts.Add(entry)
 		  
 		  SubExpressionCount = SubExpressionCount + 1
@@ -268,7 +271,12 @@ Protected Class HighlightContext
 		  Var substring As String
 		  Var startPos, startPosB, charPos, charPosB As Integer
 		  
-		  Var style As SyntaxArea.TokenStyle = Owner.Owner.StyleForToken(Self.Name, Self.Fallback)
+		  Var style As SyntaxArea.TokenStyle
+		  If Self.Name = "fieldwhitespace" And ParentContext <> Nil Then
+		    style = Owner.Owner.StyleForToken(ParentContext.Name)
+		  Else
+		    style = Owner.Owner.StyleForToken(Self.Name, Self.Fallback)
+		  End If
 		  
 		  // Scan subcontexts.
 		  substring = mSearchPattern
@@ -327,6 +335,7 @@ Protected Class HighlightContext
 		      startPosB = charPosB
 		      
 		      entry = subContexts(tknIndex)
+		      
 		      Var entryStyle As SyntaxArea.TokenStyle = Owner.Owner.StyleForToken(entry.Name)
 		      
 		      // Forward execution to subcontext...
@@ -626,6 +635,10 @@ Protected Class HighlightContext
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mParentContext As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPlaceholderContextDef As SyntaxArea.HighlightContext
 	#tag EndProperty
 
@@ -681,6 +694,30 @@ Protected Class HighlightContext
 			End Set
 		#tag EndSetter
 		Owner As SyntaxArea.HighlightDefinition
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 41207765616B207265666572656E636520746F207468697320636F6E74657874277320706172656E74206F72204E696C2069662074686572652069736E2774206F6E652E
+		#tag Getter
+			Get
+			  If mParentContext = Nil Or mParentContext.Value = Nil Then
+			    Return Nil
+			  Else
+			    Return SyntaxArea.HighlightContext(mParentContext.Value)
+			  End If
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If value = Nil Then
+			    mParentContext = Nil
+			  Else
+			    mParentContext = New WeakRef(value)
+			  End If
+			  
+			End Set
+		#tag EndSetter
+		ParentContext As SyntaxArea.HighlightContext
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

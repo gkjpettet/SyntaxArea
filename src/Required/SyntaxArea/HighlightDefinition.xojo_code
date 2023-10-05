@@ -4,7 +4,7 @@ Protected Class HighlightDefinition
 		Private Sub AddBlankSpaceContext()
 		  /// Adds a blank space context, this will tokenise strings.
 		  
-		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self, False)
+		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self, False, False)
 		  blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))"
 		  blankSpaceContext.Name = "fieldwhitespace"
 		  
@@ -572,7 +572,7 @@ Protected Class HighlightDefinition
 		      End Select
 		    Next i
 		    
-		    // Add a blank space context, this will tokenize strings.
+		    // Add a blank space context.
 		    Self.AddBlankSpaceContext
 		    
 		    Return True
