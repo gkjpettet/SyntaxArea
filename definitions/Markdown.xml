@@ -69,6 +69,14 @@
 		<highlightContext name="h6atx" fallback="h6">
 			<entryRegEx>^#{6}[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
-
+		
+		<highlightContext name="linkReference">
+			<startRegEx>^\[[[:alpha:]]+\]:[ \t]</startRegEx>
+			<endRegEx>\n|$</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="url">
+			<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
+		</highlightContext>
 	</contexts>
 </highlightDefinition>
