@@ -15,6 +15,7 @@
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
 				End
 				Begin CopyFilesBuildStep CopyThemesLinux
 					AppliesTo = 0
@@ -26,6 +27,7 @@
 					FolderItem = Li4vLi4vdGhlbWVzL05vdmElMjBMaWdodC5qc29u
 					FolderItem = Li4vLi4vdGhlbWVzL1hvam8lMjBEYXJrLmpzb24=
 					FolderItem = Li4vLi4vdGhlbWVzL1hvam8lMjBMaWdodC5qc29u
+					FolderItem = Li4vLi4vdGhlbWVzL01hcmtkb3duJTIwTGlnaHQuanNvbg==
 				End
 			End
 			Begin BuildStepList Mac OS X
@@ -44,6 +46,7 @@
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
 				End
 				Begin CopyFilesBuildStep CopyThemesMac
 					AppliesTo = 0
@@ -55,6 +58,7 @@
 					FolderItem = Li4vLi4vdGhlbWVzL05vdmElMjBMaWdodC5qc29u
 					FolderItem = Li4vLi4vdGhlbWVzL1hvam8lMjBEYXJrLmpzb24=
 					FolderItem = Li4vLi4vdGhlbWVzL1hvam8lMjBMaWdodC5qc29u
+					FolderItem = Li4vLi4vdGhlbWVzL01hcmtkb3duJTIwTGlnaHQuanNvbg==
 				End
 				Begin SignProjectStep Sign
 				  DeveloperID=
@@ -76,6 +80,7 @@
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
 				End
 				Begin CopyFilesBuildStep CopyThemesWindows
 					AppliesTo = 0
@@ -87,6 +92,7 @@
 					FolderItem = Li4vLi4vdGhlbWVzL05vdmElMjBMaWdodC5qc29u
 					FolderItem = Li4vLi4vdGhlbWVzL1hvam8lMjBEYXJrLmpzb24=
 					FolderItem = Li4vLi4vdGhlbWVzL1hvam8lMjBMaWdodC5qc29u
+					FolderItem = Li4vLi4vdGhlbWVzL01hcmtkb3duJTIwTGlnaHQuanNvbg==
 				End
 			End
 #tag EndBuildAutomation

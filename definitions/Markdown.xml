@@ -1,51 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <highlightDefinition version="2.0">
 	<name>Markdown</name>
-
 	<contexts caseSensitive="no">
 		<highlightContext name="inlineCode" fallback="code">
-			<entryRegEx>\`[^\n]+\`</entryRegEx>
+			<entryRegEx>\`[^\`\n]+\`</entryRegEx>
 		</highlightContext>
-		
+
 		<highlightContext name="doubleUnderscoreEmphasis" fallback="strongEmphasis">
 			<startRegEx>__[^ \t\n]</startRegEx>
 			<endRegEx>__</endRegEx>
-			
-			<highlightContext name="starEmphasisWithinDoubleUnderscoreEmphasis" fallback="mixedEmphasis">
+
+			<highlightContext name="starEmphasisWithinDoubleUnderscoreEmphasis" fallback="strongEmphasis">
 				<startRegEx>\*[^ \t\n]</startRegEx>
 				<endRegEx>\*</endRegEx>
 			</highlightContext>
 		</highlightContext>
-		
+
 		<highlightContext name="doubleStarEmphasis" fallback="strongEmphasis">
 			<startRegEx>\*\*[^ \t\n]</startRegEx>
 			<endRegEx>\*\*</endRegEx>
-			
-			<highlightContext name="underscoreEmphasisWithinDoubleStarEmphasis" fallback="mixedEmphasis">
+
+			<highlightContext name="underscoreEmphasisWithinDoubleStarEmphasis" fallback="emphasis">
 				<startRegEx>_[^ \t\n]</startRegEx>
 				<endRegEx>_</endRegEx>
 			</highlightContext>
 		</highlightContext>
-		
+
 		<highlightContext name="singleUnderscoreEmphasis" fallback="emphasis">
 			<startRegEx>_[^ \t\n]</startRegEx>
 			<endRegEx>_</endRegEx>
-			
-			<highlightContext name="doubleStarEmphasisWithinSingleUnderscoreEmphasis" fallback="mixedEmphasis">
+
+			<highlightContext name="doubleStarEmphasisWithinSingleUnderscoreEmphasis" fallback="strongEmphasis">
 				<startRegEx>\*\*[^ \t\n]</startRegEx>
 				<endRegEx>\*\*</endRegEx>
 			</highlightContext>
 		</highlightContext>
-		
+
 		<highlightContext name="singleStarEmphasis" fallback="emphasis">
 			<startRegEx>\*[^ \t\n]</startRegEx>
 			<endRegEx>\*</endRegEx>
-			
-			<highlightContext name="doubleUnderscoreEmphasisWithinSingleStarEmphasis" fallback="mixedEmphasis">
+
+			<highlightContext name="doubleUnderscoreEmphasisWithinSingleStarEmphasis" fallback="strongEmphasis">
 				<startRegEx>__[^ \t\n]</startRegEx>
 				<endRegEx>__</endRegEx>
 			</highlightContext>
 		</highlightContext>
+
+		<highlightContext name="h1atx" fallback="h1">
+			<entryRegEx>^#[ \t]+[^#].+</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="h2atx" fallback="h2">
+			<entryRegEx>^#{2}[ \t]+[^#].+</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="h3atx" fallback="h3">
+			<entryRegEx>^#{3}[ \t]+[^#].+</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="h4atx" fallback="h4">
+			<entryRegEx>^#{4}[ \t]+[^#].+</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="h5atx" fallback="h5">
+			<entryRegEx>^#{5}[ \t]+[^#].+</entryRegEx>
+		</highlightContext>
+
+		<highlightContext name="h6atx" fallback="h6">
+			<entryRegEx>^#{6}[ \t]+[^#].+</entryRegEx>
+		</highlightContext>
+
 	</contexts>
-		
 </highlightDefinition>

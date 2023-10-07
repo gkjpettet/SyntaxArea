@@ -207,6 +207,43 @@ Protected Class HighlightDefinition
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 4C6F61647320612073796E74617820646566696E6974696F6E20584D4C2066696C652E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
+		Shared Function FromFile(f As FolderItem, owner As SyntaxArea.IEditor) As SyntaxArea.HighlightDefinition
+		  /// Loads a syntax definition XML file.
+		  /// May raise an `InvalidArgumentException`.
+		  
+		  If f = Nil Or Not f.Exists Then
+		    Raise New InvalidArgumentException("Cannot load a non-existent definition file.")
+		  End If
+		  
+		  If f.IsFolder Then
+		    Raise New InvalidArgumentException("Expected a definition file instead got a folder.")
+		  End If
+		  
+		  If owner = Nil Then
+		    Raise New InvalidArgumentException("The owning editor cannot be Nil.")
+		  End If
+		  
+		  Var xml As String
+		  Try
+		    Var tin As TextInputStream = TextInputStream.Open(f)
+		    xml = tin.ReadAll
+		    tin.Close
+		  Catch e As IOException
+		    Raise New InvalidArgumentException("Unable to read the contents of the definition file (" + _
+		    e.Message + ").")
+		  End Try
+		  
+		  Var def As New SyntaxArea.HighlightDefinition(owner)
+		  If Not def.LoadFromXml(xml) Then
+		    Raise New InvalidArgumentException("Invalid syntax definition file.")
+		  End If
+		  
+		  Return def
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Highlight(s As String, tokens() As SyntaxArea.TextSegment, placeholders() As SyntaxArea.TextPlaceholder, forceMatch As SyntaxArea.HighlightContext = Nil) As SyntaxArea.HighlightContext
 		  #Pragma DisableBackgroundTasks

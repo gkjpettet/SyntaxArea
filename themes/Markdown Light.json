@@ -1,0 +1,105 @@
+{
+	"name": "Markdown Dark",
+	"author": "Garry Pettet",
+	"version": "1.0.0",
+	"defaultStyle": {
+		"textColor": "&h00000000",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	},
+	"invisibleCharacterColor": "&h00BFC5CC",
+	"styles": {
+		"inlineCode": {
+			"textColor": "&h00000000",
+			"backColor": "&h00E5E5E5",
+			"hasBackColor": true,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"strongEmphasis": {
+			"textColor": "&h003D8F3D",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": true,
+			"italic": false,
+			"underline": false
+		},
+		"emphasis": {
+			"textColor": "&h003179DD",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": true,
+			"underline": false
+		},
+		"h1": {
+			"textColor": "&h00004C99",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"h2": {
+			"textColor": "&h00004C99",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"h3": {
+			"textColor": "&h00004C99",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"h4": {
+			"textColor": "&h00004C99",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"h5": {
+			"textColor": "&h00004C99",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"h6": {
+			"textColor": "&h00004C99",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		}
+	},
+	"backColor": "&h00FFFFFF",
+	"blockFoldedColor": "&h00FF8000",
+	"blockFoldedEllipsisColor": "&h00AAAAAA",
+	"blockFoldMarkerColor": "&h00555555",
+	"bookmarkColor": "&h000000FF",
+	"bracketHighlightColor": "&h000000FF",
+	"caretColor": "&h00000000",
+	"dirtyLinesColor": "&h00FFFF00",
+	"gutterBackColor": "&h00FFFFFF",
+	"gutterBorderColor": "&h00000000",
+	"lineNumbersColor": "&h00000000",
+	"verticalRulerColor": "&h00AAAAAA",
+	"sugestionPopupBackColor": "&h00FFFFFF",
+	"suggestionPopupSelectedTextColor": "&h00000000",
+	"suggestionPopupTextColor": "&h00000000",
+	"textColor": "&h00000000",
+	"textSelectionColor": "&h00A4CCFE"
+}
