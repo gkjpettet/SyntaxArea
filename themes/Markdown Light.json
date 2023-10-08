@@ -29,7 +29,7 @@
 			"underline": false
 		},
 		"emphasis": {
-			"textColor": "&h003179DD",
+			"textColor": "&h00DD7930",
 			"backColor": "&h00000000",
 			"hasBackColor": false,
 			"bold": false,
@@ -99,6 +99,126 @@
 			"bold": false,
 			"italic": false,
 			"underline": true
+		},
+		"xojoKeyword": {
+			"textColor": "&h000A5FFE",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"comment": {
+		  "textColor": "&h007D1012",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": true,
+		  "underline": false
+		},
+		"keyword": {
+		  "textColor": "&h000A5FFE",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"number": {
+		  "textColor": "&h0027CD41",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"double": {
+		  "textColor": "&h00117421",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"integer": {
+		  "textColor": "&h0027CD41",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"string": {
+		  "textColor": "&h009D33D5",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"type": {
+		  "textColor": "&h00000000",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"directive": {
+		  "textColor": "&h000A5FFE",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"placeholder": {
+		  "textColor": "&h00FFFFFF",
+		  "backColor": "&h003379F7",
+		  "hasBackColor": false,
+		  "bold": true,
+		  "italic": false,
+		  "underline": false
+		},
+		"double": {
+		  "textColor": "&h00146319",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"integer": {
+		  "textColor": "&h0028C732",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"colorRed": {
+		  "textColor": "&h00FF0000",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"colorGreen": {
+		  "textColor": "&h0000FF00",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+		},
+		"colorBlue": {
+		  "textColor": "&h000000FF",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
 		}
 	},
 	"backColor": "&h00FFFFFF",
