@@ -84,7 +84,7 @@
 			"italic": false,
 			"underline": false
 		},
-		"linkReference": {
+		"linkReferenceDefinition": {
 			"textColor": "&h00FF0000",
 			"backColor": "&h00000000",
 			"hasBackColor": false,

@@ -70,9 +70,13 @@
 			<entryRegEx>^#{6}[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
 		
-		<highlightContext name="linkReference">
+		<highlightContext name="linkReferenceDefinition">
 			<startRegEx>^\[[[:alpha:]]| +\]:[ \t]</startRegEx>
 			<endRegEx>\n|$</endRegEx>
+			
+			<highlightContext name="linkReferenceDestination" fallback="url">
+				<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
+			</highlightContext>
 		</highlightContext>
 		
 		<highlightContext name="url">
