@@ -85,7 +85,7 @@
 			"underline": false
 		},
 		"linkReferenceDefinition": {
-			"textColor": "&h00FF0000",
+			"textColor": "&h00027BB8",
 			"backColor": "&h00000000",
 			"hasBackColor": false,
 			"bold": false,
@@ -205,7 +205,7 @@
 		  "underline": false
 		},
 		"colorGreen": {
-		  "textColor": "&h0000FF00",
+		  "textColor": "&h0027CD41",
 		  "backColor": "&h00000000",
 		  "hasBackColor": false,
 		  "bold": false,
