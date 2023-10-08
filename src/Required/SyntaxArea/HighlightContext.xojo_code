@@ -414,6 +414,11 @@ Protected Class HighlightContext
 		  // Context name.
 		  Name = node.GetAttribute("name")
 		  
+		  // Case sensitivity override?
+		  If node.GetAttribute("caseSensitive") <> "" Then
+		    mScanner.Options.CaseSensitive = YN2Bool(node.GetAttribute("caseSensitive"))
+		  End If
+		  
 		  // Fallback style name,
 		  Fallback = node.GetAttribute("fallback")
 		  
@@ -472,6 +477,17 @@ Protected Class HighlightContext
 		  End If
 		  
 		  Return mSubContextPattern
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 52657475726E732054727565206966206076616C7565602069732022796573222C206F74686572776973652072657475726E732046616C73652E
+		Private Function YN2Bool(value As String) As Boolean
+		  /// Returns True if `value` is "yes", otherwise returns False.
+		  
+		  If value = "yes" Then Return True
+		  
+		  Return False
 		  
 		End Function
 	#tag EndMethod
