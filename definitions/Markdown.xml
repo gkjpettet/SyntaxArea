@@ -7,43 +7,23 @@
 		</highlightContext>
 
 		<highlightContext name="doubleUnderscoreEmphasis" fallback="strongEmphasis">
-			<startRegEx>__[^ \t\n]</startRegEx>
+			<startRegEx>(?:^|\W)__[^ \t\n]</startRegEx>
 			<endRegEx>__</endRegEx>
-			
-			<highlightContext name="starEmphasisWithinDoubleUnderscoreEmphasis" fallback="strongEmphasis">
-				<startRegEx>\*[^ \t\n]</startRegEx>
-				<endRegEx>\*</endRegEx>
-			</highlightContext>
 		</highlightContext>
 
 		<highlightContext name="doubleStarEmphasis" fallback="strongEmphasis">
-			<startRegEx>\*\*[^ \t\n]</startRegEx>
+			<startRegEx>(?:^|\W)\*\*[^ \t\n]</startRegEx>
 			<endRegEx>\*\*</endRegEx>
-
-			<highlightContext name="underscoreEmphasisWithinDoubleStarEmphasis" fallback="emphasis">
-				<startRegEx>_[^ \t\n]</startRegEx>
-				<endRegEx>_</endRegEx>
-			</highlightContext>
 		</highlightContext>
 
 		<highlightContext name="singleUnderscoreEmphasis" fallback="emphasis">
-			<startRegEx>_[^ \t\n]</startRegEx>
+			<startRegEx>(?:^|\W)_[^ \t\n]</startRegEx>
 			<endRegEx>_</endRegEx>
-
-			<highlightContext name="doubleStarEmphasisWithinSingleUnderscoreEmphasis" fallback="strongEmphasis">
-				<startRegEx>\*\*[^ \t\n]</startRegEx>
-				<endRegEx>\*\*</endRegEx>
-			</highlightContext>
 		</highlightContext>
 
 		<highlightContext name="singleStarEmphasis" fallback="emphasis">
-			<startRegEx>\*[^ \t\n]</startRegEx>
+			<startRegEx>(?:^|\W)\*[^ \t\n]</startRegEx>
 			<endRegEx>\*</endRegEx>
-
-			<highlightContext name="doubleUnderscoreEmphasisWithinSingleStarEmphasis" fallback="strongEmphasis">
-				<startRegEx>__[^ \t\n]</startRegEx>
-				<endRegEx>__</endRegEx>
-			</highlightContext>
 		</highlightContext>
 
 		<highlightContext name="h1atx" fallback="h1">
