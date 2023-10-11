@@ -2444,36 +2444,6 @@ End
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function DebugTestMarkdown() As Boolean Handles DebugTestMarkdown.Action
-		  // Load the Markdown definition and the light Markdown theme.
-		  
-		  For i As Integer = 0 To PopupDefinition.LastRowIndex
-		    If PopupDefinition.RowValueAt(i) = "Markdown" Then
-		      PopupDefinition.SelectedRowIndex = i
-		      Exit
-		    End If
-		  Next i
-		  
-		  For i As Integer = 0 To PopupTheme.LastRowIndex
-		    If PopupTheme.RowValueAt(i) = "Markdown Light" Then
-		      PopupTheme.SelectedRowIndex = i
-		      Exit
-		    End If
-		  Next i
-		  
-		  For i As Integer = 0 To PopupExampleText.LastRowIndex
-		    If PopupExampleText.RowValueAt(i) = "Markdown" Then
-		      PopupExampleText.SelectedRowIndex = i
-		      Exit
-		    End If
-		  Next i
-		  
-		  Return True
-		  
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function EditRedo() As Boolean Handles EditRedo.Action
 		  If CodeEditor.CanRedo Then CodeEditor.Redo
 		  
@@ -3248,6 +3218,12 @@ End
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
+		  // Markdown.
+		  Me.AddRow("Markdown")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Markdown.xml"))
+		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
+		  
 		  // ObjoScript.
 		  Me.AddRow("ObjoScript")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
@@ -3282,12 +3258,6 @@ End
 		  Me.AddRow("C")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
 		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Markdown.
-		  Me.AddRow("Markdown")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Markdown.xml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // Start with the Xojo definition.
@@ -3331,6 +3301,10 @@ End
 		  Me.AddRow("Xojo")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_XOJO
 		  
+		  // Markdown.
+		  Me.AddRow("Markdown")
+		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_MARKDOWN
+		  
 		  // ObjoScript.
 		  Me.AddRow("ObjoScript")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_OBJOSCRIPT
@@ -3354,10 +3328,6 @@ End
 		  // C.
 		  Me.AddRow("C")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_C
-		  
-		  // Markdown.
-		  Me.AddRow("Markdown")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_MARKDOWN
 		  
 		  // Start with Xojo text.
 		  Me.SelectedRowIndex = 0

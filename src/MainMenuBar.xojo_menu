@@ -158,22 +158,6 @@ Begin Menu MainMenuBar
          End
       End
    End
-   Begin DesktopMenuItem DebugMenu
-      SpecialMenu = 0
-      Index = -2147483648
-      Text = "Debug"
-      AutoEnabled = True
-      AutoEnable = True
-      Visible = True
-      Begin DesktopMenuItem DebugTestMarkdown
-         SpecialMenu = 0
-         Index = -2147483648
-         Text = "Test Markdown"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
-   End
    Begin DesktopMenuItem HelpMenu
       SpecialMenu = 0
       Index = -2147483648
