@@ -51,7 +51,8 @@
 		</highlightContext>
 		
 		<highlightContext name="linkReferenceDefinition">
-			<startRegEx>^\[[[:alpha:]]| +\]:[ \t]</startRegEx>
+		<!-- LINK REFERENCES -->
+			<startRegEx>^\[(\w|[ -#|&amp;&lt;&gt;])+\]:[ \t]*</startRegEx>
 			<endRegEx>\n|$</endRegEx>
 			
 			<highlightContext name="linkReferenceDestination" fallback="url">
@@ -59,16 +60,16 @@
 			</highlightContext>
 		</highlightContext>
 		
+		<highlightContext name="link">
+			<entryRegEx>\[(\w|[ -#|&amp;&lt;&gt;])+\]\([^\n]+\)</entryRegEx>
+		</highlightContext>
+		
 		<highlightContext name="url">
 			<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
 		</highlightContext>
 		
 		<highlightContext name="xojoCodeFence" fallback="codeFence">
-		<!--
-			===============================
-			Xojo code fences
-			===============================
-		-->
+		<!-- XOJO CODE FENCES-->
 			<startRegEx>^```xojo[ ]*\n</startRegEx>
 			<endRegEx>^```(\n|$)</endRegEx>
 			
@@ -229,11 +230,7 @@
 		</highlightContext>
 		
 		<highlightContext name="objoCodeFence" fallback="codeFence" caseSensitive="yes">
-		<!--
-			===============================
-			ObjoScript code fences
-			===============================
-		-->
+		<!-- OBJOSCRIPT CODE FENCES -->
 			<startRegEx>^```objo[ ]*\n</startRegEx>
 			<endRegEx>^```(\n|$)</endRegEx>
 			
