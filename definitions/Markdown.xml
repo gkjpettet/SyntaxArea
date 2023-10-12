@@ -61,7 +61,55 @@
 		</highlightContext>
 		
 		<highlightContext name="link">
-			<entryRegEx>\[(\w|[ -#|&amp;&lt;&gt;])+\]\([^\n]+\)</entryRegEx>
+		<!--This is [linkText][linkDestination]-->
+			<startRegEx>\[(\w|[ -#|&amp;&lt;&gt;])+\]\[[^\n]+\]</startRegEx>
+			<endRegEx>\n|$</endRegEx>
+			
+			<highlightContext name="bracketedlinkText">
+			<!--This is the link text surrounded by square brackets-->
+				<entryRegEx>(?:\[)(\w|[ -#|&amp;&lt;&gt;])+(?:\])</entryRegEx>
+				
+				<highlightContext name="linkText">
+				<!--This is the text within the square brackets-->
+					<entryRegEx>[^[].+[^]]</entryRegEx>
+				</highlightContext>
+			</highlightContext>
+			
+			<highlightContext name="bracketedLinkDestination">
+			<!--This is the destination surrounded by square brackets-->
+				<entryRegEx>(?:\[)(\w|[ -#:\|&amp;&lt;&gt;])+(?:\])</entryRegEx>
+				
+				<highlightContext name="linkDestination">
+				<!--This is the destination within the square brackets-->
+					<entryRegEx>[^[].+[^]]</entryRegEx>
+				</highlightContext>
+			</highlightContext>
+		</highlightContext>
+		
+		<highlightContext name="inlineLink">
+		<!--This is [linkText](linkDestination)-->
+			<startRegEx>\[(\w|[ -#|&amp;&lt;&gt;])+\]\([^\n]+\)</startRegEx>
+			<endRegEx>\n|$</endRegEx>
+			
+			<highlightContext name="bracketedinlineLinkText" fallback="bracketedlinkText">
+			<!--This is the link text surrounded by square brackets-->
+				<entryRegEx>(?:\[)(\w|[ -#|&amp;&lt;&gt;])+(?:\])</entryRegEx>
+				
+				<highlightContext name="inlineLinkText" fallback="linkText">
+				<!--This is the text within the square brackets-->
+					<entryRegEx>[^[].+[^]]</entryRegEx>
+				</highlightContext>
+			</highlightContext>
+			
+			<highlightContext name="bracketedinlineLinkDestination" fallback="bracketedLinkDestination">
+			<!--This is the destination surrounded by parentheses-->
+				<entryRegEx>(?:\()(\w|[ -#:\|&amp;&lt;&gt;])+(?:\))</entryRegEx>
+				
+				<highlightContext name="inlineLinkDestination" fallback="linkDestination">
+				<!--This is the destination within the parentheses-->
+					<entryRegEx>[^(].+[^)]</entryRegEx>
+				</highlightContext>
+			</highlightContext>
 		</highlightContext>
 		
 		<highlightContext name="url">
