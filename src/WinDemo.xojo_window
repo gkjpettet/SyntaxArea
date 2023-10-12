@@ -2469,11 +2469,11 @@ End
 		  
 		  If Color.IsDarkMode Then
 		    // Get the correct bundled theme.
-		    Var themeFile As FolderItem = SpecialFolder.Resource("Xojo Dark.json")
+		    Var themeFile As FolderItem = SpecialFolder.Resource("Nova Dark.json")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  Else
-		    Var themeFile As FolderItem = SpecialFolder.Resource("Xojo Light.json")
+		    Var themeFile As FolderItem = SpecialFolder.Resource("Nova Light.json")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  End If
@@ -2679,10 +2679,10 @@ End
 		  // Themes.
 		  PopupTheme.SelectedRowIndex = -1
 		  For i As Integer = 0 To PopupTheme.LastRowIndex
-		    If Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Xojo Dark" Then
+		    If Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Nova Dark" Then
 		      PopupTheme.SelectedRowIndex = i
 		      Exit
-		    ElseIf Not Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Xojo Light" Then
+		    ElseIf Not Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Nova Light" Then
 		      PopupTheme.SelectedRowIndex = i
 		      Exit
 		    End If
@@ -3430,16 +3430,6 @@ End
 	#tag Event
 		Sub Opening()
 		  Var theme As SyntaxArea.EditorTheme
-		  
-		  // Xojo Light.
-		  Me.AddRow("Xojo Light")
-		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Xojo Light.json"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
-		  
-		  // Xojo Dark.
-		  Me.AddRow("Xojo Dark")
-		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Xojo Dark.json"))
-		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
 		  
 		  // Nova Light.
 		  Me.AddRow("Nova Light")

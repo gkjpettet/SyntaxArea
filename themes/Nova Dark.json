@@ -1,9 +1,9 @@
 {
   "name": "Nova Dark",
   "author": "Garry Pettet",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "defaultStyle": {
-	"textColor": "&h00DBE5F1",
+	"textColor": "&h00FFFFFF",
 	"backColor": "&h00000000",
 	"hasBackColor": false,
 	"bold": false,
@@ -12,96 +12,280 @@
   },
   "invisibleCharacterColor" : "&h00363A3F",
   "styles": {
-	"autocomplete": {
-	  "textColor": "&h40AAAAAA",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": true,
-	  "underline": false
-	},
-	"comment": {
-	  "textColor": "&h00798BA1",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": true,
-	  "underline": false
-	},
-	"keyword": {
-	  "textColor": "&h0078B1F9",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"number": {
-	  "textColor": "&h00E4CE88",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"string": {
-	  "textColor": "&h00EF8F84",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"type": {
-	  "textColor": "&h00C8C8C8",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"identifier": {
-	  "textColor": "&h00DBE5F1",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"uppercaseIndentifier": {
-	  "textColor": "&h0071E5E7",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"lowercaseIdentifier": {
-	  "textColor": "&h0073E5AF",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"directive": {
-	  "textColor": "&h00945200",
-	  "backColor": "&h00000000",
-	  "hasBackColor": false,
-	  "bold": false,
-	  "italic": false,
-	  "underline": false
-	},
-	"placeholder": {
-	  "textColor": "&h00FFFFFF",
-	  "backColor": "&h003379F7",
-	  "hasBackColor": false,
-	  "bold": true,
-	  "italic": false,
-	  "underline": false
-	}
+	  "inlineCode": {
+		  "textColor": "&h00FFFFFF",
+		  "backColor": "&h002F3031",
+		  "hasBackColor": true,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "strongEmphasis": {
+		  "textColor": "&h0064A0BF",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": true,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "emphasis": {
+		  "textColor": "&h00A7CA83",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": true,
+		  "underline": false
+	  },
+	  "h1": {
+		  "textColor": "&h00ECAA70",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "h2": {
+		  "textColor": "&h00ECAA70",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "h3": {
+		  "textColor": "&h00ECAA70",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "h4": {
+		  "textColor": "&h00ECAA70",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "h5": {
+		  "textColor": "&h00ECAA70",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "h6": {
+		  "textColor": "&h00ECAA70",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "linkText": {
+		"textColor": "&h0078B1F9",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "linkDestination": {
+		"textColor": "&h0078B1F9",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "inlineLinkDestination": {
+		"textColor": "&h0078B1F9",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": true
+	  },
+	  "linkReferenceDefinition": {
+		  "textColor": "&h0078B1F9",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "url": {
+		  "textColor": "&h00FFFFFF",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": true
+	  },
+	  "comment": {
+		"textColor": "&h00798CA1",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": true,
+		"underline": false
+	  },
+	  "keyword": {
+		"textColor": "&h0078B1F9",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "number": {
+		"textColor": "&h00E4CE88",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "string": {
+		"textColor": "&h00F09184",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "type": {
+		"textColor": "&h00FFFFFF",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "directive": {
+		"textColor": "&h00C6A5F0",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "placeholder": {
+		"textColor": "&h00FFFFFF",
+		"backColor": "&h003379F7",
+		"hasBackColor": false,
+		"bold": true,
+		"italic": false,
+		"underline": false
+	  },
+	  "xojoComment": {
+		  "textColor": "&h00FB4A4B",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "xojoKeyword": {
+		  "textColor": "&h00106AFE",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": false,
+		  "underline": false
+	  },
+	  "xojoString": {
+		"textColor": "&h009D33D5",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "xojoDouble": {
+		"textColor": "&h0018691D",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "xojoInteger": {
+		"textColor": "&h0030D33A",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "xojoPragma": {
+		"textColor": "&h00106AFE",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "xojoColorRedComponent": {
+		"textColor": "&h00FF0000",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "xojoColorGreenComponent": {
+		"textColor": "&h006AD45E",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "xojoColorBlueComponent": {
+		"textColor": "&h00106AFE",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "htmlTag": {
+		"textColor": "&h007DD4B0",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "stringInHtmlTag": {
+		"textColor": "&h00F09084",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  }, 
+	  "singleStringInHtmlTag": {
+		"textColor": "&h00F09084",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  },
+	  "attributeInHtmlTag": {
+		"textColor": "&h00B0DF8F",
+		"backColor": "&h00000000",
+		"hasBackColor": false,
+		"bold": false,
+		"italic": false,
+		"underline": false
+	  }
   },
-  "backColor": "&h00000000",
+  "backColor": "&h00161616",
   "blockFoldedColor": "&h00FF8000",
   "blockFoldedEllipsisColor": "&h00AAAAAA",
   "blockFoldMarkerColor": "&h00555555",
@@ -109,11 +293,11 @@
   "bracketHighlightColor": "&h000000FF",
   "caretColor": "&h00FFFFFF",
   "dirtyLinesColor": "&h00FFFF00",
-  "gutterBackColor": "&h00000000",
+  "gutterBackColor": "&h00161616",
   "gutterBorderColor": "&h00FFFFFF",
   "lineNumbersColor": "&h00FFFFFF",
   "verticalRulerColor": "&h00555555",
-  "suggestionPopupBackColor": "&h00000000",
+  "suggestionPopupBackColor": "&h00161616",
   "suggestionPopupSelectedTextColor": "&h00FFFFFF",
   "suggestionPopupTextColor": "&h00FFFFFF",
   "textColor": "&h00FFFFFF",
