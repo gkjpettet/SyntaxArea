@@ -52,7 +52,7 @@
 		
 		<highlightContext name="linkReferenceDefinition">
 		<!-- LINK REFERENCES -->
-			<startRegEx>^\[(\w|[ -#|&amp;&lt;&gt;])+\]:[ \t]*</startRegEx>
+			<startRegEx>^\[(\w|[ \-#|&amp;&lt;&gt;])+\]:[ \t]*</startRegEx>
 			<endRegEx>\n|$</endRegEx>
 			
 			<highlightContext name="linkReferenceDestination" fallback="url">
@@ -62,12 +62,11 @@
 		
 		<highlightContext name="link">
 		<!--This is [linkText][linkDestination]-->
-			<startRegEx>\[(\w|[ -#|&amp;&lt;&gt;])+\]\[[^\n]+\]</startRegEx>
-			<endRegEx>\n|$</endRegEx>
+			<entryRegEx>\[((?:\w|[ \-#|&amp;&lt;&gt;])+)\]\[[^\n]+\]</entryRegEx>
 			
 			<highlightContext name="bracketedlinkText">
 			<!--This is the link text surrounded by square brackets-->
-				<entryRegEx>(?:\[)(\w|[ -#|&amp;&lt;&gt;])+(?:\])</entryRegEx>
+				<entryRegEx>(?:\[)((?:\w|[ \-#|&amp;&lt;&gt;])+)(?:\])</entryRegEx>
 				
 				<highlightContext name="linkText">
 				<!--This is the text within the square brackets-->
@@ -77,7 +76,7 @@
 			
 			<highlightContext name="bracketedLinkDestination">
 			<!--This is the destination surrounded by square brackets-->
-				<entryRegEx>(?:\[)(\w|[ -#:\|&amp;&lt;&gt;])+(?:\])</entryRegEx>
+				<entryRegEx>(?:\[)((?:\w|[ \-#:\|&amp;&lt;&gt;])+)(?:\])</entryRegEx>
 				
 				<highlightContext name="linkDestination">
 				<!--This is the destination within the square brackets-->
@@ -88,12 +87,11 @@
 		
 		<highlightContext name="inlineLink">
 		<!--This is [linkText](linkDestination)-->
-			<startRegEx>\[(\w|[ -#|&amp;&lt;&gt;])+\]\([^\n]+\)</startRegEx>
-			<endRegEx>\n|$</endRegEx>
+			<entryRegEx>\[((?:\w|[ \-#|&amp;&lt;&gt;])+)\]\([^\n]+\)</entryRegEx>
 			
 			<highlightContext name="bracketedinlineLinkText" fallback="bracketedlinkText">
 			<!--This is the link text surrounded by square brackets-->
-				<entryRegEx>(?:\[)(\w|[ -#|&amp;&lt;&gt;])+(?:\])</entryRegEx>
+				<entryRegEx>(?:\[)((?:\w|[ \-#|&amp;&lt;&gt;])+)(?:\])</entryRegEx>
 				
 				<highlightContext name="inlineLinkText" fallback="linkText">
 				<!--This is the text within the square brackets-->
@@ -103,7 +101,7 @@
 			
 			<highlightContext name="bracketedinlineLinkDestination" fallback="bracketedLinkDestination">
 			<!--This is the destination surrounded by parentheses-->
-				<entryRegEx>(?:\()(\w|[ -#:\|&amp;&lt;&gt;])+(?:\))</entryRegEx>
+				<entryRegEx>(?:\()((?:\w|[ \-#:\/|&amp;&lt;&gt;])+)(?:\))</entryRegEx>
 				
 				<highlightContext name="inlineLinkDestination" fallback="linkDestination">
 				<!--This is the destination within the parentheses-->
