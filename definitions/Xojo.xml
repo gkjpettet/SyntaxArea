@@ -60,7 +60,7 @@
 			</keywords>
 		</highlightContext>
 		
-		<highlightContext name="keyword">
+		<highlightContext name="xojoKeyword" fallback="keyword">
 			<keywords>
 				<string>#Else</string>
 				<string>#ElseIf</string>
@@ -158,39 +158,39 @@
 			</keywords>
 		</highlightContext>
 			
-        <highlightContext name="double" fallback="number">
+        <highlightContext name="xojoDouble" fallback="number">
             <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?=\d+\.|\.\d+|\d+e(?:\d|\b))(\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
         </highlightContext>    	
         
-        <highlightContext name="integer" fallback="number">
+        <highlightContext name="xojoInteger" fallback="number">
             <entryRegEx>(?&lt;=[^\w.&#x7F;-&#x10F7FF;]|^)(?:\d+|&amp;h[[:xdigit:]]*\b|&amp;o[0-7]*\b|&amp;b[01]*\b)(?=[^\w.&#x7F;-&#x10F7FF;]|$)</entryRegEx>
         </highlightContext>
 
-		<highlightContext name="pragma" fallback="directive">
+		<highlightContext name="xojoPragma" fallback="directive">
             <entryRegEx>#(?:if|elseif|else|endif|pragma)</entryRegEx>
         </highlightContext>        
 		
-		<highlightContext name="comment">
+		<highlightContext name="xojoComment" fallback="comment">
 			<startRegEx>'|\/\/|\brem\b</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
-				<highlightContext name="url" fallback="comment">
+				<highlightContext name="xojoUrl" fallback="comment">
 					<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
 				</highlightContext>
 		</highlightContext>
 		
-		<highlightContext name="string">
+		<highlightContext name="xojoString" fallback="string">
 			<entryRegEx>"[^"\r\n]*["\r\n]|&amp;u[[:xdigit:]]*\b</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="colorRed">
+		<highlightContext name="xojoColorRedComponent">
 				<entryRegEx>(?&lt;=&amp;c)[[:xdigit:]]{1,2}</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="colorGreen">
+		<highlightContext name="xojoColorGreenComponent">
 				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{2})[[:xdigit:]]{1,2}</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="colorBlue">
+		<highlightContext name="xojoColorBlueComponent">
 				<entryRegEx>(?&lt;=&amp;c[[:xdigit:]]{4})[[:xdigit:]]{1,2}</entryRegEx>
 		</highlightContext>
 	</contexts>

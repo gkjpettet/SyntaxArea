@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <highlightDefinition version="2.0">
 	<name>Markdown</name>
+	<!--Note that block highlighting will break if code fences are present that do no specify the language-->
+	<blockStartMarker indent="1">```\w+</blockStartMarker>
+	
+	<blockEndMarker>```(\n|$)</blockEndMarker>
+	
+	<blockStartMarker indent="1">(?x)
+		^(?!&lt;link|&lt;meta)&lt;((?:\w|-)+)(?:[ ]+(?:\w|[-"'=\/ ])+)?&gt;([ \t]*)(\n|$)(?!.*&lt;\/(\1)&gt;)
+		|^&lt;!--(?!.*--\s*&gt;)
+	</blockStartMarker>
+	
+	<blockEndMarker>(?x)
+		(?x)(?&lt;=^|[^\w&gt;])(&lt;\/\w+&gt;)
+		|^(?!.*?&lt;!--).*?--\s*&gt;
+	</blockEndMarker>
+	
 	<contexts caseSensitive="no">
 		<highlightContext name="inlineCode" fallback="code">
 			<entryRegEx>\`[^\`\n]+\`</entryRegEx>
@@ -26,71 +41,81 @@
 			<endRegEx>\*</endRegEx>
 		</highlightContext>
 
-		<highlightContext name="h1atx" fallback="h1">
+		<highlightContext name="h1">
 			<entryRegEx>^#[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="h2atx" fallback="h2">
+		<highlightContext name="h2">
 			<entryRegEx>^#{2}[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="h3atx" fallback="h3">
+		<highlightContext name="h3">
 			<entryRegEx>^#{3}[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="h4atx" fallback="h4">
+		<highlightContext name="h4">
 			<entryRegEx>^#{4}[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="h5atx" fallback="h5">
+		<highlightContext name="h5">
 			<entryRegEx>^#{5}[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
 
-		<highlightContext name="h6atx" fallback="h6">
+		<highlightContext name="h6">
 			<entryRegEx>^#{6}[ \t]+[^#].+</entryRegEx>
 		</highlightContext>
-		
-		<highlightContext name="linkReferenceDefinition">
-		<!-- LINK REFERENCES -->
-			<startRegEx>^\[(\w|[ \-#|&amp;&lt;&gt;])+\]:[ \t]*</startRegEx>
-			<endRegEx>\n|$</endRegEx>
+				
+		<highlightContext name="linkReference">
+		<!--Eg [linkDef]:linkDestination STYLING THIS WILL TARGET THE SQUARE BRACKETS AND COLON ONLY-->
+			<entryRegEx>\[(?:(?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)\]:(?:[ \t])*[^\n]+</entryRegEx>
+			
+			<highlightContext name="bracketedLinkReferenceDefinition">
+			<!--This is [linkDef]: DO NOT STYLE THIS-->
+				<entryRegEx>(?:\[)(?:(?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)(?:\]:(?:[ \t])*)</entryRegEx>
+				
+				<highlightContext name="linkReferenceDefinition" fallback="linkText">
+				<!--This is the actual text within [linkDef]:-->
+					<entryRegEx>((?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)</entryRegEx>
+				</highlightContext>
+			</highlightContext>
 			
 			<highlightContext name="linkReferenceDestination" fallback="url">
-				<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
+			<!--This is matching within linkDestination]-->
+				<entryRegEx>.+</entryRegEx>
 			</highlightContext>
 		</highlightContext>
 		
 		<highlightContext name="link">
 		<!--Eg [linkText][linkDestination] STYLING THIS WILL TARGET THE SQUARE BRACKETS ONLY-->
-			<entryRegEx>\[(?:(?:\w|[ \-#|&amp;&lt;&gt;])+)\]\[[^\n]+\]</entryRegEx>
+			<entryRegEx>\[(?:(?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)\]\[[^\n]+\]</entryRegEx>
 			
 			<highlightContext name="bracketedLinkText">
 			<!--This is [linkText][ DO NOT STYLE THIS-->
-				<entryRegEx>(?:\[)(?:(?:\w|[ \-#|&amp;&lt;&gt;])+)(?:\]\[)</entryRegEx>
+				<entryRegEx>(?:\[)(?:(?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)(?:\]\[)</entryRegEx>
 				
 				<highlightContext name="linkText">
 				<!--This is the actual text within [linkText]-->
-					<entryRegEx>((?:\w|[ \-#|&amp;&lt;&gt;])+)</entryRegEx>
+					<entryRegEx>((?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)</entryRegEx>
 				</highlightContext>
 			</highlightContext>
 			
 			<highlightContext name="linkDestination">
 			<!--This is matching within linkDestination]-->
-				<entryRegEx>((?:\w|[ \-#|&amp;&lt;&gt;])+)</entryRegEx>
+				<entryRegEx>((?:\w|[ \-#&amp;&lt;&gt;])+)</entryRegEx>
 			</highlightContext>
 		</highlightContext>
 		
 		<highlightContext name="inlineLink">
 		<!--Eg [linkText](linkDestination) STYLING THIS WILL TARGET THE BRACKETS ONLY-->
-			<entryRegEx>\[(?:(?:\w|[ \-#|&amp;&lt;&gt;])+)\]\([^\n]+\)</entryRegEx>
+			<entryRegEx>\[(?:(?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)\]\([^\n]+\)</entryRegEx>
 			
 			<highlightContext name="bracketedInlineLinkText">
 			<!--This is [linkText]( DO NOT STYLE THIS-->
-				<entryRegEx>(?:\[)(?:(?:\w|[ \-#|&amp;&lt;&gt;])+)(?:\]\()</entryRegEx>
+				<entryRegEx>(?:\[)(?:(?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)(?:\]\()</entryRegEx>
 				
 				<highlightContext name="inlineLinkText" fallback="linkText">
 				<!--This is the actual text within [linkText]-->
-					<entryRegEx>((?:\w|[ \-#|&amp;&lt;&gt;])+)</entryRegEx>
+					<entryRegEx>((?:\w|[ \-#\?\!,&amp;&lt;&gt;])+)</entryRegEx>
 				</highlightContext>
 			</highlightContext>
 			
@@ -350,6 +375,27 @@
 			
 			<highlightContext name="codeFenceContents">
 				<entryRegEx>^(?!```[[:alpha:]]?).*(\n|$)</entryRegEx>
+			</highlightContext>
+		</highlightContext>
+		
+		<highlightContext name="htmlTag">
+		<!--Eg <div blah blah>-->
+			<entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
+			
+			<highlightContext name="stringInHtmlTag" fallback="string">
+				<entryRegEx>("[^"&gt;&lt;]*")</entryRegEx>
+			</highlightContext>
+			
+			<highlightContext name="singleStringInHtmlTag" fallback="string">
+				<entryRegEx>('[^'&gt;&lt;]*')</entryRegEx>
+			</highlightContext>
+			
+			<highlightContext name="entireAttributeInHtmlTag" fallback="htmlTag">
+				<entryRegEx>([\w-]*)[ \t]*=(?=[ \t]*"[^"&gt;&lt;]*")</entryRegEx>
+				
+				<highlightContext name="attributeInHtmlTag">
+					<entryRegEx>[\w-]+</entryRegEx>
+				</highlightContext>
 			</highlightContext>
 		</highlightContext>
 	</contexts>
