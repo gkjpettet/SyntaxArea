@@ -414,7 +414,7 @@ Protected Class HighlightDefinition
 		  
 		  stateOut = stateIn
 		  
-		  // If the owning editor does not support line folding then we won't search for blocks.
+		  // If the owning editor has disabled line folding then we won't search for blocks.
 		  If Not Owner.EnableLineFolding Then Return 0
 		  
 		  Var v As Variant = BlockStartDef.Lookup(stateIn, Nil)

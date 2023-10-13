@@ -3,14 +3,12 @@
 	<name>Markdown</name>
 	<!--Note that block highlighting will break if code fences are present that do no specify the language-->
 	<blockStartMarker indent="1">```\w+</blockStartMarker>
-	
 	<blockEndMarker>```(\n|$)</blockEndMarker>
 	
 	<blockStartMarker indent="1">(?x)
 		^(?!&lt;link|&lt;meta)&lt;((?:\w|-)+)(?:[ ]+(?:\w|[-"'=\/ ])+)?&gt;([ \t]*)(\n|$)(?!.*&lt;\/(\1)&gt;)
 		|^&lt;!--(?!.*--\s*&gt;)
 	</blockStartMarker>
-	
 	<blockEndMarker>(?x)
 		(?x)(?&lt;=^|[^\w&gt;])(&lt;\/\w+&gt;)
 		|^(?!.*?&lt;!--).*?--\s*&gt;
