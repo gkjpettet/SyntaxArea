@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="2.0">
-	<name>ObjoScript</name>
+<highlightDefinition version="2.1">
+	<name>Objo</name>
 
 	<!-- Generic block -->
 	<blockStartMarker indent="1">\{\s*(?:$|#)</blockStartMarker>
@@ -38,7 +38,7 @@
 	</symbols>
 	
 	<contexts caseSensitive="yes">		
-		<highlightContext name="intrinsicType" fallback="type">
+		<highlightContext name="objoType" fallback="type">
 			<keywords>
 				<string>Boolean</string>
 				<string>KeyValue</string>
@@ -49,7 +49,7 @@
 			</keywords>
 		</highlightContext>
 	
-		<highlightContext name="keyword">
+		<highlightContext name="objoKeyword" fallback="keyword">
 			<keywords>
 				<string>and</string>
 				<string>as</string>
@@ -90,26 +90,25 @@
 			</keywords>
 		</highlightContext>
 		
-		<highlightContext name="comment">
+		<highlightContext name="objoComment" fallback="comment">
 			<startRegEx>#</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="number">
+		<highlightContext name="objoNumber" fallback="number">
 			<entryRegEx>(?&lt;=[^\w.]|^)(?=\d+|\d+\.|\.\d+|\d+e(?:\d|\b))((?:\d+_\d+)+|\d+|\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.]|$)|(?&lt;=[^\w.]|^)(?:\d+|0x[[:xdigit:]]*\b|0b[01]*\b)(?=[^\w.]|$)</entryRegEx>
 		</highlightContext>
 		
-		<highlightContext name="string">
+		<highlightContext name="objoString" fallback="string">
 			<entryRegEx>"[^"\r\n]*["\r\n]</entryRegEx>
 		</highlightContext>
 		
-		<highlightContext name="uppercaseIdentifier" fallback="identifier">
+		<highlightContext name="objoUppercaseIdentifier" fallback="uppercaseIdentifier">
 			<entryRegEx>\b[A-Z]\w*</entryRegEx>
 		</highlightContext>
 		
-		<highlightContext name="lowercaseIdentifier" fallback="identifier">
+		<highlightContext name="objoLowercaseIdentifier" fallback="lowercaseIdentifier">
 			<entryRegEx>\b[a-z]\w*</entryRegEx>
 		</highlightContext>	
 	</contexts>
-	
 </highlightDefinition>

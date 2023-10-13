@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="2.0">
+<highlightDefinition version="2.1">
 	<name>Xojo</name>
 
 <!-- Module block -->
@@ -39,7 +39,7 @@
 	</symbols>
 	
 	<contexts caseSensitive="no">
-		<highlightContext name="type">
+		<highlightContext name="xojoType" fallback="type">
 			<keywords>
 				<string>Boolean</string>
 				<string>Color</string>

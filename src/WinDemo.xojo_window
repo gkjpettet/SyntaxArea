@@ -2917,6 +2917,32 @@ End
 		  
 		End Sub
 	#tag EndEvent
+	#tag Event , Description = 54686520656469746F72206973206C6F6164696E6720612073796E74617820646566696E6974696F6E20746861742069732072657175657374696E67206120646566696E6974696F6E20657874656E73696F6E20776974682074686520737065636966696564206E616D652E20596F752073686F756C642072657475726E204E696C206966206E6F6E6520697320617661696C61626C652E
+		Function RequestDefinitionExtension(name As String) As SyntaxArea.HighlightDefinition
+		  /// The editor is loading a syntax definition and that definition is requesting another
+		  /// definition named `name` (case-insensitive).
+		  
+		  // Try to load the requested definition from our bundled definition files.
+		  Var defFile As FolderItem = SpecialFolder.Resource(name + ".xml")
+		  
+		  If defFile = Nil Or Not defFile.Exists Then
+		    // Can't find a definition for this language.
+		    Return Nil
+		  End If
+		  
+		  // Try to parse the definition file into a syntax definition instance.
+		  Try
+		    Return SyntaxArea.HighlightDefinition.FromFile(defFile, CodeEditor)
+		  Catch e As InvalidArgumentException
+		    Raise New RuntimeException("Successfully found the requested definition extension " + _
+		    "but the file contents are invalid: " + e.Message)
+		  End Try
+		  
+		  
+		  Return Nil
+		  
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events PopupFontName
 	#tag Event
@@ -3257,49 +3283,65 @@ End
 		  // Xojo.
 		  Me.AddRow("Xojo")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Xojo definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // Markdown.
 		  Me.AddRow("Markdown")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Markdown.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Markdown.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Markdown definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
-		  // ObjoScript.
-		  Me.AddRow("ObjoScript")
+		  // Objo.
+		  Me.AddRow("Objo")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Objo.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Objo definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // Java.
 		  Me.AddRow("Java")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Java definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // HTML.
 		  Me.AddRow("HTML")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the HTML definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // PostgreSQL.
 		  Me.AddRow("PostgreSQL")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the PostgreSQL definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // XML.
 		  Me.AddRow("XML/XHTML")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the XML/XHTML definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // C.
 		  Me.AddRow("C")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Call syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml"))
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the C definition")
+		  End If
 		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
 		  
 		  // Start with the Xojo definition.

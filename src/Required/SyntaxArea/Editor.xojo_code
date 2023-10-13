@@ -4114,6 +4114,18 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 496E7465726E616C206D6574686F642063616C6C656420627920486967686C69676874446566696E6974696F6E732074686174206172652072657175657374696E6720612073796E74617820646566696E6974696F6E20657874656E73696F6E206E616D656420606E616D65602E
+		Function RaiseRequestDefinitionExtension(name As String) As SyntaxArea.HighlightDefinition
+		  /// Internal method called by HighlightDefinitions that are requesting a 
+		  /// syntax definition extension named `name`.
+		  ///
+		  /// Part of the SyntaxArea.IEditor interface.
+		  
+		  Return RaiseEvent RequestDefinitionExtension(name)
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, Description = 50617274206F6620746865204D65737361676543656E7472652E4D657373616765526563656976657220696E746572666163652E
 		Protected Sub ReceiveMessage(m As MessageCentre.Message)
 		  /// Part of the MessageCentre.MessageReceiver interface.
@@ -5019,6 +5031,10 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 
 	#tag Hook, Flags = &h0
 		Event PlaceholderSelected(placeholderLabel As String, lineIndex As Integer, line As SyntaxArea.TextLine, placeholder As SyntaxArea.TextPlaceholder, doubleClick As Boolean)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206C6F6164696E6720612073796E74617820646566696E6974696F6E20746861742069732072657175657374696E67206120646566696E6974696F6E20657874656E73696F6E20776974682074686520737065636966696564206E616D652E20596F752073686F756C642072657475726E204E696C206966206E6F6E6520697320617661696C61626C652E
+		Event RequestDefinitionExtension(name As String) As SyntaxArea.HighlightDefinition
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

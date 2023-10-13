@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="2.0">
+<highlightDefinition version="2.1">
 	<name>C/C++</name>
 
 	<blockStartMarker indent="1">\{\s*(?:$|//|/\*|\\)|\s*/\*\s*$</blockStartMarker>
@@ -25,26 +25,26 @@
 	</symbols>
 
 	<contexts caseSensitive="yes">				
-		<highlightContext name="preprocessor" fallback="directive">
+		<highlightContext name="cPreprocessor" fallback="directive">
 			<startRegEx>^#</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
-			<highlightContext name="number">
+			<highlightContext name="cNumber" fallback="number">
 			<!-- Highlight numbers within single line preprocessor directives -->
 				<entryRegEx>(?&lt;=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)</entryRegEx>
 			</highlightContext>
 		</highlightContext>
 		
-		<highlightContext name="string">
+		<highlightContext name="cString" fallback="string">
 			<startRegEx>"</startRegEx>
 			<endRegEx>(((?&lt;!\\)(\\\\)*)|^)"</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="character" fallback="string">
+		<highlightContext name="cCharacter" fallback="string">
 			<startRegEx>'</startRegEx>
 			<endRegEx>(\\'')|(.')</endRegEx>
 		</highlightContext>
 
-        <highlightContext name="keyword">
+        <highlightContext name="cKeyword" fallback="keyword">
             <keywords>
                 <string>break</string>
                 <string>case</string>
@@ -91,20 +91,20 @@
             </keywords>
         </highlightContext>
 		
-        <highlightContext name="number">
+        <highlightContext name="cNumber" fallback="number">
             <entryRegEx>(?&lt;=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)</entryRegEx>
         </highlightContext>
 		
-        <highlightContext name="identifier">
+        <highlightContext name="cIdentifier" fallback="identifier">
             <entryRegEx>([A-Za-z0-9_]+ *)\(</entryRegEx>
         </highlightContext>
 		
-		<highlightContext name="comment">
+		<highlightContext name="cComment" fallback="comment">
 			<startRegEx>//</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="multiLineComment" fallback="comment">
+		<highlightContext name="cMultiLineComment" fallback="comment">
 			<startRegEx>/\*</startRegEx>
 			<endRegEx>\*/</endRegEx>
 		</highlightContext>

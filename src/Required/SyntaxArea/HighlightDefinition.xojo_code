@@ -4,7 +4,7 @@ Protected Class HighlightDefinition
 		Private Sub AddBlankSpaceContext()
 		  /// Adds a blank space context, this will tokenise strings.
 		  
-		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self, False, False)
+		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False)
 		  blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))"
 		  blankSpaceContext.Name = "fieldwhitespace"
 		  
@@ -16,6 +16,8 @@ Protected Class HighlightDefinition
 	#tag Method, Flags = &h21
 		Private Sub AddContext(context As SyntaxArea.HighlightContext)
 		  If context = Nil Then Return
+		  
+		  context.Owner = Self.Owner
 		  
 		  SubContexts.Add(context)
 		  
@@ -586,7 +588,7 @@ Protected Class HighlightDefinition
 		        Next j
 		        
 		      Case "placeholders"
-		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self, False, False)
+		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self.Owner, False, False)
 		        PlaceholderContextDef.EntryRegEx = node.FirstChild.Value
 		        PlaceholderContextDef.IsPlaceholder = True
 		        PlaceholderContextDef.Name = "placeholder"
@@ -602,7 +604,7 @@ Protected Class HighlightDefinition
 		        // Contexts.
 		        CaseSensitive = YN2Bool(node.GetAttribute("caseSensitive"))
 		        For j = 0 To node.ChildCount-1
-		          context = New SyntaxArea.HighlightContext(Self, CaseSensitive)
+		          context = New SyntaxArea.HighlightContext(Self.Owner, CaseSensitive)
 		          context.LoadFromXmlNode(node.Child(j))
 		          AddContext(context)
 		        Next j
@@ -993,7 +995,7 @@ Protected Class HighlightDefinition
 	#tag EndProperty
 
 
-	#tag Constant, Name = VERSION, Type = Double, Dynamic = False, Default = \"2.0", Scope = Public
+	#tag Constant, Name = VERSION, Type = Double, Dynamic = False, Default = \"2.1", Scope = Public
 	#tag EndConstant
 
 

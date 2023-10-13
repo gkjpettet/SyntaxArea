@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="2.0">
+<highlightDefinition version="2.1">
 	<!-- Adapted from the CEF original definition by Arndt Weinmann -->
 	<name>PostgreSQL</name>	
 	
@@ -7,49 +7,49 @@
 	<blockEndMarker>^\s*\)</blockEndMarker>
 	
 	<contexts caseSensitive="no">
-	   <highlightContext name="comment">
+	   <highlightContext name="postgresqlComment" fallback="comment">
 			<startRegEx>--</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
-		<highlightContext name="sqlComment" fallback="comment">
+		<highlightContext name="postgresqlSqlComment" fallback="comment">
 			<startRegEx>//</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
-		<highlightContext name="squareBracketCommand">
+		<highlightContext name="postgresqlSquareBracketCommand">
 			<startRegEx>\[:</startRegEx>
 			<endRegEx>\]</endRegEx>
 		</highlightContext>
-		<highlightContext name="view">
+		<highlightContext name="postgresqlView">
 			<startRegEx>\[view</startRegEx>
 			<endRegEx>\]</endRegEx>
 		</highlightContext>			
-		<highlightContext name="sqlCommentMulti" fallback="comment">
+		<highlightContext name="postgresqlSqlCommentMulti" fallback="comment">
 			<startRegEx>/\*</startRegEx>
 			<endRegEx>\*/</endRegEx>
 		</highlightContext>
-		<highlightContext name="string">
+		<highlightContext name="postgresqlString" fallback="string">
             		<startRegEx>"</startRegEx>
 			<endRegEx>[^"]*"</endRegEx>
-			<highlightContext name="squareBracketCommandInString">
+			<highlightContext name="postgresqlSquareBracketCommandInString">
 				<startRegEx>\[:</startRegEx>
 				<endRegEx>\]</endRegEx>
 			</highlightContext>
 		</highlightContext>
-		<highlightContext name="stringB" fallback="string">
+		<highlightContext name="postgresqlStringB" fallback="string">
 			<startRegEx>'</startRegEx>
 			<endRegEx>[^']*'</endRegEx>
-			<highlightContext name="squareBracketCommandInStringB">
+			<highlightContext name="postgresqlSquareBracketCommandInStringB">
 				<startRegEx>\[:</startRegEx>
 				<endRegEx>\]</endRegEx>
 			</highlightContext>
 		</highlightContext>
-		<highlightContext name="double" fallback="number">
+		<highlightContext name="postgresqlDouble" fallback="number">
 			<entryRegEx>(?&lt;=[^\w\d]|^)(([0-9]+\.[0-9]*)|([0-9]{11,}))(?=[^\w\d]|$)</entryRegEx>
 		</highlightContext>
-		<highlightContext name="integer" fallback="number">
+		<highlightContext name="postgresqlInteger" fallback="number">
 			<entryRegEx>(?&lt;=[^\w\d]|^)([0-9]{1,10})(?=[^\w\d]|$)</entryRegEx>
 		</highlightContext>        
-		<highlightContext name="redString">
+		<highlightContext name="postgresqlRedString">
 			<keywords>
 				<string>DELETE</string>
 				<string>UPDATE</string>
@@ -57,7 +57,7 @@
 				<string>ALTER</string>
 			</keywords>
 		</highlightContext>        		
-		<highlightContext name="dataType" fallback="type">
+		<highlightContext name="postgresqlDataType" fallback="type">
 			<keywords>
 				<string>varchar</string>
 				<string>integer</string>
@@ -72,7 +72,7 @@
 				<string>timestamp</string>
 			</keywords>
 		</highlightContext>
-		<highlightContext name="keyword">
+		<highlightContext name="postgresqlKeyword" fallback="keyword">
 			<keywords>
 				<string>abort</string>
 				<string>abs</string>

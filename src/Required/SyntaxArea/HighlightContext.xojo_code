@@ -23,6 +23,7 @@ Protected Class HighlightContext
 		  If entry = Nil Then Return
 		  
 		  entry.ParentContext = Self
+		  entry.Owner = Self.Owner
 		  
 		  SubContexts.Add(entry)
 		  
@@ -120,7 +121,7 @@ Protected Class HighlightContext
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(owner As SyntaxArea.HighlightDefinition, caseSensitive As Boolean, createBlank As Boolean = True)
+		Sub Constructor(owner As SyntaxArea.IEditor, caseSensitive As Boolean, createBlank As Boolean = True)
 		  Self.Owner = owner
 		  
 		  mScanner = New RegEx
@@ -273,9 +274,9 @@ Protected Class HighlightContext
 		  
 		  Var style As SyntaxArea.TokenStyle
 		  If Self.Name = "fieldwhitespace" And ParentContext <> Nil Then
-		    style = Owner.Owner.StyleForToken(ParentContext.Name)
+		    style = Owner.StyleForToken(ParentContext.Name)
 		  Else
-		    style = Owner.Owner.StyleForToken(Self.Name, Self.Fallback)
+		    style = Owner.StyleForToken(Self.Name, Self.Fallback)
 		  End If
 		  
 		  // Scan subcontexts.
@@ -336,7 +337,7 @@ Protected Class HighlightContext
 		      
 		      entry = subContexts(tknIndex)
 		      
-		      Var entryStyle As SyntaxArea.TokenStyle = Owner.Owner.StyleForToken(entry.Name)
+		      Var entryStyle As SyntaxArea.TokenStyle = Owner.StyleForToken(entry.Name)
 		      
 		      // Forward execution to subcontext...
 		      If entry <> Nil And Not entry.isPlaceholder Then
@@ -425,6 +426,19 @@ Protected Class HighlightContext
 		  // Enabled?
 		  tmp = node.GetAttribute("enabled")
 		  Enabled = tmp <> "false"
+		  
+		  // Is this highlight context defined externally? That is, do we need to 
+		  // ask the code editor's host app for a matching syntax definition file?
+		  If node.GetAttribute("extension") <> "" Then
+		    Var extension As SyntaxArea.HighlightDefinition = _
+		    Owner.RaiseRequestDefinitionExtension(node.GetAttribute("extension"))
+		    If extension <> Nil Then
+		      // Copy all of the extension definition's contexts into this context.
+		      For Each extensionContext As SyntaxArea.HighlightContext In extension.Contexts
+		        AddSubContext(extensionContext)
+		      Next extensionContext
+		    End If
+		  End If
 		  
 		  Var i, j As Integer
 		  Var subNode As XmlNode
@@ -694,7 +708,7 @@ Protected Class HighlightContext
 			  If mOwner = Nil Or mOwner.Value = Nil Then
 			    Return Nil
 			  Else
-			    Return SyntaxArea.HighlightDefinition(mOwner.Value)
+			    Return SyntaxArea.IEditor(mOwner.Value)
 			  End If
 			  
 			End Get
@@ -709,7 +723,7 @@ Protected Class HighlightContext
 			  
 			End Set
 		#tag EndSetter
-		Owner As SyntaxArea.HighlightDefinition
+		Owner As SyntaxArea.IEditor
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 41207765616B207265666572656E636520746F207468697320636F6E74657874277320706172656E74206F72204E696C2069662074686572652069736E2774206F6E652E

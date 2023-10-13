@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="2.0">
+<highlightDefinition version="2.1">
 	<name>Java</name>
 	<blockStartMarker indent="1">\{\s*(?:$|//|/\*|\\)|\s*/\*\*?\s*$</blockStartMarker>
 	<blockEndMarker>^\s*\}|^\s*\*\*?/</blockEndMarker>
@@ -21,25 +21,25 @@
 			<startRegEx>/\*\*[\n\r]</startRegEx>
 			<endRegEx>\*/</endRegEx>
 		</highlightContext>
-		<highlightContext name="comment">
+		<highlightContext name="javaComment" fallback="comment">
 			<startRegEx>/\*</startRegEx>
 			<endRegEx>\*/</endRegEx>
-			<highlightContext name="todos">
+			<highlightContext name="javaTodos">
 				<keywords>
                		<string>todo</string>
 					<string>hack</string>
 				</keywords>
 			</highlightContext>				
 		</highlightContext>
-		<highlightContext name="singleComment" fallback="comment">
+		<highlightContext name="javaSingleComment" fallback="comment">
 			<startRegEx>//</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>
-		<highlightContext name="string">
+		<highlightContext name="javaString" fallback="string">
 			<startRegEx>"</startRegEx>
 			<endRegEx>(((?&lt;!\\)(\\\\)*)|^)"</endRegEx>
 		</highlightContext>
-		<highlightContext name="keyword">
+		<highlightContext name="javaKeyword" fallback="keyword">
 			<keywords>
 				<string>abstract</string>
 				<string>break</string>
@@ -92,17 +92,17 @@
 				<string>void</string>
 			</keywords>
 		</highlightContext>
-		<highlightContext name="number">
+		<highlightContext name="javaNumber" fallback="number">
 			<entryRegEx>(?&lt;=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)</entryRegEx>
 		</highlightContext>
-		<highlightContext name="character" fallback="string">
+		<highlightContext name="javaCharacter" fallback="string">
 			<entryRegEx>('.')</entryRegEx>
 		</highlightContext>
-		<highlightContext name="function" fallback="identifier">
+		<highlightContext name="javaFunction" fallback="identifier">
 			<entryRegEx>([A-Za-z0-9_]+ *)(?=\()</entryRegEx>
 		</highlightContext>
 		
-        <highlightContext name="preprocessor" fallback="directive">
+        <highlightContext name="javaPreprocessor" fallback="directive">
 			<regExes>
                 <string>(^[ 	]*import([^\n\r])*)</string>
                 <string>(^[ 	]*package([^\n\r])*)</string>

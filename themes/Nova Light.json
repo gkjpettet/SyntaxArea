@@ -1,7 +1,7 @@
 {
 	"name": "Nova Light",
 	"author": "Garry Pettet",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"defaultStyle": {
 		"textColor": "&h00000000",
 		"backColor": "&h00000000",
@@ -123,6 +123,30 @@
 			"bold": false,
 			"italic": false,
 			"underline": true
+		},
+		"identifier": {
+			"textColor": "&h00000000",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"lowercaseIdentifier": {
+			"textColor": "&h00000000",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
+		},
+		"uppercaseIdentifier": {
+			"textColor": "&h00000000",
+			"backColor": "&h00000000",
+			"hasBackColor": false,
+			"bold": false,
+			"italic": false,
+			"underline": false
 		},
 		"comment": {
 		  "textColor": "&h00737373",

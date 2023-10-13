@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="2.0">
+<highlightDefinition version="2.1">
 	<name>HTML</name>
 
 	<blockStartMarker indent="1">(?x)
@@ -12,46 +12,46 @@
 	</blockEndMarker>
 
 	<contexts caseSensitive="no">		
-		<highlightContext name="comment">
+		<highlightContext name="htmlComment" fallback="comment">
 			<startRegEx>&lt;!--</startRegEx>
 			<endRegEx>--&gt;</endRegEx>
-			<highlightContext name="todos">
+			<highlightContext name="htmlTodos">
 				<entryRegEx>(?-i)TODO:|HACK:</entryRegEx> <!-- Note case sensitive -->
 			</highlightContext>	
 		</highlightContext>
 
-		<highlightContext name="cdata">
+		<highlightContext name="htmlCdata">
 			<startRegEx>&lt;!\s*\[CDATA\s*\[</startRegEx>
 			<endRegEx>\]\s*\]\s*&gt;</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="docType">
+		<highlightContext name="htmlDocType">
 			<startRegEx>&lt;!</startRegEx>
 			<endRegEx>&gt;</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="escape">
+		<highlightContext name="htmlEscape">
 			<startRegEx>&lt;\?</startRegEx>
 			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 					
-		<highlightContext name="tag">
+		<highlightContext name="htmlTag">
 			<entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
 
-			<highlightContext name="stringInTag" fallback="string">
+			<highlightContext name="htmlStringInTag" fallback="string">
 				<entryRegEx>("[^"&gt;&lt;]*")</entryRegEx>
 			</highlightContext>
 
-			<highlightContext name="singleStringInTag" fallback="string">
+			<highlightContext name="htmlSingleStringInTag" fallback="string">
 				<entryRegEx>('[^'&gt;&lt;]*')</entryRegEx>
 			</highlightContext>
 
-			<highlightContext name="attributeInTag">
+			<highlightContext name="htmlAttributeInTag">
 				<entryRegEx>([\w-]*)[ \t]*=(?=[ \t]*"[^"&gt;&lt;]*")</entryRegEx>
 			</highlightContext>
 		</highlightContext>
 
-		<highlightContext name="entity">
+		<highlightContext name="htmlEntity">
 			<entryRegEx>(&amp;\w{1,8};)</entryRegEx>
 		</highlightContext>
 	</contexts>

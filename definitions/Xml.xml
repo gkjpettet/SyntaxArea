@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<highlightDefinition version="2.0">
+<highlightDefinition version="2.1">
 	<name>XML/XHTML</name>
 
 	<blockStartMarker indent="1">^\s*(&lt;[^!?%/](?!.+?(/&gt;|&lt;/.+?&gt;))|&lt;[!%]--(?!.+?--%?&gt;)|&lt;%[!]?(?!.+?%&gt;))</blockStartMarker>
@@ -14,50 +14,50 @@
 	<placeholders>\{#(.+?)#\}</placeholders>
 
 	<contexts caseSensitive="no">		
-		<highlightContext name="comment">
+		<highlightContext name="xmlComment" fallback="comment">
 			<startRegEx>&lt;!--</startRegEx>
 			<endRegEx>--&gt;</endRegEx>
-			<highlightContext name="todos">
+			<highlightContext name="xmlTodos">
 				<entryRegEx>(?-i)TODO:|HACK:</entryRegEx> <!-- Note case sensitive -->
 			</highlightContext>
 		</highlightContext>
 
-		<highlightContext name="cdata">
+		<highlightContext name="xmlCdata">
 			<startRegEx>&lt;!\s*\[CDATA\s*\[</startRegEx>
 			<endRegEx>\]\s*\]\s*&gt;</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="docType">
+		<highlightContext name="xmlDocType">
 			<startRegEx>&lt;!</startRegEx>
 			<endRegEx>&gt;</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="escape">
+		<highlightContext name="xmlEscape">
 			<startRegEx>&lt;\?</startRegEx>
 			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 					
-        <highlightContext name="tag">
+        <highlightContext name="xmlTag">
             <entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
 			           
-            <highlightContext name="stringInTag" fallback="string">
+            <highlightContext name="xmlStringInTag" fallback="string">
                 <entryRegEx>("[^"&gt;&lt;]*")</entryRegEx>
             </highlightContext>
             
-            <highlightContext name="singleStringInTag" fallback="string">
+            <highlightContext name="xmlSingleStringInTag" fallback="string">
                 <entryRegEx>('[^'&gt;&lt;]*')</entryRegEx>
             </highlightContext>
             
-            <highlightContext name="attributeInTag" fallback="directive">
+            <highlightContext name="xmlAttributeInTag" fallback="directive">
                 <entryRegEx>([\w-]*)[ \t]*=(?=[ \t]*"[^"&gt;&lt;]*")</entryRegEx>
             </highlightContext>
 			
-			<highlightContext name="tagName" fallback="identifier">
+			<highlightContext name="xmlTagName" fallback="identifier">
 				<entryRegEx>(\w+)</entryRegEx>
 			</highlightContext>
         </highlightContext>
         
-        <highlightContext name="entity">
+        <highlightContext name="xmlEntity">
             <entryRegEx>(&amp;\w{1,8};)</entryRegEx>
         </highlightContext>
 	</contexts>
