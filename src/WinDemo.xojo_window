@@ -2348,6 +2348,37 @@ Begin DesktopWindow WinDemo
       Visible         =   True
       Width           =   127
    End
+   Begin DesktopButton ButtonExportTheme
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Export Theme..."
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   1020
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      MacButtonStyle  =   0
+      Scope           =   0
+      TabIndex        =   73
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   643
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   121
+   End
 End
 #tag EndDesktopWindow
 
@@ -2466,6 +2497,9 @@ End
 	#tag Method, Flags = &h0, Description = 54686520617070277320617070656172616E636520686173206368616E6765642028652E672E206120737769746368206265747765656E206C696768742F6461726B206D6F6465292E
 		Sub AppearanceChanged(alsoInitialiseControls As Boolean = False)
 		  /// The app's appearance has changed (e.g. a switch between light/dark mode).
+		  ///
+		  /// We'll switch the current theme to one of the bundled ones. Note that this will 
+		  /// undo any changes the user has made to the current colour scheme.
 		  
 		  If Color.IsDarkMode Then
 		    // Get the correct bundled theme.
@@ -2745,6 +2779,12 @@ End
 		  SuggestionColor.SelectedColor = CodeEditor.SuggestionPopupTextColor
 		  SelectedSuggestionTextColor.SelectedColor = CodeEditor.SuggestionPopupSelectedTextColor
 		  SuggestionPopupBackColor.SelectedColor = CodeEditor.SuggestionPopupBackColor
+		  
+		  // Since this method is called when something changes, it's possible that the 
+		  // syntax definition changed. In that case, check that the definition still
+		  // supports code blocks.
+		  CheckBoxEnableLineFolding.Value = _
+		  CheckBoxEnableLineFolding.Value And CodeEditor.SyntaxDefinition.SupportsCodeBlocks
 		  
 		  // ===========
 		  // Info panel.
@@ -3450,6 +3490,30 @@ End
 		  If mFinishedInitialising Then
 		    CodeEditor.LoadTheme(Me.RowTagAt(Me.SelectedRowIndex))
 		  End If
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ButtonExportTheme
+	#tag Event
+		Sub Pressed()
+		  Var f As FolderItem = FolderItem.ShowSaveFileDialog(MyFiles.TextJSON, "My Custom Theme.json")
+		  
+		  // Did the user cancel?
+		  If f = Nil Then Return
+		  
+		  // Export the current editor settings as a theme file.
+		  Var exportTheme As SyntaxArea.EditorTheme = CodeEditor.ToEditorTheme
+		  
+		  Try
+		    Var json As String = exportTheme.ToJSON
+		    Var tout As TextOutputStream = TextOutputStream.Create(f)
+		    tout.Write(json)
+		    tout.Close
+		  Catch e As RuntimeException
+		    Raise New RuntimeException("An error occurred whilst attempting to export the " + _
+		    "code editor's properties as a theme: " + e.Message)
+		  End Try
 		  
 		End Sub
 	#tag EndEvent
