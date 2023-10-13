@@ -380,9 +380,6 @@ Protected Class HighlightDefinition
 		  
 		  stateOut = stateIn
 		  
-		  // If the owning editor does not support line folding then we won't search for blocks.
-		  If Not Owner.EnableLineFolding Then Return False
-		  
 		  Var v As Variant = BlockEndDef.Lookup(stateIn, Nil)
 		  If v.IsArray Then
 		    Var ps() As Pair = v
@@ -413,9 +410,6 @@ Protected Class HighlightDefinition
 		  /// Opaque, only useful for matching with IsBlockEnd's returned value.
 		  
 		  stateOut = stateIn
-		  
-		  // If the owning editor has disabled line folding then we won't search for blocks.
-		  If Not Owner.EnableLineFolding Then Return 0
 		  
 		  Var v As Variant = BlockStartDef.Lookup(stateIn, Nil)
 		  If v.IsArray Then
