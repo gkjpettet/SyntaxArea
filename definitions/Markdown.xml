@@ -129,6 +129,21 @@
 			<endRegEx>^```(\n|$)</endRegEx>
 		</highlightContext>
 		
+		<highlightContext name="htmlCodeFence" fallback="codeFence" extension="html">
+			<startRegEx>^```html[ ]*\n</startRegEx>
+			<endRegEx>^```(\n|$)</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="xmlCodeFence" fallback="codeFence" extension="xml">
+			<startRegEx>^```xml[ ]*\n</startRegEx>
+			<endRegEx>^```(\n|$)</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="javaCodeFence" fallback="codeFence" extension="java">
+			<startRegEx>^```java[ ]*\n</startRegEx>
+			<endRegEx>^```(\n|$)</endRegEx>
+		</highlightContext>
+		
 		<highlightContext name="codeFence">
 			<startRegEx>^```[[:alpha:]]*\n</startRegEx>
 			<endRegEx>^```(\n|$)</endRegEx>
