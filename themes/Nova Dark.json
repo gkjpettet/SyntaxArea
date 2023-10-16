@@ -20,6 +20,14 @@
 		  "italic": false,
 		  "underline": false
 	  },
+	  "blockQuote": {
+		  "textColor": "&h00868E96",
+		  "backColor": "&h00000000",
+		  "hasBackColor": false,
+		  "bold": false,
+		  "italic": true,
+		  "underline": false
+	  },
 	  "strongEmphasis": {
 		  "textColor": "&h0064A0BF",
 		  "backColor": "&h00000000",

@@ -6,6 +6,11 @@
 			<entryRegEx>\`[^\`\n]+\`</entryRegEx>
 		</highlightContext>
 
+		<highlightContext name="blockQuote">
+			<startRegEx>^[ ]{0,3}&gt;[ \t]*\w+[ \t]*</startRegEx>
+			<endRegEx>\n\n|$</endRegEx>
+		</highlightContext>
+
 		<highlightContext name="doubleUnderscoreEmphasis" fallback="strongEmphasis">
 			<startRegEx>(?:^|\W)__[^ \t\n]</startRegEx>
 			<endRegEx>__</endRegEx>
