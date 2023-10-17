@@ -40,6 +40,20 @@
 			<endRegEx>\*/</endRegEx>
 		</highlightContext>
 	
+		<highlightContext name="phpSingleQuoteString" fallback="string">
+			<startRegEx>'</startRegEx>
+			<endRegEx>(((?&lt;!\\)(\\\\)*)|^)'</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="phpDoubleQuoteString" fallback="string">
+			<startRegEx>"</startRegEx>
+			<endRegEx>(((?&lt;!\\)(\\\\)*)|^)"</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="phpNumber" fallback="number">
+			<entryRegEx>(?&lt;=[^\w.]|^)(?=\d+|\d+\.|\.\d+|\d+e(?:\d|\b))((?:\d+_\d+)+n?|\d+n?|\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.]|$)|(?&lt;=[^\w.]|^)(?:\d+|0x[[:xdigit:]]*\b|0b[01]*\b|0o[0-7]*\b)(?=[^\w.]|$)</entryRegEx>
+		</highlightContext>
+	
 		<highlightContext name="phpKeyword" fallback="keyword">
 			<keywords>
 				<string>__halt_compiler</string>
@@ -115,5 +129,13 @@
 				<string>yield_from</string>
 			</keywords>
 		</highlightContext>
+		
+		<highlightContext name="phpUppercaseIdentifier" fallback="uppercaseIdentifier">
+			<entryRegEx>\b[A-Z]\w*</entryRegEx>
+		</highlightContext>
+		
+		<highlightContext name="phpLowercaseIdentifier" fallback="lowercaseIdentifier">
+			<entryRegEx>\b[a-z]\w*</entryRegEx>
+		</highlightContext>			
 	</contexts>
 </highlightDefinition>
