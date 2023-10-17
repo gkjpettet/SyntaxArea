@@ -7,8 +7,8 @@
 		</highlightContext>
 
 		<highlightContext name="blockQuote">
-			<startRegEx>^[ ]{0,3}&gt;[ \t]*\w+[ \t]*</startRegEx>
-			<endRegEx>\n\n|$</endRegEx>
+			<startRegEx>^[ ]{0,3}&gt;[ \t]*\w*[ \t]*</startRegEx>
+			<endRegEx>(\n\n)|$</endRegEx>
 		</highlightContext>
 
 		<highlightContext name="doubleUnderscoreEmphasis" fallback="strongEmphasis">
@@ -118,9 +118,24 @@
 		<highlightContext name="url">
 			<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
 		</highlightContext>
+
+		<highlightContext name="cCodeFence" fallback="codeFence" extension="c">
+			<startRegEx>^```c[ ]*\n</startRegEx>
+			<endRegEx>^```(\n|$)</endRegEx>
+		</highlightContext>
+				
+		<highlightContext name="htmlCodeFence" fallback="codeFence" extension="html">
+			<startRegEx>^```html[ ]*\n</startRegEx>
+			<endRegEx>^```(\n|$)</endRegEx>
+		</highlightContext>
 		
-		<highlightContext name="xojoCodeFence" fallback="codeFence" extension="xojo">
-			<startRegEx>^```xojo[ ]*\n</startRegEx>
+		<highlightContext name="javascriptCodeFence" fallback="codeFence" extension="javascript">
+			<startRegEx>^```javascript[ ]*\n</startRegEx>
+			<endRegEx>^```(\n|$)</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="javaCodeFence" fallback="codeFence" extension="java">
+			<startRegEx>^```java[ ]*\n</startRegEx>
 			<endRegEx>^```(\n|$)</endRegEx>
 		</highlightContext>
 		
@@ -129,8 +144,8 @@
 			<endRegEx>^```(\n|$)</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="htmlCodeFence" fallback="codeFence" extension="html">
-			<startRegEx>^```html[ ]*\n</startRegEx>
+		<highlightContext name="postgresqlCodeFence" fallback="codeFence" extension="postgresql">
+			<startRegEx>^```postgresql[ ]*\n</startRegEx>
 			<endRegEx>^```(\n|$)</endRegEx>
 		</highlightContext>
 		
@@ -139,8 +154,8 @@
 			<endRegEx>^```(\n|$)</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="javaCodeFence" fallback="codeFence" extension="java">
-			<startRegEx>^```java[ ]*\n</startRegEx>
+		<highlightContext name="xojoCodeFence" fallback="codeFence" extension="xojo">
+			<startRegEx>^```xojo[ ]*\n</startRegEx>
 			<endRegEx>^```(\n|$)</endRegEx>
 		</highlightContext>
 		
