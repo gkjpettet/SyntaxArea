@@ -17,6 +17,7 @@
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqby54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YXNjcmlwdC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUGhwLnhtbA==
 				End
 				Begin CopyFilesBuildStep CopyThemesLinux
 					AppliesTo = 0
@@ -46,6 +47,7 @@
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqby54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YXNjcmlwdC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUGhwLnhtbA==
 				End
 				Begin CopyFilesBuildStep CopyThemesMac
 					AppliesTo = 0
@@ -78,6 +80,7 @@
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvT2Jqby54bWw=
 					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvSmF2YXNjcmlwdC54bWw=
+					FolderItem = Li4vLi4vZGVmaW5pdGlvbnMvUGhwLnhtbA==
 				End
 				Begin CopyFilesBuildStep CopyThemesWindows
 					AppliesTo = 0

@@ -35,7 +35,7 @@
 			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 					
-		<highlightContext name="htmlTag">
+		<highlightContext name="htmlTag" fallback="tag">
 			<entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
 
 			<highlightContext name="htmlStringInTag" fallback="string">
