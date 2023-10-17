@@ -143,6 +143,11 @@
 			<startRegEx>^```objo[ ]*\n</startRegEx>
 			<endRegEx>^```(\n|$)</endRegEx>
 		</highlightContext>
+
+		<highlightContext name="phpCodeFence" fallback="codeFence" extension="php">
+			<startRegEx>^```php[ ]*\n</startRegEx>
+			<endRegEx>^```(\n|$)</endRegEx>
+		</highlightContext>
 		
 		<highlightContext name="postgresqlCodeFence" fallback="codeFence" extension="postgresql">
 			<startRegEx>^```postgresql[ ]*\n</startRegEx>
