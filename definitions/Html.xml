@@ -11,7 +11,16 @@
 		|^(?!.*?&lt;!--).*?--\s*&gt;
 	</blockEndMarker>
 
-	<contexts caseSensitive="no">		
+	<contexts caseSensitive="no">
+		<highlightContext name="phpBlock" fallback="tag" extension="php">
+			<startRegEx>&lt;\?php(?!.+\?&gt;).*</startRegEx>
+			<endRegEx>\?&gt;</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="inlinePHP" fallback="tag" extension="php">
+			<entryRegEx>&lt;\?php.+\?&gt;</entryRegEx>
+		</highlightContext>
+	
 		<highlightContext name="htmlComment" fallback="comment">
 			<startRegEx>&lt;!--</startRegEx>
 			<endRegEx>--&gt;</endRegEx>
@@ -34,7 +43,7 @@
 			<startRegEx>&lt;\?</startRegEx>
 			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
-					
+			
 		<highlightContext name="htmlTag" fallback="tag">
 			<entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
 
