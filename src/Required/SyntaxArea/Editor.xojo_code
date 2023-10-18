@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
-	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -125,6 +125,13 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    // INSERTING
 		    // =========================================
 		  Case CmdInsertNewline
+		    #If TargetWindows Or TargetLinux
+		      If Keyboard.AsyncOptionKey Then
+		        // The user has pressed Option-Return
+		        HandleCompleteCodeBlock
+		        Return True
+		      End If
+		    #EndIf
 		    HandleInsertText(EndOfLine)
 		    
 		    // =========================================
@@ -182,21 +189,18 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    HandleInsertText(Chr(9))
 		    
 		  Case "noop:"
-		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
-		      // Ctrl+Space pressed.
-		      If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
-		        ShowAutocompletion
+		    #If TargetMacOS
+		      // These are handled in KeyDown on Windows and Linux
+		      If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
+		        // Ctrl+Space pressed.
+		        If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
+		          ShowAutocompletion
+		        End If
+		        
+		      ElseIf Keyboard.AsyncCommandKey And Keyboard.AsyncKeyDown(&h24) Then
+		        HandleCompleteCodeBlock
 		      End If
-		      
-		    ElseIf Keyboard.AsyncCommandKey And Keyboard.AsyncKeyDown(&h24) Then
-		      // Cmd+Return pressed
-		      // Get the contents of the line but not any trailing newline characters.
-		      Var lineContents As String = _
-		      mTextStorage.GetText(CaretLine.Offset, CaretLine.Length).TrimRight(EndOfLine.Windows, EndOfLine.UNIX)
-		      // Ask the host for text (if any) to insert at the caret position.
-		      Var toInsert As String = RequestCodeBlockCompletion(lineContents, CaretColumn, CaretIsAtEndOfLine)
-		      If toInsert <> "" Then Insert(CaretPos, toInsert)
-		    End If
+		    #EndIf
 		    
 		  End Select
 		  
@@ -384,6 +388,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		      Return True
 		    End If
 		  #EndIf
+		  
 		  
 		End Function
 	#tag EndEvent
@@ -2221,6 +2226,19 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  Return s.ReplaceLineEndings(EndOfLine).NthField(EndOfLine, 1)
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 54686520757365722069732072657175657374696E6720746F20636F6D706C657465206120636F646520626C6F636B2E
+		Private Sub HandleCompleteCodeBlock()
+		  /// The user is requesting to complete a code block.
+		  
+		  // Get the contents of the line but not any trailing newline characters.
+		  Var lineContents As String = _
+		  mTextStorage.GetText(CaretLine.Offset, CaretLine.Length).TrimRight(EndOfLine.Windows, EndOfLine.UNIX)
+		  // Ask the host for text (if any) to insert at the caret position.
+		  Var toInsert As String = RequestCodeBlockCompletion(lineContents, CaretColumn, CaretIsAtEndOfLine)
+		  If toInsert <> "" Then Insert(CaretPos, toInsert)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 5468652075736572206861732070726573736564207468652064656C657465206F7220666F72776172642064656C657465206B65792E204966206064656C657465576F7264602069732054727565207468656E207468652061646A6163656E7420776F72642077696C6C2062652072656D6F7665642E204F74686572776973652069742072656D6F766573207468652061646A6163656E74206368617261637465722E
