@@ -17,6 +17,11 @@
 			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 		
+		<highlightContext name="inlineJavascript" extension="javascript">
+			<startRegEx>&lt;script(?:[ ]+(?:\w|[-+"'#=:\\\.\/ ])+)?&gt;</startRegEx>
+			<endRegEx>&lt;\/script&gt;</endRegEx>
+		</highlightContext>
+		
 		<highlightContext name="inlinePHP" fallback="tag" extension="php">
 			<entryRegEx>&lt;\?php.+\?&gt;</entryRegEx>
 		</highlightContext>
