@@ -3,11 +3,11 @@
 	<name>HTML</name>
 
 	<blockStartMarker indent="1">(?x)
-		(?!&lt;link|&lt;meta)&lt;((?:\w|-)+)(?:[ ]+(?:\w|[-"'=\/ ])+)?&gt;(?!.*&lt;\/(\1)&gt;)
+		(?!&lt;link|&lt;meta)&lt;((?:\w|-)+)(?:[ ]+(?:\w|[-+"'=:\\\.\/ ])+)?&gt;(?!.*&lt;\/(\1)&gt;)
 		|&lt;!--(?!.*--\s*&gt;)
 	</blockStartMarker>
 	<blockEndMarker>(?x)
-		(?x)(?&lt;=^|[^\w&gt;])(&lt;\/\w+&gt;)
+		(?&lt;=^|[^\w&gt;{}])(&lt;\/\w+&gt;)
 		|^(?!.*?&lt;!--).*?--\s*&gt;
 	</blockEndMarker>
 
