@@ -193,6 +193,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		      // Get the contents of the line but not any trailing newline characters.
 		      Var lineContents As String = _
 		      mTextStorage.GetText(CaretLine.Offset, CaretLine.Length).TrimRight(EndOfLine.Windows, EndOfLine.UNIX)
+		      // Ask the host for text (if any) to insert at the caret position.
 		      Var toInsert As String = RequestCodeBlockCompletion(lineContents, CaretColumn, CaretIsAtEndOfLine)
 		      If toInsert <> "" Then Insert(CaretPos, toInsert)
 		    End If

@@ -2951,7 +2951,10 @@ End
 		  // Returning nothing will not change the text in the editor.
 		  
 		  // In this demo we'll only offer code block completion for Xojo code.
-		  If CodeEditor.SyntaxDefinition.Name <> "Xojo" Then Return ""
+		  If CodeEditor.SyntaxDefinition = Nil Or _
+		    CodeEditor.SyntaxDefinition.Name <> "Xojo" Then
+		    Return ""
+		  End If
 		  
 		  // If the line begins with `if` and we're at the end of the line and that
 		  // line doesn't end with `then` we'll autocomplete an empty `if` block.
