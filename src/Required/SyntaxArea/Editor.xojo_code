@@ -190,14 +190,11 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		      
 		    ElseIf Keyboard.AsyncCommandKey And Keyboard.AsyncKeyDown(&h24) Then
 		      // Cmd+Return pressed
-		      // If the caret is at the end of the current line and the current line 
-		      // is not empty we'll raise our event requesting text to append to this line.
-		      If CaretIsAtEndOfLine Then
-		        // Get the contents of the line but not any trailing newline characters.
-		        Var lineContents As String = _
-		        mTextStorage.GetText(CaretLine.Offset, CaretLine.Length).TrimRight(EndOfLine.Windows, EndOfLine.UNIX)
-		        Insert(CaretPos, FetchBlockCompletion(lineContents))
-		      End If
+		      // Get the contents of the line but not any trailing newline characters.
+		      Var lineContents As String = _
+		      mTextStorage.GetText(CaretLine.Offset, CaretLine.Length).TrimRight(EndOfLine.Windows, EndOfLine.UNIX)
+		      Var toInsert As String = RequestCodeBlockCompletion(lineContents, CaretColumn, CaretIsAtEndOfLine)
+		      If toInsert <> "" Then Insert(CaretPos, toInsert)
 		    End If
 		    
 		  End Select
@@ -4989,10 +4986,6 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event FetchBlockCompletion(lineContents As String) As String
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event FocusLost()
 	#tag EndHook
 
@@ -5054,6 +5047,10 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 
 	#tag Hook, Flags = &h0
 		Event PlaceholderSelected(placeholderLabel As String, lineIndex As Integer, line As SyntaxArea.TextLine, placeholder As SyntaxArea.TextPlaceholder, doubleClick As Boolean)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0, Description = 54686520757365722069732072657175657374696E672074686520636F6D706C6574696F6E206F66206120636F646520626C6F636B20746578742E20546869732069732073657061726174652066726F6D206175746F636F6D706C6574696F6E20616E64206973207472696767657265642062792060436D642D456E746572602E20596F7520617265207061737365642074686520636F6E74656E7473206F66207468652063757272656E74206C696E6520616E64207468652063757272656E7420706F736974696F6E2028636F6C756D6E29206F6620746865206361726574206F6E2074686174206C696E652E20596F75206D61792063686F6F736520746F2072657475726E20617262697472617279207465787420746861742077696C6C20626520696E7365727465642061742074686520636172657427732063757272656E7420706F736974696F6E2E
+		Event RequestCodeBlockCompletion(lineContents As String, caretPos As Integer, caretIsAtLineEnd As Boolean) As String
 	#tag EndHook
 
 	#tag Hook, Flags = &h0, Description = 54686520656469746F72206973206C6F6164696E6720612073796E74617820646566696E6974696F6E20746861742069732072657175657374696E67206120646566696E6974696F6E20657874656E73696F6E20776974682074686520737065636966696564206E616D652E20596F752073686F756C642072657475726E204E696C206966206E6F6E6520697320617661696C61626C652E

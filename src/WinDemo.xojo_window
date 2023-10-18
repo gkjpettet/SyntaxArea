@@ -2945,12 +2945,18 @@ End
 		  
 		End Function
 	#tag EndEvent
-	#tag Event
-		Function FetchBlockCompletion(lineContents As String) As String
-		  #Pragma Warning "FINISH"
+	#tag Event , Description = 54686520757365722069732072657175657374696E672074686520636F6D706C6574696F6E206F66206120636F646520626C6F636B20746578742E20546869732069732073657061726174652066726F6D206175746F636F6D706C6574696F6E20616E64206973207472696767657265642062792060436D642D456E746572602E20596F7520617265207061737365642074686520636F6E74656E7473206F66207468652063757272656E74206C696E6520616E64207468652063757272656E7420706F736974696F6E2028636F6C756D6E29206F6620746865206361726574206F6E2074686174206C696E652E20596F75206D61792063686F6F736520746F2072657475726E20617262697472617279207465787420746861742077696C6C20626520696E7365727465642061742074686520636172657427732063757272656E7420706F736974696F6E2E
+		Function RequestCodeBlockCompletion(lineContents As String, caretPos As Integer, caretIsAtLineEnd As Boolean) As String
+		  // This is a basic demonstration of how to implement code block completion.
+		  // Returning nothing will not change the text in the editor.
 		  
-		  If lineContents.Length > 2 And lineContents.Left(2) = "if" Then
-		    Return EndOfLine + EndOfLine + "end if"
+		  // In this demo we'll only offer code block completion for Xojo code.
+		  If CodeEditor.SyntaxDefinition.Name <> "Xojo" Then Return ""
+		  
+		  // If the line begins with `if` and we're at the end of the line and that
+		  // line doesn't end with `then` we'll autocomplete an empty `if` block.
+		  If lineContents.BeginsWith("if ") And Not lineContents.Trim.EndsWith("then") Then
+		    Return EndOfLine + EndOfLine + "End If"
 		  End If
 		End Function
 	#tag EndEvent
