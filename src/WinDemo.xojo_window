@@ -175,7 +175,6 @@ Begin DesktopWindow WinDemo
          BorderColor     =   &c00000000
          BracketHighlightColor=   &c76D6FF00
          CaretColor      =   &c00000000
-         CaretLine       =   0
          ClearHighlightedRangesOnTextChange=   True
          DirtyLinesColor =   &cFFD47900
          DisableReset    =   False
@@ -2944,6 +2943,15 @@ End
 		  
 		  Return Nil
 		  
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function FetchBlockCompletion(lineContents As String) As String
+		  #Pragma Warning "FINISH"
+		  
+		  If lineContents.Length > 2 And lineContents.Left(2) = "if" Then
+		    Return EndOfLine + EndOfLine + "end if"
+		  End If
 		End Function
 	#tag EndEvent
 #tag EndEvents

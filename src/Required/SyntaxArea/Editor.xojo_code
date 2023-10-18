@@ -2,7 +2,7 @@
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
 Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -186,6 +186,17 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		      // Ctrl+Space pressed.
 		      If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
 		        ShowAutocompletion
+		      End If
+		      
+		    ElseIf Keyboard.AsyncCommandKey And Keyboard.AsyncKeyDown(&h24) Then
+		      // Cmd+Return pressed
+		      // If the caret is at the end of the current line and the current line 
+		      // is not empty we'll raise our event requesting text to append to this line.
+		      If CaretIsAtEndOfLine Then
+		        // Get the contents of the line but not any trailing newline characters.
+		        Var lineContents As String = _
+		        mTextStorage.GetText(CaretLine.Offset, CaretLine.Length).TrimRight(EndOfLine.Windows, EndOfLine.UNIX)
+		        Insert(CaretPos, FetchBlockCompletion(lineContents))
 		      End If
 		    End If
 		    
@@ -823,7 +834,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  End If
 		  
 		  Var y As Double
-		  XYAtCharPos(CaretPos, CaretLine, AutocompleteSuggestionInsertionX, y)
+		  XYAtCharPos(CaretPos, CaretLineIndex, AutocompleteSuggestionInsertionX, y)
 		  
 		End Sub
 	#tag EndMethod
@@ -850,11 +861,11 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  
 		  // Check indentations.
 		  If AutoIndentNewLines And Not mIndentVisually Then
-		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLineIndex)
 		    If thisLine <> Nil And thisLine.IsBlockEnd Then
 		      Var state As Variant
-		      If PrivateIndentLine(CaretLine, False, state) Then
-		        InvalidateLine(CaretLine)
+		      If PrivateIndentLine(CaretLineIndex, False, state) Then
+		        InvalidateLine(CaretLineIndex)
 		      End
 		    End If
 		  End If
@@ -928,11 +939,19 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 
 	#tag Method, Flags = &h0
 		Function CaretColumn() As Integer
-		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLineIndex)
 		  If line <> Nil Then
 		    Return CaretPos - line.Offset
 		  End If
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732054727565206966207468652063617265742069732063757272656E746C792061742074686520656E64206F6620746865206C696E652E
+		Function CaretIsAtEndOfLine() As Boolean
+		  /// Returns True if the caret is currently at the end of the line.
+		  
+		  Return SelectionStart + SelectionLength >= CaretLine.EndOffset - 1
 		End Function
 	#tag EndMethod
 
@@ -1058,7 +1077,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    // Check if selstart is in a visible line, if not, move it to the next or 
 		    // previous visible line.
 		    If selStart <> mSelectionStart Then
-		      If linenum <> CaretLine Then
+		      If linenum <> CaretLineIndex Then
 		        // Only if the new line is different from the previous.
 		        startLineIdx = Lines.GetLineNumberForOffset(selStart)
 		        startLine = Lines.GetLine(startLineIdx)
@@ -1200,15 +1219,15 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  // If SelLength = 0 or outside selection then update the caret.
 		  If selLength = 0 Or CaretPos < selStart Or CaretPos > selStart + selLength Then
 		    // Has the line changed? If so, invalidate the lines.
-		    If linenum <> CaretLine Then
-		      InvalidateLine(CaretLine)
-		      mCaretLine = Lines.GetLineNumberForOffset(selStart)
+		    If linenum <> CaretLineIndex Then
+		      InvalidateLine(CaretLineIndex)
+		      mCaretLineIndex = Lines.GetLineNumberForOffset(selStart)
 		    End If
 		    
 		    mCaretPos = selStart
 		    
 		    // Check if the caret is out of view.
-		    ViewToCharPos(CaretLine, mCaretPos)
+		    ViewToCharPos(CaretLineIndex, mCaretPos)
 		  End If
 		  
 		  // Blink only if no selection.
@@ -1236,7 +1255,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    AutocompleteEOL
 		  End If
 		  
-		  InvalidateLine(CaretLine)
+		  InvalidateLine(CaretLineIndex)
 		  
 		End Sub
 	#tag EndMethod
@@ -1503,7 +1522,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  /// Handles character deletion, either forwards or backwards, word or character.
 		  
 		  // Check if the key would delete a placeholder.
-		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLineIndex)
 		  If line <> Nil And line.HasPlaceholders Then
 		    Var placeholder As SyntaxArea.TextPlaceholder
 		    If forwardDelete Then
@@ -1549,7 +1568,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    // but the line delimiter to the previous line as well, or the user would not be able to ever join
 		    // the current line with the previous line because it would get re-indented right away again.
 		    Var caretCol As Integer = Self.CaretColumn
-		    Var lineText As String = Self.GetLine(caretLine)
+		    Var lineText As String = Self.GetLine(CaretLineIndex)
 		    Var textLeftOfCaret As String = lineText.Left(caretCol)
 		    If textLeftOfCaret.Trim = "" Then
 		      // The cursor is at the start of the line or inside indentation space.
@@ -1853,7 +1872,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		      End If
 		      
 		      // Autocomplete suggestion.
-		      If SelectionLength = 0 And lineIdx = CaretLine And TrailingSuggestion <> "" Then
+		      If SelectionLength = 0 And lineIdx = CaretLineIndex And TrailingSuggestion <> "" Then
 		        g.DrawingColor = StyleForToken("autocomplete").TextColor
 		        g.DrawText(trailingSuggestion, AutocompleteSuggestionInsertionX, sy - (g.TextHeight - g.FontAscent))
 		      End If
@@ -1870,7 +1889,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		          End If
 		          gg.FillRectangle(LineNumberOffset - FoldingOffset - 1, sy - g.TextHeight, FoldingOffset, TextHeight)
 		        End If
-		        If CaretLine = lineIdx Then
+		        If CaretLineIndex = lineIdx Then
 		          gg.DrawingColor = GutterBackColor.DarkerColor(20, True)
 		          gg.FillRectangle(0, sy - g.TextHeight, LineNumberOffset - 1 - FoldingOffset, TextHeight)
 		          gg.Bold = True
@@ -2126,7 +2145,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  If Not EnableLineFolding Then Return
 		  
 		  /// Find the index of the line at the start of the block that the caret is currently in.
-		  Var index As Integer = OpeningBlockLineForLine(CaretLine)
+		  Var index As Integer = OpeningBlockLineForLine(CaretLineIndex)
 		  If index < 0 Then Return
 		  
 		  ToggleLineFolding(index)
@@ -2236,7 +2255,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  If IsWhitespace(char) Then char = TextStorage.GetCharAt(Max(CaretPos - 1, 0))
 		  
 		  // Check if it's in a placeholder.
-		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		  Var line As SyntaxArea.TextLine = Lines.GetLine(CaretLineIndex)
 		  If line <> Nil And line.PlaceholderForOffset(CaretPos + 1) <> Nil Then
 		    Word.Offset = CaretPos + 1
 		    Word.Length = 0
@@ -2347,12 +2366,12 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  // Autoindent lines?
 		  // Check if current (new) entered line needs autoindenting.
 		  If AutoIndentNewLines And Not mIndentVisually Then
-		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLine)
+		    Var thisLine As SyntaxArea.TextLine = Lines.GetLine(CaretLineIndex)
 		    If thisLine <> Nil And thisLine.IsBlockEnd Then
 		      // Indent this new line.
 		      Var state As Variant
-		      If PrivateIndentline(CaretLine, False, state) Then
-		        InvalidateLine(CaretLine)
+		      If PrivateIndentline(CaretLineIndex, False, state) Then
+		        InvalidateLine(CaretLineIndex)
 		      End If
 		    End If
 		  End If
@@ -2361,7 +2380,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  UpdateDesiredColumn
 		  
 		  If MouseOverBlock <> Nil Then
-		    CreateMouseOverBlockHighlight(CaretLine)
+		    CreateMouseOverBlockHighlight(CaretLineIndex)
 		  End If
 		  
 		  // Redraw.
@@ -2406,7 +2425,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		Private Sub HandleTripleClick()
 		  /// Selected the current line.
 		  
-		  Me.SelectLine(CaretLine, True)
+		  Me.SelectLine(CaretLineIndex, True)
 		  
 		End Sub
 	#tag EndMethod
@@ -2968,7 +2987,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    
 		    ChangeSelection(SelectionStart - charsToMove, 0)
 		    pos = CaretPos
-		    ViewToCharPos(CaretLine, pos)
+		    ViewToCharPos(CaretLineIndex, pos)
 		    
 		    // Did we just cross a block character?
 		    Var char As String = TextStorage.GetCharAt(CaretPos)
@@ -3022,7 +3041,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    
 		    ChangeSelection(SelectionStart + charsToMove, 0)
 		    pos = CaretPos
-		    ViewToCharPos(CaretLine, pos)
+		    ViewToCharPos(CaretLineIndex, pos)
 		  End If
 		  
 		  UpdateDesiredColumn(CaretPos)
@@ -3115,7 +3134,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  
 		  Var pos As Integer = CaretPos
 		  
-		  ViewToCharPos(CaretLine, pos)
+		  ViewToCharPos(CaretLineIndex, pos)
 		  
 		  UpdateDesiredColumn(CaretPos)
 		  
@@ -3130,7 +3149,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  
 		  ChangeSelection(SelectionStart - charsToMove, 0)
 		  Var pos As Integer = CaretPos
-		  ViewToCharPos(CaretLine, pos)
+		  ViewToCharPos(CaretLineIndex, pos)
 		  
 		  // Did we just cross a block character?
 		  Var char As String = TextStorage.GetCharAt(CaretPos)
@@ -3609,7 +3628,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  Var xpos, ypos As Double
 		  
 		  If atPos = CaretPos Then
-		    XYAtCharPos(atPos, CaretLine, xpos, ypos)
+		    XYAtCharPos(atPos, CaretLineIndex, xpos, ypos)
 		  Else
 		    XYAtCharPos(atPos, xpos, ypos)
 		  End If
@@ -4149,7 +4168,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		      Var index As Integer = m.Info(Messages.LineChangedStartIndex)
 		      Var length As Integer = m.Info(Messages.LineChangedLength) // length
 		      
-		      If index = CaretLine And mHighlighter <> Nil And _
+		      If index = CaretLineIndex And mHighlighter <> Nil And _
 		        mHighlighter.ThreadState <> Thread.ThreadStates.NotRunning Then
 		        mHighlighter.HighlightLine(index)
 		      End If
@@ -4218,9 +4237,9 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  UndoManager.Redo
 		  
 		  // Raise events.
-		  Var line As SyntaxArea.TextLine = lines.GetLine(CaretLine)
+		  Var line As SyntaxArea.TextLine = lines.GetLine(CaretLineIndex)
 		  If line <> Nil Then
-		    RaiseEvent SelectionChanged(CaretLine + 1, SelectionStart - line.Offset, SelectionLength)
+		    RaiseEvent SelectionChanged(CaretLineIndex + 1, SelectionStart - line.Offset, SelectionLength)
 		  End If
 		  HandleTextChanged
 		  
@@ -4262,7 +4281,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  
 		  Var scrollPos As Integer = Self.ScrollPosition // Since it's computed.
 		  If EnableLineFolding Then scrollPos = Lines.GetNumberOfLinesNeededToView(scrollPos)
-		  If (CaretLine < scrollPos Or CaretLine > scrollPos + VisibleLineRange.Length) Then Return
+		  If (CaretLineIndex < scrollPos Or CaretLineIndex > scrollPos + VisibleLineRange.Length) Then Return
 		  
 		  // OPTIMISE: Need to find a way to avoid updating the entire
 		  // canvas every time we update the blinking text cursor.
@@ -4478,7 +4497,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  
 		  // Find the (x, y) position of the caret.
 		  Var x, y  As Double
-		  XYAtCharPos(CaretPos, CaretLine, x, y)
+		  XYAtCharPos(CaretPos, CaretLineIndex, x, y)
 		  
 		  // Compute the maximum height available for the popup. Usually we'll want to display the popup beneath
 		  // the caret but if the available height is too small we'll display it above the caret.
@@ -4755,9 +4774,9 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  UndoManager.Undo
 		  
 		  // Raise events.
-		  Var line As SyntaxArea.TextLine = lines.GetLine(CaretLine)
+		  Var line As SyntaxArea.TextLine = lines.GetLine(CaretLineIndex)
 		  If line <> Nil Then
-		    RaiseEvent SelectionChanged(CaretLine + 1, SelectionStart - line.Offset, SelectionLength)
+		    RaiseEvent SelectionChanged(CaretLineIndex + 1, SelectionStart - line.Offset, SelectionLength)
 		  End If
 		  HandleTextChanged
 		  
@@ -4967,6 +4986,10 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 
 	#tag Hook, Flags = &h0
 		Event ConstructContextualMenu(base As DesktopMenuItem, x As Integer, y As Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event FetchBlockCompletion(lineContents As String) As String
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -5446,19 +5469,29 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		Private CaretDesiredColumn As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 5468652061637475616C206C696E65207468652063617265742069732063757272656E746C79206F6E2E
+		#tag Getter
+			Get
+			  Return Lines.GetLine(CaretLineIndex)
+			  
+			End Get
+		#tag EndGetter
+		CaretLine As SyntaxArea.TextLine
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0, Description = 54686520696E646578206F6620746865206C696E6520746865206361726574206973206F6E20287A65726F2D6261736564292E
 		#tag Getter
 			Get
-			  Return mCaretLine
+			  Return mCaretLineIndex
 			End Get
 		#tag EndGetter
-		CaretLine As Integer
+		CaretLineIndex As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return SymbolAtline(CaretLine)
+			  Return SymbolAtline(CaretLineIndex)
 			  
 			End Get
 		#tag EndGetter
@@ -6142,7 +6175,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCaretLine As Integer
+		Private mCaretLineIndex As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -6701,7 +6734,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 			  
 			  LoadingDocument = True
 			  IgnoreRepaint = True
-			  mCaretLine = 0
+			  mCaretLineIndex = 0
 			  ChangeSelection(0, 0)
 			  
 			  // Flag so the undo is not reset, needed for a custom "replace all"
@@ -7216,7 +7249,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="CaretLine"
+			Name="CaretLineIndex"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
