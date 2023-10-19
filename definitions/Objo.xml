@@ -3,8 +3,8 @@
 	<name>Objo</name>
 
 	<!-- Generic block -->
-	<blockStartMarker indent="1">\{\s*(?:$|#)</blockStartMarker>
-	<blockEndMarker>^\s*\}</blockEndMarker>
+	<blockStartMarker indent="1">\{\W*(?:$|#)</blockStartMarker>
+	<blockEndMarker>^\W*\}</blockEndMarker>
 	
 	<!-- Symbol definitions -->
 	<!-- Note that we strip `{` from the matched symbol name. We use the rTrim attribute to tell the
