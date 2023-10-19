@@ -175,6 +175,7 @@ Begin DesktopWindow WinDemo
          BorderColor     =   &c00000000
          BracketHighlightColor=   &c76D6FF00
          CaretColor      =   &c00000000
+         CaretLineIndex  =   0
          ClearHighlightedRangesOnTextChange=   True
          DirtyLinesColor =   &cFFD47900
          DisableReset    =   False
@@ -2950,6 +2951,8 @@ End
 		  // This is a basic demonstration of how to implement code block completion.
 		  // Returning nothing will not change the text in the editor.
 		  
+		  #Pragma Unused caretPos
+		  
 		  // In this demo we'll only offer code block completion for Xojo code.
 		  If CodeEditor.SyntaxDefinition = Nil Or _
 		    CodeEditor.SyntaxDefinition.Name <> "Xojo" Then
@@ -2958,7 +2961,8 @@ End
 		  
 		  // If the line begins with `if` and we're at the end of the line and that
 		  // line doesn't end with `then` we'll autocomplete an empty `if` block.
-		  If lineContents.BeginsWith("if ") And Not lineContents.Trim.EndsWith("then") Then
+		  If caretIsAtLineEnd And lineContents.BeginsWith("if ") And _
+		    Not lineContents.Trim.EndsWith("then") Then
 		    Return EndOfLine + EndOfLine + "End If"
 		  End If
 		End Function

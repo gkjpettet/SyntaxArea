@@ -337,7 +337,7 @@
 	"gutterBorderColor": "&h00000000",
 	"lineNumbersColor": "&h00000000",
 	"verticalRulerColor": "&h00AAAAAA",
-	"sugestionPopupBackColor": "&h00FFFFFF",
+	"suggestionPopupBackColor": "&h00FFFFFF",
 	"suggestionPopupSelectedTextColor": "&h00000000",
 	"suggestionPopupTextColor": "&h00000000",
 	"textColor": "&h00000000",

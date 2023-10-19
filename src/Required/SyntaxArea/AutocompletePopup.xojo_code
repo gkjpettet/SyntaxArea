@@ -1,7 +1,7 @@
 #tag Class
 Protected Class AutocompletePopup
 Inherits DesktopListBox
-	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
+	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 	#tag Event
 		Function CellPressed(row As Integer, column As Integer, x As Integer, y As Integer) As Boolean
 		  // The user has pressed on a suggestion option.

@@ -126,8 +126,9 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    // =========================================
 		  Case CmdInsertNewline
 		    #If TargetWindows Or TargetLinux
-		      If Keyboard.AsyncOptionKey Then
-		        // The user has pressed Option-Return
+		      If Keyboard.AsyncAltKey Then
+		        // The user has pressed Alt-Return. The equivalent on macOS is Cmd-Return
+		        // and this is handled below as a "noop:".
 		        HandleCompleteCodeBlock
 		        Return True
 		      End If
@@ -190,7 +191,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    
 		  Case "noop:"
 		    #If TargetMacOS
-		      // These are handled in KeyDown on Windows and Linux
+		      // These are handled in `KeyDown()` on Windows and Linux
 		      If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
 		        // Ctrl+Space pressed.
 		        If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
@@ -381,10 +382,9 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  // Catch Ctrl-Space key on Windows & Linux.
 		  // This is handled on macOS within `DoCommand` as "noop:"
 		  #If TargetWindows Or TargetLinux
-		    If Keyboard.AsyncControlKey And Keyboard.AsyncKeyDown(&h31) Then
-		      If AutocompleteCombo = AutocompleteCombos.CtrlSpace And EnableAutocomplete Then
-		        ShowAutocompletion
-		      End If
+		    If AutocompleteCombo = SyntaxArea.AutocompleteCombos.CtrlSpace And _
+		      key = " " And Keyboard.AsyncControlKey And EnableAutocomplete Then
+		      ShowAutocompletion
 		      Return True
 		    End If
 		  #EndIf
