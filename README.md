@@ -2,7 +2,7 @@
 `SyntaxArea` is a free, open source, code editor written in 100% Xojo. It's built upon the open source [`TextInputCanvas`][tic] desktop control and implements all standard keyboard shortcuts and fully supports international input.
 
 ## Background
-This is the third (and currently best!) code editor that I've written in Xojo. `SyntaxArea` began as an API 2.0 port of the venerable [`CustomEditField`][cef] (CEF) control but has been significantly refactored, is better documented and many bugs have been fixed.
+This is the third code editor that I've written in Xojo. `SyntaxArea` began as an API 2.0 port of the venerable [`CustomEditField`][cef] (CEF) control but it has been significantly refactored, new features added, is better documented and many bugs have been fixed.
 
 Rather than numerous classes, interfaces and images scattered in multiple folders as was the case with CEF, everything you need to use the `Editor` is contained within the `SyntaxArea` module (and two support modules).
 
@@ -22,7 +22,7 @@ Here's a list of the some of the editor's features:
 - Dirty line support
 - Optional right margin ruler
 - Undo / redo
-- Native scrollbars on macOS with support for Xojo scrollbars on Windows.
+- Native scrollbars on macOS with support for Xojo scrollbars on Windows
 
 ## Requirements
 The editor is 100% native Xojo code. The only dependency is the free and open source [`TextInputCanvas`][tic] plugin. This plugin is a Xojo `Canvas` control that handles international input. Make sure you download it and put it in your Xojo `plugins` folder before launching the Xojo IDE.
