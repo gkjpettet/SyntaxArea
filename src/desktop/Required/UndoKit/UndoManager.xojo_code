@@ -49,8 +49,9 @@ Protected Class UndoManager
 		  
 		  RedoStack.ResizeTo(-1)
 		  
-		  App.RefreshMenuBar
-		  
+		  #If TargetDesktop
+		    App.RefreshMenuBar
+		  #EndIf
 		End Sub
 	#tag EndMethod
 
@@ -89,8 +90,9 @@ Protected Class UndoManager
 		    undoing = False
 		  Loop Until id = 0 Or Not CanRedo Or Not match
 		  
-		  App.RefreshMenuBar
-		  
+		  #If TargetDesktop
+		    App.RefreshMenuBar
+		  #EndIf
 		End Sub
 	#tag EndMethod
 
@@ -102,8 +104,10 @@ Protected Class UndoManager
 		  RedoStack.ResizeTo(-1)
 		  UndoStackIndex = 0
 		  Undoing = False
-		  App.RefreshMenuBar
 		  
+		  #If TargetDesktop
+		    App.RefreshMenuBar
+		  #EndIf
 		End Sub
 	#tag EndMethod
 
@@ -148,8 +152,9 @@ Protected Class UndoManager
 		    Undoing = False
 		  Loop Until id = 0 Or Not CanUndo Or Not match
 		  
-		  App.RefreshMenuBar
-		  
+		  #If TargetDesktop
+		    App.RefreshMenuBar
+		  #EndIf
 		End Sub
 	#tag EndMethod
 
