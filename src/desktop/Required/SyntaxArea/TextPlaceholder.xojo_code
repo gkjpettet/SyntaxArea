@@ -3,7 +3,7 @@ Protected Class TextPlaceholder
 Inherits SyntaxArea.TextSegment
 	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
 	#tag Method, Flags = &h0, Description = 52657475726E73206120636C6F6E65206F662074686973207465787420706C616365686F6C6465722E
-		Function Clone() As textsegment
+		Function Clone() As SyntaxArea.TextSegment
 		  /// Returns a clone of this text placeholder.
 		  
 		  Var tmp As New SyntaxArea.TextPlaceholder(Offset, Length, TextRange.Offset, TextRange.Length, Self.TextColor, BackgroundColor, Bold, Italic, Underline)

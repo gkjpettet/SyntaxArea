@@ -644,11 +644,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 
 	#tag Event , Description = 5468652063616E766173206973206F70656E696E672E
 		Sub Opening()
-		  BlockBeginPosX = -1
-		  
 		  IgnoreRepaint = True
-		  
-		  RaiseEvent Opening
 		  
 		  If FontName = "" Then FontName = DEFAULT_FONT
 		  If FontSize = 0 Then FontSize = DEFAULT_FONT_SIZE
@@ -672,6 +668,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		    TextSelectionColor = Color.HighlightColor
 		  End If
 		  
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
@@ -1250,7 +1247,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  
 		  // Fire autocomplete events.
 		  If selLength > 0 Or Not EnableAutocomplete Then Return
-		  trailingSuggestion = ""
+		  TrailingSuggestion = ""
 		  
 		  // Are we at the end of the current line?
 		  If caretPos = line.Offset + line.Length - line.DelimiterLength Then
@@ -4639,9 +4636,9 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21, Description = 52657475726E20612074656D706F72617279207069637475726520746861742063616E206265207573656420666F722067726170686963732063616C63756C6174696F6E732C206574632E
+	#tag Method, Flags = &h21, Description = 52657475726E7320612074656D706F72617279207069637475726520746861742063616E206265207573656420666F722067726170686963732063616C63756C6174696F6E732C206574632E
 		Private Function TemporaryPicture() As Picture
-		  /// Return a temporary picture that can be used for graphics calculations, etc.
+		  /// Returns a temporary picture that can be used for graphics calculations, etc.
 		  
 		  If mTempPicture = Nil Then mTempPicture = New Picture(2, 2)
 		  
@@ -4875,7 +4872,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  
 		  Var horizontal, vertical As Integer
 		  Var scrollPos As Integer = Self.ScrollPosition
-		  If EnableLineFolding Then scrollPosition = Lines.getNumberOfLinesNeededToView(scrollPos)
+		  If EnableLineFolding Then scrollPosition = Lines.GetNumberOfLinesNeededToView(scrollPos)
 		  
 		  horizontal = ScrollPositionX
 		  vertical = Self.ScrollPosition
@@ -4981,7 +4978,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		  Var line As SyntaxArea.TextLine = Lines.GetLine(lineNumber)
 		  If line = Nil Then Return
 		  
-		  Var sx As Integer = leftMarginOffset + LineNumberOffset - ScrollPositionX
+		  Var sx As Integer = LeftMarginOffset + LineNumberOffset - ScrollPositionX
 		  
 		  Var xpos As Integer = sx + XPosForOffset(line, charPos)
 		  
@@ -5162,7 +5159,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private BlockBeginPosX As Double
+		Private BlockBeginPosX As Double = -1
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -5691,7 +5688,7 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		FontName As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h0, Description = 54686520656469746F72277320666F6E742073697A652E
 		#tag Getter
 			Get
 			  Return mFontSize
@@ -5699,7 +5696,11 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Value = mFontSize Then Return
+			  If value = mFontSize Then
+			    // Nothing to do.
+			    Return
+			  End If
+			  
 			  mFontSize = value
 			  TextHeight = 0
 			  
