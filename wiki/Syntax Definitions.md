@@ -2,12 +2,12 @@ A syntax definition is an XML file that describes to `SyntaxArea` how to highlig
 
 Examples of definition files can be found in the `definitions` folder and their effects can be seen within the demo application.
 
-Below is a simplified example of ObjoScript's language definition. The full version can be found within `definitions/Objo.xml`. Note that regular expressions must be escaped for use within XML. This means symbols's such as `>` must be represented as `&gt;` see [this excellent StackOverflow answer][xmlEscapes] for a complete list.
+Below is a simplified example of Objo's language definition. The full version can be found within `definitions/Objo.xml`. Note that regular expressions must be escaped for use within XML. This means symbols's such as `>` must be represented as `&gt;` see [this excellent StackOverflow answer][xmlEscapes] for a complete list.
 
 ## Example
 
 ```xml
-<highlightDefinition>
+<highlightDefinition version="1.1">
   <name>Objo</name> <!-- The name of the language. Mandatory -->
   
   <!-- This pattern stipulates the start and end of a block. Multiple block start and end tags can be used -->
@@ -53,13 +53,16 @@ Below is a simplified example of ObjoScript's language definition. The full vers
 
 Let's take a closer look at each section more closely.
 
+## Version
+The `version` attribute of the `<highlightDefinition>` node stipulates the **minimum** version of the `SyntaxArea` highlighting engine that this definition requires. The editor will not load the definition if the definition's minimum version exceeds the engine's.
+
 ## Name
 The `<name>` node stipulates the definition's name.
 
 ## Block markers
-SyntaxEditor supports automatically indenting code within blocks and can optionally allow the folding of blocks of code. To do this the editor needs to know what constitutes the start and end of a block. For example, in a curly brace language, `{` is the start of a block and `}` is the end of a block. We indicate this to the editor in a definition file using the `<blockStartMarker>` and `<blockEndMarker>` nodes.
+`SyntaxEditor` supports automatically indenting code within blocks and can optionally allow the folding of blocks of code. To do this the editor needs to know what constitutes the start and end of a block. For example, in a curly brace language such as Objo, `{` is the start of a block and `}` is the end of a block. We indicate this to the editor in a definition file using the `<blockStartMarker>` and `<blockEndMarker>` nodes.
 
-`<blockStartMarker>` and `<blockEndMarker>` nodes should be provided **as a pair**. A definition may provide no block markers (for example plain text or Markdown doesn't really have a context of blocks) or any number so long as they are paired. This is useful for languages such as Xojo which have blocks demarcated with lots of different keywords (`do...loop`, `if...end if`, etc).
+`<blockStartMarker>` and `<blockEndMarker>` nodes should be provided **as a pair**. A definition may provide no block markers (for example plain text or Markdown doesn't really have the concept of blocks) or any number so long as they are paired. This is useful for languages such as Xojo which have blocks demarcated with lots of different keywords (`do...loop`, `if...end if`, etc).
 
 The text within a `<blockStartMarker>` and `<blockEndMarker>` is the regex pattern to match the block start or end marker. For example, to match a block opening `{` in Objo we would write:
 
@@ -73,7 +76,7 @@ This pattern says to match a literal `{` character followed by optional whitespa
 <blockEndMarker>^\W*\}</blockEndMarker>
 ```
 
-This states that block end markers are the `}` character at the start of a line preceded by any non-word characters.
+This states that block end markers are the `}` character at the start of a line preceded by any number of optional non-word characters.
 
 ## Symbols
 The `<symbols>` node is optional.
@@ -84,7 +87,7 @@ Here's the simplified Objo class symbol definition:
 
 ```xml
 <symbol type="class">
-	<entryRegEx>^\s*class [^ {]*</entryRegEx>
+  <entryRegEx>^\s*class [^ {]*</entryRegEx>
 </symbol>
 ```
 
@@ -109,7 +112,7 @@ Each `highlightContext` needs a unique name. It's highly recommend that you pref
 
 You can also provide a _fallback_ name for a highlight context. Take the example above. If the theme currently in use by the editor doesn't define a style for a token named `objoComment` then it would check to see if it has a style named `comment` instead. If it did it would fallback to using that styling data. If you don't provide a fallback or if neither the original name or the fallback style are available then the default theme style is used for the token.
 
-You must provide a regex pattern for each `highlightContext` that represents the whole token. This can either match on a single line as (using the `<entryReg>` node) or can span multiple lines using the `<startRegEx>` and `<endRegEx>` nodes as in the example above.
+You must provide a regex pattern for each `highlightContext` that represents the whole token. This can either match on a single line (using the `<entryReg>` node) or can span multiple lines using the `<startRegEx>` and `<endRegEx>` nodes as in the example above.
 
 In the above example the highlighting engine will try to match the `#` character. If it does it will match everything after it up until the pattern in `<endRegEx>` which in this case is a newline.
 
@@ -118,28 +121,28 @@ It's perfectly reasonable to nest highlight contexts. Take a look at the snippet
 
 ```xml
 <highlightContext name="htmlTag" fallback="tag">
-	<entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
-	<highlightContext name="htmlStringInTag" fallback="string">
-		<entryRegEx>("[^"&gt;&lt;]*")</entryRegEx>
-	</highlightContext>
+  <entryRegEx>(&lt;[^&gt;]*&gt;)</entryRegEx>
+    <highlightContext name="htmlStringInTag" fallback="string">
+      <entryRegEx>("[^"&gt;&lt;]*")</entryRegEx>
+    </highlightContext>
 </highlightContext>
 ```
 
-Firstly notes again how the `<` and `>` have to be escaped in XML (as &lt; and &gt; respectively). In this example the highlighter will first find an html tag (e.g. `<div name="main">`) and mark it as an `htmlTag` (falling back to `tag` if the theme doesn't have a style named `htmlTag`). Then the highlighter will take the string matched by the regex in `<entryRegEx>` and forward it for processing to any sub contexts (i.e. nested highlight contexts). In this case it will look for characters encased within double quotes. If it finds any it marks them as `htmlStringInTag` tokens for further styling.
+Firstly notes again how the `<` and `>` have to be escaped in XML (as `&lt;` and `&gt;` respectively). In this example the highlighter will first find an html tag (e.g. `<div name="main">`) and mark it as an `htmlTag` (falling back to `tag` if the theme doesn't have a style named `htmlTag`). Then the highlighter will take the string matched by the regex in `<entryRegEx>` and forward it for processing to any sub contexts (i.e. nested highlight contexts). In this case it will look for characters encased within double quotes. If it finds any it marks them as `htmlStringInTag` tokens for further styling.
 
 ## Definition extensions
-A powerful feature of SyntaxArea is its ability to extend one definition with the contents of another definition. Let's take a look at what this looks like, this time with a snippet from the `Markdown.xml` definition for code fences:
+A powerful feature of `SyntaxArea` is its ability to extend one definition with the contents of another definition. Let's take a look at what this looks like, this time with a snippet from the `Markdown.xml` definition for code fences:
 
 ```xml
 <highlightContext name="xojoCodeFence" fallback="codeFence" extension="xojo">
-	<startRegEx>^```xojo[ ]*\n</startRegEx>
-	<endRegEx>^```(\n|$)</endRegEx>
+  <startRegEx>^```xojo[ ]*\n</startRegEx>
+    <endRegEx>^```(\n|$)</endRegEx>
 </highlightContext>
 ```
 
-Notice the `extension="xojo"` attribute. What this does is when the definition is **first loaded from XML** the editor that the definition belongs to will ask the host application (via the `SyntaxArea.Editor.RequestDefinitionExtension(name)`) event for the `SyntaxArea.HighlightDefinition` corresponding to `name`. In this case, the host will be asked for a definition for "xojo". If the host app doesn't have a definition for that language it returns Nil. Since this is only done once when the definition is first loaded there is no performance impact whilst typing from the use of extensions. The editor will then inject all highlight contexts defined in the "xojo" definition into the "xojoCodeFence" context.
+Notice the `extension="xojo"` attribute. What this does is when the definition is **first loaded from XML** the editor that the definition belongs to will ask the host application (via the `SyntaxArea.Editor.RequestDefinitionExtension(name)` event) for the `SyntaxArea.HighlightDefinition` corresponding to `name`. In this case, the host will be asked for a definition for `"xojo"`. If the host app doesn't have a definition for that language it returns `Nil`. Since this is only done once when the definition is first loaded there is no performance impact whilst typing from the use of extensions. The editor will then inject all highlight contexts defined in the `"xojo"` definition into the `"xojoCodeFence"` context.
 
-In this specific example what will happen is that the engine first matches all text that is flanked by ```` ```xojo ```` and ```` ``` ````. It will then pass the matched text to the contexts defined in the "xojo" definition. This allows us to highlight Xojo code within a Markdown code fence. Pretty cool right?
+In this specific example what will happen is that the engine first matches all text that is flanked by ```` ```xojo ```` and ```` ``` ````. It will then pass the matched text to the contexts defined in the `"xojo"` definition. This allows us to highlight Xojo code within a Markdown code fence. Pretty cool right?
 
 It should be clear now why I recommend giving every highlight context name a language-specific prefix as it makes styling easier.
 
