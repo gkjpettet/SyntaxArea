@@ -1,8 +1,8 @@
 #tag Class
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
-Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+Implements SAMessageCentre.MessageReceiver,SyntaxArea.IEditor
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
 		  // Remove this control from all the message lists.
@@ -4159,8 +4159,8 @@ Implements MessageCentre.MessageReceiver,SyntaxArea.IEditor
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 50617274206F6620746865204D65737361676543656E7472652E4D657373616765526563656976657220696E746572666163652E
-		Protected Sub ReceiveMessage(m As MessageCentre.Message)
-		  /// Part of the MessageCentre.MessageReceiver interface.
+		Protected Sub ReceiveMessage(m As SAMessageCentre.Message)
+		  /// Part of the SAMessageCentre.MessageReceiver interface.
 		  
 		  #If Not DebugBuild
 		    #Pragma DisableBackgroundTasks

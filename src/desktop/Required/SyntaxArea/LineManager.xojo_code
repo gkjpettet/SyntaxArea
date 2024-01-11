@@ -633,34 +633,34 @@ Protected Class LineManager
 		Protected Sub NotifyLineChangedRange(startIndex As Integer, length As Integer)
 		  If length <= 0 Then Return
 		  
-		  Var msg As New MessageCentre.Message(Self, Self)
+		  Var msg As New SAMessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, Messages.LineChanged)
 		  msg.AddInfo(Messages.LineChangedStartIndex, startIndex)
 		  msg.AddInfo(Messages.LineChangedLength, length)
 		  
-		  MessageCentre.SendMessage(msg)
+		  SAMessageCentre.SendMessage(msg)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub NotifyLineCountChanged()
-		  Var msg As New MessageCentre.Message(Self, Self)
+		  Var msg As New SAMessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, Messages.LineCountChanged)
 		  msg.AddInfo(Messages.LineCount, count)
 		  
-		  MessageCentre.SendMessage(msg)
+		  SAMessageCentre.SendMessage(msg)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub NotifyMaxLineLengthChanged(longestLineIndex As Integer)
-		  Var msg As New MessageCentre.Message(Self, Self)
+		  Var msg As New SAMessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, Messages.MaxLineLengthChanged)
 		  msg.AddInfo(2, longestLineIndex)
 		  
-		  MessageCentre.SendMessage(msg)
+		  SAMessageCentre.SendMessage(msg)
 		  
 		End Sub
 	#tag EndMethod
@@ -822,14 +822,14 @@ Protected Class LineManager
 		  
 		  If tmp.KeyCount = 0 Then Return
 		  
-		  Var msg As New MessageCentre.Message(Self, Self)
+		  Var msg As New SAMessageCentre.Message(Self, Self)
 		  msg.AddInfo(1, Messages.LineSymbolsRemoved)
 		  msg.AddInfo(2, tmp)
 		  
 		  If toIndex - fromIndex <= 2 Then
-		    MessageCentre.SendMessage(msg)
+		    SAMessageCentre.SendMessage(msg)
 		  Else
-		    MessageCentre.QueueMessage(msg)
+		    SAMessageCentre.QueueMessage(msg)
 		  End If
 		  
 		End Sub

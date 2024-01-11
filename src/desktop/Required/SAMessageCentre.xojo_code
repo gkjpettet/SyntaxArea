@@ -1,5 +1,5 @@
 #tag Module
-Protected Module MessageCentre
+Protected Module SAMessageCentre
 	#tag Method, Flags = &h1, Description = 52657475726E7320547275652069662061206D657373616765206D61746368696E67207468652070617373656420706172616D657465727320697320666F756E6420696E207468652071756575652E
 		Protected Function IsMessageInQueue(type As Variant, infoKey As Variant, infoValue As Variant) As Boolean
 		  /// Returns True if a message matching the passed parameters is found in the queue.
@@ -12,7 +12,7 @@ Protected Module MessageCentre
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 49662061206D657373616765206D61746368696E67207468652070617373656420706172616D657465727320697320666F756E6420696E207468652071756575652069742069732072657475726E65642E204F74686572776973652C204E696C2069732072657475726E65642E
-		Protected Function MessageInQueue(type As Variant, matchInfoKey As Variant, matchInfoValue As Variant) As MessageCentre.Message
+		Protected Function MessageInQueue(type As Variant, matchInfoKey As Variant, matchInfoValue As Variant) As SAMessageCentre.Message
 		  /// If a message matching the passed parameters is found in the queue it is returned.
 		  /// Otherwise, Nil is returned.
 		  
@@ -24,7 +24,7 @@ Protected Module MessageCentre
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 5175657565732061206D65737361676520666F722064697370617463682E
-		Protected Sub QueueMessage(m As MessageCentre.Message)
+		Protected Sub QueueMessage(m As SAMessageCentre.Message)
 		  /// Queues a message for dispatch.
 		  
 		  // If there are no receivers registered then bail.
@@ -33,7 +33,7 @@ Protected Module MessageCentre
 		  // Sanity check.
 		  If m = Nil Then Return
 		  
-		  If Queue = Nil Then Queue = New MessageCentre.MessageQueue
+		  If Queue = Nil Then Queue = New SAMessageCentre.MessageQueue
 		  
 		  Queue.AddMessage(m)
 		  
@@ -41,7 +41,7 @@ Protected Module MessageCentre
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 5265676973746572732061206D65737361676520726563656976657220666F722061207370656369666963206D65737361676520747970652E
-		Sub RegisterForMessage(Extends theReceiver As MessageCentre.MessageReceiver, messageType As Variant)
+		Sub RegisterForMessage(Extends theReceiver As SAMessageCentre.MessageReceiver, messageType As Variant)
 		  /// Registers a message receiver for a specific message type.
 		  
 		  If ReceiversForType = Nil Then
@@ -64,7 +64,7 @@ Protected Module MessageCentre
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, Description = 53656E64732074686520706173736564206D65737361676520696D6D6564696174656C792E
-		Protected Sub SendMessage(m As MessageCentre.Message)
+		Protected Sub SendMessage(m As SAMessageCentre.Message)
 		  /// Sends the passed message immediately.
 		  
 		  #Pragma DisableBackgroundTasks
@@ -81,7 +81,7 @@ Protected Module MessageCentre
 		  Var receivers As Dictionary = ReceiversForType.value(type)
 		  
 		  // Send to all receivers of this type.
-		  For Each receiver As MessageCentre.MessageReceiver In receivers.Keys
+		  For Each receiver As SAMessageCentre.MessageReceiver In receivers.Keys
 		    receiver.ReceiveMessage(m)
 		  Next receiver
 		  
@@ -89,7 +89,7 @@ Protected Module MessageCentre
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 556E726567697374657273206120726563656976657220666F72206120706172746963756C6172206D65737361676520747970652E20546869732077696C6C2073746F7020746865206D6573736167652063656E7472652066726F6D2073656E64696E67206D65737361676573206F662074686973207479706520746F2074686520726563656976657220696E20746865206675747572652E
-		Sub UnregisterForMessage(Extends theReceiver As MessageCentre.MessageReceiver, messageType As Variant)
+		Sub UnregisterForMessage(Extends theReceiver As SAMessageCentre.MessageReceiver, messageType As Variant)
 		  /// Unregisters a receiver for a particular message type. This will stop the message 
 		  /// centre from sending messages of this type to the receiver in the future.
 		  
@@ -118,7 +118,7 @@ Protected Module MessageCentre
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 556E72656769737465727320612072656365697665722066726F6D20616C6C206D6573736167652074797065732E
-		Sub UnregisterReceiver(Extends theReceiver As MessageCentre.MessageReceiver)
+		Sub UnregisterReceiver(Extends theReceiver As SAMessageCentre.MessageReceiver)
 		  /// Unregisters a receiver from all message types.
 		  
 		  // No receivers?
@@ -153,7 +153,7 @@ Protected Module MessageCentre
 
 
 	#tag Property, Flags = &h21, Description = 546865207175657565206F66206D6573736167657320746F2073656E642E204C6F77657220696E646578206D65737361676573206172652073656E742066697273742E
-		Private Queue As MessageCentre.MessageQueue
+		Private Queue As SAMessageCentre.MessageQueue
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, Description = 412064696374696F6E617279206F6620726563656976657273207265676973746572656420746F2072656365697665206D65737361676573206F66206120706172746963756C617220747970652E204B6579203D206D65737361676520747970652C2056616C7565203D2044696374696F6E6172792E205468652056616C756527732064696374696F6E6172792773206B65797320617265207468652061637475616C207265636569766572206F626A656374732E

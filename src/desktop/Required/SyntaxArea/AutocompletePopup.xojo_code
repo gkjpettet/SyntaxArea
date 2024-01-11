@@ -1,7 +1,7 @@
 #tag Class
 Protected Class AutocompletePopup
 Inherits DesktopListBox
-	#tag CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Function CellPressed(row As Integer, column As Integer, x As Integer, y As Integer) As Boolean
 		  // The user has pressed on a suggestion option.
@@ -39,15 +39,15 @@ Inherits DesktopListBox
 		  Else
 		    Var options As SyntaxArea.AutocompleteOptions
 		    
-		    Var msg As New MessageCentre.Message(Self, Self)
+		    Var msg As New SAMessageCentre.Message(Self, Self)
 		    Msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.SuggestionWindowKeyDown)
 		    msg.AddInfo(2, key)
-		    MessageCentre.sendMessage(Msg)
+		    SAMessageCentre.sendMessage(Msg)
 		    
 		    // Key down message.
-		    msg = New MessageCentre.Message(Self, Self)
+		    msg = New SAMessageCentre.Message(Self, Self)
 		    msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.CurrentAutocompleteOptions)
-		    MessageCentre.SendMessage(msg)
+		    SAMessageCentre.SendMessage(msg)
 		    
 		    // `msg` should have the options now.
 		    options = msg.Info(3)
@@ -110,10 +110,10 @@ Inherits DesktopListBox
 		  
 		  OptionSubmitted = True
 		  
-		  Var msg As New MessageCentre.Message(Self, Self)
+		  Var msg As New SAMessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.AutocompleteCancelled)
 		  msg.AddInfo(2, requestFocus)
-		  MessageCentre.SendMessage(msg)
+		  SAMessageCentre.SendMessage(msg)
 		  
 		  Me.Visible = False
 		End Sub
@@ -189,9 +189,9 @@ Inherits DesktopListBox
 		  
 		  Var options As SyntaxArea.AutocompleteOptions
 		  
-		  Var msg As New MessageCentre.Message(Self, Self)
+		  Var msg As New SAMessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.CurrentAutocompleteOptions)
-		  MessageCentre.SendMessage(msg)
+		  SAMessageCentre.SendMessage(msg)
 		  options = msg.Info(3)
 		  
 		  If options = Nil Then Return
@@ -226,10 +226,10 @@ Inherits DesktopListBox
 		    option = what
 		  End If
 		  
-		  Var msg As New MessageCentre.Message(Self, Self)
+		  Var msg As New SAMessageCentre.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.SuggestionWindowOptionSelected)
 		  msg.AddInfo(2, option)
-		  MessageCentre.SendMessage(msg)
+		  SAMessageCentre.SendMessage(msg)
 		  
 		  Me.Visible = False
 		  
