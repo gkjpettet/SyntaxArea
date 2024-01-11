@@ -39,15 +39,15 @@ Inherits DesktopListBox
 		  Else
 		    Var options As SyntaxArea.AutocompleteOptions
 		    
-		    Var msg As New SAMessageCentre.Message(Self, Self)
+		    Var msg As New SyntaxArea.Message(Self, Self)
 		    Msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.SuggestionWindowKeyDown)
 		    msg.AddInfo(2, key)
-		    SAMessageCentre.sendMessage(Msg)
+		    MessageCentre.sendMessage(Msg)
 		    
 		    // Key down message.
-		    msg = New SAMessageCentre.Message(Self, Self)
+		    msg = New SyntaxArea.Message(Self, Self)
 		    msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.CurrentAutocompleteOptions)
-		    SAMessageCentre.SendMessage(msg)
+		    MessageCentre.SendMessage(msg)
 		    
 		    // `msg` should have the options now.
 		    options = msg.Info(3)
@@ -110,10 +110,10 @@ Inherits DesktopListBox
 		  
 		  OptionSubmitted = True
 		  
-		  Var msg As New SAMessageCentre.Message(Self, Self)
+		  Var msg As New SyntaxArea.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.AutocompleteCancelled)
 		  msg.AddInfo(2, requestFocus)
-		  SAMessageCentre.SendMessage(msg)
+		  MessageCentre.SendMessage(msg)
 		  
 		  Me.Visible = False
 		End Sub
@@ -189,9 +189,9 @@ Inherits DesktopListBox
 		  
 		  Var options As SyntaxArea.AutocompleteOptions
 		  
-		  Var msg As New SAMessageCentre.Message(Self, Self)
+		  Var msg As New SyntaxArea.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.CurrentAutocompleteOptions)
-		  SAMessageCentre.SendMessage(msg)
+		  MessageCentre.SendMessage(msg)
 		  options = msg.Info(3)
 		  
 		  If options = Nil Then Return
@@ -226,10 +226,10 @@ Inherits DesktopListBox
 		    option = what
 		  End If
 		  
-		  Var msg As New SAMessageCentre.Message(Self, Self)
+		  Var msg As New SyntaxArea.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, SyntaxArea.Messages.SuggestionWindowOptionSelected)
 		  msg.AddInfo(2, option)
-		  SAMessageCentre.SendMessage(msg)
+		  MessageCentre.SendMessage(msg)
 		  
 		  Me.Visible = False
 		  

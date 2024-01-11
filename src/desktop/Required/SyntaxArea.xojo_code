@@ -183,6 +183,29 @@ Protected Module SyntaxArea
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 5265676973746572732061206D65737361676520726563656976657220666F722061207370656369666963206D65737361676520747970652E
+		Sub RegisterForMessage(Extends theReceiver As SyntaxArea.MessageReceiver, messageType As Variant)
+		  /// Registers a message receiver for a specific message type.
+		  
+		  If MessageCentre.ReceiversForType = Nil Then
+		    MessageCentre.ReceiversForType = New Dictionary
+		  End If
+		  
+		  // Get the dictionary of receivers for this message type or create a temporary one.
+		  Var d As Dictionary
+		  If MessageCentre.ReceiversForType.HasKey(messageType) Then
+		    d = MessageCentre.ReceiversForType.Value(messageType)
+		  Else
+		    d = New Dictionary
+		    MessageCentre.ReceiversForType.Value(messageType) = d
+		  End If
+		  
+		  // Store this receiver as a key in the dictionary. The value is ignored.
+		  d.Value(theReceiver) = False
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Reverse(Extends s As String) As String
 		  // Returns `s` with the characters in reverse order.
@@ -210,6 +233,69 @@ Protected Module SyntaxArea
 		  Return String.FromArray(characters, "")
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 556E726567697374657273206120726563656976657220666F72206120706172746963756C6172206D65737361676520747970652E20546869732077696C6C2073746F7020746865206D6573736167652063656E7472652066726F6D2073656E64696E67206D65737361676573206F662074686973207479706520746F2074686520726563656976657220696E20746865206675747572652E
+		Sub UnregisterForMessage(Extends theReceiver As SyntaxArea.MessageReceiver, messageType As Variant)
+		  /// Unregisters a receiver for a particular message type. This will stop the message 
+		  /// centre from sending messages of this type to the receiver in the future.
+		  
+		  // No receivers?
+		  If MessageCentre.ReceiversForType = Nil Then Return
+		  
+		  // No such message?
+		  If Not MessageCentre.ReceiversForType.HasKey(messageType) Then Return
+		  
+		  // Remove receiver.
+		  Var receivers As Dictionary = MessageCentre.ReceiversForType.Value(messageType)
+		  
+		  // If our list of receivers for this message type contains this receiver then we
+		  // need to remove it.
+		  If Not receivers.HasKey(theReceiver) Then
+		    Return
+		  Else
+		    receivers.Remove(theReceiver)
+		  End If
+		  
+		  // If there are no longer any receivers registered for this message type
+		  // we can remove the type from our dictionary.
+		  If receivers.KeyCount = 0 Then MessageCentre.ReceiversForType.Remove(messageType)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 556E72656769737465727320612072656365697665722066726F6D20616C6C206D6573736167652074797065732E
+		Sub UnregisterReceiver(Extends theReceiver As SyntaxArea.MessageReceiver)
+		  /// Unregisters a receiver from all message types.
+		  
+		  // No receivers?
+		  If MessageCentre.ReceiversForType = Nil Then Return
+		  
+		  // Find the object within our registered receivers.
+		  Var receivers As Dictionary
+		  Var typesToRemove() As Variant
+		  Var type As Variant
+		  
+		  For i As Integer = 0 To MessageCentre.ReceiversForType.KeyCount - 1
+		    // Message type.
+		    type = MessageCentre.ReceiversForType.Key(i)
+		    
+		    // Get the receivers for this message type.
+		    receivers = MessageCentre.ReceiversForType.Value(type)
+		    
+		    If Not receivers.HasKey(theReceiver) Then Continue For
+		    
+		    receivers.Remove(theReceiver)
+		    
+		    If receivers.KeyCount = 0 Then typesToRemove.Add(type)
+		  Next i
+		  
+		  // Remove any message types that no longer have any receivers listening.
+		  For Each type In typesToRemove
+		    If MessageCentre.ReceiversForType.HasKey(type) Then MessageCentre.ReceiversForType.Remove(Type)
+		  Next type
+		  
+		End Sub
 	#tag EndMethod
 
 

@@ -38,10 +38,10 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub DoneWithScreenLines()
-		  If Not SAMessageCentre.IsMessageInQueue(Self, Messages.MessageType, Messages.ScreenLinesHighlighted) Then
-		    Var msg As New SAMessageCentre.Message(Self, Self)
+		  If Not MessageCentre.IsMessageInQueue(Self, Messages.MessageType, Messages.ScreenLinesHighlighted) Then
+		    Var msg As New SyntaxArea.Message(Self, Self)
 		    msg.AddInfo(Messages.MessageType, Messages.ScreenLinesHighlighted)
-		    SAMessageCentre.sendMessage(msg)
+		    MessageCentre.SendMessage(msg)
 		  End If
 		  
 		End Sub
@@ -49,10 +49,10 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub HighlightingDone()
-		  If Not SAMessageCentre.IsMessageInQueue(Self, Messages.MessageType, Messages.HighlightDone) Then
-		    Var msg As New SAMessageCentre.Message(Self, Self)
+		  If Not MessageCentre.IsMessageInQueue(Self, Messages.MessageType, Messages.HighlightDone) Then
+		    Var msg As New SyntaxArea.Message(Self, Self)
 		    msg.AddInfo(Messages.MessageType, Messages.HighlightDone)
-		    SAMessageCentre.QueueMessage(msg)
+		    MessageCentre.QueueMessage(msg)
 		  End If
 		  
 		End Sub
@@ -146,10 +146,10 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub LineHighlighted(index As Integer)
-		  Var msg As New SAMessageCentre.Message(Self, Self)
+		  Var msg As New SyntaxArea.Message(Self, Self)
 		  msg.AddInfo(Messages.MessageType, Messages.LineHighlighted)
 		  msg.AddInfo(2, index)
-		  SAMessageCentre.SendMessage(msg)
+		  MessageCentre.SendMessage(msg)
 		  
 		End Sub
 	#tag EndMethod
