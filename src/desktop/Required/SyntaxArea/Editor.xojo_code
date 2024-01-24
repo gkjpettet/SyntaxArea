@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Editor
 Inherits SyntaxArea.NSScrollViewCanvas
-Implements SyntaxArea.IEditor,  SyntaxArea.MessageReceiver
+Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 	#tag CompatibilityFlags = ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event , Description = 5468652063616E76617320697320636C6F73696E672E
 		Sub Closing()
@@ -1424,6 +1424,9 @@ Implements SyntaxArea.IEditor,  SyntaxArea.MessageReceiver
 		  Self.RegisterForMessage(MyAutocompletePopup)
 		  MyAutocompletePopup.Visible = False
 		  Me.Window.AddControl(MyAutocompletePopup)
+		  
+		  // Ensure that there's always at least one line in the editor.
+		  Me.Text = ""
 		End Sub
 	#tag EndMethod
 
