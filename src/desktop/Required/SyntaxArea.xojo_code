@@ -299,6 +299,21 @@ Protected Module SyntaxArea
 	#tag EndMethod
 
 
+	#tag Note, Name = Changes
+		: -it - 19/10/23:ial release.
+		------------
+		1.0.1
+		-----
+		: 24/ -/24:
+		1.0.2-----------
+		Fixed a bug that would cause a NilObjectException if the editor was empty.
+		-----
+		Fixed - 25/1/24: a bug in `ViewToCharPos()` that caused very poor typing performance 
+		if `E-----------ditor.EnableLineFolding` was False.
+		
+	#tag EndNote
+
+
 	#tag ComputedProperty, Flags = &h1, Description = 54686520656E636F64696E67207573656420696E7465726E616C6C792062792053796E746178417265612E
 		#tag Getter
 			Get
@@ -325,7 +340,7 @@ Protected Module SyntaxArea
 	#tag Constant, Name = TEXT_STORAGE_MEMORYBLOCK, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Version, Type = String, Dynamic = False, Default = \"1.1.1", Scope = Protected
+	#tag Constant, Name = Version, Type = String, Dynamic = False, Default = \"1.1.2", Scope = Protected
 	#tag EndConstant
 
 

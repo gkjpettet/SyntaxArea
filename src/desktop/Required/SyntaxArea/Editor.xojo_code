@@ -4875,7 +4875,11 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		  
 		  Var horizontal, vertical As Integer
 		  Var scrollPos As Integer = Self.ScrollPosition
-		  If EnableLineFolding Then scrollPosition = Lines.GetNumberOfLinesNeededToView(scrollPos)
+		  
+		  ' CHANGE 25/1/24: Replaced the commented out line because performance was really slow if
+		  ' EnableLineFolding was False. Not sure why so now the scrollPosition is always recalculated.
+		  ' If EnableLineFolding Then scrollPosition = Lines.GetNumberOfLinesNeededToView(scrollPos)
+		  scrollPosition = Lines.GetNumberOfLinesNeededToView(scrollPos)
 		  
 		  horizontal = ScrollPositionX
 		  vertical = Self.ScrollPosition
