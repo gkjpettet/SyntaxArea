@@ -4,7 +4,7 @@
 
 	<!-- Thanks to Kem Tekinay for his invaluable help with the regular expression for block identification -->
 	<blockStartMarker indent="1">(?x)
-		(?!&lt;link|&lt;meta)&lt;((?:\w|-)+)(?:[ ]+(?:\w|[-+"'#=:\\\.\/ ])+)?&gt;(?!.*&lt;\/(\1)&gt;)
+		(?!&lt;link|&lt;meta|&lt;br|&lt;img)&lt;((?:\w|-)+)(?:[ ]+(?:\w|[-+"'#=:\\\.\/ ])+)?&gt;(?!.*&lt;\/(\1)&gt;)
 		|&lt;!--(?!.*--\s*&gt;)
 	</blockStartMarker>
 	<blockEndMarker>(?x)
