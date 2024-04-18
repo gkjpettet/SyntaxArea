@@ -13,11 +13,12 @@
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YXNjcmlwdC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
-					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqby54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvUGhwLnhtbA==
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
+					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb0Jhc2ljLnhtbA==
+					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
 				End
 				Begin CopyFilesBuildStep CopyThemesLinux
 					AppliesTo = 0
@@ -43,11 +44,12 @@
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YXNjcmlwdC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
-					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqby54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvUGhwLnhtbA==
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
+					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb0Jhc2ljLnhtbA==
+					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
 				End
 				Begin CopyFilesBuildStep CopyThemesMac
 					AppliesTo = 0
@@ -76,11 +78,12 @@
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YXNjcmlwdC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
-					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqby54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvUGhwLnhtbA==
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvUG9zdGdyZXNxbC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvWG1sLnhtbA==
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvWG9qby54bWw=
+					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb0Jhc2ljLnhtbA==
+					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
 				End
 				Begin CopyFilesBuildStep CopyThemesWindows
 					AppliesTo = 0
