@@ -2,12 +2,7 @@
 <highlightDefinition version="1.1">
 	<name>ObjoBasic</name>
 
-<!-- Class block -->
-	<blockStartMarker indent="1">^\s*(protected\b|private\b)?\s*(static)?\s*class\b</blockStartMarker>
-	<blockEndMarker>^\s*end\s+class\b</blockEndMarker>
-	
-<!-- Everything else -->
-	<blockStartMarker indent="1">^\s*(?:(if|elseif)\b.*\sthen\b\s*(\#|(?!.+?))|if\s(?!.*\sthen\b)|^\s*(public\b|protected\b|private\b)?\s*(static\b)?\s*(?&lt;!end\b)\s*(constructor|sub|function|property)\b|(do|for|while|case|else)\b)</blockStartMarker>
+	<blockStartMarker indent="1">^\s*(?:(if|elseif)\b.*\sthen\b\s*(\#|(?!.+?))|if\s(?!.*\sthen\b)|^\s*(public\b|protected\b|private\b)\s*(static\b)?\s*(class|constructor|sub|function|property)\b|(do|for|while|case|else)\b)</blockStartMarker>
 	<blockEndMarker>^\s*(?:end|else|case|loop|wend|next)\b</blockEndMarker>
 
 	<lineContinuationMarker indent="2">^((?:"[^"\r\n]*"|(?!\#)[^\r\n_])*)_[\t\x20]*((?:\#)[^\r\n]*|)$</lineContinuationMarker>
