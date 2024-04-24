@@ -2,7 +2,8 @@
 <highlightDefinition version="1.1">
 	<name>ObjoBasic</name>
 
-	<blockStartMarker indent="1">^\s*(?:(if|elseif)\b.*\sthen\b\s*(\#|(?!.+?))|if\s(?!.*\sthen\b)|^\s*(public\b|protected\b|private\b)\s*(static\b)?\s*(class|constructor|sub|function|property)\b|(do|for|while|case|else)\b)</blockStartMarker>
+	<blockStartMarker indent="1">^\s*(?:(if|elseif)\b.*\sthen\b\s*(\#|(?!.+?))|if\s(?!.*\sthen\b)|^\s*(public\b|protected\b|private\b)\s*(static\b)?\s*(class|constructor|function|sub)\b|(do|for|while|case|else|module)\b)|^\s*foreign (public\b|protected\b|private\b)\s*(static\b)?\s*class\b</blockStartMarker>
+	
 	<blockEndMarker>^\s*(?:end|else|case|loop|wend|next)\b</blockEndMarker>
 
 	<lineContinuationMarker indent="2">^((?:"[^"\r\n]*"|(?!\#)[^\r\n_])*)_[\t\x20]*((?:\#)[^\r\n]*|)$</lineContinuationMarker>
@@ -12,7 +13,7 @@
 			<entryRegEx>^\s*(?:public|protected|private)?\b\s*(static\b)?\s*(?&lt;!end\b)\s*(?:constructor|sub|function)\b.+?\([^\)]*\)\s*(?:as\b\s*\w+\s*)?</entryRegEx>
 		</symbol>
 		<symbol type="property">
-			<entryRegEx>^\s*(?:public|protected|private)?\b\s*(static\b)?\s*(?&lt;!end\b)\s*(property\b).+</entryRegEx>
+			<entryRegEx>^\s*(static\b)?\s*(?&lt;!end\b)\s*(property\b).+</entryRegEx>
 		</symbol>
 		<symbol type="class">
 			<entryRegEx>^\s*(?:protected\b|private\b)?\s*(static)?\s*class\s+\w+\s*</entryRegEx>
@@ -24,6 +25,7 @@
 			<keywords>
 				<string>Boolean</string>
 				<string>Double</string>
+				<string>Nothing</string>
 				<string>Number</string>
 				<string>Integer</string>
 				<string>Object</string>
@@ -57,6 +59,7 @@
 				<string>inherits</string>
 				<string>is</string>
 				<string>loop</string>
+				<string>module</string>
 				<string>next</string>
 				<string>not</string>
 				<string>or</string>
