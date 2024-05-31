@@ -221,7 +221,7 @@ Inherits DesktopListBox
 		  
 		  Var option As String
 		  If what = "" Then
-		    option = Me.SelectedRowValue
+		    option = Me.SelectedRowText
 		  Else
 		    option = what
 		  End If

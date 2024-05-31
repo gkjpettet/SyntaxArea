@@ -2628,7 +2628,7 @@ End
 		  
 		  // Font name.
 		  For i As Integer = 0 to PopupFontName.LastRowIndex
-		    If PopupFontName.RowValueAt(i) = CodeEditor.FontName Then
+		    If PopupFontName.RowTextAt(i) = CodeEditor.FontName Then
 		      PopupFontName.SelectedRowIndex = i
 		      Exit
 		    End If
@@ -2640,7 +2640,7 @@ End
 		  
 		  // Line numbers font name.
 		  For i As Integer = 0 to PopupFontName.LastRowIndex
-		    If PopupLineNumFontName.RowValueAt(i) = CodeEditor.LineNumbersFontName Then
+		    If PopupLineNumFontName.RowTextAt(i) = CodeEditor.LineNumbersFontName Then
 		      PopupLineNumFontName.SelectedRowIndex = i
 		      Exit
 		    End If
@@ -2701,7 +2701,7 @@ End
 		  
 		  // Syntax definition.
 		  For i As Integer = 0 To PopupDefinition.LastRowIndex
-		    If PopupDefinition.RowValueAt(i) = CodeEditor.SyntaxDefinition.Name Then
+		    If PopupDefinition.RowTextAt(i) = CodeEditor.SyntaxDefinition.Name Then
 		      PopupDefinition.SelectedRowIndex = i
 		      Exit
 		    End If
@@ -2710,10 +2710,10 @@ End
 		  // Themes.
 		  PopupTheme.SelectedRowIndex = -1
 		  For i As Integer = 0 To PopupTheme.LastRowIndex
-		    If Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Nova Dark" Then
+		    If Color.IsDarkMode And PopupTheme.RowTextAt(i) = "Nova Dark" Then
 		      PopupTheme.SelectedRowIndex = i
 		      Exit
-		    ElseIf Not Color.IsDarkMode And PopupTheme.RowValueAt(i) = "Nova Light" Then
+		    ElseIf Not Color.IsDarkMode And PopupTheme.RowTextAt(i) = "Nova Light" Then
 		      PopupTheme.SelectedRowIndex = i
 		      Exit
 		    End If
@@ -2990,7 +2990,7 @@ End
 		Sub SelectionChanged(item As DesktopMenuItem)
 		  #Pragma Unused item
 		  
-		  CodeEditor.FontName = Me.SelectedRowValue
+		  CodeEditor.FontName = Me.SelectedRowText
 		  
 		End Sub
 	#tag EndEvent
@@ -3035,7 +3035,7 @@ End
 		Sub SelectionChanged(item As DesktopMenuItem)
 		  #Pragma Unused item
 		  
-		  CodeEditor.LineNumbersFontName = Me.SelectedRowValue
+		  CodeEditor.LineNumbersFontName = Me.SelectedRowText
 		  
 		End Sub
 	#tag EndEvent

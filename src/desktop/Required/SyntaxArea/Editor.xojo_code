@@ -2128,6 +2128,66 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 536561726368657320666F722060776861746020696E207468697320656469746F7220626567696E6E696E6720617420607374617274506F736020616E642072657475726E7320746865206F666673657420696620666F756E64206F72202D31206966206E6F742E
+		Function Find(what As String, ignoreCase As Boolean, wrap As Boolean, redraw As Boolean = True, startPos As Integer = -1, highlightSelection As Boolean = True) As integer
+		  /// Searches for `what` in this editor beginning at `startPos` and returns the offset if
+		  /// found or -1 if not.
+		  ///
+		  /// `startPos`: The 0-based offset in the text to begin the search at. 
+		  ///             Defaults to -1 which begins the search at the current selection start location.
+		  /// highlightSelection: If True then if `what` is found it will be selected in the editor.
+		  
+		  If what = "" Then Return -1
+		  
+		  If startPos < 0 Then startPos = SelectionStart + SelectionLength
+		  
+		  Var tmpTxt As String = TextStorage.GetText(0, TextStorage.Length)
+		  If tmpTxt.Encoding <> Nil Then tmpTxt = tmpTxt.ConvertEncoding(Encodings.UTF8)
+		  
+		  startPos = tmpTxt.Left(startPos).Bytes // In case there are multi-bytes.
+		  
+		  // We'll use RegEx to do the search.
+		  Var scanner As New RegEx
+		  scanner.Options.CaseSensitive = Not ignoreCase
+		  
+		  // Escape RegEx special characters.
+		  scanner.SearchPattern = what.ReplaceAll("\", "\\").ReplaceAll("(", "\(").replaceAll(")", "\)").ReplaceAll("[", "\[").ReplaceAll("]", "\]").ReplaceAll("{", "\{").ReplaceAll("}", "\}").ReplaceAll("?", "\?").ReplaceAll("*", "\*").ReplaceAll("+", "\+").ReplaceAll("|", "\|").ReplaceAll("^", "\^").ReplaceAll("$", "\$").ReplaceAll(".", "\.")
+		  
+		  Var match As RegExMatch = scanner.Search(tmpTxt, startPos)
+		  If match = Nil Then
+		    If wrap Then
+		      System.Beep
+		      Return Find(what, ignoreCase, False, redraw, 0)
+		    Else
+		      Return -1 // Not found.
+		    End If
+		  End If
+		  
+		  // Reveal line if folded.
+		  Var offset As Integer = tmpTxt.LeftBytes(match.SubExpressionStartB(0)).Length
+		  Var length As Integer = match.SubExpressionString(0).Length
+		  Var lineIdx As Integer = Lines.GetLineNumberForOffset(offset)
+		  
+		  Var line As TextLine = Lines.GetLine(lineIdx)
+		  If line <> Nil And Not line.Visible Then Lines.RevealLine(lineIdx)
+		  
+		  // If the user wants to actually highlight the found text then change the selection, 
+		  // otherwise just return the offset.
+		  If highlightSelection Then
+		    ChangeSelection(offset, length)
+		    If redraw Then Self.Redraw
+		    Return SelectionStart
+		  Else
+		    If redraw Then Self.Redraw
+		    Return offset
+		  End If
+		  
+		  Exception RegExSearchPatternException
+		    Return -1 // Ignore these.
+		    
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 466F6C647320616C6C20746865206C696E65732E
 		Sub FoldAll()
 		  /// Folds all the lines.
