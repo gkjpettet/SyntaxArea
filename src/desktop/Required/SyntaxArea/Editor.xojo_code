@@ -4069,8 +4069,8 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 496E7465726E616C20757365206F6E6C792E2052657475726E732074686520656469746F722773206C696E65206D616E616765722E
-		Function PrivateLines() As SyntaxArea.LineManager
+	#tag Method, Flags = &h21, Description = 496E7465726E616C20757365206F6E6C792E2052657475726E732074686520656469746F722773206C696E65206D616E616765722E
+		Private Function PrivateLines() As SyntaxArea.LineManager
 		  /// Internal use only. Returns the editor's line manager.
 		  ///
 		  /// Part of the `SyntaxArea.IEditor` interface.
@@ -4079,8 +4079,8 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2E20596F752073686F756C646E277420757365206974206469726563746C792E20496E737465616420757365206053656C53746172746020616E64206053656C656374696F6E54657874602E
-		Sub PrivateRemove(offset As Integer, length As Integer, updateCaret As Boolean = True)
+	#tag Method, Flags = &h21, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2E20596F752073686F756C646E277420757365206974206469726563746C792E20496E737465616420757365206053656C53746172746020616E64206053656C656374696F6E54657874602E
+		Private Sub PrivateRemove(offset As Integer, length As Integer, updateCaret As Boolean = True)
 		  /// This method is used internally by the control, and externally by the undo mechanism.
 		  /// You shouldn't use it directly. Instead use `SelStart` and `SelectionText`.
 		  ///
@@ -4118,8 +4118,8 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2C20796F752073686F756C646E277420757365206974206469726563746C792C2075736520696E73746561642053656C656374696F6E537461727420616E642053656C656374696F6E546578742E
-		Sub PrivateReplace(offset As Integer, length As Integer, s As String, alwaysMarkChanged As Boolean = True, eventID As Integer = -1, keepSelection As Boolean = False, beSilent As Boolean = False, undoable As Boolean = True)
+	#tag Method, Flags = &h21, Description = 54686973206D6574686F64206973207573656420696E7465726E616C6C792062792074686520636F6E74726F6C2C20616E642065787465726E616C6C792062792074686520756E646F206D656368616E69736D2C20796F752073686F756C646E277420757365206974206469726563746C792C2075736520696E73746561642053656C656374696F6E537461727420616E642053656C656374696F6E546578742E
+		Private Sub PrivateReplace(offset As Integer, length As Integer, s As String, alwaysMarkChanged As Boolean = True, eventID As Integer = -1, keepSelection As Boolean = False, beSilent As Boolean = False, undoable As Boolean = True)
 		  /// This method is used internally by the control, and externally by the undo mechanism, 
 		  /// you shouldn't use it directly, use instead SelectionStart and SelectionText.
 		  ///
@@ -4435,6 +4435,14 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		    Highlight
 		  End If
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 5265706C6163657320606C656E67746860206368617261637465727320626567696E6E696E6720617420606F6666736574602077697468206076616C7565602E
+		Sub Replace(offset As Integer, length As Integer, value As String, alwaysMarkDirty As Boolean = True)
+		  /// Replaces `length` characters beginning at `offset` with `value`.
+		  
+		  PrivateReplace(offset, length, value, alwaysMarkDirty)
 		End Sub
 	#tag EndMethod
 
