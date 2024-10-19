@@ -2486,7 +2486,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		  DragTextSelection.Length = SelectionLength
 		  
 		  Var drag As Picture = SelectedTextDragImage
-		  Var di As DragItem = New DragItem(Self.Window, x, y, drag.Width, drag.Height)
+		  Var di As DragItem = New DragItem(Self.Window, x, y, drag.Width, drag.Height, drag)
 		  
 		  di.Text = Me.SelectionText
 		  
@@ -4482,7 +4482,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		  w = Min(tmp.Graphics.TextWidth(selection + " "), Width)
 		  h = tmp.Graphics.TextHeight(selection, w)
 		  
-		  Var image As Picture = New Picture(w, h, 32)
+		  Var image As New Picture(w, h)
 		  image.Graphics.FontSize = FontSize
 		  image.Graphics.FontName = FontName
 		  Image.Graphics.DrawText(selection, 0, Image.Graphics.TextHeight - (Image.Graphics.TextHeight - Image.Graphics.FontAscent), w)
