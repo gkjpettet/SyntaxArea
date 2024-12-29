@@ -10,7 +10,7 @@ Begin DesktopWindow WinDemo
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   692
+   Height          =   740
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -23,11 +23,11 @@ Begin DesktopWindow WinDemo
    Title           =   "SyntaxArea Demo"
    Type            =   0
    Visible         =   True
-   Width           =   1168
+   Width           =   1178
    Begin DesktopPagePanel Panel
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   692
+      Height          =   740
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
@@ -47,13 +47,11 @@ Begin DesktopWindow WinDemo
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   788
+      Width           =   798
       Begin DesktopScrollbar HorizontalScrollBar
-         Active          =   False
          AllowAutoDeactivate=   True
          AllowFocus      =   True
          AllowLiveScrolling=   True
-         AllowTabStop    =   True
          Enabled         =   True
          Height          =   16
          Index           =   -2147483648
@@ -68,32 +66,26 @@ Begin DesktopWindow WinDemo
          MaximumValue    =   0
          MinimumValue    =   0
          PageStep        =   20
-         PanelIndex      =   0
          Scope           =   0
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
-         Top             =   658
+         Top             =   706
          Transparent     =   True
          Value           =   0
          Visible         =   True
-         Width           =   772
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
+         Width           =   782
       End
       Begin DesktopScrollbar VerticalScrollBar
-         Active          =   False
          AllowAutoDeactivate=   True
          AllowFocus      =   True
          AllowLiveScrolling=   True
-         AllowTabStop    =   True
          Enabled         =   True
-         Height          =   658
+         Height          =   706
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         Left            =   772
+         Left            =   782
          LineStep        =   1
          LockBottom      =   True
          LockedInPosition=   False
@@ -103,20 +95,16 @@ Begin DesktopWindow WinDemo
          MaximumValue    =   0
          MinimumValue    =   0
          PageStep        =   20
-         PanelIndex      =   0
          Scope           =   0
          TabIndex        =   2
          TabPanelIndex   =   1
+         TabStop         =   True
          Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          Value           =   0
          Visible         =   True
          Width           =   16
-         _mIndex         =   0
-         _mInitialParent =   ""
-         _mName          =   ""
-         _mPanelIndex    =   0
       End
       Begin SyntaxArea.EditorInfoPanel Info
          AllowAutoDeactivate=   True
@@ -154,11 +142,11 @@ Begin DesktopWindow WinDemo
          Text            =   ""
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   674
+         Top             =   722
          TopBorderColor  =   &c00000000
          Transparent     =   True
          Visible         =   True
-         Width           =   788
+         Width           =   798
       End
       Begin SyntaxArea.Editor CodeEditor
          AllowFocusRing  =   False
@@ -194,7 +182,7 @@ Begin DesktopWindow WinDemo
          HasLeftBorder   =   True
          HasRightBorder  =   True
          HasTopBorder    =   True
-         Height          =   658
+         Height          =   706
          HighlightBlocksOnMouseOverGutter=   False
          HighlightMatchingBrackets=   True
          HighlightMatchingBracketsMode=   0
@@ -203,7 +191,6 @@ Begin DesktopWindow WinDemo
          Index           =   -2147483648
          InitialParent   =   "Panel"
          InvisibleCharacterColor=   &c00000000
-         KeepEntireTextIndented=   True
          Left            =   0
          LeftMarginOffset=   5
          LineHeight      =   0.0
@@ -241,7 +228,7 @@ Begin DesktopWindow WinDemo
          VerticalRulerColor=   &c00000000
          VerticalRulerPosition=   80
          Visible         =   True
-         Width           =   772
+         Width           =   782
       End
    End
    Begin DesktopPopupMenu PopupFontName
@@ -255,7 +242,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   886
+      Left            =   896
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -283,7 +270,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   816
+      Left            =   826
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -315,7 +302,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1041
+      Left            =   1051
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -354,7 +341,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1091
+      Left            =   1101
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -389,7 +376,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   886
+      Left            =   896
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -417,7 +404,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -449,7 +436,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1041
+      Left            =   1051
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -488,7 +475,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1091
+      Left            =   1101
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -523,7 +510,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -553,7 +540,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -583,7 +570,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -613,7 +600,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -643,7 +630,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   919
+      Left            =   929
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -679,7 +666,7 @@ Begin DesktopWindow WinDemo
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1091
+      Left            =   1101
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -714,7 +701,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   919
+      Left            =   929
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -742,7 +729,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1135
+      Left            =   1145
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -769,7 +756,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   919
+      Left            =   929
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -800,7 +787,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1027
+      Left            =   1037
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -827,7 +814,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   919
+      Left            =   929
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -858,7 +845,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1027
+      Left            =   1037
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -884,7 +871,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1031
+      Left            =   1041
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -910,7 +897,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1031
+      Left            =   1041
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -937,7 +924,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -968,7 +955,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   893
+      Left            =   903
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -995,7 +982,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   919
+      Left            =   929
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1026,7 +1013,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1027
+      Left            =   1037
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1054,7 +1041,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1084,7 +1071,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1113,7 +1100,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   941
+      Left            =   951
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1144,7 +1131,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1049
+      Left            =   1059
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1172,7 +1159,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1202,7 +1189,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   988
+      Left            =   998
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1230,7 +1217,7 @@ Begin DesktopWindow WinDemo
       Height          =   18
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   1091
+      Left            =   1101
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1258,7 +1245,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1288,7 +1275,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1318,7 +1305,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1348,7 +1335,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1376,7 +1363,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   979
+      Left            =   989
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1388,7 +1375,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   473
+      Top             =   498
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1403,7 +1390,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1419,7 +1406,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   473
+      Top             =   498
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1435,7 +1422,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1451,7 +1438,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   450
+      Top             =   475
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1466,7 +1453,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   979
+      Left            =   989
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1478,7 +1465,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   451
+      Top             =   476
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1493,7 +1480,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1509,7 +1496,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   494
+      Top             =   519
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1524,7 +1511,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   979
+      Left            =   989
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1536,7 +1523,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   495
+      Top             =   520
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1550,7 +1537,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   895
+      Left            =   905
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1577,7 +1564,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1610,7 +1597,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   919
+      Left            =   929
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1639,7 +1626,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1655,7 +1642,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   526
+      Top             =   551
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1672,7 +1659,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   886
+      Left            =   896
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1684,7 +1671,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   526
+      Top             =   551
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1700,7 +1687,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1716,7 +1703,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   547
+      Top             =   572
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1735,7 +1722,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1020
+      Left            =   1030
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1747,7 +1734,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   526
+      Top             =   551
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1763,7 +1750,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1779,7 +1766,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   579
+      Top             =   604
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1796,7 +1783,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   886
+      Left            =   896
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1808,7 +1795,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   579
+      Top             =   604
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1824,7 +1811,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1855,7 +1842,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   893
+      Left            =   903
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1882,7 +1869,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   937
+      Left            =   947
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1913,7 +1900,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1087
+      Left            =   1097
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1941,7 +1928,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -1971,7 +1958,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2001,7 +1988,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2031,7 +2018,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2059,7 +2046,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1087
+      Left            =   1097
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2086,7 +2073,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   937
+      Left            =   947
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2118,7 +2105,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   937
+      Left            =   947
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2150,7 +2137,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   937
+      Left            =   947
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2181,7 +2168,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1087
+      Left            =   1097
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2207,7 +2194,7 @@ Begin DesktopWindow WinDemo
       Enabled         =   True
       Height          =   18
       Index           =   -2147483648
-      Left            =   1087
+      Left            =   1097
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2237,7 +2224,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1020
+      Left            =   1030
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2249,7 +2236,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   611
+      Top             =   636
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2265,7 +2252,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2281,7 +2268,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   611
+      Top             =   636
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2297,7 +2284,7 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   800
+      Left            =   810
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2313,7 +2300,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   632
+      Top             =   657
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2330,7 +2317,7 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
-      Left            =   886
+      Left            =   896
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -2342,7 +2329,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   611
+      Top             =   636
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2361,23 +2348,53 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1020
-      LockBottom      =   True
+      Left            =   1030
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   73
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   643
+      Top             =   668
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   121
+   End
+   Begin DesktopCheckBox CheckBoxKeepTextIndented
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Keep Text Indented"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   810
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   74
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   450
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   179
    End
 End
 #tag EndDesktopWindow
@@ -3615,6 +3632,13 @@ End
 		    "code editor's properties as a theme: " + e.Message)
 		  End Try
 		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxKeepTextIndented
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.KeepTextIndented = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

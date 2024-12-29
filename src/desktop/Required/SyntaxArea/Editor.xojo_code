@@ -1565,7 +1565,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		  End If
 		  
 		  Var updateCaret As Boolean = Not forwardDelete
-		  If Not mIndentVisually And mKeepEntireTextIndented Then
+		  If Not mIndentVisually And mKeepTextIndented Then
 		    // Here we may have a special case: If IndentVisually=false, and the user backspaces when the
 		    // cursor is at the start of the indented line, we'll need to delete not only the indentation
 		    // but the line delimiter to the previous line as well, or the user would not be able to ever join
@@ -4900,7 +4900,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateIndentation()
-		  If mKeepEntireTextIndented Then
+		  If mKeepTextIndented Then
 		    // Prevents the LineHighlighter from interfering while we're modifying the lines.
 		    Var lock As New SyntaxArea.LinesLock(Self)
 		    #Pragma Unused lock
@@ -6011,19 +6011,19 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 	#tag ComputedProperty, Flags = &h0, Description = 49662054727565207468656E20696E64656E746174696F6E20697320656E61626C65642E
 		#tag Getter
 			Get
-			  Return mKeepEntireTextIndented
+			  Return mKeepTextIndented
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If mKeepEntireTextIndented <> value Then
-			    mKeepEntireTextIndented = value
+			  If mKeepTextIndented <> value Then
+			    mKeepTextIndented = value
 			    Self.ReindentText
 			  End If
 			  
 			End Set
 		#tag EndSetter
-		KeepEntireTextIndented As Boolean
+		KeepTextIndented As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -6391,7 +6391,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKeepEntireTextIndented As Boolean = True
+		Private mKeepTextIndented As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -7725,7 +7725,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="KeepEntireTextIndented"
+			Name="KeepTextIndented"
 			Visible=false
 			Group="Autocompletion"
 			InitialValue=""
