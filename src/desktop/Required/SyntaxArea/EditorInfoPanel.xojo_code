@@ -66,7 +66,7 @@ Inherits DesktopCanvas
 		  g.DrawText(Self.Text, symbolX, y)
 		  
 		  // Draw vertical bars either side of the symbol name.
-		  g.DrawingColor = TextColor
+		  g.DrawingColor = InternalBorderColor
 		  g.DrawLine(symbolX - HPADDING, 0, symbolX - HPADDING, g.Height) // Left.
 		  g.DrawLine(cursorX - HPADDING, 0, cursorX - HPADDING, g.Height) // Right.
 		  
@@ -314,6 +314,23 @@ Inherits DesktopCanvas
 		HasTopBorder As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F662074686520696E7465726E616C20626F72646572732C206569746865722073696465206F6620746865207465787420646973706C617965642E
+		#tag Getter
+			Get
+			  Return mInternalBorderColor
+			  
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  mInternalBorderColor = value
+			  Self.Refresh
+			  
+			End Set
+		#tag EndSetter
+		InternalBorderColor As ColorGroup
+	#tag EndComputedProperty
+
 	#tag ComputedProperty, Flags = &h0, Description = 54686520636F6C6F7572206F6620746865206F7074696F6E616C206C65667420626F726465722E
 		#tag Getter
 			Get
@@ -364,6 +381,10 @@ Inherits DesktopCanvas
 
 	#tag Property, Flags = &h21
 		Private mHasTopBorder As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInternalBorderColor As ColorGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

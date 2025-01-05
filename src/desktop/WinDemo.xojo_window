@@ -1053,7 +1053,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   303
+      Top             =   325
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1083,7 +1083,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   324
+      Top             =   346
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1117,7 +1117,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   324
+      Top             =   346
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1144,7 +1144,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   325
+      Top             =   347
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1171,7 +1171,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   345
+      Top             =   367
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1202,7 +1202,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   345
+      Top             =   367
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1230,7 +1230,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   346
+      Top             =   368
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1257,7 +1257,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   366
+      Top             =   388
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1287,7 +1287,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   387
+      Top             =   409
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1317,7 +1317,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   408
+      Top             =   430
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1347,7 +1347,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   429
+      Top             =   451
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1376,7 +1376,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   498
+      Top             =   520
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1407,7 +1407,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   498
+      Top             =   520
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1439,7 +1439,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   475
+      Top             =   497
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1466,7 +1466,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   476
+      Top             =   498
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1497,7 +1497,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   519
+      Top             =   541
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1524,7 +1524,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   520
+      Top             =   542
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1550,7 +1550,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   281
+      Top             =   303
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1581,7 +1581,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   280
+      Top             =   302
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1609,7 +1609,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   280
+      Top             =   302
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -1643,7 +1643,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   551
+      Top             =   573
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1672,7 +1672,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   551
+      Top             =   573
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1704,7 +1704,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   572
+      Top             =   594
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1735,7 +1735,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   551
+      Top             =   573
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1767,7 +1767,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   604
+      Top             =   626
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1796,7 +1796,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   604
+      Top             =   626
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1945,7 +1945,7 @@ Begin DesktopWindow WinDemo
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   0
+      VisualState     =   1
       Width           =   129
    End
    Begin DesktopCheckBox CheckBoxInfoLeftBorder
@@ -2237,7 +2237,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   636
+      Top             =   658
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2269,7 +2269,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   636
+      Top             =   658
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2301,7 +2301,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   657
+      Top             =   679
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2330,7 +2330,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   636
+      Top             =   658
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2361,7 +2361,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   668
+      Top             =   690
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2389,13 +2389,71 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   450
+      Top             =   472
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       VisualState     =   1
       Width           =   179
+   End
+   Begin ColorPicker InfoInternalBorderColor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   18
+      Index           =   -2147483648
+      Left            =   1097
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      SelectedColor   =   &c00000000
+      TabIndex        =   75
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   281
+      Transparent     =   True
+      Visible         =   True
+      Width           =   18
+   End
+   Begin DesktopLabel LabelInfoInteralBorderBorderColor
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   947
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   76
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Info Int Border Colour"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   279
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   145
    End
 End
 #tag EndDesktopWindow
@@ -2752,6 +2810,7 @@ End
 		  CheckBoxInfoLeftBorder.Value = Info.HasLeftBorder
 		  Info.RightBorderColor = InfoRightBorderColor.SelectedColor
 		  CheckBoxInfoRightBorder.Value = Info.HasRightBorder
+		  Info.InternalBorderColor = InfoInternalBorderColor.SelectedColor
 		  Info.TextColor = DefaultTextColor.SelectedColor
 		  Info.BackColor = BackColor.SelectedColor
 		  
@@ -2812,6 +2871,7 @@ End
 		  Info.BottomBorderColor = InfoBottomBorderColor.SelectedColor
 		  Info.LeftBorderColor = InfoLeftBorderColor.SelectedColor
 		  Info.RightBorderColor = InfoRightBorderColor.SelectedColor
+		  Info.InternalBorderColor = InfoInternalBorderColor.SelectedColor
 		  Info.TextColor = DefaultTextColor.SelectedColor
 		  Info.BackColor = BackColor.SelectedColor
 		  
@@ -3643,6 +3703,13 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  CodeEditor.KeepTextIndented = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events InfoInternalBorderColor
+	#tag Event
+		Sub ColorChanged()
+		  Info.InternalBorderColor = Me.SelectedColor
 		End Sub
 	#tag EndEvent
 #tag EndEvents
