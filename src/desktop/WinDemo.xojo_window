@@ -191,6 +191,7 @@ Begin DesktopWindow WinDemo
          Index           =   -2147483648
          InitialParent   =   "Panel"
          InvisibleCharacterColor=   &c00000000
+         KeepTextIndented=   False
          Left            =   0
          LeftMarginOffset=   5
          LineHeight      =   0.0
@@ -2427,6 +2428,9 @@ End
 		Sub Opening()
 		  // Enable line foldings if the definition supports them.
 		  CodeEditor.EnableLineFolding = CodeEditor.SyntaxDefinition.SupportsCodeBlocks
+		  
+		  // Make sure the lines are auto indented.
+		  CodeEditor.KeepTextIndented = True
 		  
 		  // Give the editor a bottom border on Windows.
 		  #If TargetMacOS

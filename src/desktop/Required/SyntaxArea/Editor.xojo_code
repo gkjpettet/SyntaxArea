@@ -1606,7 +1606,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		  
 		  Var symbols() As SyntaxArea.DocumentSymbol
 		  
-		  // Quick exit if there are defined symbols.
+		  // Quick exit if there are no defined symbols.
 		  If CurrentDocumentSymbols = Nil Then Return symbols
 		  
 		  For Each line As SyntaxArea.TextLine In CurrentDocumentSymbols.Keys
