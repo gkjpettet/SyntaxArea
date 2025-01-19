@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<highlightDefinition version="1.1">
+	<name>Wren</name>
+
+	<blockStartMarker indent="1">\{\s*(?:$|//|/\*|\\)|\s*/\*\s*$</blockStartMarker>
+	<blockEndMarker>^\s*\}|^\s*\*/</blockEndMarker>	
+
+	<contexts caseSensitive="yes">
+	<!-- Regular strings with escapes and interpolation -->
+	<highlightContext name="wrenString" fallback="string">
+		<startRegEx>"</startRegEx>
+		<!-- Match until either:
+			 - an unescaped quote (using negative lookbehind)
+			 - or start of line + quote (for multi-line strings) -->
+		<endRegEx>(((?&lt;!\\)(\\\\)*)|^)"</endRegEx>
+		
+		<!-- Escape sequences -->
+		<highlightContext subPatterns="1" fallback="constant.character.escape">
+			<!-- Match all Wren escape sequences -->
+			<entryRegEx>\\([0\\"%abeefnrtv]|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})</entryRegEx>
+		</highlightContext>
+		
+		<!-- String interpolation -->
+		<highlightContext subPatterns="1" fallback="constant.other">
+			<entryRegEx>%\((.*?)\)</entryRegEx>
+		</highlightContext>
+	</highlightContext>
+	
+	<!-- Raw strings (triple quoted) -->
+	<highlightContext name="wrenRawString" fallback="string">
+		<startRegEx>"""</startRegEx>
+		<endRegEx>"""</endRegEx>
+	</highlightContext>
+	
+		<highlightContext name="wrenKeyword" fallback="keyword">
+			<keywords>
+				<string>as</string>
+				<string>break</string>
+				<string>class</string>
+				<string>construct</string>
+				<string>continue</string>
+				<string>else</string>
+				<string>false</string>
+				<string>for</string>
+				<string>foreign</string>
+				<string>if</string>
+				<string>import</string>
+				<string>in</string>
+				<string>is</string>
+				<string>null</string>
+				<string>return</string>
+				<string>static</string>
+				<string>super</string>
+				<string>this</string>
+				<string>true</string>
+				<string>var</string>
+				<string>while</string>
+			</keywords>
+		</highlightContext>
+	</contexts>
+</highlightDefinition>

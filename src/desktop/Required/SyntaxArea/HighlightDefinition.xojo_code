@@ -604,6 +604,8 @@ Protected Class HighlightDefinition
 		        // Contexts.
 		        CaseSensitive = YN2Bool(node.GetAttribute("caseSensitive"))
 		        For j = 0 To node.ChildCount-1
+		          // Ignore XML comments.
+		          If node.Child(j) IsA XMLComment Then Continue
 		          context = New SyntaxArea.HighlightContext(Self.Owner, CaseSensitive)
 		          context.LoadFromXmlNode(node.Child(j))
 		          AddContext(context)
@@ -841,14 +843,7 @@ Protected Class HighlightDefinition
 
 
 	#tag Note, Name = About
-		Info
-		
-		HighlightDefinition
-		By Alex Restrepo
-		send comments, suggestions, fixes to alexrestrepo@mac.com
-		
-		A little experiment on SyntaxHighlighting
-		Contains the rules of how to Highlight the contents of the EditField.
+		Contains the rules of how to Highlight the contents of the text field.
 		A definition is composed of one or more HighlightContexts
 		
 		Methods:
@@ -862,11 +857,6 @@ Protected Class HighlightDefinition
 		DefaultColor: gets or sets the default color for the text
 		Name: the name of the definition (ie: Xml or REALbasic)
 		
-		
-		Open source under the creative commons license.
-		Use in whatever way you like... at your own risk :P
-		let me know if you find it useful.
-		If you decide to use it in your projects, please give me credit in your about window or documentation, thanks.
 	#tag EndNote
 
 
