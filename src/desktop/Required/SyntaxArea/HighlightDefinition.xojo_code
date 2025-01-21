@@ -1,10 +1,10 @@
 #tag Class
 Protected Class HighlightDefinition
 	#tag Method, Flags = &h21, Description = 41646473206120626C616E6B20737061636520636F6E746578742C20746869732077696C6C20746F6B656E69736520737472696E67732E
-		Private Sub AddBlankSpaceContext()
+		Private Sub AddBlankSpaceContext(syntaxName As String)
 		  /// Adds a blank space context, this will tokenise strings.
 		  
-		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False)
+		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False, syntaxName)
 		  blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))"
 		  blankSpaceContext.Name = "fieldwhitespace"
 		  
@@ -588,7 +588,7 @@ Protected Class HighlightDefinition
 		        Next j
 		        
 		      Case "placeholders"
-		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self.Owner, False, False)
+		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self.Owner, False, False, Self.Name)
 		        PlaceholderContextDef.EntryRegEx = node.FirstChild.Value
 		        PlaceholderContextDef.IsPlaceholder = True
 		        PlaceholderContextDef.Name = "placeholder"
@@ -606,7 +606,7 @@ Protected Class HighlightDefinition
 		        For j = 0 To node.ChildCount-1
 		          // Ignore XML comments.
 		          If node.Child(j) IsA XMLComment Then Continue
-		          context = New SyntaxArea.HighlightContext(Self.Owner, CaseSensitive)
+		          context = New SyntaxArea.HighlightContext(Self.Owner, CaseSensitive, Self.Name)
 		          context.LoadFromXmlNode(node.Child(j))
 		          AddContext(context)
 		        Next j
@@ -614,7 +614,7 @@ Protected Class HighlightDefinition
 		    Next i
 		    
 		    // Add a blank space context.
-		    Self.AddBlankSpaceContext
+		    Self.AddBlankSpaceContext(Name)
 		    
 		    Return True
 		  Catch e As RuntimeException

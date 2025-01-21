@@ -6,31 +6,26 @@
 	<blockEndMarker>^\s*\}|^\s*\*/</blockEndMarker>	
 
 	<contexts caseSensitive="yes">
-	<!-- Regular strings with escapes and interpolation -->
-	<highlightContext name="wrenString" fallback="string">
-		<startRegEx>"</startRegEx>
-		<!-- Match until either:
-			 - an unescaped quote (using negative lookbehind)
-			 - or start of line + quote (for multi-line strings) -->
-		<endRegEx>(((?&lt;!\\)(\\\\)*)|^)"</endRegEx>
+		<highlightContext name="wrenString" fallback="string">
+			<!-- Grab everything between double quotes on a line -->
+			<entryRegEx>"[^\r\n]*"</entryRegEx>
 		
-		<!-- Escape sequences -->
-		<highlightContext subPatterns="1" fallback="constant.character.escape">
-			<!-- Match all Wren escape sequences -->
-			<entryRegEx>\\([0\\"%abeefnrtv]|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})</entryRegEx>
+			<!-- Escape sequences within strings -->
+			<highlightContext name="wrenEscape" fallback="escape">
+				<entryRegEx>\\(?:[0\\"%abeefnrtv]|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})</entryRegEx>
+			</highlightContext>
+		
+			<!-- String interpolation -->
+			<highlightContext name="wrenStringInterpolation" fallback="string">
+				<entryRegEx>%\(.+\)</entryRegEx>
+			</highlightContext>
 		</highlightContext>
 		
-		<!-- String interpolation -->
-		<highlightContext subPatterns="1" fallback="constant.other">
-			<entryRegEx>%\((.*?)\)</entryRegEx>
+		<!-- Raw strings (triple quoted) -->
+		<highlightContext name="wrenRawString" fallback="string">
+			<startRegEx>"""</startRegEx>
+			<endRegEx>"""</endRegEx>
 		</highlightContext>
-	</highlightContext>
-	
-	<!-- Raw strings (triple quoted) -->
-	<highlightContext name="wrenRawString" fallback="string">
-		<startRegEx>"""</startRegEx>
-		<endRegEx>"""</endRegEx>
-	</highlightContext>
 	
 		<highlightContext name="wrenKeyword" fallback="keyword">
 			<keywords>
@@ -56,6 +51,35 @@
 				<string>var</string>
 				<string>while</string>
 			</keywords>
+		</highlightContext>
+		
+		<highlightContext name="wrenComment" fallback="comment">
+			<startRegEx>//</startRegEx>
+			<endRegEx>[\n\r]</endRegEx>
+		</highlightContext>
+		
+		<highlightContext name="wrenMultiLineComment" fallback="comment">
+			<startRegEx>/\*</startRegEx>
+			<endRegEx>\*/</endRegEx>
+		</highlightContext>
+		
+		<!-- Field identifiers (starting with underscore) -->
+		<highlightContext name="wrenField" fallback="identifier">
+			<entryRegEx>_[A-Za-z_][A-Za-z0-9_]*</entryRegEx>
+		</highlightContext>
+		
+		<!-- Regular lowercase identifier -->
+		<highlightContext name="lowercaseIdentifier" fallback="identifier">
+			<entryRegEx>[a-z][A-Za-z0-9_]*</entryRegEx>
+		</highlightContext>
+		
+		<!-- Regular uppercase identifier -->
+		<highlightContext name="uppercaseIdentifier" fallback="identifier">
+			<entryRegEx>[A-Z][A-Za-z0-9_]*</entryRegEx>
+		</highlightContext>
+		
+		<highlightContext name="wrenNumber" fallback="number">
+			<entryRegEx>-?(?:0x[0-9a-f]+|[0-9]+(?:\.[0-9]+)?(?:e[+-]?[0-9]+)?)</entryRegEx>
 		</highlightContext>
 	</contexts>
 </highlightDefinition>

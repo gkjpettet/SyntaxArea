@@ -121,7 +121,7 @@ Protected Class HighlightContext
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(owner As SyntaxArea.IEditor, caseSensitive As Boolean, createBlank As Boolean = True)
+		Sub Constructor(owner As SyntaxArea.IEditor, caseSensitive As Boolean, createBlank As Boolean = True, syntaxName As String)
 		  Self.Owner = owner
 		  
 		  mScanner = New RegEx
@@ -132,12 +132,13 @@ Protected Class HighlightContext
 		  
 		  // Whitespace tokeniser?
 		  If createBlank Then
-		    Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False)
+		    Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False, syntaxName)
 		    blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))" '"([\s])"
 		    blankSpaceContext.Name = "fieldwhitespace"
 		    AddSubContext(blankSpaceContext)
 		  End If
 		  
+		  Self.SyntaxName = syntaxName
 		End Sub
 	#tag EndMethod
 
@@ -466,7 +467,7 @@ Protected Class HighlightContext
 		        AddRegEx(subNode.Child(j).FirstChild.Value)
 		      Next
 		    Case "highlightContext"
-		      subContext = New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive)
+		      subContext = New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive, Self.Name)
 		      subContext.loadFromXmlNode(subNode)
 		      AddSubContext(subContext)
 		    End Select
@@ -801,6 +802,10 @@ Protected Class HighlightContext
 
 	#tag Property, Flags = &h21
 		Private SubExpressionIndex() As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		SyntaxName As String
 	#tag EndProperty
 
 
