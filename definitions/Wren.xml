@@ -6,9 +6,10 @@
 	<blockEndMarker>^\s*\}|^\s*\*/</blockEndMarker>	
 
 	<contexts caseSensitive="yes">
+		<!-- ======== STRINGS ======== -->
 		<highlightContext name="wrenString" fallback="string">
 			<!-- Grab everything between double quotes on a line -->
-			<entryRegEx>"[^\r\n]*"</entryRegEx>
+			<entryRegEx>"[^\n]*"</entryRegEx>
 		
 			<!-- Escape sequences within strings -->
 			<highlightContext name="wrenEscape" fallback="escape">
@@ -16,8 +17,8 @@
 			</highlightContext>
 		
 			<!-- String interpolation -->
-			<highlightContext name="wrenStringInterpolation" fallback="string" extension="wren">
-				<entryRegEx>%\(.+\)</entryRegEx>
+			<highlightContext name="wrenStringInterpolation" fallback="string">
+				<entryRegEx>%\(([^()]*|\((?:[^()]*|\([^()]*\))*\))*\)</entryRegEx>
 			</highlightContext>
 		</highlightContext>
 		

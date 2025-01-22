@@ -437,6 +437,7 @@ Protected Class HighlightContext
 		  // ask the code editor's host app for a matching syntax definition file?
 		  If node.GetAttribute("extension") <> "" Then
 		    If node.GetAttribute("extension") = MySyntax.Name Then
+		      #Pragma Warning "CHECK: This check if already added and sorting out later may be a bug consider reverting"
 		      // We will add this completed definition's contexts into this context once this
 		      // definition is finalised to prevent a stackoverflow error due to runaway recursion.
 		      MySyntax.ContextsToSelfReference.Value(Self) = Nil
