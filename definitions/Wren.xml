@@ -16,7 +16,7 @@
 			</highlightContext>
 		
 			<!-- String interpolation -->
-			<highlightContext name="wrenStringInterpolation" fallback="string">
+			<highlightContext name="wrenStringInterpolation" fallback="string" extension="wren">
 				<entryRegEx>%\(.+\)</entryRegEx>
 			</highlightContext>
 		</highlightContext>

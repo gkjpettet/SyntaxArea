@@ -18,8 +18,8 @@ Protected Class HighlightContext
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub AddSubContext(entry As SyntaxArea.HighlightContext)
+	#tag Method, Flags = &h0
+		Sub AddSubContext(entry As SyntaxArea.HighlightContext)
 		  If entry = Nil Then Return
 		  
 		  entry.ParentContext = Self
@@ -121,8 +121,14 @@ Protected Class HighlightContext
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(owner As SyntaxArea.IEditor, caseSensitive As Boolean, createBlank As Boolean = True, syntaxName As String)
+		Sub Constructor(owner As SyntaxArea.IEditor, caseSensitive As Boolean, createBlank As Boolean = True, owningSyntax As HighlightDefinition)
 		  Self.Owner = owner
+		  
+		  If owningSyntax = Nil Then
+		    Raise New InvalidArgumentException("A highlight context must be owned by a syntax definition.")
+		  Else
+		    mMySyntax = New WeakRef(owningSyntax)
+		  End If
 		  
 		  mScanner = New RegEx
 		  mScanner.Options.DotMatchAll = True
@@ -132,13 +138,12 @@ Protected Class HighlightContext
 		  
 		  // Whitespace tokeniser?
 		  If createBlank Then
-		    Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False, syntaxName)
+		    Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False, owningSyntax)
 		    blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))" '"([\s])"
 		    blankSpaceContext.Name = "fieldwhitespace"
 		    AddSubContext(blankSpaceContext)
 		  End If
 		  
-		  Self.SyntaxName = syntaxName
 		End Sub
 	#tag EndMethod
 
@@ -431,13 +436,19 @@ Protected Class HighlightContext
 		  // Is this highlight context defined externally? That is, do we need to 
 		  // ask the code editor's host app for a matching syntax definition file?
 		  If node.GetAttribute("extension") <> "" Then
-		    Var extension As SyntaxArea.HighlightDefinition = _
-		    Owner.RaiseRequestDefinitionExtension(node.GetAttribute("extension"))
-		    If extension <> Nil Then
-		      // Copy all of the extension definition's contexts into this context.
-		      For Each extensionContext As SyntaxArea.HighlightContext In extension.Contexts
-		        AddSubContext(extensionContext)
-		      Next extensionContext
+		    If node.GetAttribute("extension") = MySyntax.Name Then
+		      // We will add this completed definition's contexts into this context once this
+		      // definition is finalised to prevent a stackoverflow error due to runaway recursion.
+		      MySyntax.ContextsToSelfReference.Value(Self) = Nil
+		    Else
+		      Var extension As SyntaxArea.HighlightDefinition = _
+		      Owner.RaiseRequestDefinitionExtension(node.GetAttribute("extension"))
+		      If extension <> Nil Then
+		        // Copy all of the extension definition's contexts into this context.
+		        For Each extensionContext As SyntaxArea.HighlightContext In extension.Contexts
+		          AddSubContext(extensionContext)
+		        Next extensionContext
+		      End If
 		    End If
 		  End If
 		  
@@ -467,7 +478,7 @@ Protected Class HighlightContext
 		        AddRegEx(subNode.Child(j).FirstChild.Value)
 		      Next
 		    Case "highlightContext"
-		      subContext = New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive, Self.Name)
+		      subContext = New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive, MySyntax)
 		      subContext.loadFromXmlNode(subNode)
 		      AddSubContext(subContext)
 		    End Select
@@ -658,6 +669,10 @@ Protected Class HighlightContext
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMySyntax As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mName As String
 	#tag EndProperty
 
@@ -688,6 +703,20 @@ Protected Class HighlightContext
 	#tag Property, Flags = &h21
 		Private mSubContextPattern As String
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 41207765616B207265666572656E636520746F207468697320636F6E746578742773206F776E696E672073796E74617820646566696E6974696F6E2E
+		#tag Getter
+			Get
+			  If mMySyntax = Nil Or mMySyntax.Value = Nil Then
+			    Return Nil
+			  Else
+			    Return HighlightDefinition(mMySyntax.Value)
+			  End If
+			  
+			End Get
+		#tag EndGetter
+		MySyntax As HighlightDefinition
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0, Description = 5468697320636F6E746578742773206E616D652E
 		#tag Getter
@@ -802,10 +831,6 @@ Protected Class HighlightContext
 
 	#tag Property, Flags = &h21
 		Private SubExpressionIndex() As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		SyntaxName As String
 	#tag EndProperty
 
 

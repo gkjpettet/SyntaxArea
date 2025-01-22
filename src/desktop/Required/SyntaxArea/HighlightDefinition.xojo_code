@@ -1,10 +1,10 @@
 #tag Class
 Protected Class HighlightDefinition
 	#tag Method, Flags = &h21, Description = 41646473206120626C616E6B20737061636520636F6E746578742C20746869732077696C6C20746F6B656E69736520737472696E67732E
-		Private Sub AddBlankSpaceContext(syntaxName As String)
+		Private Sub AddBlankSpaceContext()
 		  /// Adds a blank space context, this will tokenise strings.
 		  
-		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False, syntaxName)
+		  Var blankSpaceContext As New SyntaxArea.HighlightContext(Self.Owner, False, False, Self)
 		  blankSpaceContext.EntryRegEx = "([ ]|\t|\x0A|(?:\x0D\x0A?))"
 		  blankSpaceContext.Name = "fieldwhitespace"
 		  
@@ -75,7 +75,7 @@ Protected Class HighlightDefinition
 		  BlockEndDef = New Dictionary
 		  BlockStartDef = New Dictionary
 		  LineContinuationDef = New Dictionary
-		  
+		  ContextsToSelfReference = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -588,7 +588,7 @@ Protected Class HighlightDefinition
 		        Next j
 		        
 		      Case "placeholders"
-		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self.Owner, False, False, Self.Name)
+		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self.Owner, False, False, Self)
 		        PlaceholderContextDef.EntryRegEx = node.FirstChild.Value
 		        PlaceholderContextDef.IsPlaceholder = True
 		        PlaceholderContextDef.Name = "placeholder"
@@ -606,7 +606,7 @@ Protected Class HighlightDefinition
 		        For j = 0 To node.ChildCount-1
 		          // Ignore XML comments.
 		          If node.Child(j) IsA XMLComment Then Continue
-		          context = New SyntaxArea.HighlightContext(Self.Owner, CaseSensitive, Self.Name)
+		          context = New SyntaxArea.HighlightContext(Self.Owner, CaseSensitive, Self)
 		          context.LoadFromXmlNode(node.Child(j))
 		          AddContext(context)
 		        Next j
@@ -614,7 +614,17 @@ Protected Class HighlightDefinition
 		    Next i
 		    
 		    // Add a blank space context.
-		    Self.AddBlankSpaceContext(Name)
+		    Self.AddBlankSpaceContext
+		    
+		    // Finalise self references.
+		    If ContextsToSelfReference.KeyCount > 0 Then
+		      For Each entry As DictionaryEntry In ContextsToSelfReference
+		        Var hc As HighlightContext = entry.Key
+		        For Each c As SyntaxArea.HighlightContext In Self.Contexts
+		          hc.AddSubContext(c)
+		        Next c
+		      Next entry
+		    End If
 		    
 		    Return True
 		  Catch e As RuntimeException
@@ -882,6 +892,10 @@ Protected Class HighlightDefinition
 		#tag EndSetter
 		CaseSensitive As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0, Description = 436F6E7461696E7320636F6E746578747320746861742068617665207265666572656E63656420746869732073796E74617820646566696E6974696F6E20696E207468656972206F776E20646566696E6974696F6E2E205768656E2066696E616C6973696E6720746869732073796E74617820646566696E6974696F6E2077652077696C6C206E65656420746F2061646420616C6C206F66207468697320646566696E6974696F6E7320636F6E746578747320746F2065616368206F662074686520686967686C6967687420636F6E746578747320696E20746869732064696374696F6E6172792E204B6579203D20486967686C69676874436F6E746578742C2056616C7565203D204E696C20286E6F742075736564292E
+		ContextsToSelfReference As Dictionary
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

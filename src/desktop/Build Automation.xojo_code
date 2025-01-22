@@ -41,7 +41,6 @@
 					Destination = 1
 					Subdirectory = 
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvQy54bWw=
-					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YS54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSmF2YXNjcmlwdC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvTWFya2Rvd24ueG1s
@@ -52,6 +51,7 @@
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb0Jhc2ljLnhtbA==
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvT2Jqb1NjcmlwdC54bWw=
 					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvV3Jlbi54bWw=
+					FolderItem = Li4vLi4vLi4vZGVmaW5pdGlvbnMvSHRtbC54bWw=
 				End
 				Begin CopyFilesBuildStep CopyThemesMac
 					AppliesTo = 0
