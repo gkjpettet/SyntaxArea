@@ -14,7 +14,7 @@
 
 	<contexts caseSensitive="no">
 		<highlightContext name="phpBlock" fallback="tag" extension="php">
-			<startRegEx>&lt;\?php(?!.+\?&gt;).*</startRegEx>
+			<startRegEx>&lt;\?php.*</startRegEx>
 			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 		

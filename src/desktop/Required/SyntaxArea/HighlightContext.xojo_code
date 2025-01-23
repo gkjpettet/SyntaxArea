@@ -435,9 +435,9 @@ Protected Class HighlightContext
 		  
 		  // Is this highlight context defined externally? That is, do we need to 
 		  // ask the code editor's host app for a matching syntax definition file?
-		  If node.GetAttribute("extension") <> "" Then
+		  If node.GetAttribute("extension") <> "" And Owner.EnableDefinitionExtensions Then
+		    #Pragma Warning "FIX: The extension system is a bit buggy (hence why it can be disabled)"
 		    If node.GetAttribute("extension") = MySyntax.Name Then
-		      #Pragma Warning "CHECK: This check if already added and sorting out later may be a bug consider reverting"
 		      // We will add this completed definition's contexts into this context once this
 		      // definition is finalised to prevent a stackoverflow error due to runaway recursion.
 		      MySyntax.ContextsToSelfReference.Value(Self) = Nil

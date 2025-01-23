@@ -10,7 +10,7 @@ Begin DesktopWindow WinDemo
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   740
+   Height          =   762
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -27,7 +27,7 @@ Begin DesktopWindow WinDemo
    Begin DesktopPagePanel Panel
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   740
+      Height          =   762
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
@@ -71,7 +71,7 @@ Begin DesktopWindow WinDemo
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   706
+         Top             =   728
          Transparent     =   True
          Value           =   0
          Visible         =   True
@@ -82,7 +82,7 @@ Begin DesktopWindow WinDemo
          AllowFocus      =   True
          AllowLiveScrolling=   True
          Enabled         =   True
-         Height          =   706
+         Height          =   728
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   782
@@ -143,7 +143,7 @@ Begin DesktopWindow WinDemo
          Text            =   ""
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   722
+         Top             =   744
          TopBorderColor  =   &c00000000
          Transparent     =   True
          Visible         =   True
@@ -183,7 +183,7 @@ Begin DesktopWindow WinDemo
          HasLeftBorder   =   True
          HasRightBorder  =   True
          HasTopBorder    =   True
-         Height          =   706
+         Height          =   728
          HighlightBlocksOnMouseOverGutter=   False
          HighlightMatchingBrackets=   True
          HighlightMatchingBracketsMode=   0
@@ -1377,7 +1377,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   520
+      Top             =   540
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1408,7 +1408,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   520
+      Top             =   540
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1440,7 +1440,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   497
+      Top             =   517
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1467,7 +1467,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   498
+      Top             =   518
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1498,7 +1498,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   541
+      Top             =   561
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1525,7 +1525,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   542
+      Top             =   562
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1644,7 +1644,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   573
+      Top             =   593
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1673,7 +1673,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   573
+      Top             =   593
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1705,7 +1705,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   594
+      Top             =   614
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1736,7 +1736,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   573
+      Top             =   593
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1768,7 +1768,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   626
+      Top             =   646
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1797,7 +1797,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   626
+      Top             =   646
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2238,7 +2238,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   658
+      Top             =   678
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2270,7 +2270,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   658
+      Top             =   678
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2302,7 +2302,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   679
+      Top             =   699
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2331,7 +2331,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   658
+      Top             =   678
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2362,7 +2362,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   690
+      Top             =   710
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2455,6 +2455,36 @@ Begin DesktopWindow WinDemo
       Underline       =   False
       Visible         =   True
       Width           =   145
+   End
+   Begin DesktopCheckBox CheckBoxEnableDefinitionExtensions
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Enable Extension Definitions"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   810
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   77
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   493
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   179
    End
 End
 #tag EndDesktopWindow
@@ -2818,6 +2848,133 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ReloadDefinitions()
+		  /// Reloads all of the syntax definitions.
+		  
+		  Var syntaxDefinition As SyntaxArea.HighlightDefinition
+		  
+		  Var presentSyntax As String = PopupDefinition.SelectedRowText
+		  
+		  PopupDefinition.RemoveAllRows
+		  
+		  // C.
+		  PopupDefinition.AddRow("C")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the C definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // Java.
+		  PopupDefinition.AddRow("Java")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Java definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // HTML.
+		  PopupDefinition.AddRow("HTML")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the HTML definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // Javascript.
+		  PopupDefinition.AddRow("Javascript")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Javascript.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Javascript definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // Markdown.
+		  PopupDefinition.AddRow("Markdown")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Markdown.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Markdown definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // ObjoScript.
+		  PopupDefinition.AddRow("ObjoScript")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the ObjoScript definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // ObjoBasic.
+		  PopupDefinition.AddRow("ObjoBasic")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoBasic.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the ObjoBasic definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // PHP.
+		  PopupDefinition.AddRow("PHP")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PHP.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the PHP definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // PostgreSQL.
+		  PopupDefinition.AddRow("PostgreSQL")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the PostgreSQL definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // XML.
+		  PopupDefinition.AddRow("XML/XHTML")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the XML/XHTML definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // Xojo.
+		  PopupDefinition.AddRow("Xojo")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Xojo definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // Wren.
+		  PopupDefinition.AddRow("Wren")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Wren.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Wren definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // If there was a definition selected before we reloaded then reselect it, otherwise
+		  // select the last added definition.
+		  If presentSyntax = "" Then
+		    PopupDefinition.SelectedRowIndex = PopupDefinition.LastAddedRowIndex
+		  Else
+		    Var foundSyntax As Boolean = False
+		    For i As Integer = 0 To PopupDefinition.LastRowIndex
+		      If PopupDefinition.RowTextAt(i) = presentSyntax Then
+		        PopupDefinition.SelectedRowIndex = i
+		        foundSyntax = True
+		        Exit
+		      End If
+		    Next i
+		    If Not foundSyntax Then
+		      PopupDefinition.SelectedRowIndex = PopupDefinition.LastAddedRowIndex
+		    End If
+		  End If
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 5570646174657320616C6C206F662074686520636F6E74726F6C7320746F206D61746368207468652073657474696E6773206F662074686520636F646520656469746F722E
 		Private Sub UpdateControls()
 		  /// Updates all of the controls to match the settings of the code editor.
@@ -2863,6 +3020,9 @@ End
 		  // supports code blocks.
 		  CheckBoxEnableLineFolding.Value = _
 		  CheckBoxEnableLineFolding.Value And CodeEditor.SyntaxDefinition.SupportsCodeBlocks
+		  
+		  // Extension definitions.
+		  CheckBoxEnableDefinitionExtensions.Value = CodeEditor.EnableDefinitionExtensions
 		  
 		  // ===========
 		  // Info panel.
@@ -3387,108 +3547,7 @@ End
 #tag Events PopupDefinition
 	#tag Event
 		Sub Opening()
-		  Var syntaxDefinition As SyntaxArea.HighlightDefinition
-		  
-		  // C.
-		  Me.AddRow("C")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the C definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Java.
-		  Me.AddRow("Java")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Java definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // HTML.
-		  Me.AddRow("HTML")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the HTML definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Javascript.
-		  Me.AddRow("Javascript")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Javascript.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Javascript definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Markdown.
-		  Me.AddRow("Markdown")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Markdown.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Markdown definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // ObjoScript.
-		  Me.AddRow("ObjoScript")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the ObjoScript definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // ObjoBasic.
-		  Me.AddRow("ObjoBasic")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoBasic.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the ObjoBasic definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // PHP.
-		  Me.AddRow("PHP")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PHP.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the PHP definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // PostgreSQL.
-		  Me.AddRow("PostgreSQL")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the PostgreSQL definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // XML.
-		  Me.AddRow("XML/XHTML")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the XML/XHTML definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Xojo.
-		  Me.AddRow("Xojo")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Xojo definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  Var xojoDefIndex As Integer = Me.LastAddedRowIndex
-		  
-		  // Wren.
-		  Me.AddRow("Wren")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Wren.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Wren definition")
-		  End If
-		  Me.RowTagAt(Me.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Start with the Wren definition.
-		  Me.SelectedRowIndex = Me.LastAddedRowIndex
-		  
+		  ReloadDefinitions
 		  
 		End Sub
 	#tag EndEvent
@@ -3726,6 +3785,14 @@ End
 	#tag Event
 		Sub ColorChanged()
 		  Info.InternalBorderColor = Me.SelectedColor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxEnableDefinitionExtensions
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.EnableDefinitionExtensions = Me.Value
+		  ReloadDefinitions
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -2069,6 +2069,28 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 49662054727565207468656E2074686520657874656E73696F6E2066656174757265206F6620646566696E6974696F6E7320697320656E61626C65642E2049662046616C7365207468657920617265207475726E6564206F66662E
+		Function EnableDefinitionExtensions() As Boolean
+		  /// If True then the extension feature of definitions is enabled. If False they are turned off.
+		  ///
+		  /// Part of the IEditor interface.
+		  
+		  Return mEnableDefinitionExtensions
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 49662054727565207468656E2074686520657874656E73696F6E2066656174757265206F6620646566696E6974696F6E7320697320656E61626C65642E2049662046616C7365207468657920617265207475726E6564206F66662E
+		Sub EnableDefinitionExtensions(Assigns value As Boolean)
+		  /// If True then the extension feature of definitions is enabled. If False they are turned off.
+		  ///
+		  /// Part of the IEditor interface.
+		  
+		  mEnableDefinitionExtensions = value
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function EnableLineFolding() As Boolean
 		  Return mEnableLineFolding
@@ -6308,6 +6330,10 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 
 	#tag Property, Flags = &h21
 		Private mDisplayVerticalRuler As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEnableDefinitionExtensions As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
