@@ -22,7 +22,8 @@
 	
 	<contexts caseSensitive="no">
 		<highlightContext name="phpTag" fallback="tag">
-			<entryRegEx>&lt;\?php</entryRegEx>
+			<startRegEx>&lt;\?php</startRegEx>
+			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 	
 		<highlightContext name="phpSingleLineComment" fallback="comment">
