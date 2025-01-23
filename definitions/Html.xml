@@ -13,18 +13,14 @@
 	</blockEndMarker>
 
 	<contexts caseSensitive="no">
-		<highlightContext name="phpBlock" fallback="tag" extension="php">
-			<startRegEx>&lt;\?php.*</startRegEx>
-			<endRegEx>\?&gt;</endRegEx>
-		</highlightContext>
-		
 		<highlightContext name="inlineJavascript" extension="javascript">
 			<startRegEx>&lt;script(?:[ ]+(?:\w|[-+"'#=:\\\.\/ ])+)?&gt;</startRegEx>
 			<endRegEx>&lt;\/script&gt;</endRegEx>
 		</highlightContext>
 		
-		<highlightContext name="inlinePHP" fallback="tag" extension="php">
-			<entryRegEx>&lt;\?php.+\?&gt;</entryRegEx>
+		<highlightContext name="inlinePHP" fallback="tag">
+			<startRegEx>&lt;\?php.*?(?=\?&gt;)</startRegEx>
+			<endRegEx>\?&gt;</endRegEx>
 		</highlightContext>
 	
 		<highlightContext name="htmlComment" fallback="comment">
