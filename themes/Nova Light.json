@@ -10,7 +10,6 @@
 		"italic": false,
 		"underline": false
 	},
-	"invisibleCharacterColor": "&h00BFC5CC",
 	"styles": {	
 		"attributeInHtmlTag": {
 		  "textColor": "&h003479B2",
@@ -359,6 +358,7 @@
 	"dirtyLinesColor": "&h00FFFF00",
 	"gutterBackColor": "&h00FFFFFF",
 	"gutterBorderColor": "&h00000000",
+	"invisibleCharacterColor": "&h00BFC5CC",
 	"lineNumbersColor": "&h00000000",
 	"verticalRulerColor": "&h00AAAAAA",
 	"suggestionPopupBackColor": "&h00FFFFFF",
