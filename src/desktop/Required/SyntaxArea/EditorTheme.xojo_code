@@ -216,7 +216,12 @@ Protected Class EditorTheme
 		  If d.HasKey("textColor") Then theme.TextColor = d.Value("textColor")
 		  If d.HasKey("textSelectionColor") Then theme.TextSelectionColor = d.Value("textSelectionColor")
 		  
-		  Return theme
+		  Var themeValidMessage As String = IsValidTheme(theme)
+		  If themeValidMessage <> "" Then
+		    Raise New InvalidArgumentException("Invalid theme TOML: " + themeValidMessage)
+		  Else
+		    Return theme
+		  End If
 		  
 		End Function
 	#tag EndMethod
@@ -242,6 +247,38 @@ Protected Class EditorTheme
 		  End Try
 		  
 		  Return SyntaxArea.EditorTheme.FromTOML(toml)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E732022222069662074686973207468656D652069732076616C69642028636F6E7461696E73207265717569726564207374796C657329206F7220616E206572726F7220737472696E672E
+		Shared Function IsValidTheme(theme As EditorTheme) As String
+		  /// Returns "" if this theme is valid (contains required styles) or an error string.
+		  
+		  If theme.Name = "" Then Return "No theme name specified."
+		  If theme.Author = "" Then Return "No theme author specified."
+		  
+		  If theme.DefaultTokenStyle = Nil Then Return "Invalid default token style."
+		  
+		  If Not theme.TokenStyles.HasKey("comment") Then Return "Missing a style for `comment` tokens."
+		  If Not theme.TokenStyles.HasKey("directive") Then Return "Missing a style for `directive` tokens."
+		  If Not theme.TokenStyles.HasKey("escape") Then Return "Missing a style for `escape` tokens."
+		  If Not theme.TokenStyles.HasKey("identifier") Then Return "Missing a style for `identifier` tokens."
+		  If Not theme.TokenStyles.HasKey("keyword") Then Return "Missing a style for `keyword` tokens."
+		  If Not theme.TokenStyles.HasKey("lowercaseIdentifier") Then
+		    Return "Missing a style for `lowercaseIdentifier` tokens."
+		  End If
+		  If Not theme.TokenStyles.HasKey("number") Then Return "Missing a style for `number` tokens."
+		  If Not theme.TokenStyles.HasKey("placeholder") Then Return "Missing a style for `placeholder` tokens."
+		  If Not theme.TokenStyles.HasKey("string") Then Return "Missing a style for `string` tokens."
+		  If Not theme.TokenStyles.HasKey("type") Then Return "Missing a style for `type` tokens."
+		  If Not theme.TokenStyles.HasKey("uppercaseIdentifier") Then
+		    Return "Missing a style for `uppercaseIdentifier` tokens."
+		  End If
+		  If Not theme.TokenStyles.HasKey("url") Then Return "Missing a style for `url` tokens."
+		  
+		  // All good.
+		  Return ""
 		  
 		End Function
 	#tag EndMethod
