@@ -1,0 +1,392 @@
+# Theme metadata.
+name = "Nova Light"
+author = "Garry Pettet"
+version = "1.3.0"
+
+# Generic.
+backColor = "&h00FFFFFF"
+textColor = "&h00000000"
+textSelectionColor = "&h00A4CCFE"
+
+# Block folding.
+blockFoldedColor = "&h00FF8000"
+blockFoldedEllipsisColor = "&h00AAAAAA"
+blockFoldMarkerColor = "&h00555555"
+
+# Left gutter colours.
+gutterBackColor = "&h00FFFFFF"
+gutterBorderColor = "&h00000000"
+lineNumbersColor = "&h00000000"
+
+# Autocomplete colours.
+suggestionPopupBackColor = "&h00FFFFFF"
+suggestionPopupSelectedTextColor = "&h00000000"
+suggestionPopupTextColor = "&h00000000"
+
+# Miscellaneous.
+bookmarkColor = "&h000000FF"
+bracketHighlightColor = "&h000000FF"
+caretColor = "&h00000000"
+dirtyLinesColor = "&h00FFFF00"
+invisibleCharacterColor = "&h00BFC5CC"
+verticalRulerColor = "&h00AAAAAA"
+
+# The required default style. Used for text that matches no other style.
+[defaultStyle]
+textColor = "&h00000000"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+# ==============================================
+# Required styles. All themes must define these.
+# ==============================================
+[styles.comment]
+textColor = "&h00737373"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = true
+underline = false
+
+[styles.directive]
+textColor = "&h007C3EA6"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.escape]
+textColor = "&h0000ff00"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.identifier]
+textColor = "&h00B42F84"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.keyword]
+textColor = "&h000061B8"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.lowercaseIdentifier]
+textColor = "&h00B42F84"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.number]
+textColor = "&h00000000"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.placeholder]
+textColor = "&h00FFFFFF"
+backColor = "&h003379F7"
+hasBackColor = false
+bold = true
+italic = false
+underline = false
+
+[styles.string]
+textColor = "&h00BD391D"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.type]
+textColor = "&h00000000"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.uppercaseIdentifier]
+textColor = "&h0023575A"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.url]
+textColor = "&h00000000"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = true
+
+# ==============================================
+# HTML specific.
+# ==============================================
+[styles.attributeInHtmlTag]
+textColor = "&h003479B2"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.htmlTag]
+textColor = "&h001E4C94"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.inlinePHP]
+textColor = "&h007C3EA6"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = true
+underline = false
+
+[styles.singleStringInHtmlTag]
+textColor = "&h00439729"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.stringInHtmlTag]
+textColor = "&h00439729"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.tag]
+textColor = "&h007C3EA6"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+# ==============================================
+# Markdown specific.
+# ==============================================
+[styles.blockQuote]
+textColor = "&h00868E96"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = true
+underline = false
+
+[styles.emphasis]
+textColor = "&h00DD7930"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = true
+underline = false
+
+[styles.h1]
+textColor = "&h001D4B94"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h2]
+textColor = "&h001D4B94"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h3]
+textColor = "&h001D4B94"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h4]
+textColor = "&h001D4B94"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h5]
+textColor = "&h001D4B94"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h6]
+textColor = "&h001D4B94"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.inlineCode]
+textColor = "&h00000000"
+backColor = "&h00E5E5E5"
+hasBackColor = true
+bold = false
+italic = false
+underline = false
+
+[styles.inlineLinkDestination]
+textColor = "&h003378B2"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = true
+
+[styles.linkDestination]
+textColor = "&h003378B2"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.linkReferenceDefinition]
+textColor = "&h003378B2"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.linkText]
+textColor = "&h003378B2"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.strongEmphasis]
+textColor = "&h003D8F3D"
+backColor = "&h00000000"
+hasBackColor = false
+bold = true
+italic = false
+underline = false
+
+# ==============================================
+# Wren specific.
+# ==============================================
+[styles.wrenStringInterpolation]
+textColor = "&h000A5FFE"
+backColor = "&h00000000"
+hasBackColor = false
+bold = true
+italic = false
+underline = false
+
+# ==============================================
+# Xojo specific.
+# ==============================================
+[styles.xojoColorBlueComponent]
+textColor = "&h000000FF"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoColorGreenComponent]
+textColor = "&h0027CD41"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoColorRedComponent]
+textColor = "&h00FF0000"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoComment]
+textColor = "&h007D1012"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoDouble]
+textColor = "&h00146319"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoInteger]
+textColor = "&h0028C732"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoKeyword]
+textColor = "&h000A5FFE"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoPragma]
+textColor = "&h000A5FFE"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoString]
+textColor = "&h009D33D5"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false

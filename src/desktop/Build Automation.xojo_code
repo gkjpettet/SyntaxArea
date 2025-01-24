@@ -27,8 +27,7 @@
 					Target = 0
 					Destination = 1
 					Subdirectory = 
-					FolderItem = Li4vLi4vLi4vdGhlbWVzL05vdmElMjBEYXJrLmpzb24=
-					FolderItem = Li4vLi4vLi4vdGhlbWVzL05vdmElMjBMaWdodC5qc29u
+					FolderItem = Li4vLi4vLi4vdGhlbWVzLw==
 				End
 			End
 			Begin BuildStepList Mac OS X
@@ -59,8 +58,7 @@
 					Target = 0
 					Destination = 1
 					Subdirectory = 
-					FolderItem = Li4vLi4vLi4vdGhlbWVzL05vdmElMjBEYXJrLmpzb24=
-					FolderItem = Li4vLi4vLi4vdGhlbWVzL05vdmElMjBMaWdodC5qc29u
+					FolderItem = Li4vLi4vLi4vdGhlbWVzLw==
 				End
 				Begin SignProjectStep Sign
 				  DeveloperID=
@@ -95,8 +93,7 @@
 					Target = 0
 					Destination = 1
 					Subdirectory = 
-					FolderItem = Li4vLi4vLi4vdGhlbWVzL05vdmElMjBEYXJrLmpzb24=
-					FolderItem = Li4vLi4vLi4vdGhlbWVzL05vdmElMjBMaWdodC5qc29u
+					FolderItem = Li4vLi4vLi4vdGhlbWVzLw==
 				End
 			End
 #tag EndBuildAutomation

@@ -2515,6 +2515,8 @@ End
 
 	#tag Event
 		Sub Opening()
+		  Me.Title = "SyntaxArea v" + SyntaxArea.Version
+		  
 		  // Enable line foldings if the definition supports them.
 		  CodeEditor.EnableLineFolding = CodeEditor.SyntaxDefinition.SupportsCodeBlocks
 		  
@@ -2610,12 +2612,12 @@ End
 		  
 		  If Color.IsDarkMode Then
 		    // Get the correct bundled theme.
-		    Var themeFile As FolderItem = SpecialFolder.Resource("Nova Dark.json")
-		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
+		    Var themeFile As FolderItem = SpecialFolder.Resource("themes").Child("Nova Dark.toml")
+		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromTOMLFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  Else
-		    Var themeFile As FolderItem = SpecialFolder.Resource("Nova Light.json")
-		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(themeFile)
+		    Var themeFile As FolderItem = SpecialFolder.Resource("themes").Child("Nova Light.toml")
+		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromTOMLFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  End If
 		  
@@ -3710,11 +3712,11 @@ End
 #tag Events ButtonLoadTheme
 	#tag Event
 		Sub Pressed()
-		  Var f As FolderItem = FolderItem.ShowOpenFileDialog(MyFiles.TextJSON)
+		  Var f As FolderItem = FolderItem.ShowOpenFileDialog(MyFiles.TextTOML)
 		  
 		  If f = Nil Then Return
 		  
-		  Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromFile(f)
+		  Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromTOMLFile(f)
 		  PopupTheme.AddRow(theme.Name)
 		  PopupTheme.RowTagAt(PopupTheme.LastAddedRowIndex) = theme
 		  PopupTheme.SelectedRowIndex = PopupTheme.LastAddedRowIndex
@@ -3729,12 +3731,12 @@ End
 		  
 		  // Nova Light.
 		  Me.AddRow("Nova Light")
-		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Nova Light.json"))
+		  theme = SyntaxArea.EditorTheme.FromTOMLFile(SpecialFolder.Resource("themes").Child("Nova Light.toml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
 		  
 		  // Nova Dark.
 		  Me.AddRow("Nova Dark")
-		  theme = SyntaxArea.EditorTheme.FromFile(SpecialFolder.Resource("Nova Dark.json"))
+		  theme = SyntaxArea.EditorTheme.FromTOMLFile(SpecialFolder.Resource("themes").Child("Nova Dark.toml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
 		  
 		End Sub
@@ -3753,7 +3755,7 @@ End
 #tag Events ButtonExportTheme
 	#tag Event
 		Sub Pressed()
-		  Var f As FolderItem = FolderItem.ShowSaveFileDialog(MyFiles.TextJSON, "My Custom Theme.json")
+		  Var f As FolderItem = FolderItem.ShowSaveFileDialog(MyFiles.TextTOML, "My Custom Theme.toml")
 		  
 		  // Did the user cancel?
 		  If f = Nil Then Return
@@ -3762,9 +3764,9 @@ End
 		  Var exportTheme As SyntaxArea.EditorTheme = CodeEditor.ToEditorTheme
 		  
 		  Try
-		    Var json As String = exportTheme.ToJSON
+		    Var toml As String = exportTheme.ToTOML
 		    Var tout As TextOutputStream = TextOutputStream.Create(f)
-		    tout.Write(json)
+		    tout.Write(toml)
 		    tout.Close
 		  Catch e As RuntimeException
 		    Raise New RuntimeException("An error occurred whilst attempting to export the " + _

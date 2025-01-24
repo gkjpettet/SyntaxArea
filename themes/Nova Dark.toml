@@ -1,11 +1,11 @@
 # Theme metadata.
-name = "Nova Light"
+name = "Nova Dark"
 author = "Garry Pettet"
 version = "1.3.0"
 
 # Generic.
-backColor = "&h00FFFFFF"
-textColor = "&h00000000"
+backColor = "&h00161616"
+textColor = "&h00FFFFFF"
 textSelectionColor = "&h00A4CCFE"
 
 # Block folding.
@@ -14,51 +14,37 @@ blockFoldedEllipsisColor = "&h00AAAAAA"
 blockFoldMarkerColor = "&h00555555"
 
 # Left gutter colours.
-gutterBackColor = "&h00FFFFFF"
-gutterBorderColor = "&h00000000"
-lineNumbersColor = "&h00000000"
+gutterBackColor = "&h00161616"
+gutterBorderColor = "&h00FFFFFF"
+lineNumbersColor = "&h00FFFFFF"
 
 # Autocomplete colours.
-suggestionPopupBackColor = "&h00FFFFFF"
-suggestionPopupSelectedTextColor = "&h00000000"
-suggestionPopupTextColor = "&h00000000"
+suggestionPopupBackColor = "&h00161616"
+suggestionPopupSelectedTextColor = "&h00FFFFFF"
+suggestionPopupTextColor = "&h00FFFFFF"
 
 # Miscellaneous.
 bookmarkColor = "&h000000FF"
 bracketHighlightColor = "&h000000FF"
-caretColor = "&h00000000"
+caretColor = "&h00FFFFFF"
 dirtyLinesColor = "&h00FFFF00"
-invisibleCharacterColor = "&h00BFC5CC"
-verticalRulerColor = "&h00AAAAAA"
+invisibleCharacterColor = "&h00363A3F"
+verticalRulerColor = "&h00555555"
 
 # The required default style. Used for text that matches no other style.
 [defaultStyle]
-textColor = "&h00000000"
+textColor = "&h00DBE5F1"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
 italic = false
 underline = false
 
-[styles]
-[styles.attributeInHtmlTag]
-textColor = "&h003479B2"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.blockQuote]
-textColor = "&h00868E96"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = true
-underline = false
-
+# ==============================================
+# Required styles. All themes must define these.
+# ==============================================
 [styles.comment]
-textColor = "&h00737373"
+textColor = "&h00798CA1"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -66,19 +52,11 @@ italic = true
 underline = false
 
 [styles.directive]
-textColor = "&h007C3EA6"
+textColor = "&h00C6A5F0"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
 italic = false
-underline = false
-
-[styles.emphasis]
-textColor = "&h00DD7930"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = true
 underline = false
 
 [styles.escape]
@@ -89,120 +67,16 @@ bold = false
 italic = false
 underline = false
 
-[styles.h1]
-textColor = "&h001D4B94"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.h2]
-textColor = "&h001D4B94"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.h3]
-textColor = "&h001D4B94"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.h4]
-textColor = "&h001D4B94"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.h5]
-textColor = "&h001D4B94"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.h6]
-textColor = "&h001D4B94"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.htmlTag]
-textColor = "&h001E4C94"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
 [styles.identifier]
-textColor = "&h00B42F84"
+textColor = "&h00ffffff"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
 italic = false
-underline = false
-
-[styles.inlineCode]
-textColor = "&h00000000"
-backColor = "&h00E5E5E5"
-hasBackColor = true
-bold = false
-italic = false
-underline = false
-
-[styles.inlineLinkDestination]
-textColor = "&h003378B2"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = true
-
-[styles.inlinePHP]
-textColor = "&h007C3EA6"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = true
 underline = false
 
 [styles.keyword]
-textColor = "&h000061B8"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.linkDestination]
-textColor = "&h003378B2"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.linkReferenceDefinition]
-textColor = "&h003378B2"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.linkText]
-textColor = "&h003378B2"
+textColor = "&h0078B1F9"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -210,7 +84,7 @@ italic = false
 underline = false
 
 [styles.lowercaseIdentifier]
-textColor = "&h00B42F84"
+textColor = "&h00ffffff"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -218,7 +92,7 @@ italic = false
 underline = false
 
 [styles.number]
-textColor = "&h00000000"
+textColor = "&h00E4CE88"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -233,40 +107,8 @@ bold = true
 italic = false
 underline = false
 
-[styles.singleStringInHtmlTag]
-textColor = "&h00439729"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
 [styles.string]
-textColor = "&h00BD391D"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.stringInHtmlTag]
-textColor = "&h00439729"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.strongEmphasis]
-textColor = "&h003D8F3D"
-backColor = "&h00000000"
-hasBackColor = false
-bold = true
-italic = false
-underline = false
-
-[styles.tag]
-textColor = "&h007C3EA6"
+textColor = "&h00F09184"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -274,7 +116,7 @@ italic = false
 underline = false
 
 [styles.type]
-textColor = "&h00000000"
+textColor = "&h00FFFFFF"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -282,7 +124,7 @@ italic = false
 underline = false
 
 [styles.uppercaseIdentifier]
-textColor = "&h0023575A"
+textColor = "&h00ffffff"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -290,18 +132,206 @@ italic = false
 underline = false
 
 [styles.url]
-textColor = "&h00000000"
+textColor = "&h000000FF"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
 italic = false
 underline = true
 
+# ==============================================
+# HTML specific.
+# ==============================================
+[styles.attributeInHtmlTag]
+textColor = "&h00B0DF8F"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.htmlTag]
+textColor = "&h007DD4B0"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.inlinePHP]
+textColor = "&h007C3EA6"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = true
+underline = false
+
+[styles.stringInHtmlTag]
+textColor = "&h00F09084"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.singleStringInHtmlTag]
+textColor = "&h00F09084"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.tag]
+textColor = "&h00C6A5F0"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+# ==============================================
+# Markdown support.
+# ==============================================
+[styles.blockQuote]
+textColor = "&h00868E96"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = true
+underline = false
+
+[styles.emphasis]
+textColor = "&h00A7CA83"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = true
+underline = false
+
+[styles.h1]
+textColor = "&h00ECAA70"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h2]
+textColor = "&h00ECAA70"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h3]
+textColor = "&h00ECAA70"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h4]
+textColor = "&h00ECAA70"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h5]
+textColor = "&h00ECAA70"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.h6]
+textColor = "&h00ECAA70"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.inlineCode]
+textColor = "&h00FFFFFF"
+backColor = "&h002F3031"
+hasBackColor = true
+bold = false
+italic = false
+underline = false
+
+[styles.inlineLinkDestination]
+textColor = "&h0078B1F9"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = true
+
+[styles.linkDestination]
+textColor = "&h0078B1F9"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.linkReferenceDefinition]
+textColor = "&h0078B1F9"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.linkText]
+textColor = "&h0078B1F9"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.strongEmphasis]
+textColor = "&h0064A0BF"
+backColor = "&h00000000"
+hasBackColor = false
+bold = true
+italic = false
+underline = false
+
+# ==============================================
+# Wren specific.
+# ==============================================
 [styles.wrenStringInterpolation]
 textColor = "&h000A5FFE"
 backColor = "&h00000000"
 hasBackColor = false
 bold = true
+italic = false
+underline = false
+
+# ==============================================
+# Xojo specific.
+# ==============================================
+[styles.xojoColorBlueComponent]
+textColor = "&h00106AFE"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
+[styles.xojoColorGreenComponent]
+textColor = "&h006AD45E"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
 italic = false
 underline = false
 
@@ -313,24 +343,8 @@ bold = false
 italic = false
 underline = false
 
-[styles.xojoColorGreenComponent]
-textColor = "&h0027CD41"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
-[styles.xojoColorBlueComponent]
-textColor = "&h000000FF"
-backColor = "&h00000000"
-hasBackColor = false
-bold = false
-italic = false
-underline = false
-
 [styles.xojoComment]
-textColor = "&h007D1012"
+textColor = "&h00FB4A4B"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -338,7 +352,7 @@ italic = false
 underline = false
 
 [styles.xojoDouble]
-textColor = "&h00146319"
+textColor = "&h0018691D"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -346,7 +360,7 @@ italic = false
 underline = false
 
 [styles.xojoInteger]
-textColor = "&h0028C732"
+textColor = "&h0030D33A"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -354,7 +368,7 @@ italic = false
 underline = false
 
 [styles.xojoKeyword]
-textColor = "&h000A5FFE"
+textColor = "&h00106AFE"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false
@@ -362,7 +376,7 @@ italic = false
 underline = false
 
 [styles.xojoPragma]
-textColor = "&h000A5FFE"
+textColor = "&h00106AFE"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false

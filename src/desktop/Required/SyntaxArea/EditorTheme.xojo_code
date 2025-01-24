@@ -42,7 +42,7 @@ Protected Class EditorTheme
 		  theme.TextSelectionColor = Color.HighlightColor
 		  
 		  // =================
-		  // Tokens
+		  // Required styles
 		  // =================
 		  // Default.
 		  theme.DefaultTokenStyle = New SyntaxArea.TokenStyle(&cDBE5F1)
@@ -50,11 +50,25 @@ Protected Class EditorTheme
 		  // Comments.
 		  theme.TokenStyles.Value("comment") = New SyntaxArea.TokenStyle(&c798BA1, False, True)
 		  
-		  // Keywords.
+		  // Directives.
+		  theme.TokenStyles.Value("directive") = New SyntaxArea.TokenStyle(&c945200)
+		  
+		  // Escape.
+		  theme.TokenStyles.Value("escape") = New SyntaxArea.TokenStyle(Color.Red)
+		  
+		  // Identifiers.
+		  theme.TokenStyles.Value("identifier") = New SyntaxArea.TokenStyle(&cDBE5F1)
+		  theme.TokenStyles.Value("uppercaseIndentifier") = New SyntaxArea.TokenStyle(&c71E5E7)
+		  theme.TokenStyles.Value("lowercaseIdentifier") = New SyntaxArea.TokenStyle(&c73E5AF)
+		  
+		  // Keyword.
 		  theme.TokenStyles.Value("keyword") = New SyntaxArea.TokenStyle(&c78B1F9)
 		  
 		  // Numbers.
 		  theme.TokenStyles.Value("number") = New SyntaxArea.TokenStyle(&cE4CE88)
+		  
+		  // Placeholders.
+		  theme.TokenStyles.Value("placeholder") = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
 		  
 		  // Strings.
 		  theme.TokenStyles.Value("string") = New SyntaxArea.TokenStyle(&cEF8F84)
@@ -62,16 +76,8 @@ Protected Class EditorTheme
 		  // Types.
 		  theme.TokenStyles.Value("type") = New SyntaxArea.TokenStyle(&cC8C8C8)
 		  
-		  // Identifiers.
-		  theme.TokenStyles.Value("identifier") = New SyntaxArea.TokenStyle(&cDBE5F1)
-		  theme.TokenStyles.Value("uppercaseIndentifier") = New SyntaxArea.TokenStyle(&c71E5E7)
-		  theme.TokenStyles.Value("lowercaseIdentifier") = New SyntaxArea.TokenStyle(&c73E5AF)
-		  
-		  // Directives.
-		  theme.TokenStyles.Value("directive") = New SyntaxArea.TokenStyle(&c945200)
-		  
-		  // Placeholders.
-		  theme.TokenStyles.Value("placeholder") = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
+		  // URLs.
+		  theme.TokenStyles.Value("url") = New SyntaxArea.TokenStyle(Color.Blue, False, False, True)
 		  
 		  Return theme
 		  
@@ -111,7 +117,7 @@ Protected Class EditorTheme
 		  theme.TextSelectionColor = Color.HighlightColor
 		  
 		  // =================
-		  // Tokens
+		  // Required styles.
 		  // =================
 		  // Default.
 		  theme.DefaultTokenStyle = New SyntaxArea.TokenStyle(&c262627)
@@ -119,11 +125,25 @@ Protected Class EditorTheme
 		  // Comments.
 		  theme.TokenStyles.Value("comment") = New SyntaxArea.TokenStyle(&c737373, False, True)
 		  
+		  // Directives.
+		  theme.TokenStyles.Value("directive") = New SyntaxArea.TokenStyle(&c945200)
+		  
+		  // Escapes.
+		  theme.TokenStyles.Value("escape") = New SyntaxArea.TokenStyle(Color.Red)
+		  
+		  // Identifiers.
+		  theme.TokenStyles.Value("identifier") = New SyntaxArea.TokenStyle(&c262627)
+		  theme.TokenStyles.Value("uppercaseIndentifier") = New SyntaxArea.TokenStyle(&c40822E)
+		  theme.TokenStyles.Value("lowercaseIdentifier") = New SyntaxArea.TokenStyle(&c337172)
+		  
 		  // Keywords.
 		  theme.TokenStyles.Value("keyword") = New SyntaxArea.TokenStyle(&c255BB2)
 		  
 		  // Numbers.
 		  theme.TokenStyles.Value("number") = New SyntaxArea.TokenStyle(&cC43B64)
+		  
+		  // Placeholders.
+		  theme.TokenStyles.Value("placeholder") = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
 		  
 		  // Strings.
 		  theme.TokenStyles.Value("string") = New SyntaxArea.TokenStyle(&cBC391D)
@@ -131,43 +151,10 @@ Protected Class EditorTheme
 		  // Types.
 		  theme.TokenStyles.Value("type") = New SyntaxArea.TokenStyle(&c262626)
 		  
-		  // Identifiers.
-		  theme.TokenStyles.Value("identifier") = New SyntaxArea.TokenStyle(&c262627)
-		  theme.TokenStyles.Value("uppercaseIndentifier") = New SyntaxArea.TokenStyle(&c40822E)
-		  theme.TokenStyles.Value("lowercaseIdentifier") = New SyntaxArea.TokenStyle(&c337172)
-		  
-		  // Directives.
-		  theme.TokenStyles.Value("directive") = New SyntaxArea.TokenStyle(&c945200)
-		  
-		  // Placeholders.
-		  theme.TokenStyles.Value("placeholder") = New SyntaxArea.TokenStyle(Color.White, True, False, False, &c3379F7)
+		  // URLs.
+		  theme.TokenStyles.Value("url") = New SyntaxArea.TokenStyle(Color.Blue, False, False, True)
 		  
 		  Return theme
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 4C6F6164732061204A534F4E207468656D652066696C6520616E642072657475726E7320697420617320616E2060456469746F725468656D65602E
-		Shared Function FromFile(f As FolderItem) As SyntaxArea.EditorTheme
-		  /// Loads a JSON theme file and returns it as an `EditorTheme`.
-		  
-		  // Sanity checks.
-		  If f = Nil Or Not f.Exists Then
-		    Raise New InvalidArgumentException("Cannot load theme as the file does not exist.")
-		  ElseIf f.IsFolder Then
-		    Raise New InvalidArgumentException("Invalid theme file (received a folder, expected a file).")
-		  End If
-		  
-		  Var json As String
-		  Try
-		    Var tin As TextInputStream = TextInputStream.Open(f)
-		    json = tin.ReadAll
-		    tin.Close
-		  Catch e As IOException
-		    Raise New InvalidArgumentException("Unable to read the theme file.")
-		  End Try
-		  
-		  Return SyntaxArea.EditorTheme.FromJSON(json)
 		  
 		End Function
 	#tag EndMethod
@@ -230,6 +217,118 @@ Protected Class EditorTheme
 		  If d.HasKey("textSelectionColor") Then theme.TextSelectionColor = d.Value("textSelectionColor")
 		  
 		  Return theme
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4C6F6164732061204A534F4E207468656D652066696C6520616E642072657475726E7320697420617320616E2060456469746F725468656D65602E
+		Shared Function FromJSONFile(f As FolderItem) As SyntaxArea.EditorTheme
+		  /// Loads a JSON theme file and returns it as an `EditorTheme`.
+		  
+		  // Sanity checks.
+		  If f = Nil Or Not f.Exists Then
+		    Raise New InvalidArgumentException("Cannot load theme as the file does not exist.")
+		  ElseIf f.IsFolder Then
+		    Raise New InvalidArgumentException("Invalid theme file (received a folder, expected a file).")
+		  End If
+		  
+		  Var json As String
+		  Try
+		    Var tin As TextInputStream = TextInputStream.Open(f)
+		    json = tin.ReadAll
+		    tin.Close
+		  Catch e As IOException
+		    Raise New InvalidArgumentException("Unable to read the theme file.")
+		  End Try
+		  
+		  Return SyntaxArea.EditorTheme.FromJSON(json)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C20726570726573656E746174696F6E206F662061207468656D652E
+		Shared Function FromTOML(toml As String) As SyntaxArea.EditorTheme
+		  /// Loads a TOML representation of a theme.
+		  
+		  Var d As Dictionary
+		  Try
+		    d = ParseTOML(toml)
+		  Catch e As TOMLKit.TKException
+		    Raise New InvalidArgumentException("Invalid TOML. Cannot load theme.")
+		  End Try
+		  
+		  Var theme As New SyntaxArea.EditorTheme
+		  
+		  // Metadata.
+		  theme.Name = d.Lookup("name", "Untitled Theme")
+		  theme.Author = d.Lookup("author", "Unknown Author")
+		  theme.Version = d.Lookup("version", "1.0.0")
+		  
+		  // Default token style.
+		  If d.HasKey("defaultStyle") Then
+		    theme.DefaultTokenStyle = SyntaxArea.TokenStyle.FromDictionary(d.Value("defaultStyle"))
+		  End If
+		  
+		  // Invisible character colour.
+		  If d.HasKey("invisibleCharacterColor") Then
+		    theme.InvisibleCharacterColor = Color.FromString(d.Value("invisibleCharacterColor"))
+		  End If
+		  
+		  // Any other token styles.
+		  If d.HasKey("styles") Then
+		    Var styles As Dictionary = d.Value("styles")
+		    For Each entry As DictionaryEntry In styles
+		      Var styleName As String = entry.Key
+		      Var styleDict As Dictionary = entry.Value
+		      theme.TokenStyles.Value(styleName) = SyntaxArea.TokenStyle.FromDictionary(styleDict)
+		    Next entry
+		  End If
+		  
+		  // Editor colours.
+		  If d.HasKey("backColor") Then theme.BackColor = d.Value("backColor")
+		  If d.HasKey("blockFoldedColor") Then theme.BlockFoldedColor = d.Value("blockFoldedColor")
+		  If d.HasKey("blockFoldedEllipsisColor") Then theme.BlockFoldedEllipsisColor = d.Value("blockFoldedEllipsisColor")
+		  If d.HasKey("blockFoldMarkerColor") Then theme.BlockFoldMarkerColor = d.Value("blockFoldMarkerColor")
+		  If d.HasKey("bookmarkColor") Then theme.BookmarkColor = d.Value("bookmarkColor")
+		  If d.HasKey("bracketHighlightColor") Then theme.BracketHighlightColor = d.Value("bracketHighlightColor")
+		  If d.HasKey("caretColor") Then theme.CaretColor = d.Value("caretColor")
+		  If d.HasKey("dirtyLinesColor") Then theme.DirtyLinesColor = d.Value("dirtyLinesColor")
+		  If d.HasKey("gutterBackColor") Then theme.GutterBackColor = d.Value("gutterBackColor")
+		  If d.HasKey("gutterBorderColor") Then theme.GutterBorderColor = d.Value("gutterBorderColor")
+		  If d.HasKey("lineNumbersColor") Then theme.LineNumbersColor = d.Value("lineNumbersColor")
+		  If d.HasKey("verticalRulerColor") Then theme.VerticalRulerColor = d.Value("verticalRulerColor")
+		  If d.HasKey("suggestionPopupBackColor") Then theme.SuggestionPopupBackColor = d.Value("suggestionPopupBackColor")
+		  If d.HasKey("suggestionPopupSelectedTextColor") Then theme.SuggestionPopupSelectedTextColor = d.Value("suggestionPopupSelectedTextColor")
+		  If d.HasKey("suggestionPopupTextColor") Then theme.SuggestionPopupTextColor = d.Value("suggestionPopupTextColor")
+		  If d.HasKey("textColor") Then theme.TextColor = d.Value("textColor")
+		  If d.HasKey("textSelectionColor") Then theme.TextSelectionColor = d.Value("textSelectionColor")
+		  
+		  Return theme
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C207468656D652066696C6520616E642072657475726E7320697420617320616E2060456469746F725468656D65602E
+		Shared Function FromTOMLFile(f As FolderItem) As SyntaxArea.EditorTheme
+		  /// Loads a TOML theme file and returns it as an `EditorTheme`.
+		  
+		  // Sanity checks.
+		  If f = Nil Or Not f.Exists Then
+		    Raise New InvalidArgumentException("Cannot load theme as the file does not exist.")
+		  ElseIf f.IsFolder Then
+		    Raise New InvalidArgumentException("Invalid theme file (received a folder, expected a file).")
+		  End If
+		  
+		  Var toml As String
+		  Try
+		    Var tin As TextInputStream = TextInputStream.Open(f)
+		    toml = tin.ReadAll
+		    tin.Close
+		  Catch e As IOException
+		    Raise New InvalidArgumentException("Unable to read the theme file.")
+		  End Try
+		  
+		  Return SyntaxArea.EditorTheme.FromTOML(toml)
 		  
 		End Function
 	#tag EndMethod
@@ -307,6 +406,91 @@ Protected Class EditorTheme
 		  json.Add("}")
 		  
 		  Return String.FromArray(json, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 52657475726E73206120544F4D4C20726570726573656E746174696F6E206F662074686973207468656D652E
+		Function ToTOML() As String
+		  /// Returns a TOML representation of this theme.
+		  
+		  Var toml() As String
+		  
+		  // Metadata.
+		  toml.Add("# Theme metadata.")
+		  toml.Add(TOMLKit.KeyValue("name", Name))
+		  toml.Add(TOMLKit.KeyValue("author", Author))
+		  toml.Add(TOMLKit.KeyValue("version", Version))
+		  
+		  toml.Add("")
+		  
+		  // Generic.
+		  toml.Add("# Generic.")
+		  toml.Add(TOMLKit.KeyValue("backColor", BackColor))
+		  toml.Add(TOMLKit.KeyValue("textColor", TextColor))
+		  toml.Add(TOMLKit.KeyValue("textSelectionColor", TextSelectionColor))
+		  
+		  toml.Add("")
+		  
+		  // Block folding.
+		  toml.Add("# Block folding.")
+		  toml.Add(TOMLKit.KeyValue("blockFoldedColor", BlockFoldedColor))
+		  toml.Add(TOMLKit.KeyValue("blockFoldedEllipsisColor", BlockFoldedEllipsisColor))
+		  toml.Add(TOMLKit.KeyValue("blockFoldedMarkerColor", BlockFoldMarkerColor))
+		  
+		  toml.Add("")
+		  
+		  // Left gutter colours.
+		  toml.Add("# Left gutter colours.")
+		  toml.Add(TOMLKit.KeyValue("gutterBackColor", GutterBackColor))
+		  toml.Add(TOMLKit.KeyValue("gutterBorderColor", GutterBorderColor))
+		  toml.Add(TOMLKit.KeyValue("lineNumbersColor", LineNumbersColor))
+		  
+		  toml.Add("")
+		  
+		  // Autocomplete colours.
+		  toml.Add("# Autocomplete colours.")
+		  toml.Add(TOMLKit.KeyValue("suggestionPopupBackColor", SuggestionPopupBackColor))
+		  toml.Add(TOMLKit.KeyValue("suggestionPopupSelectedTextColor", SuggestionPopupSelectedTextColor))
+		  toml.Add(TOMLKit.KeyValue("suggestionPopupTextColor", SuggestionPopupTextColor))
+		  
+		  toml.Add("")
+		  
+		  // Miscellaneous.
+		  toml.Add("# Miscellaneous.")
+		  toml.Add(TOMLKit.KeyValue("bookmarkColor", BookmarkColor))
+		  toml.Add(TOMLKit.KeyValue("bracketHighlightColor", BracketHighlightColor))
+		  toml.Add(TOMLKit.KeyValue("caretColor", CaretColor))
+		  toml.Add(TOMLKit.KeyValue("dirtyLinesColor", DirtyLinesColor))
+		  toml.Add(TOMLKit.KeyValue("invisibleCharacterColor", InvisibleCharacterColor))
+		  toml.Add(TOMLKit.KeyValue("verticalRulerColor", VerticalRulerColor))
+		  
+		  toml.Add("")
+		  
+		  // Default style.
+		  toml.Add("# The required default style. Used for text that matches no other style.")
+		  toml.Add("[defaultStyle]")
+		  If DefaultTokenStyle = Nil Then
+		    Raise New UnsupportedOperationException("Unable to convert theme to TOML as there is no default token style.")
+		  End If
+		  toml.Add(DefaultTokenStyle.ToTOML)
+		  
+		  toml.Add("")
+		  
+		  // Token styles.
+		  toml.Add("# ==============================================")
+		  toml.Add("# Token styles.")
+		  toml.Add("# ==============================================")
+		  For Each entry As DictionaryEntry In TokenStyles
+		    Var styleName As String = entry.Key
+		    Var style As SyntaxArea.TokenStyle = entry.Value
+		    If styleName <> "*default" Then
+		      toml.Add("[styles." + styleName + "]")
+		      toml.Add(style.ToTOML)
+		      toml.Add("")
+		    End If
+		  Next entry
+		  
+		  Return String.FromArray(toml, EndOfLine)
 		End Function
 	#tag EndMethod
 
@@ -621,6 +805,14 @@ Protected Class EditorTheme
 			InitialValue="1.0.0"
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InvisibleCharacterColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

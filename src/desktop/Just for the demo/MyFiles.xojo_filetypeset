@@ -31,4 +31,20 @@
 		UTIPhysicalType=public.data
 	#tag EndFileType
 
+	#tag FileType
+		CodeName=TextTOML
+		Extension=.toml
+		Flags=&h2
+		MacCreator=
+		MacType=TEXT
+		Name=text/toml
+		UTI=public.toml
+		UTIConformsTo=public.data
+		Description=
+		MimeType=
+		Imported=True
+		HandlerRank=&h9
+		UTIPhysicalType=public.data
+	#tag EndFileType
+
 #tag EndFileTypeSet

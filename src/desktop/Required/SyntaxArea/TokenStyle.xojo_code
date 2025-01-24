@@ -123,6 +123,33 @@ Protected Class TokenStyle
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 52657475726E73206120544F4D4C206F626A65637420726570726573656E746174696F6E206F66207468697320746F6B656E207374796C652E
+		Function ToTOML() As String
+		  /// Returns a TOML object representation of this token style.
+		  ///
+		  ///
+		  /// ```toml
+		  /// textColor = COLOR
+		  /// backColor = COLOR
+		  /// hasBackColor = BOOLEAN
+		  /// bold = BOOLEAN
+		  /// italic = BOOLEAN
+		  /// underline = BOOLEAN
+		  /// ```
+		  
+		  Var toml() As String
+		  toml.Add(TOMLKit.KeyValue("textColor", TextColor.ToString))
+		  toml.Add(TOMLKit.KeyValue("backColor", BackColor.ToString))
+		  toml.Add(TOMLKit.KeyValue("hasBackColor", HasBackColor))
+		  toml.Add(TOMLKit.KeyValue("bold", Bold))
+		  toml.Add(TOMLKit.KeyValue("italic", Italic))
+		  toml.Add(TOMLKit.KeyValue("underline", Underline))
+		  
+		  Return String.FromArray(toml, EndOfLine)
+		  
+		End Function
+	#tag EndMethod
+
 
 	#tag Note, Name = About
 		Represents a visual style for a token. 
