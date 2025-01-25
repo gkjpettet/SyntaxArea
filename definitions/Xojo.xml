@@ -18,7 +18,7 @@
 	<blockStartMarker indent="1">^\s*(?:(if|elseif)\b.*\sthen\b\s*(('|//)|(?!.+?))|if\s(?!.*\sthen\b)|^\s*(public\b|protected\b|private\b)?\s*(shared\b)?\s*(?&lt;!end\b)\s*(sub|function|property)\b|(do|for|while|select|case|try|catch|else|enum|Get|Set|#if|#elseif|#else)\b)</blockStartMarker>
 	<blockEndMarker>^\s*(?:end|wend|next|loop|else|case|catch|elseif|#else|#elseif|#endif)\b</blockEndMarker>
 
-	<lineContinuationMarker indent="2">^((?:"[^"\r\n]*"|(?!'|//|\brem\b)[^\r\n_])*)_[\t\x20]*((?:'|//|\brem\b)[^\r\n]*|)$</lineContinuationMarker>
+	<lineContinuationMarker indent="2">^((?:"[^"\r\n]*"|(?!'|\/\/|\brem\b)[^\r\n_])*)_[\t\x20]*((?:'|\/\/|\brem\b)[^\r\n]*|)$</lineContinuationMarker>
 
 	<symbols> <!-- these are used to identify declared symbols that are useful for navigation inside larger source file -->
 		<symbol type="method">

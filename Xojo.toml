@@ -1,0 +1,31 @@
+# Xojo syntax definition.
+name = "Xojo"
+version = "1.0.0"
+
+# Block rules.
+[block.module]
+start = '^\s*(protected\b|private\b)?\s*module\b'
+end = '^\s*end\s+module\b'
+indent = 1
+
+[block.class]
+start = '^\s*(protected\b|private\b)?\s*class\b'
+end = '^\s*end\s+class\b'
+indent = 1
+
+[block.interface]
+start = '^\s*(protected\b|private\b)?\s*interface\b<'
+end = '^\s*end\s+interface\b'
+indent = 1
+startState = 'insideInterface'
+endState = ''
+endCondition = 'insideInterface'
+
+[block.generic]
+start = '''^\s*(?:(if|elseif)\b.*\sthen\b\s*(('|//)|(?!.+?))|if\s(?!.*\sthen\b)|^\s*(public\b|protected\b|private\b)?\s*(shared\b)?\s*(?<!end\b)\s*(sub|function|property)\b|(do|for|while|select|case|try|catch|else|enum|Get|Set|#if|#elseif|#else)\b)'''
+end = '^\s*(?:end|wend|next|loop|else|case|catch|elseif|#else|#elseif|#endif)\b'
+indent = 1
+
+[lineContinuationMarker]
+regex = '''^((?:"[^"\r\n]*"|(?!'|//|\brem\b)[^\r\n_])*)_[\t\x20]*((?:'|//|\brem\b)[^\r\n]*|)$'''
+indent = 2

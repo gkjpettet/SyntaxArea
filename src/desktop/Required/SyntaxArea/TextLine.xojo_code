@@ -1,7 +1,7 @@
 #tag Class
 Protected Class TextLine
 Inherits SyntaxArea.TextSegment
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit)) or  (TargetAndroid and (Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) ) or ( TargetIOS and ( Target64Bit ) ) or ( TargetAndroid and ( Target64Bit ) )
 	#tag Event
 		Sub LengthChanged()
 		  IsDirty = true
@@ -735,6 +735,8 @@ Inherits SyntaxArea.TextSegment
 
 	#tag Method, Flags = &h0
 		Sub UpdateIndentationState(definition As SyntaxArea.HighlightDefinition, prevIndentationState As String, myText As String)
+		  #Pragma Warning "TODO: Figure out what newstate actually does"
+		  
 		  If mIndentationStateIn <> prevIndentationState Then
 		    mIndentationStateIn = prevIndentationState
 		    mIndentationStateOut = prevIndentationState

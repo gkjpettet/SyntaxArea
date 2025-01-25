@@ -530,6 +530,7 @@ Protected Class HighlightDefinition
 		        Name = node.FirstChild.Value
 		        
 		      Case "blockStartMarker"
+		        #Pragma Warning "TODO: Figure out exactly what condition does"
 		        If lastStartRule <> Nil Then
 		          // Error: There's still an unfinished start rule open.
 		          Return False
@@ -551,6 +552,7 @@ Protected Class HighlightDefinition
 		        lastStartRule = re
 		        
 		      Case "blockEndMarker"
+		        #Pragma Warning "TODO: Figure out exactly what condition does"
 		        If lastStartRule = Nil Then
 		          // Error: End rule without start rule.
 		          Return False
