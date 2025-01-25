@@ -209,8 +209,45 @@ Protected Class HighlightDefinition
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 4C6F61647320612073796E74617820646566696E6974696F6E20544F4D4C2066696C652E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
+		Shared Function FromTOMLFile(f As FolderItem, owner As SyntaxArea.IEditor) As SyntaxArea.HighlightDefinition
+		  /// Loads a syntax definition TOML file.
+		  /// May raise an `InvalidArgumentException`.
+		  
+		  If f = Nil Or Not f.Exists Then
+		    Raise New InvalidArgumentException("Cannot load a non-existent definition file.")
+		  End If
+		  
+		  If f.IsFolder Then
+		    Raise New InvalidArgumentException("Expected a definition file instead got a folder.")
+		  End If
+		  
+		  If owner = Nil Then
+		    Raise New InvalidArgumentException("The owning editor cannot be Nil.")
+		  End If
+		  
+		  Var toml As String
+		  Try
+		    Var tin As TextInputStream = TextInputStream.Open(f)
+		    toml = tin.ReadAll
+		    tin.Close
+		  Catch e As IOException
+		    Raise New InvalidArgumentException("Unable to read the TOML contents of the definition file (" + _
+		    e.Message + ").")
+		  End Try
+		  
+		  Var def As New SyntaxArea.HighlightDefinition(owner)
+		  If Not def.LoadFromTOML(toml) Then
+		    Raise New InvalidArgumentException("Invalid syntax definition file.")
+		  End If
+		  
+		  Return def
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 4C6F61647320612073796E74617820646566696E6974696F6E20584D4C2066696C652E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
-		Shared Function FromFile(f As FolderItem, owner As SyntaxArea.IEditor) As SyntaxArea.HighlightDefinition
+		Shared Function FromXMLFile(f As FolderItem, owner As SyntaxArea.IEditor) As SyntaxArea.HighlightDefinition
 		  /// Loads a syntax definition XML file.
 		  /// May raise an `InvalidArgumentException`.
 		  
@@ -483,6 +520,41 @@ Protected Class HighlightDefinition
 		    Var indentAndState As Pair = p.Right
 		    Return indentAndState.Left
 		  End If
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C20646566696E6974696F6E2066696C652E
+		Function LoadFromTOML(data As FolderItem) As Boolean
+		  /// Loads a TOML definition file.
+		  
+		  If data = Nil Then Return False
+		  
+		  Var tis As TextInputStream = TextInputStream.Open(data)
+		  If tis = Nil Then Return False
+		  
+		  Var toml As String = tis.ReadAll(Encodings.UTF8)
+		  tis.Close
+		  
+		  Return LoadFromTOML(toml)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C2073796E74617820646566696E6974696F6E2E2052657475726E732054727565206966207375636365737366756C206F722046616C736520696620756E61626C6520746F206C6F61642074686520646566696E6974696F6E2E
+		Function LoadFromTOML(toml As String) As Boolean
+		  /// Loads a TOML syntax definition.
+		  /// Returns True if successful or False if unable to load the definition.
+		  
+		  #Pragma Warning "TODO"
+		  
+		  Var data As Dictionary
+		  Try
+		    data = ParseTOML(toml)
+		  Catch e As RuntimeException
+		    Return False
+		  End Try
+		  
 		  
 		End Function
 	#tag EndMethod

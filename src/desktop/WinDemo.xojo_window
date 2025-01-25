@@ -2854,107 +2854,24 @@ End
 		Private Sub ReloadDefinitions()
 		  /// Reloads all of the syntax definitions.
 		  
-		  Var syntaxDefinition As SyntaxArea.HighlightDefinition
-		  
 		  Var presentSyntax As String = PopupDefinition.SelectedRowText
 		  
 		  PopupDefinition.RemoveAllRows
 		  
-		  // C.
-		  PopupDefinition.AddRow("C")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("C.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the C definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  // Grab a reference to the bundled definitions folder.
+		  Var definitions As FolderItem = SpecialFolder.Resource("definitions")
 		  
-		  // Java.
-		  PopupDefinition.AddRow("Java")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Java.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Java definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // HTML.
-		  PopupDefinition.AddRow("HTML")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("HTML.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the HTML definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Javascript.
-		  PopupDefinition.AddRow("Javascript")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Javascript.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Javascript definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Markdown.
-		  PopupDefinition.AddRow("Markdown")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Markdown.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Markdown definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // ObjoScript.
-		  PopupDefinition.AddRow("ObjoScript")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoScript.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the ObjoScript definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // ObjoBasic.
-		  PopupDefinition.AddRow("ObjoBasic")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("ObjoBasic.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the ObjoBasic definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // PHP.
-		  PopupDefinition.AddRow("PHP")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PHP.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the PHP definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // PostgreSQL.
-		  PopupDefinition.AddRow("PostgreSQL")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("PostgreSQL.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the PostgreSQL definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // XML.
-		  PopupDefinition.AddRow("XML/XHTML")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("XML.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the XML/XHTML definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Wren.
-		  PopupDefinition.AddRow("Wren")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Wren.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Wren definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
-		  // Xojo.
-		  PopupDefinition.AddRow("Xojo")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Xojo definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  // Load each XML definition.
+		  For Each definitionFile As FolderItem In definitions.Children
+		    If Not definitionFile.IsFolder And definitionFile.Extension = "xml" Then
+		      Var syntaxDefinition As New SyntaxArea.HighlightDefinition(CodeEditor)
+		      If Not syntaxDefinition.LoadFromXml(definitionFile) Then
+		        Raise New UnsupportedOperationException("Unable to load the `" + definitionFile.Name + "` definition file.")
+		      End If
+		      PopupDefinition.AddRow(syntaxDefinition.Name)
+		      PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		    End If
+		  Next definitionFile
 		  
 		  // If there was a definition selected before we reloaded then reselect it, otherwise
 		  // select the last added definition.
@@ -3182,7 +3099,7 @@ End
 		  
 		  // Try to parse the definition file into a syntax definition instance.
 		  Try
-		    Return SyntaxArea.HighlightDefinition.FromFile(defFile, CodeEditor)
+		    Return SyntaxArea.HighlightDefinition.FromXMLFile(defFile, CodeEditor)
 		  Catch e As InvalidArgumentException
 		    Raise New RuntimeException("Successfully found the requested definition extension " + _
 		    "but the file contents are invalid: " + e.Message)
