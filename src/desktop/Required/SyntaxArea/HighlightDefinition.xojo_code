@@ -375,17 +375,19 @@ Protected Class HighlightDefinition
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E7320547275652069662069742773206120626C6F636B20656E642C206E657720737461746520616E6420746865206D6174636865642072756C6520286F70617175652C206F6E6C792075736566756C20666F72206D61746368696E672077697468204973426C6F636B537461727427732072657475726E65642076616C7565292E
-		Function IsBlockEnd(lineText As String, stateIn As String, ByRef stateOut As String, ByRef ruleOut As Object) As Boolean
+	#tag Method, Flags = &h0, Description = 52657475726E7320547275652069662069742773206120626C6F636B20656E642C206E657720737461746520616E6420746865206D6174636865642072756C65
+		Function IsBlockEnd(lineText As String, stateIn As String, ByRef stateOut As String, ByRef ruleOut As RegEx) As Boolean
 		  /// Returns True if it's a block end, new state and the matched rule
-		  /// (opaque, only useful for matching with IsBlockStart's returned value).
+		  ///
+		  /// Opaque, only useful for matching with IsBlockStart's returned value.
 		  
 		  stateOut = stateIn
 		  
 		  Var v As Variant = BlockEndDef.Lookup(stateIn, Nil)
 		  If v.IsArray Then
-		    Var ps() As Pair = v
-		    For Each p As Pair In ps
+		    Var pairs() As Pair = v
+		    For Each p As Pair In pairs
+		      // RegEx : Pair(block start RegEx : Pair(changeStateBool : newStateString))
 		      If p <> Nil Then
 		        Var scanner As RegEx = p.Left
 		        If scanner.Search(lineText) <> Nil Then
@@ -406,17 +408,19 @@ Protected Class HighlightDefinition
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 52657475726E732074686520696E64656E742076616C75652C20746865206E657720737461746520616E6420746865206D6174636865642072756C652E
-		Function IsBlockStart(lineText As String, stateIn As String, ByRef stateOut As String, ByRef ruleOut As Object) As Integer
+		Function IsBlockStart(lineText As String, stateIn As String, ByRef stateOut As String, ByRef ruleOut As RegEx) As Integer
 		  /// Returns the indent value, the new state and the matched rule.
 		  /// 
 		  /// Opaque, only useful for matching with IsBlockEnd's returned value.
+		  /// `ruleOut` will be a RegEx object.
 		  
 		  stateOut = stateIn
 		  
 		  Var v As Variant = BlockStartDef.Lookup(stateIn, Nil)
 		  If v.IsArray Then
-		    Var ps() As Pair = v
-		    For Each p As Pair In ps
+		    Var pairs() As Pair = v
+		    For Each p As Pair In pairs
+		      // RegEx : Pair(indentLevelInt : Pair(changeStateBool : newStateString))
 		      If p <> Nil Then
 		        Var scanner As RegEx = p.Left
 		        If scanner.Search(lineText) <> Nil Then
@@ -520,7 +524,7 @@ Protected Class HighlightDefinition
 		      Return False
 		    End If
 		    
-		    Var lastStartRule As Object
+		    Var lastStartRule As RegEx
 		    
 		    For i = 0 To root.ChildCount - 1
 		      node = root.Child(i)
@@ -530,7 +534,6 @@ Protected Class HighlightDefinition
 		        Name = node.FirstChild.Value
 		        
 		      Case "blockStartMarker"
-		        #Pragma Warning "TODO: Figure out exactly what condition does"
 		        If lastStartRule <> Nil Then
 		          // Error: There's still an unfinished start rule open.
 		          Return False
@@ -552,7 +555,6 @@ Protected Class HighlightDefinition
 		        lastStartRule = re
 		        
 		      Case "blockEndMarker"
-		        #Pragma Warning "TODO: Figure out exactly what condition does"
 		        If lastStartRule = Nil Then
 		          // Error: End rule without start rule.
 		          Return False
@@ -872,7 +874,7 @@ Protected Class HighlightDefinition
 	#tag EndNote
 
 
-	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2C2056616C7565203D204172726179206F662050616972206F66202872656765782C2050616972206F66202872656765785F6F665F626C6F636B53746172742C2050616972206F6620286368616E6765537461746520617320426F6F6C65616E203A206E6577537461746520617320537472696E6729292E
+	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2028537472696E67292C2056616C7565203D205061697220617272617920285265674578203A205061697228626C6F636B2073746172742052656745782C2050616972286368616E67655374617465426F6F6C65616E203A206E65775374617465537472696E6729292E
 		Private BlockEndDef As Dictionary
 	#tag EndProperty
 

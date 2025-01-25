@@ -55,13 +55,13 @@ Inherits SyntaxArea.TextSegment
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BlockEndRule() As Object
+		Function BlockEndRule() As RegEx
 		  Return mBlockEndRule
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BlockStartRule() As Object
+		Function BlockStartRule() As RegEx
 		  Return mBlockStartRule
 		End Function
 	#tag EndMethod
@@ -735,8 +735,6 @@ Inherits SyntaxArea.TextSegment
 
 	#tag Method, Flags = &h0
 		Sub UpdateIndentationState(definition As SyntaxArea.HighlightDefinition, prevIndentationState As String, myText As String)
-		  #Pragma Warning "TODO: Figure out what newstate actually does"
-		  
 		  If mIndentationStateIn <> prevIndentationState Then
 		    mIndentationStateIn = prevIndentationState
 		    mIndentationStateOut = prevIndentationState
@@ -873,16 +871,16 @@ Inherits SyntaxArea.TextSegment
 		Lock As CriticalSection
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mBlockEndRule As Object
+	#tag Property, Flags = &h21, Description = 546865205265674578207768696368206D6174636865732074686520626C6F636B20656E642072756C652E
+		Private mBlockEndRule As RegEx
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mBlockIndent As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mBlockStartRule As Object
+	#tag Property, Flags = &h21, Description = 546865205265674578207768696368206D6174636865732074686520626C6F636B2073746172742072756C652E
+		Private mBlockStartRule As RegEx
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
