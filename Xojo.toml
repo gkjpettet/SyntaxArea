@@ -2,7 +2,10 @@
 name = "Xojo"
 version = "1.0.0"
 
-# Block rules.
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
 [block.module]
 start = '^\s*(protected\b|private\b)?\s*module\b'
 end = '^\s*end\s+module\b'
@@ -29,3 +32,23 @@ indent = 1
 [lineContinuationMarker]
 regex = '''^((?:"[^"\r\n]*"|(?!'|//|\brem\b)[^\r\n_])*)_[\t\x20]*((?:'|//|\brem\b)[^\r\n]*|)$'''
 indent = 2
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+[symbols.method]
+regex = '^\s*(?:public|protected|private)?\b\s*(shared\b)?\s*(?<!end\b)\s*(?:sub|function)\b.+?\([^\)]*\)\s*(?:as\b\s*\w+\s*)?'
+
+[symbols.property]
+regex = '^\s*(?:public|protected|private)?\b\s*(shared\b)?\s*(?<!end\b)\s*(property\b).+'
+
+[symbols.class]
+regex = '^\s*(?:protected\b|private\b)?\s*class\s+\w+\s*'
+
+[symbols.module]
+regex = '^\s*(?:protected\b|private\b)?\s*module\s+\w+\s*'
+
+[symbols.interface]
+regex = '^\s*(?:protected\b|private\b)?\s*interface\s+\w+\s*'

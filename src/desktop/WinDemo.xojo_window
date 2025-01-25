@@ -2940,19 +2940,19 @@ End
 		  End If
 		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
 		  
-		  // Xojo.
-		  PopupDefinition.AddRow("Xojo")
-		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml")) Then
-		    Raise New UnsupportedOperationException("Unable to load the Xojo definition")
-		  End If
-		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  
 		  // Wren.
 		  PopupDefinition.AddRow("Wren")
 		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
 		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Wren.xml")) Then
 		    Raise New UnsupportedOperationException("Unable to load the Wren definition")
+		  End If
+		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  
+		  // Xojo.
+		  PopupDefinition.AddRow("Xojo")
+		  syntaxDefinition = New SyntaxArea.HighlightDefinition(CodeEditor)
+		  If Not syntaxDefinition.LoadFromXml(SpecialFolder.Resource("Xojo.xml")) Then
+		    Raise New UnsupportedOperationException("Unable to load the Xojo definition")
 		  End If
 		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
 		  
@@ -3624,15 +3624,15 @@ End
 		  Me.AddRow("XML")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_XML
 		  
-		  // Xojo.
-		  Me.AddRow("Xojo")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_XOJO
-		  
 		  // Wren.
 		  Me.AddRow("Wren")
 		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_WREN
 		  
-		  // Start with Wren text.
+		  // Xojo.
+		  Me.AddRow("Xojo")
+		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_XOJO
+		  
+		  // Start with the last added example.
 		  Me.SelectedRowIndex = Me.LastAddedRowIndex
 		  
 		End Sub

@@ -173,7 +173,7 @@
 		<highlightContext name="xojoComment" fallback="comment">
 			<startRegEx>'|\/\/|\brem\b</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
-				<highlightContext name="xojoUrl" fallback="comment">
+				<highlightContext name="xojoURL" fallback="comment">
 					<entryRegEx>(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)</entryRegEx>
 				</highlightContext>
 		</highlightContext>
