@@ -2553,6 +2553,20 @@ End
 		  
 		  mFinishedInitialising = True
 		  
+		  // Select the Xojo definition and Xojo example text.
+		  For i As Integer = 0 To PopupDefinition.LastRowIndex
+		    If PopupDefinition.RowTextAt(i) = "Xojo" Then
+		      PopupDefinition.SelectedRowIndex = i
+		      Exit
+		    End If
+		  Next i
+		  For i As Integer = 0 To PopupExampleText.LastRowIndex
+		    If PopupExampleText.RowTextAt(i) = "Xojo" Then
+		      PopupExampleText.SelectedRowIndex = i
+		      Exit
+		    End If
+		  Next i
+		  
 		End Sub
 	#tag EndEvent
 
