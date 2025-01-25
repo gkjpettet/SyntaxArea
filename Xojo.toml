@@ -52,3 +52,58 @@ regex = '^\s*(?:protected\b|private\b)?\s*module\s+\w+\s*'
 
 [symbols.interface]
 regex = '^\s*(?:protected\b|private\b)?\s*interface\s+\w+\s*'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+# Every definition must have at least one context within the `contexts` table. 
+# We'll call ours `main`.
+[contexts.main]
+caseSensitive = false
+
+[contexts.main.xojoType]
+fallback = "type"
+keywords = ["Boolean", "Color", "Double", "Integer", "Int8", "UInt8", "Int16", "UInt16", "Int32", "UInt32", "Int64", "UInt64", "Single", "String", "CFString", "Ptr"]
+
+[contexts.main.xojoKeyword]
+fallback = "keyword"
+keywords = ["#Else", "#ElseIf", "#EndIf", "#If", "#Pragma", "AddHandler", "AddressOf", "And", "Array", "As", "Assigns", "ByRef", "ByVal", "Call", "Case", "Catch", "Class", "Const", "Continue", "CType", "Declare", "Delegate", "Dim", "Do", "DownTo", "Each", "Else", "ElseIf", "End", "Enum", "Event", "Exception", "Exit", "Extends", "False", "Finally", "For", "Function", "Get", "Global", "GoTo", "Handles", "If", "Implements", "In", "Inherits", "Inline68K", "Interface", "Is", "IsA", "Lib", "Loop", "Me", "Mod", "Module", "Namespace", "New", "Next", "Nil", "Not", "Object", "Of", "Optional", "Or", "ParamArray", "Private", "Property", "Protected", "Public", "Raise", "RaiseEvent", "Redim", "RemoveHandler", "Return", "Select", "Self", "Set", "Shared", "Soft", "Static", "Step", "Structure", "Sub", "Super", "Then", "To", "True", "Try", "Until", "Var", "Wend", "While", "With"]
+
+[contexts.main.xojoDouble]
+fallback = "number"
+regex = '(?<=[^\w.\\u{7F}-\\u{10F7FF}]|^)(?=\d+\.|\.\d+|\d+e(?:\d|\b))(\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.\\u{7F}-\\u{10F7FF}]|$)'
+
+[contexts.main.xojoInteger]
+fallback = "number"
+regex = '(?<=[^\w.\\u{7F}-\\u{10F7FF}]|^)(?:\d+|&amp;h[[:xdigit:]]*\b|&amp;o[0-7]*\b|&amp;b[01]*\b)(?=[^\w.\\u{7F}-\\u{10F7FF}]|$)'
+
+[contexts.main.xojoPragma]
+fallback = "directive"
+regex = '#(?:if|elseif|else|endif|pragma)'
+
+[contexts.main.xojoString]
+fallback = "string"
+regex = '"[^"\r\n]*["\r\n]|&u[[:xdigit:]]*\b'
+
+[contexts.main.xojoColorRedComponent]
+regex = '(?<=&c)[[:xdigit:]]{1,2}'
+
+[contexts.main.xojoGreenComponent]
+regex = '(?<=&c[[:xdigit:]]{2})[[:xdigit:]]{1,2}'
+
+[contexts.main.xojoBlueComponent]
+regex = '(?<=&c[[:xdigit:]]{4})[[:xdigit:]]{1,2}'
+
+# -----------------------------------------------------------------------------
+# COMMENTS
+# Note there is a subcontext here (`xojoURL`) within the `xojoComment` context.
+# This allows us to highlight URLs within comments.
+# -----------------------------------------------------------------------------
+[contexts.main.xojoComment]
+fallback = "comment"
+start = ''''|\/\/|\brem\b'''
+end = '[\n\r]'
+
+[contexts.main.xojoComment.xojoURL]
+fallback = "comment" 
+regex = '(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)'
