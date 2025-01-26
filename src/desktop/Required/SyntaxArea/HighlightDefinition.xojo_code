@@ -541,21 +541,44 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C2073796E74617820646566696E6974696F6E2E2052657475726E732054727565206966207375636365737366756C206F722046616C736520696620756E61626C6520746F206C6F61642074686520646566696E6974696F6E2E
+	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C2073796E74617820646566696E6974696F6E2E2052616973657320612072756E74696D6520657863657074696F6E20696620756E61626C6520746F206C6F61642074686520646566696E6974696F6E2E
 		Function LoadFromTOML(toml As String) As Boolean
 		  /// Loads a TOML syntax definition.
-		  /// Returns True if successful or False if unable to load the definition.
+		  /// Raises a runtime exception if unable to load the definition.
 		  
 		  #Pragma Warning "TODO"
 		  
-		  Var data As Dictionary
+		  Var data As Dictionary = ParseTOML(toml)
+		  
+		  // Compatible with the current engine version?
+		  If Not data.HasKey("engineVersion") Then
+		    Raise New InvalidArgumentException("Missing definition `engineVersion` key.")
+		  End If
+		  If data.Value("engineVersion").DoubleValue > VERSION Then
+		    Raise New UnsupportedOperationException("This definition requires SyntaxArea " + _
+		    "highlight engine version " + VERSION.ToString + " (current engine version is " + VERSION.ToString)
+		  End If
+		  
+		  // Theme name.
+		  If Not data.HasKey("name") Then Raise New InvalidArgumentException("Missing definition `name` key.")
+		  
+		  // If this definition supports code blocks then data should contain a dictionary called `block`.
 		  Try
-		    data = ParseTOML(toml)
+		    If data.HasKey("block") And data.Value("block") IsA Dictionary _
+		      And Dictionary(data.Value("block")).KeyCount > 0 Then
+		      // A language may have several types of code block. The `block` dictionary keys are the names
+		      // of those different block types and each value is a dictionary.
+		      Var blocks As Dictionary = data.Value("block")
+		      For Each entry As DictionaryEntry In blocks
+		        ParseBlock(entry.Key, entry.Value)
+		      Next entry
+		    End If
 		  Catch e As RuntimeException
-		    Return False
+		    Raise New InvalidArgumentException("An error occurred whilst parsing the definition's blocks: " + _
+		    e.Message)
 		  End Try
 		  
-		  
+		  Break
 		End Function
 	#tag EndMethod
 
@@ -708,6 +731,31 @@ Protected Class HighlightDefinition
 		  End Try
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ParseBlock(blockName As String, blockData As Dictionary)
+		  /// Parses block TOML data to a block definition.
+		  ///
+		  /// `blockData` format:
+		  /// Required keys:
+		  /// - start:  Regex string to find the start of the block.
+		  /// - end:    Regex string to find the end of the block.
+		  /// - indent: Integer telling the editor how much to indent a block by.
+		  ///
+		  /// Optional keys:
+		  /// - startState:     String.
+		  /// - endState:       String.
+		  /// - startCondition: String.
+		  /// - endCondition:   String.
+		  ///
+		  /// About states and conditions.
+		  /// Since I ported SyntaxArea from CustomEditField, I'm not completely sure what they do. I think
+		  /// when the engine encounters a block with a startState then it stores that the engine is in that
+		  /// state. If endCondition matches the current state then I think the current state is set to endState.
+		  
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 4275696C6473207468652073656172636820737472696E672066726F6D20616C6C20636F6E74657874732E
@@ -1075,7 +1123,7 @@ Protected Class HighlightDefinition
 	#tag EndProperty
 
 
-	#tag Constant, Name = VERSION, Type = Double, Dynamic = False, Default = \"1.1", Scope = Public
+	#tag Constant, Name = VERSION, Type = Double, Dynamic = False, Default = \"1.2", Scope = Public
 	#tag EndConstant
 
 

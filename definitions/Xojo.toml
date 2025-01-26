@@ -1,6 +1,7 @@
 # Xojo syntax definition.
 name = "Xojo"
-version = "1.0.0"
+engineVersion = 1.2
+themeVersion = 1.0
 
 # ======================================================
 # BLOCK RULES
