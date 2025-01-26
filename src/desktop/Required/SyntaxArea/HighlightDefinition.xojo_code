@@ -993,12 +993,59 @@ Protected Class HighlightDefinition
 		
 	#tag EndNote
 
+	#tag Note, Name = Block Data Proposal
+		--------------------
+		Current
+		--------------------
+		BlockStartDef
+		Key = condition (String)
+		Value = Pair array:
+		Regex : Pair of (indent as Integer, Pair of (changeState as Boolean : newState as String))
+		--------------------
+		
+		BlockStartDef proposal:
+		Key = condition (String), Value = BlockStartDefinition()
+		
+		BlockStartData
+		- Indent: Integer
+		- State: BlockState
+		
+		BlockStartDefinition
+		- Scanner: RegEx
+		- Data: BlockStartData()
+		
+		
+		--------------------
+		Current
+		--------------------
+		BlockEndDef
+		Key = condition (String)
+		Value = Pair array
+		RegEx : Pair(block start RegEx, Pair(changeStateBoolean : newStateString))
+		--------------------
+		
+		BlockEndDef proposal:
+		Key = condition, Value = BlockEndDefinition()
+		
+		BlockEndDefinition
+		- Scanner: RegEx
+		- Data: BlockEndData()
+		
+		BlockEndData
+		- BlockStartRegex : RegEx
+		- State: BlockState
+		
+		BlockState
+		- ChangeState: Boolean
+		- NewState: String
+	#tag EndNote
+
 
 	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2028537472696E67292C2056616C7565203D205061697220617272617920285265674578203A205061697228626C6F636B2073746172742052656745782C2050616972286368616E67655374617465426F6F6C65616E203A206E65775374617465537472696E6729292E
 		Private BlockEndDef As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2C2056616C7565203D204172726179206F662050616972206F66202872656765782C2050616972206F662028696E64656E7420617320496E74656765722C2050616972206F6620286368616E6765537461746520617320426F6F6C65616E203A206E6577537461746520617320537472696E6729292E
+	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2C2056616C7565203D204172726179206F662050616972206F6620285265674578203A2050616972206F662028696E64656E7420617320496E74656765722C2050616972206F6620286368616E6765537461746520617320426F6F6C65616E203A206E6577537461746520617320537472696E6729292E
 		Private BlockStartDef As Dictionary
 	#tag EndProperty
 
