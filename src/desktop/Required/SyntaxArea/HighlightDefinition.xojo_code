@@ -754,6 +754,7 @@ Protected Class HighlightDefinition
 		  /// when the engine encounters a block with a startState then it stores that the engine is in that
 		  /// state. If endCondition matches the current state then I think the current state is set to endState.
 		  
+		  #Pragma Warning "TODO"
 		  
 		End Sub
 	#tag EndMethod
