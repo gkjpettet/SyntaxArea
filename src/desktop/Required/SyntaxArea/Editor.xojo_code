@@ -4011,6 +4011,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		    If previousLine <> Nil Then
 		      Var prevTxt As String = TextStorage.GetText(previousLine.Offset, previousLine.Length)
 		      Var prevHasContinuation As Integer = SyntaxDefinition.IsLineContinuation(prevTxt)
+		      #Pragma Warning "BUG: If the line being continued is a block start this doesn't work correctly"
 		      If prevHasContinuation > 0 Then
 		        // We're inside a line continuation.
 		        If previousLine.IsContinuedFromLine < 0 Then

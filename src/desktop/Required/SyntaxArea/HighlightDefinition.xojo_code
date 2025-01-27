@@ -491,26 +491,6 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E732074686520626C6F636B20696E64656E746174696F6E206F66207468652066697273742064656661756C742073746174652E
-		Function LineContinuationIndent() As Integer
-		  /// Returns the block indentation of the first default state.
-		  
-		  #Pragma Warning "BUG: This wasn't working even before I removed the old BlockStartDef implementation"
-		  ' It always seemed to return 0.
-		  
-		  Return 0
-		  
-		  ' Var ps() As Pair = BlockStartDef.Lookup("", Nil)
-		  ' 
-		  ' If Not (ps Is Nil) Then
-		  ' Var p As Pair = ps(0)
-		  ' Var indentAndState As Pair = p.Right
-		  ' Return indentAndState.Left
-		  ' End If
-		  
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C20646566696E6974696F6E2066696C652E
 		Function LoadFromTOML(data As FolderItem) As Boolean
 		  /// Loads a TOML definition file.
@@ -752,6 +732,7 @@ Protected Class HighlightDefinition
 		  /// state. If endCondition matches the current state then I think the current state is set to endState.
 		  
 		  #Pragma Warning "TODO"
+		  
 		  
 		End Sub
 	#tag EndMethod
