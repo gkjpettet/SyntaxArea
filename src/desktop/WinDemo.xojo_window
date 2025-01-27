@@ -2567,10 +2567,10 @@ End
 		    End If
 		  Next i
 		  
-		  Var tomlDefFile As FolderItem = SpecialFolder.Resource("definitions").Child("Xojo.toml")
-		  Var xojoDef As New SyntaxArea.HighlightDefinition(CodeEditor)
-		  Var result As Boolean = xojoDef.LoadFromTOML(tomlDefFile)
-		  Break
+		  ' Var tomlDefFile As FolderItem = SpecialFolder.Resource("definitions").Child("Xojo.toml")
+		  ' Var xojoDef As New SyntaxArea.HighlightDefinition(CodeEditor)
+		  ' Var result As Boolean = xojoDef.LoadFromTOML(tomlDefFile)
+		  ' Break
 		End Sub
 	#tag EndEvent
 

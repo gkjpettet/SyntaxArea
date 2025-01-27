@@ -72,10 +72,11 @@ Protected Class HighlightDefinition
 		  mContextRegex = New RegEx
 		  mContextRegex.Options.DotMatchAll = True
 		  mSymbolRegex = New RegEx
-		  BlockEndDef = New Dictionary
-		  BlockStartDef = New Dictionary
 		  LineContinuationDef = New Dictionary
 		  ContextsToSelfReference = New Dictionary
+		  BlockEndDef = New Dictionary
+		  BlockStartDef = New Dictionary
+		  
 		End Sub
 	#tag EndMethod
 
@@ -415,31 +416,22 @@ Protected Class HighlightDefinition
 	#tag Method, Flags = &h0, Description = 52657475726E7320547275652069662069742773206120626C6F636B20656E642C206E657720737461746520616E6420746865206D6174636865642072756C65
 		Function IsBlockEnd(lineText As String, stateIn As String, ByRef stateOut As String, ByRef ruleOut As RegEx) As Boolean
 		  /// Returns True if it's a block end, new state and the matched rule
-		  ///
-		  /// Opaque, only useful for matching with IsBlockStart's returned value.
 		  
 		  stateOut = stateIn
 		  
-		  Var v As Variant = BlockEndDef.Lookup(stateIn, Nil)
-		  If v.IsArray Then
-		    Var pairs() As Pair = v
-		    For Each p As Pair In pairs
-		      // RegEx : Pair(block start RegEx : Pair(changeStateBool : newStateString))
-		      If p <> Nil Then
-		        Var scanner As RegEx = p.Left
-		        If scanner.Search(lineText) <> Nil Then
-		          Var ruleAndState As Pair = p.Right
-		          Var state As Pair = ruleAndState.Right
-		          If state.Left.BooleanValue Then
-		            // Change state.
-		            stateOut = state.Right
-		          End
-		          ruleOut = ruleAndState.Left
-		          Return True
-		        End If
+		  If Not BlockEndDef.HasKey(stateIn) Then Return False
+		  
+		  Var blockEndDefs() As BlockEndDefinition = BlockEndDef.Value(stateIn)
+		  
+		  For Each endDef As BlockEndDefinition In blockEndDefs
+		    If endDef.Scanner.Search(lineText) <> Nil Then
+		      If endDef.Data.State.ChangeState Then
+		        stateOut = endDef.Data.State.NewState
 		      End If
-		    Next p
-		  End If
+		      ruleOut = endDef.Data.BlockStartRegex
+		      Return True
+		    End If
+		  Next endDef
 		  
 		End Function
 	#tag EndMethod
@@ -447,32 +439,22 @@ Protected Class HighlightDefinition
 	#tag Method, Flags = &h0, Description = 52657475726E732074686520696E64656E742076616C75652C20746865206E657720737461746520616E6420746865206D6174636865642072756C652E
 		Function IsBlockStart(lineText As String, stateIn As String, ByRef stateOut As String, ByRef ruleOut As RegEx) As Integer
 		  /// Returns the indent value, the new state and the matched rule.
-		  /// 
-		  /// Opaque, only useful for matching with IsBlockEnd's returned value.
-		  /// `ruleOut` will be a RegEx object.
 		  
 		  stateOut = stateIn
 		  
-		  Var v As Variant = BlockStartDef.Lookup(stateIn, Nil)
-		  If v.IsArray Then
-		    Var pairs() As Pair = v
-		    For Each p As Pair In pairs
-		      // RegEx : Pair(indentLevelInt : Pair(changeStateBool : newStateString))
-		      If p <> Nil Then
-		        Var scanner As RegEx = p.Left
-		        If scanner.Search(lineText) <> Nil Then
-		          Var indentAndState As Pair = p.Right
-		          Var state As Pair = indentAndState.Right
-		          If state.Left.BooleanValue Then
-		            // Change state.
-		            stateOut = state.Right
-		          End If
-		          ruleOut = scanner
-		          Return indentAndState.Left
-		        End If
+		  If Not BlockStartDef.HasKey(stateIn) Then Return 0
+		  
+		  Var blockStartDefs() As BlockStartDefinition = BlockStartDef.Value(stateIn)
+		  
+		  For Each bsd As BlockStartDefinition In BlockStartDefs
+		    If bsd.Scanner.Search(lineText) <> Nil Then
+		      If bsd.Data.State.ChangeState Then
+		        stateOut = bsd.Data.State.NewState
 		      End If
-		    Next p
-		  End If
+		      ruleOut = bsd.Scanner
+		      Return bsd.Data.Indent
+		    End If
+		  Next bsd
 		  
 		End Function
 	#tag EndMethod
@@ -513,13 +495,18 @@ Protected Class HighlightDefinition
 		Function LineContinuationIndent() As Integer
 		  /// Returns the block indentation of the first default state.
 		  
-		  Var ps() As Pair = BlockStartDef.Lookup("", Nil)
+		  #Pragma Warning "BUG: This wasn't working even before I removed the old BlockStartDef implementation"
+		  ' It always seemed to return 0.
 		  
-		  If Not (ps Is Nil) Then
-		    Var p As Pair = ps(0)
-		    Var indentAndState As Pair = p.Right
-		    Return indentAndState.Left
-		  End If
+		  Return 0
+		  
+		  ' Var ps() As Pair = BlockStartDef.Lookup("", Nil)
+		  ' 
+		  ' If Not (ps Is Nil) Then
+		  ' Var p As Pair = ps(0)
+		  ' Var indentAndState As Pair = p.Right
+		  ' Return indentAndState.Left
+		  ' End If
 		  
 		End Function
 	#tag EndMethod
@@ -637,17 +624,22 @@ Protected Class HighlightDefinition
 		        Var newstateValue As String
 		        If newstate <> Nil Then newstateValue = newstate.Value
 		        Var cond As String = node.GetAttribute("condition")
-		        Var values() As Pair
-		        Var v As Variant = BlockStartDef.Lookup(cond, Nil)
-		        If Not v.IsArray Then
-		          BlockStartDef.Value(cond) = values
-		        Else
-		          values = v
-		        End If
+		        
 		        Var re As New RegEx
 		        re.SearchPattern = node.FirstChild.Value
-		        values.Add(re : (node.GetAttribute("indent").Val : (newstate <> Nil : newstateValue)))
 		        lastStartRule = re
+		        
+		        Var blockStartDefs() As BlockStartDefinition
+		        Var tmpVariant As Variant = BlockStartDef.Lookup(cond, Nil)
+		        If Not tmpVariant.IsArray Then
+		          BlockStartDef.Value(cond) = blockStartDefs
+		        Else
+		          blockStartDefs = tmpVariant
+		        End If
+		        
+		        Var state As New BlockState(newState <> Nil, newstateValue)
+		        Var blockData As New BlockStartData(node.GetAttribute("indent").Val, state)
+		        blockStartDefs.Add(New BlockStartDefinition(re, blockData))
 		        
 		      Case "blockEndMarker"
 		        If lastStartRule = Nil Then
@@ -658,16 +650,21 @@ Protected Class HighlightDefinition
 		        Var newstateValue As String
 		        If newstate <> Nil Then newstateValue = newstate.Value
 		        Var cond As String = node.GetAttribute("condition")
-		        Var values() As Pair
-		        Var v As Variant = BlockEndDef.Lookup(cond, Nil)
-		        If Not v.IsArray Then
-		          BlockEndDef.Value(cond) = values
-		        Else
-		          values = v
-		        End If
 		        Var re As New RegEx
 		        re.SearchPattern = node.FirstChild.Value
-		        values.Add(re : (lastStartRule : (newstate <> Nil : newstateValue)))
+		        
+		        Var blockEndDefs() As BlockEndDefinition
+		        Var tmpVariant As Variant = BlockEndDef.Lookup(cond, Nil)
+		        If Not tmpVariant.IsArray Then
+		          BlockEndDef.Value(cond) = blockEndDefs
+		        Else
+		          blockEndDefs = tmpVariant
+		        End If
+		        
+		        Var state As New BlockState(newState <> Nil, newstateValue)
+		        Var blockData As New BlockEndData(lastStartRule, state)
+		        blockEndDefs.Add(New BlockEndDefinition(re, blockData))
+		        
 		        lastStartRule = Nil
 		        
 		      Case "lineContinuationMarker"
@@ -858,8 +855,7 @@ Protected Class HighlightDefinition
 
 	#tag Method, Flags = &h0
 		Function SupportsCodeBlocks() As Boolean
-		  Return BlockStartDef.KeyCount > 0 and BlockEndDef.KeyCount > 0
-		  
+		  Return BlockStartDef.KeyCount > 0 And BlockEndDef.KeyCount > 0
 		End Function
 	#tag EndMethod
 
@@ -884,43 +880,45 @@ Protected Class HighlightDefinition
 		  IndentNode(node, 1)
 		  
 		  // Block markers.
-		  For Each cond As String In BlockStartDef.Keys
-		    Var ps() As Pair = BlockStartDef.Value(cond)
-		    For Each p As Pair In ps
-		      // p.Left: RegEx with SearchPattern
-		      // p.Right: Pair of indent and state
-		      node = root.AppendChild(xml.CreateElement("blockStartMarker"))
-		      node.AppendChild(xml.CreateTextNode(RegEx(p.Left.ObjectValue).SearchPattern))
-		      If cond <> "" Then
-		        node.SetAttribute("condition", cond)
-		      End If
-		      Var indentAndState As Pair = p.Right
-		      node.SetAttribute("indent", Str(indentAndState.Left, "#"))
-		      Var state As Pair = indentAndState.Right
-		      If state.Left.BooleanValue Then
-		        node.SetAttribute("newstate", state.Right)
-		      End If
-		      IndentNode(node, 1)
-		    Next p
-		  Next cond
+		  #Pragma Warning "TODO: Export BlockStartDef to XML"
+		  ' For Each cond As String In BlockStartDef.Keys
+		  ' Var ps() As Pair = BlockStartDef.Value(cond)
+		  ' For Each p As Pair In ps
+		  ' // p.Left: RegEx with SearchPattern
+		  ' // p.Right: Pair of indent and state
+		  ' node = root.AppendChild(xml.CreateElement("blockStartMarker"))
+		  ' node.AppendChild(xml.CreateTextNode(RegEx(p.Left.ObjectValue).SearchPattern))
+		  ' If cond <> "" Then
+		  ' node.SetAttribute("condition", cond)
+		  ' End If
+		  ' Var indentAndState As Pair = p.Right
+		  ' node.SetAttribute("indent", Str(indentAndState.Left, "#"))
+		  ' Var state As Pair = indentAndState.Right
+		  ' If state.Left.BooleanValue Then
+		  ' node.SetAttribute("newstate", state.Right)
+		  ' End If
+		  ' IndentNode(node, 1)
+		  ' Next p
+		  ' Next cond
 		  
-		  For Each cond As String In BlockEndDef.Keys
-		    Var ps() As Pair = BlockEndDef.Value(cond)
-		    For Each p As Pair In ps
-		      // p.Left: RegEx with SearchPattern
-		      // p.Right: Pair of (rule_ref, Pair of (indent, state))
-		      node = root.AppendChild(xml.CreateElement("blockEndMarker"))
-		      node.AppendChild(xml.CreateTextNode(RegEx(p.Left.ObjectValue).SearchPattern))
-		      If cond <> "" Then
-		        node.SetAttribute("condition", cond)
-		      End If
-		      Var state As Pair = Pair(p.Right).Right
-		      If state.Left.BooleanValue Then
-		        node.SetAttribute("newstate", state.Right)
-		      End If
-		      IndentNode(node, 1)
-		    Next p
-		  Next cond
+		  #Pragma Warning "TODO: Export BlockEndDef to XML"
+		  ' For Each cond As String In BlockEndDef.Keys
+		  ' Var ps() As Pair = BlockEndDef.Value(cond)
+		  ' For Each p As Pair In ps
+		  ' // p.Left: RegEx with SearchPattern
+		  ' // p.Right: Pair of (rule_ref, Pair of (indent, state))
+		  ' node = root.AppendChild(xml.CreateElement("blockEndMarker"))
+		  ' node.AppendChild(xml.CreateTextNode(RegEx(p.Left.ObjectValue).SearchPattern))
+		  ' If cond <> "" Then
+		  ' node.SetAttribute("condition", cond)
+		  ' End If
+		  ' Var state As Pair = Pair(p.Right).Right
+		  ' If state.Left.BooleanValue Then
+		  ' node.SetAttribute("newstate", state.Right)
+		  ' End If
+		  ' IndentNode(node, 1)
+		  ' Next p
+		  ' Next cond
 		  
 		  For Each key As RegEx In LineContinuationDef.Keys
 		    node = root.AppendChild(xml.CreateElement("lineContinuationMarker"))
@@ -1042,11 +1040,11 @@ Protected Class HighlightDefinition
 	#tag EndNote
 
 
-	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2028537472696E67292C2056616C7565203D205061697220617272617920285265674578203A205061697228626C6F636B2073746172742052656745782C2050616972286368616E67655374617465426F6F6C65616E203A206E65775374617465537472696E6729292E
+	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2C2056616C7565203D20426C6F636B456E64446566696E6974696F6E2829
 		Private BlockEndDef As Dictionary
 	#tag EndProperty
 
-	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2C2056616C7565203D204172726179206F662050616972206F6620285265674578203A2050616972206F662028696E64656E7420617320496E74656765722C2050616972206F6620286368616E6765537461746520617320426F6F6C65616E203A206E6577537461746520617320537472696E6729292E
+	#tag Property, Flags = &h21, Description = 4B6579203D20636F6E646974696F6E2028537472696E67292C2056616C7565203D20426C6F636B5374617274446566696E6974696F6E2829
 		Private BlockStartDef As Dictionary
 	#tag EndProperty
 

@@ -1,7 +1,16 @@
 #tag Class
 Protected Class BlockEndDefinition
+	#tag Method, Flags = &h0
+		Sub Constructor(scanner As RegEx, data As BlockEndData)
+		  Self.Scanner = scanner
+		  Self.Data = data
+		  
+		End Sub
+	#tag EndMethod
+
+
 	#tag Property, Flags = &h0
-		Data() As BlockEndData
+		Data As BlockEndData
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

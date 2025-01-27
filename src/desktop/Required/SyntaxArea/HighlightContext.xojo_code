@@ -437,6 +437,7 @@ Protected Class HighlightContext
 		  // ask the code editor's host app for a matching syntax definition file?
 		  If node.GetAttribute("extension") <> "" And Owner.EnableDefinitionExtensions Then
 		    #Pragma Warning "FIX: The extension system is a bit buggy (hence why it can be disabled)"
+		    #Pragma Warning "BUG: The extension system now seems to not work at all!"
 		    If node.GetAttribute("extension") = MySyntax.Name Then
 		      // We will add this completed definition's contexts into this context once this
 		      // definition is finalised to prevent a stackoverflow error due to runaway recursion.
