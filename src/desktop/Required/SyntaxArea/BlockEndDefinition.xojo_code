@@ -1,9 +1,10 @@
 #tag Class
 Protected Class BlockEndDefinition
 	#tag Method, Flags = &h0
-		Sub Constructor(scanner As RegEx, data As BlockEndData)
+		Sub Constructor(scanner As RegEx, data As BlockEndData, blockName As String = "")
 		  Self.Scanner = scanner
 		  Self.Data = data
+		  Self.Name = blockName
 		  
 		End Sub
 	#tag EndMethod
@@ -11,6 +12,10 @@ Protected Class BlockEndDefinition
 
 	#tag Property, Flags = &h0
 		Data As BlockEndData
+	#tag EndProperty
+
+	#tag Property, Flags = &h0, Description = 4F7074696F6E616C206E616D6520666F72207468697320626C6F636B2E
+		Name As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -56,14 +61,6 @@ Protected Class BlockEndDefinition
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Scanner"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

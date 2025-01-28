@@ -2567,10 +2567,14 @@ End
 		    End If
 		  Next i
 		  
-		  ' Var tomlDefFile As FolderItem = SpecialFolder.Resource("definitions").Child("Xojo.toml")
+		  ' Var tomlDefFile As FolderItem = SpecialFolder.Resource("Definitions").Child("Xojo.toml")
 		  ' Var xojoDef As New SyntaxArea.HighlightDefinition(CodeEditor)
-		  ' Var result As Boolean = xojoDef.LoadFromTOML(tomlDefFile)
+		  ' Try
+		  ' xojoDef.LoadFromTOML(tomlDefFile)
+		  ' Catch e As RuntimeException
 		  ' Break
+		  ' End Try
+		  
 		End Sub
 	#tag EndEvent
 
@@ -2630,11 +2634,11 @@ End
 		  
 		  If Color.IsDarkMode Then
 		    // Get the correct bundled theme.
-		    Var themeFile As FolderItem = SpecialFolder.Resource("themes").Child("Nova Dark.toml")
+		    Var themeFile As FolderItem = SpecialFolder.Resource("Themes").Child("Nova Dark.toml")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromTOMLFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  Else
-		    Var themeFile As FolderItem = SpecialFolder.Resource("themes").Child("Nova Light.toml")
+		    Var themeFile As FolderItem = SpecialFolder.Resource("Themes").Child("Nova Light.toml")
 		    Var theme As SyntaxArea.EditorTheme = SyntaxArea.EditorTheme.FromTOMLFile(themeFile)
 		    CodeEditor.LoadTheme(theme)
 		  End If
@@ -2877,15 +2881,30 @@ End
 		  PopupDefinition.RemoveAllRows
 		  
 		  // Grab a reference to the bundled definitions folder.
-		  Var definitions As FolderItem = SpecialFolder.Resource("definitions")
+		  Var definitions As FolderItem = SpecialFolder.Resource("Definitions")
 		  
-		  // Load each XML definition.
+		  ' // Load each XML definition.
+		  ' For Each definitionFile As FolderItem In definitions.Children
+		  ' If Not definitionFile.IsFolder And definitionFile.Extension = "xml" Then
+		  ' Var syntaxDefinition As New SyntaxArea.HighlightDefinition(CodeEditor)
+		  ' If Not syntaxDefinition.LoadFromXml(definitionFile) Then
+		  ' Raise New UnsupportedOperationException("Unable to load the `" + definitionFile.Name + "` definition file.")
+		  ' End If
+		  ' PopupDefinition.AddRow(syntaxDefinition.Name)
+		  ' PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
+		  ' End If
+		  ' Next definitionFile
+		  
+		  // Load each TOML definition.
 		  For Each definitionFile As FolderItem In definitions.Children
-		    If Not definitionFile.IsFolder And definitionFile.Extension = "xml" Then
+		    If Not definitionFile.IsFolder And definitionFile.Extension = "toml" Then
 		      Var syntaxDefinition As New SyntaxArea.HighlightDefinition(CodeEditor)
-		      If Not syntaxDefinition.LoadFromXml(definitionFile) Then
-		        Raise New UnsupportedOperationException("Unable to load the `" + definitionFile.Name + "` definition file.")
-		      End If
+		      Try
+		        SyntaxDefinition.LoadFromTOML(definitionFile)
+		      Catch e As RuntimeException
+		        Raise New UnsupportedOperationException("Unable to load the `" + definitionFile.Name + _
+		        "` definition file: " + e.Message)
+		      End Try
 		      PopupDefinition.AddRow(syntaxDefinition.Name)
 		      PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
 		    End If
@@ -3666,12 +3685,12 @@ End
 		  
 		  // Nova Light.
 		  Me.AddRow("Nova Light")
-		  theme = SyntaxArea.EditorTheme.FromTOMLFile(SpecialFolder.Resource("themes").Child("Nova Light.toml"))
+		  theme = SyntaxArea.EditorTheme.FromTOMLFile(SpecialFolder.Resource("Themes").Child("Nova Light.toml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
 		  
 		  // Nova Dark.
 		  Me.AddRow("Nova Dark")
-		  theme = SyntaxArea.EditorTheme.FromTOMLFile(SpecialFolder.Resource("themes").Child("Nova Dark.toml"))
+		  theme = SyntaxArea.EditorTheme.FromTOMLFile(SpecialFolder.Resource("Themes").Child("Nova Dark.toml"))
 		  Me.RowTagAt(Me.LastAddedRowIndex) = theme
 		  
 		End Sub

@@ -238,9 +238,11 @@ Protected Class HighlightDefinition
 		  End Try
 		  
 		  Var def As New SyntaxArea.HighlightDefinition(owner)
-		  If Not def.LoadFromTOML(toml) Then
-		    Raise New InvalidArgumentException("Invalid syntax definition file.")
-		  End If
+		  Try
+		    def.LoadFromTOML(toml)
+		  Catch e As RuntimeException
+		    Raise New InvalidArgumentException("Invalid syntax definition file: " + e.Message)
+		  End Try
 		  
 		  Return def
 		  
@@ -491,29 +493,32 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C20646566696E6974696F6E2066696C652E
-		Function LoadFromTOML(data As FolderItem) As Boolean
+	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C20646566696E6974696F6E2066696C652E204D61792072616973652061206052756E74696D65457863657074696F6E602E
+		Sub LoadFromTOML(data As FolderItem)
 		  /// Loads a TOML definition file.
+		  /// May raise a `RuntimeException`.
 		  
-		  If data = Nil Then Return False
+		  If data = Nil Then
+		    Raise New InvalidArgumentException("Cannot load definition file (file is Nil).")
+		  End If
 		  
-		  Var tis As TextInputStream = TextInputStream.Open(data)
-		  If tis = Nil Then Return False
+		  Var tis As TextInputStream
+		  Try
+		    tis = TextInputStream.Open(data)
+		    Var toml As String = tis.ReadAll(Encodings.UTF8)
+		    LoadFromTOML(toml)
+		    tis.Close
+		  Catch e1 As IOException
+		    Raise New InvalidArgumentException("Cannot open the syntax definition file for reading.")
+		  End Try
 		  
-		  Var toml As String = tis.ReadAll(Encodings.UTF8)
-		  tis.Close
-		  
-		  Return LoadFromTOML(toml)
-		  
-		End Function
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 4C6F616473206120544F4D4C2073796E74617820646566696E6974696F6E2E2052616973657320612072756E74696D6520657863657074696F6E20696620756E61626C6520746F206C6F61642074686520646566696E6974696F6E2E
-		Function LoadFromTOML(toml As String) As Boolean
+		Sub LoadFromTOML(toml As String)
 		  /// Loads a TOML syntax definition.
 		  /// Raises a runtime exception if unable to load the definition.
-		  
-		  #Pragma Warning "TODO"
 		  
 		  Var data As Dictionary = ParseTOML(toml)
 		  
@@ -522,12 +527,17 @@ Protected Class HighlightDefinition
 		    Raise New InvalidArgumentException("Missing definition `engineVersion` key.")
 		  End If
 		  If data.Value("engineVersion").DoubleValue > VERSION Then
+		    #Pragma Warning "TODO: Make this a string, not a double"
 		    Raise New UnsupportedOperationException("This definition requires SyntaxArea " + _
 		    "highlight engine version " + VERSION.ToString + " (current engine version is " + VERSION.ToString)
 		  End If
 		  
-		  // Theme name.
-		  If Not data.HasKey("name") Then Raise New InvalidArgumentException("Missing definition `name` key.")
+		  // Definition name.
+		  If Not data.HasKey("name") Then
+		    Raise New InvalidArgumentException("Missing definition `name` key.")
+		  Else
+		    Self.Name = data.Value("name")
+		  End If
 		  
 		  // If this definition supports code blocks then data should contain a dictionary called `block`.
 		  Try
@@ -537,7 +547,7 @@ Protected Class HighlightDefinition
 		      // of those different block types and each value is a dictionary.
 		      Var blocks As Dictionary = data.Value("block")
 		      For Each entry As DictionaryEntry In blocks
-		        ParseBlock(entry.Key, entry.Value)
+		        ParseTOMLBlock(entry.Key, entry.Value)
 		      Next entry
 		    End If
 		  Catch e As RuntimeException
@@ -545,8 +555,75 @@ Protected Class HighlightDefinition
 		    e.Message)
 		  End Try
 		  
-		  Break
-		End Function
+		  // Line continuation marker?
+		  If data.HasKey("lineContinuationMarker") And data.Value("lineContinuationMarker") IsA Dictionary Then
+		    ParseLineContinuationMarkerTable(data)
+		  End If
+		  
+		  // Optional symbols.
+		  Try
+		    If data.HasKey("symbols") And data.Value("symbols") IsA Dictionary And _
+		      Dictionary(data.Value("symbols")).KeyCount > 0 Then
+		      // A language may define several types of symbol. The `symbols` dictionary keys are the names
+		      // of those symbols and each value is a dictionary.
+		      Var symbols As Dictionary = data.Value("symbols")
+		      For Each entry As DictionaryEntry In symbols
+		        ParseTOMLSymbol(entry.Key, entry.Value)
+		      Next entry
+		    End If
+		  Catch e As RuntimeException
+		    Raise New InvalidArgumentException("An error occurred whilst parsing the definition's symbols: " + _
+		    e.Message)
+		  End Try
+		  
+		  // Contexts.
+		  If data.HasKey("contexts") And data.Value("contexts") IsA Dictionary Then
+		    Var contexts As Dictionary = data.Value("contexts")
+		    
+		    // Determine the case sensitivity for the definition overall.
+		    Self.CaseSensitive = contexts.Lookup("caseSensitive", False)
+		    
+		    // Parse the contexts.
+		    For Each entry As DictionaryEntry In contexts
+		      If entry.Value IsA Dictionary Then
+		        Var context As New SyntaxArea.HighlightContext(Self.Owner, Self.CaseSensitive, Self)
+		        context.LoadFromTOML(entry.Key, entry.Value, False)
+		        AddContext(context)
+		      End If
+		    Next entry
+		    
+		    If SubContexts.Count = 0 Then
+		      Raise New InvalidArgumentException("Expected at least one context within the `contexts` table.")
+		    End If
+		  End If
+		  
+		  // Placeholders. These are very similar to contexts except they can't have subcontexts.
+		  If data.HasKey("placeholders") And data.Value("placeholders") IsA Dictionary Then
+		    
+		    Var placeholders As Dictionary = data.Value("placeholders")
+		    For Each entry As DictionaryEntry In placeholders
+		      If entry.Value IsA Dictionary Then
+		        Var placeholder As New SyntaxArea.HighlightContext(Self.Owner, False, False, Self)
+		        placeholder.LoadFromTOML(entry.Key, entry.Value, True)
+		        AddContext(placeholder)
+		      End If
+		    Next entry
+		  End If
+		  
+		  // Add a blank space context.
+		  Self.AddBlankSpaceContext
+		  
+		  // Finalise self references.
+		  If ContextsToSelfReference.KeyCount > 0 Then
+		    For Each entry As DictionaryEntry In ContextsToSelfReference
+		      Var hc As HighlightContext = entry.Key
+		      For Each c As SyntaxArea.HighlightContext In Self.Contexts
+		        hc.AddSubContext(c)
+		      Next c
+		    Next entry
+		  End If
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -710,9 +787,31 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ParseBlock(blockName As String, blockData As Dictionary)
+	#tag Method, Flags = &h21, Description = 5061727365732061206C696E6520636F6E74696E756174696F6E206D61726B657220544F4D4C207461626C652E
+		Private Sub ParseLineContinuationMarkerTable(data As Dictionary)
+		  /// Parses a line continuation marker TOML table.
+		  
+		  Var lcm As Dictionary = data.Value("lineContinuationMarker")
+		  Var lcmRegEx As New RegEx
+		  If Not lcm.HasKey("regex") Then
+		    Raise New InvalidArgumentException("The `lineContinuation` table is missing the required " + _
+		    "`regex` key.")
+		  Else
+		    lcmRegEx.SearchPattern = lcm.Value("regex")
+		  End If
+		  If Not lcm.HasKey("indent") Then
+		    Raise New InvalidArgumentException("The `lineContinuation` table is missing the required " + _
+		    "`indent` key.")
+		  Else
+		    LineContinuationDef.Value(lcmRegEx) = lcm.Value("indent").IntegerValue
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 50617273657320626C6F636B20544F4D4C206461746120746F206120626C6F636B20646566696E6974696F6E2E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
+		Private Sub ParseTOMLBlock(blockName As String, blockData As Dictionary)
 		  /// Parses block TOML data to a block definition.
+		  /// May raise an `InvalidArgumentException`.
 		  ///
 		  /// `blockData` format:
 		  /// Required keys:
@@ -731,8 +830,94 @@ Protected Class HighlightDefinition
 		  /// when the engine encounters a block with a startState then it stores that the engine is in that
 		  /// state. If endCondition matches the current state then I think the current state is set to endState.
 		  
-		  #Pragma Warning "TODO"
+		  // Assert the required keys are present.
+		  If Not blockData.HasKey("start") Then
+		    Raise New InvalidArgumentException("The `" + blockName + "` block is missing the `start` key.")
+		  End If
+		  If Not blockData.HasKey("end") Then
+		    Raise New InvalidArgumentException("The `" + blockName + "` block is missing the `end` key.")
+		  End If
+		  If Not blockData.HasKey("indent") Then
+		    Raise New InvalidArgumentException("The `" + blockName + "` block is missing the `indent` key.")
+		  End If
 		  
+		  Var indent As Integer = blockData.Value("indent")
+		  
+		  // Block start.
+		  Var blockStartRegEx As New RegEx
+		  blockStartRegEx.SearchPattern = blockData.Value("start")
+		  Var startState As String = blockData.Lookup("startState", "")
+		  Var startCondition As String = blockData.Lookup("startCondition", "")
+		  Var startBlockState As New BlockState(startState <> "", startState)
+		  Var bsd As New BlockStartData(indent, startBlockState)
+		  
+		  // Get the block start defs array (if there is one) or create an empty array.
+		  Var blockStartDefs() As BlockStartDefinition
+		  Var v1 As Variant = BlockStartDef.Lookup(startCondition, Nil)
+		  If v1.IsArray Then blockStartDefs = v1 
+		  
+		  // Add the new start definition.
+		  blockStartDefs.Add(New BlockStartDefinition(blockStartRegEx, bsd, blockName))
+		  
+		  // Re-assign all the start definitions back.
+		  BlockStartDef.Value(startCondition) = blockStartDefs
+		  
+		  // Block end.
+		  Var blockEndRegEx As New RegEx
+		  blockEndRegEx.SearchPattern = blockData.Value("end")
+		  Var endState As String = blockData.Lookup("endState", "")
+		  Var endCondition As String = blockData.Lookup("endCondition", "")
+		  Var endBlockState As New BlockState(endState <> "", endState)
+		  Var bed As New BlockEndData(blockStartRegEx, endBlockState)
+		  
+		  // Get the block end defs array (if there is one) or create an empty array.
+		  Var blockEndDefs() As BlockEndDefinition
+		  Var v2 As Variant = BlockEndDef.Lookup(endCondition, Nil)
+		  If v2.IsArray Then blockEndDefs = v2 
+		  
+		  // Add the new end definition.
+		  blockEndDefs.Add(New BlockEndDefinition(blockEndRegEx, bed, blockName))
+		  
+		  // Re-assign all the end definitions back.
+		  BlockEndDef.Value(endCondition) = blockEndDefs
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 5061727365732073796D626F6C20544F4D4C206461746120746F20612073796D626F6C20646566696E6974696F6E2E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
+		Private Sub ParseTOMLSymbol(type As String, data As Dictionary)
+		  /// Parses symbol TOML data to a symbol definition.
+		  /// May raise an `InvalidArgumentException`.
+		  ///
+		  /// `data` format:
+		  /// Required keys:
+		  /// - regex: Regex string to find the symbol
+		  ///
+		  /// Optional keys:
+		  /// - lTrim: Optional string to trim from the left of the symbol's value.
+		  /// - rTrim: Optional string to trim from the right of the symbol's value.
+		  
+		  Var symbol As New SyntaxArea.SymbolsDefinition
+		  
+		  symbol.Type = type
+		  
+		  // Required regex.
+		  If Not data.HasKey("regex") Then
+		    Raise New InvalidArgumentException("The `" + type + _
+		    "` symbol table is missing the required `regex` key.")
+		  Else
+		    symbol.EntryRegex = data.Value("regex")
+		  End If
+		  
+		  // Optional ltrim and rtrim keys.
+		  If data.HasKey("lTrim") Then
+		    symbol.LTrim = data.Value("lTrim")
+		  End If
+		  If data.HasKey("rTrim") Then
+		    symbol.RTrim = data.Value("rTrim")
+		  End If
+		  
+		  AddSymbol(symbol)
 		  
 		End Sub
 	#tag EndMethod

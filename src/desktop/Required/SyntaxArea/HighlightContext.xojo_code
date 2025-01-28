@@ -412,6 +412,151 @@ Protected Class HighlightContext
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, Description = 506172736573206120636F6E7465787420544F4D4C207461626C6520616E6420696E697469616C69736573207468697320486967686C69676874436F6E746578742077697468207468617420646174612E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
+		Sub LoadFromTOML(contextName As String, data As Dictionary, isPlaceholder As Boolean)
+		  /// Parses a context TOML table and initialises this HighlightContext with that data. 
+		  /// May raise an `InvalidArgumentException`.
+		  ///
+		  /// `data` format:
+		  /// Either:
+		  /// `regex`: Regex string that defines this entire context.
+		  /// **or both**:
+		  /// `start`: Regex string that defines the start of this context
+		  /// `end`: Regex string that defines the end of this context
+		  /// **or**:
+		  /// `keywords`: An array of strings to match.
+		  ///
+		  /// Optional keys:
+		  /// - fallback: The name of the style to fall back to if the theme doesn't support a style 
+		  ///             named `contextName`.
+		  /// May contain additional subcontext tables, the key to which is the context's name.
+		  
+		  // We need to track which keys have been dealt with so we know which keys at the end are assumed
+		  // to be subcontexts.
+		  Var handledKeys() As String
+		  
+		  // Context name.
+		  Name = contextName
+		  
+		  // Placeholder?
+		  Self.IsPlaceholder = isPlaceholder
+		  
+		  // Case sensitivity override?
+		  If data.HasKey("caseSensitive") Then
+		    mScanner.Options.CaseSensitive = data.Value("caseSensitive").BooleanValue
+		    handledKeys.Add("caseSensitive")
+		  End If
+		  
+		  // Fallback style name,
+		  If data.HasKey("fallback") Then
+		    Fallback = data.Value("fallback")
+		    handledKeys.Add("fallback")
+		  End If
+		  
+		  // Enabled?
+		  If data.HasKey("enabled") Then
+		    Enabled = data.Value("enabled")
+		    handledKeys.Add("enabled")
+		  Else
+		    Enabled = True
+		  End If
+		  
+		  If Not isPlaceholder Then
+		    // Is this highlight context defined externally? That is, do we need to 
+		    // ask the code editor's host app for a matching syntax definition file?
+		    If data.HasKey("extension") And Owner.EnableDefinitionExtensions Then
+		      #Pragma Warning "BUG: The extension system now seems to not work at all and was buggy before!"
+		      If data.Value("extension") = MySyntax.Name Then
+		        // We will add this completed definition's contexts into this context once this
+		        // definition is finalised to prevent a stackoverflow error due to runaway recursion.
+		        MySyntax.ContextsToSelfReference.Value(Self) = Nil
+		      Else
+		        Var extension As SyntaxArea.HighlightDefinition = _
+		        Owner.RaiseRequestDefinitionExtension(data.Value("extension"))
+		        If extension <> Nil Then
+		          // Copy all of the extension definition's contexts into this context.
+		          For Each extensionContext As SyntaxArea.HighlightContext In extension.Contexts
+		            AddSubContext(extensionContext)
+		          Next extensionContext
+		        End If
+		      End If
+		      handledKeys.Add("extension")
+		    End If
+		  End If
+		  
+		  // Single regex?
+		  If data.HasKey("regex") Then
+		    // Assert that `start`, `end` and `keywords` are absent.
+		    If data.HasKey("start") Or data.HasKey("end") Or data.HasKey("keywords") Then
+		      Raise New InvalidArgumentException("The TOML table `" + contextName  + "` has the " + _
+		      " `regex` key. Unexpected `start`, `end` or `keywords` key.")
+		    End If
+		    EntryRegEx = data.Value("regex")
+		    handledKeys.Add("regex")
+		  End If
+		  
+		  // Start and end regexes?
+		  If data.HasKey("start") Then
+		    // Must have an `end` key.
+		    If Not data.HasKey("end") Then
+		      Raise New InvalidArgumentException("The TOML table for `" + contextName + "` is missing " + _
+		      "the `end` key.")
+		    End If
+		    
+		    // Assert it doesn't also have a `regex` and/or `keywords` key.
+		    If data.HasKey("regex") Or data.HasKey("keywords") Then
+		      Raise New InvalidArgumentException("The TOML table `" + contextName  + "` has the " + _
+		      " `start` key. Unexpected `regex` and/or `keywords` key.")
+		    End If
+		    
+		    StartRegEx = data.Value("start")
+		    EndRegEx = data.Value("end")
+		    
+		    handledKeys.Add("start")
+		    handledKeys.Add("end")
+		  End If
+		  
+		  // Keywords?
+		  If data.HasKey("keywords") Then
+		    // Assert that `start`, `end` and `regex` are absent.
+		    If data.HasKey("start") Or data.HasKey("end") Or data.HasKey("regex") Then
+		      Raise New InvalidArgumentException("The TOML table `" + contextName  + "` has the " + _
+		      " `keywords` key. Unexpected `start`, `end` or `regex` key.")
+		    End If
+		    
+		    // `keywords` should be a string array.
+		    Var keywordsValue As Variant = data.Value("keywords")
+		    If Not keywordsValue.IsArray Then
+		      Raise New InvalidArgumentException("Expected a string array as the value of the" + _
+		      " `keywords` key in the `" + contextName + "` context definition.")
+		    End If
+		    Var keywords() As Variant = keywordsValue
+		    For Each keywordVariant As Variant In keywords
+		      AddKeyword(keywordVariant.StringValue)
+		    Next keywordVariant
+		    
+		    handledKeys.Add("keywords")
+		  End If
+		  
+		  // Add optional subcontexts so long as this isn't a placeholder.
+		  If Not isPlaceholder Then
+		    // Any other keys not already dealt with are assumed to be the names of subcontexts.
+		    // Their values should be context tables like this one.
+		    For Each key As String In data.Keys
+		      // Only keys not already handled are assumed to be subcontexts.
+		      If handledKeys.IndexOf(key) > -1 Then Continue
+		      Var subContextName As String = key
+		      
+		      If data.Value(key) IsA Dictionary Then
+		        Var subContext As New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive, MySyntax)
+		        subContext.LoadFromTOML(subContextName, data.Value(subContextName), False)
+		        AddSubContext(subContext)
+		      End If
+		    Next key
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, Description = 4C6F6164732074686520636F6E74657874206F7574206F6620616E20584D4C206E6F64652E
 		Sub LoadFromXmlNode(node As XmlNode)
 		  /// Loads the context out of an XML node.
@@ -436,8 +581,7 @@ Protected Class HighlightContext
 		  // Is this highlight context defined externally? That is, do we need to 
 		  // ask the code editor's host app for a matching syntax definition file?
 		  If node.GetAttribute("extension") <> "" And Owner.EnableDefinitionExtensions Then
-		    #Pragma Warning "FIX: The extension system is a bit buggy (hence why it can be disabled)"
-		    #Pragma Warning "BUG: The extension system now seems to not work at all!"
+		    #Pragma Warning "BUG: The extension system now seems to not work at all and was buggy before!"
 		    If node.GetAttribute("extension") = MySyntax.Name Then
 		      // We will add this completed definition's contexts into this context once this
 		      // definition is finalised to prevent a stackoverflow error due to runaway recursion.
