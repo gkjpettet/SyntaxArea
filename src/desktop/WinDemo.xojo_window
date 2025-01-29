@@ -2553,19 +2553,9 @@ End
 		  
 		  mFinishedInitialising = True
 		  
-		  // Select the HTML definition and HTML example text.
-		  For i As Integer = 0 To PopupDefinition.LastRowIndex
-		    If PopupDefinition.RowTextAt(i) = "HTML" Then
-		      PopupDefinition.SelectedRowIndex = i
-		      Exit
-		    End If
-		  Next i
-		  For i As Integer = 0 To PopupExampleText.LastRowIndex
-		    If PopupExampleText.RowTextAt(i) = "HTML" Then
-		      PopupExampleText.SelectedRowIndex = i
-		      Exit
-		    End If
-		  Next i
+		  // Select the starting definition and matching example text.
+		  SelectStartingLanguage("Markdown")
+		  
 		  
 		  
 		End Sub
@@ -2924,6 +2914,24 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SelectStartingLanguage(languageName As String)
+		  For i As Integer = 0 To PopupDefinition.LastRowIndex
+		    If PopupDefinition.RowTextAt(i) = languageName Then
+		      PopupDefinition.SelectedRowIndex = i
+		      Exit
+		    End If
+		  Next i
+		  For i As Integer = 0 To PopupExampleText.LastRowIndex
+		    If PopupExampleText.RowTextAt(i) = languageName Then
+		      PopupExampleText.SelectedRowIndex = i
+		      Exit
+		    End If
+		  Next i
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, Description = 5570646174657320616C6C206F662074686520636F6E74726F6C7320746F206D61746368207468652073657474696E6773206F662074686520636F646520656469746F722E
 		Private Sub UpdateControls()
 		  /// Updates all of the controls to match the settings of the code editor.
@@ -3120,7 +3128,7 @@ End
 		  /// definition named `name` (case-insensitive).
 		  
 		  // Try to load the requested definition from our bundled definition files.
-		  Var defFile As FolderItem = SpecialFolder.Resource(name + ".xml")
+		  Var defFile As FolderItem = SpecialFolder.Resource("Definitions").Child(name + ".toml")
 		  
 		  If defFile = Nil Or Not defFile.Exists Then
 		    // Can't find a definition for this language.
@@ -3129,7 +3137,7 @@ End
 		  
 		  // Try to parse the definition file into a syntax definition instance.
 		  Try
-		    Return SyntaxArea.HighlightDefinition.FromXMLFile(defFile, CodeEditor)
+		    Return SyntaxArea.HighlightDefinition.FromTOMLFile(defFile, CodeEditor)
 		  Catch e As InvalidArgumentException
 		    Raise New RuntimeException("Successfully found the requested definition extension " + _
 		    "but the file contents are invalid: " + e.Message)

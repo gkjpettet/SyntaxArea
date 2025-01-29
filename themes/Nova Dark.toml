@@ -209,6 +209,14 @@ bold = false
 italic = true
 underline = false
 
+[styles.codeFence]
+textColor = "&h00737373"
+backColor = "&h00000000"
+hasBackColor = false
+bold = false
+italic = false
+underline = false
+
 [styles.emphasis]
 textColor = "&h00A7CA83"
 backColor = "&h00000000"

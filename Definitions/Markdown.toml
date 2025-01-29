@@ -133,13 +133,6 @@ regex = '''(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(
 # --------------------------------------
 # CODE FENCES
 # --------------------------------------
-[contexts.codeFence]
-start = '^```[[:alpha:]]*\n'
-end = '^```(\n|$)'
-
-[contexts.codeFence.codeFenceContents]
-regex = '^(?!```[[:alpha:]]?).*(\n|$)'
-
 [contexts.cCodeFence]
 start = '^```c[ ]*\n'
 end = '^```(\n|$)'
