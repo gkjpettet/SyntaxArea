@@ -1,0 +1,223 @@
+# Markdown syntax definition.
+name = "Markdown"
+engineVersion = 1.2
+definitionVersion = 1.0
+
+[contexts]
+caseSensitive = false
+
+[contexts.inlineCode]
+regex = '''\`[^\`\n]+\`'''
+fallback = 'code'
+
+[contexts.blockQuote]
+start = '^[ ]{0,3}<[ \t]*\w*[ \t]*'
+end = '(\n\n)|$'
+
+# --------------------------------------
+# EMPHASIS
+# --------------------------------------
+[contexts.doubleUnderscoreEmphasis]
+start = '(?:^|\W)__[^ \t\n]'
+end = '__'
+fallback = 'strongEmphasis'
+
+[contexts.doubleStarEmphasis]
+start = '(?:^|\W)\*\*[^ \t\n]'
+end = '\*\*'
+fallback = 'strongEmphasis'
+
+[contexts.singleUnderscoreEmphasis]
+start = '(?:^|\W)_[^ \t\n]'
+end = '_'
+fallback = 'emphasis'
+
+[contexts.singleStarEmphasis]
+start = '(?:^|\W)\*[^ \t\n]'
+end = '\*'
+fallback = 'emphasis'
+
+# --------------------------------------
+# HEADINGS
+# --------------------------------------
+[contexts.h1]
+regex = '^#[ \t]+[^#].+'
+
+[contexts.h2]
+regex = '^#{2}[ \t]+[^#].+'
+
+[contexts.h3]
+regex = '^#{3}[ \t]+[^#].+'
+
+[contexts.h4]
+regex = '^#{4}[ \t]+[^#].+'
+
+[contexts.h5]
+regex = '^#{5}[ \t]+[^#].+'
+
+[contexts.h6]
+regex = '^#{6}[ \t]+[^#].+'
+
+# --------------------------------------
+# LINK REFERENCES
+# --------------------------------------
+[contexts.linkReference]
+# [linkDef]:linkDestination
+# Styling this will only target the square brackets and colons.
+regex = '\[(?:(?:\w|[ \-#\?\!,&<>])+)\]:(?:[ \t])*[^\n]+'
+
+[contexts.linkReference.bracketedLinkReferenceDefinition]
+# This is `[linkDef]:`
+# DO NOT STYLE THIS.
+regex = '(?:\[)(?:(?:\w|[ \-#\?\!,&<>])+)(?:\]:(?:[ \t])*)'
+
+[contexts.linkReference.bracketedLinkReferenceDefinition.linkReferenceDefinition]
+# This is the actual text within [linkDef]:
+regex = '((?:\w|[ \-#\?\!,&<>])+)'
+fallback = 'linkText'
+
+[contexts.linkReference.linkReferenceDestination]
+# This is matching within `linkDestination]`.
+regex = '.+'
+fallback = 'url'
+
+# --------------------------------------
+# LINKS
+# --------------------------------------
+[contexts.link]
+# [linkText][linkDestination]
+# Styling this will only target the square brackets.
+regex = '\[(?:(?:\w|[ \-#\?\!,&<>])+)\]\[[^\n]+\]'
+
+[contexts.link.bracketedLinkText]
+# This is `[linkText][`
+# DO NOT STYLE THIS.
+regex = '(?:\[)(?:(?:\w|[ \-#\?\!,&<>])+)(?:\]\[)'
+
+[contexts.link.bracketedLinkText.linkText]
+# This is the actual text within `[linkText]`
+regex = '((?:\w|[ \-#\?\!,&<>])+)'
+
+[contexts.link.linkDestination]
+# This is matching within `linkDestination]`
+regex = '((?:\w|[ \-#&<>])+)'
+
+# --------------------------------------
+# INLINE LINKS
+# --------------------------------------
+[contexts.inlineLink]
+# [linkText](linkDestination)
+# Styling this will only target the brackets.
+regex = '\[(?:(?:\w|[ \-#\?\!,&<>])+)\]\([^\n]+\)'
+
+[contexts.inlineLink.bracketedInlineLinkText]
+# This is `[linkText](`
+# DO NOT STYLE THIS.
+regex = '(?:\[)(?:(?:\w|[ \-#\?\!,&<>])+)(?:\]\()'
+
+[contexts.inlineLink.bracketedInlineLinkText.inlineLinkText]
+# This is the actual text within `[linkText]`
+regex = '((?:\w|[ \-#\?\!,&<>])+)'
+fallback = 'linkText'
+
+[contexts.inlineLink.inlineLinkDestination]
+# This is matching within `linkDestination)`
+regex = '((?:\w|[ \-#|&<>])+)'
+fallback = 'linkDestination'
+
+# --------------------------------------
+
+[contexts.url]
+regex = '''(?:https?:\/\/)(?:[\w\-])+\.{1}(?:[a-zA-Z]{2,63})(?:[\/\w-]*)*\/?\??(?:[^ #\n\r]*)?#?(?:[^ \n\r]*)'''
+
+# --------------------------------------
+# CODE FENCES
+# --------------------------------------
+[contexts.codeFence]
+start = '^```[[:alpha:]]*\n'
+end = '^```(\n|$)'
+
+[contexts.codeFence.codeFenceContents]
+regex = '^(?!```[[:alpha:]]?).*(\n|$)'
+
+[contexts.cCodeFence]
+start = '^```c[ ]*\n'
+end = '^```(\n|$)'
+fallback = "codeFence"
+extension = "c"
+
+[contexts.htmlCodeFence]
+start = '^```html[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'HTML'
+
+[contexts.javascriptCodeFence]
+start = '^```javascript[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'javascript'
+
+[contexts.javaCodeFence]
+start = '^```java[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'java'
+
+[contexts.objoCodeFence]
+start = '^```objo[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'objo'
+
+[contexts.phpCodeFence]
+start = '^```php[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'php'
+
+[contexts.postgresqlCodeFence]
+start = '^```postgresql[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'postgresql'
+
+[contexts.xmlCodeFence]
+start = '^```xml[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'xml'
+
+[contexts.xojoCodeFence]
+start = '^```xojo[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'xojo'
+
+[contexts.wrenCodeFence]
+start = '^```wren[ ]*\n'
+end = '^```(\n|$)'
+fallback = 'codeFence'
+extension = 'wren'
+
+# --------------------------------------
+# HTML TAGS
+# --------------------------------------
+[contexts.htmlTag]
+# E.g: <div blah blah>
+regex = '(<[^>]*>)'
+
+[contexts.htmlTag.stringInHtmlTag]
+regex = '''("[^"><]*")'''
+fallback = 'string'
+
+[contexts.htmlTag.singleStringInHtmlTag]
+regex = '''('[^'><]*')'''
+fallback = 'string'
+
+[contexts.htmlTag.entireAttributeInHtmlTag]
+regex = '''([\w-]*)[ \t]*=(?=[ \t]*"[^"><]*")'''
+fallbaxk = 'htmlTag'
+
+[contexts.htmlTag.entireAttributeInHtmlTag.attributeInHtmlTag]
+regex = '[\w-]+'
