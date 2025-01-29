@@ -587,7 +587,7 @@ Protected Class HighlightDefinition
 		    For Each entry As DictionaryEntry In contexts
 		      If entry.Value IsA Dictionary Then
 		        Var context As New SyntaxArea.HighlightContext(Self.Owner, Self.CaseSensitive, Self)
-		        context.LoadFromTOML(entry.Key, entry.Value, False)
+		        context.LoadFromTOML(entry.Key, entry.Value, False, "")
 		        AddContext(context)
 		      End If
 		    Next entry
@@ -604,7 +604,7 @@ Protected Class HighlightDefinition
 		    For Each entry As DictionaryEntry In placeholders
 		      If entry.Value IsA Dictionary Then
 		        Var placeholder As New SyntaxArea.HighlightContext(Self.Owner, False, False, Self)
-		        placeholder.LoadFromTOML(entry.Key, entry.Value, True)
+		        placeholder.LoadFromTOML(entry.Key, entry.Value, True, "")
 		        AddContext(placeholder)
 		      End If
 		    Next entry

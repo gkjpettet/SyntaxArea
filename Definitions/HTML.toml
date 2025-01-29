@@ -1,0 +1,79 @@
+# HTML definition.
+name = 'HTML'
+engineVersion = 1.2
+themeVersion = 1.0
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[block.tags]
+start = '''(?!<link|<meta|<br|<img)<((?:\w|-)+)(?:[ ]+(?:\w|[-+"'#=:\\\.\/ ])+)?>(?!.*<\/(\1)>)|<!--(?!.*--\s*>)'''
+end = '(?U)<(\w+).*</\g1(*SKIP)(*FAIL)|</\w+>|^(?!.*?<!--).*?--\s*>'
+indent = 1
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+# Every context in HTML is case insensitive so we'll set it at the top level.
+caseSensitive = false
+
+# -----------------------------------------------------------------------------
+# COMMENTS
+# Note there is a subcontext here (`htmlTodos`) within the `htmlComment` context.
+# This allows us to highlight TODOs within comments.
+# -----------------------------------------------------------------------------
+[contexts.htmlComment]
+fallback = "comment"
+start = '<!--'
+end = '-->'
+
+[contexts.htmlComment.htmlTodo]
+regex = '(?-i)TODO:|HACK:' # Note the case sensitivity regex flag here.
+
+[contexts.inlineJavascript]
+extension = 'javascript'
+start = '''<script(?:[ ]+(?:\w|[-+"'#=:\\\.\/ ])+)?>'''
+end = '<\/script>'
+
+[contexts.inlinePHP]
+extension = 'php'
+start = '<\?php.*?(?=\?>)'
+end = '\?>'
+
+[contexts.htmlCdata]
+start = '<!\s*\[CDATA\s*\['
+end = '\]\s*\]\s*>'
+
+[contexts.htmlDocType]
+start = '<!'
+end = '>'
+fallback = "comment"
+
+[contexts.htmlEscape]
+start = '<\?'
+end = '\?>'
+
+# -----------------------------------------------------------------------------
+# HTML tags
+# Note the multiple subcontexts here  within the `htmlTag` context.
+# -----------------------------------------------------------------------------
+[contexts.htmlTag]
+fallback = 'tag'
+regex = '(<[^!>]*>)'
+
+[contexts.htmlTag.htmlStringInTag]
+fallback = 'string'
+regex = '''("[^"><]*")'''
+
+[contexts.htmlTag.htmlSingleStringInTag]
+fallback = 'string'
+regex = '''('[^'><]*')'''
+
+[contexts.htmlTag.htmlAttributeInTag]
+regex = '''([\w-]*)[ \t]*=(?=[ \t]*"[^"><]*")'''
+
+[contexts.htmlEntity]
+regex = '(&\w{1,8};)'
+

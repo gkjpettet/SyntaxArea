@@ -413,7 +413,7 @@ Protected Class HighlightContext
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 506172736573206120636F6E7465787420544F4D4C207461626C6520616E6420696E697469616C69736573207468697320486967686C69676874436F6E746578742077697468207468617420646174612E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
-		Sub LoadFromTOML(contextName As String, data As Dictionary, isPlaceholder As Boolean)
+		Sub LoadFromTOML(contextName As String, data As Dictionary, isPlaceholder As Boolean, parentFallback As String)
 		  /// Parses a context TOML table and initialises this HighlightContext with that data. 
 		  /// May raise an `InvalidArgumentException`.
 		  ///
@@ -451,6 +451,8 @@ Protected Class HighlightContext
 		  If data.HasKey("fallback") Then
 		    Fallback = data.Value("fallback")
 		    handledKeys.Add("fallback")
+		  Else
+		    Fallback = parentFallback
 		  End If
 		  
 		  // Enabled?
@@ -549,7 +551,7 @@ Protected Class HighlightContext
 		      
 		      If data.Value(key) IsA Dictionary Then
 		        Var subContext As New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive, MySyntax)
-		        subContext.LoadFromTOML(subContextName, data.Value(subContextName), False)
+		        subContext.LoadFromTOML(subContextName, data.Value(subContextName), False, Self.Fallback)
 		        AddSubContext(subContext)
 		      End If
 		    Next key
