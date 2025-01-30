@@ -3,3 +3,84 @@ name = "C/C++"
 engineVersion = "2.0.0"
 definitionVersion = "1.0.0"
 
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[block.standard]
+start = '\{\s*(?:$|//|/\*|\\)|\s*/\*\s*$'
+end = '^\s*\}|^\s*\*/'
+indent = 1
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+[symbols.function]
+regex = '^[ \t]*(?:[\w0-9_*]+\s+){1,3}[\w0-9_*]+[ \t]*\([\]\[\w0-9_,\s*&<>/]*\)(?!;)(?=\s*\{?)'
+
+[symbols.method]
+regex = '^[ \t]*(?:[\w0-9_*]+(?:::[\w0-9_]+)?\s+){0,3}[\w0-9_]+::[\w0-9_]+[ \t]*\([\]\[\w0-9_,\s*&<>/]*\)(?=\s*\{?)'
+
+[symbols.class]
+regex = '^[ \t]*(?:template[\t ]*<[^>]*>[\t\r\n ]*)?class[\t ]([\w0-9_]*)(?:[\t ]*:[\t ]*[\w0-9_]+[\t ][\w0-9_<>]+)?(?=\s*\{?)'
+
+[symbols.define]
+regex = '^\s*#define[ \t]*([\w\d()]*)[ \t]+[^\n\r]*[\n\r]<'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+# Every context in C/C++ is case sensitive so we'll set it at the top level.
+caseSensitive = true
+
+# ------------------------------------------------------
+# Preprocessor tokens
+[contexts.cPreprocessor]
+start = '^#'
+end = '[\n\r]'
+fallback = 'directive'
+
+[contexts.cPreprocessor.cNumber]
+# Highlight numbers within single line preprocessor directives.
+regex = '(?<=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)'
+fallback = 'number'
+
+# ------------------------------------------------------
+# Strings and characters
+[contexts.cString]
+start = '"'
+end = '(((?<!\\)(\\\\)*)|^)"'
+fallback = 'string'
+
+[contexts.cCharacter]
+start = "'"
+end = "(\\'')|(.')"
+fallback = 'string'
+# ------------------------------------------------------
+
+[contexts.cKeyword]
+keywords = ["break", "case", "continue", "default", "do", "else", "enum", "extern", "for", "goto", "if", "NULL", "void", "return", "sizeof", "struct", "switch", "typedef", "union", "while", "self", "super", "int", "long", "float", "double", "char", "unichar", "unsigned", "signed", "const", "extern", "static", "auto", "register", "short", "volatile", "class", "public", "protected", "private", "this"]
+fallback = 'keyword'
+
+[contexts.cNumber]
+regex = '''(?<=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)'''
+fallback = 'number'
+
+[contexts.cIdentifier]
+regex = '([A-Za-z0-9_]+ *)\('
+fallback = 'identifier'
+
+# ------------------------------------------------------
+# Comments
+[contexts.cComment]
+start = '//'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.cMultiLineComment]
+start = '/\*'
+end = '\*/'
+fallback = 'comment'
