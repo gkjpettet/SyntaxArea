@@ -1,0 +1,50 @@
+# Language definition.
+# name = "Language name"
+# engineVersion = "2.0.0" # Minimum SyntaxArea engine version. Note semantic version string.
+# definitionVersion = "1.0.0" # This definition's version. Note semantic version string.
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+# [block.tags]
+# start = start regex string
+# end = end regex string
+# indent = integer (how many indents the contents of these blocks should be)
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+# [symbols.method]
+# regex = 'some regex string'
+
+# ======================================================
+# PLACEHOLDERS
+# Placeholders in the editor can be tabbed to and 
+# overwritten. They signify text that should be 
+# amended - in effect they are temporary text.
+# They have the same potential keys as context tables.
+# ======================================================
+# [placeholders.someName]
+# regex = 'some regex'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+# [contexts]
+# caseSensitive = false # This applies to the whole definition but can be overridden
+
+# [contexts.someComment] # The table name (after the dot) is the name of the token that will be styled.
+# start = '//' # The start of a comment
+# end = '[\n\r]' # The end of a comment
+# fallback = "comment" # If the theme has no style for the table name, this is the style that will be used.
+
+# Can also supply a single `regex` key instead of separate `start` and `end` entries:
+# [contexts.tokenWithSingleRegex]
+# regex = 'some regex string'
+
+# Contexts can also provide an array of regex strings that, if match, indicate a token is present:
+# [contexts.preprocessor]
+# regexes = ['regex string 1', 'regex string 2']

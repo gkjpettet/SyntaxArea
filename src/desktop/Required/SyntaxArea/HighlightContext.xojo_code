@@ -540,6 +540,22 @@ Protected Class HighlightContext
 		    handledKeys.Add("keywords")
 		  End If
 		  
+		  // Specific regex patterns?
+		  If data.HasKey("regexes") Then
+		    // `regexes` should be a string array.
+		    Var regexesValue As Variant = data.Value("regexes")
+		    If Not regexesValue.IsArray Then
+		      Raise New InvalidArgumentException("Expected a string array as the value of the" + _
+		      " `regexes` key in the `" + contextName + "` context definition.")
+		    End If
+		    Var regexStrings() As Variant = regexesValue
+		    For Each regexVariant As Variant In regexStrings
+		      AddRegEx(regexVariant.StringValue)
+		    Next regexVariant
+		    
+		    handledKeys.Add("regexes")
+		  End If
+		  
 		  // Add optional subcontexts so long as this isn't a placeholder.
 		  If Not isPlaceholder Then
 		    // Any other keys not already dealt with are assumed to be the names of subcontexts.

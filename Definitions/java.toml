@@ -1,0 +1,91 @@
+# Java language definition.
+name = "Java"
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[block.standard]
+start = '\{\s*(?:$|//|/\*|\\)|\s*/\*\*?\s*$'
+end = '^\s*\}|^\s*\*\*?/'
+indent = 1
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+[symbols.class]
+regex = '^[ \t]*((?:public|private|protected)?[ \t]*class[^{]+)'
+
+[symbols.method]
+regex = '((?:public|private|protected)[ \t]+(?:(?:abstract|static|final|synchronized|native|strictfp)[ \t]+)*(?:[A-Za-z0-9_\-\.<>]+(?:\[\])?[ \t]+)?[A-Za-z0-9_\-]+[ \t]*\([^\)]*\)[ \t]*(?:\s*throws[ \t]*[A-Za-z0-9_\-, \t\.]+)?)\s*(?=\{?)'
+
+# ======================================================
+# PLACEHOLDERS
+# Placeholders in the editor can be tabbed to and 
+# overwritten. They signify text that should be 
+# amended - in effect they are temporary text.
+# ======================================================
+[placeholders.javaPlaceholder]
+# E.g: `<#somePlaceholder#>`
+regex = '<#(.+?)#>'
+fallback = 'placeholder'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+caseSensitive = true
+
+[contexts.JavadocComment]
+start = '/\*\*[\n\r]'
+end = '\*/'
+fallback = 'comment'
+
+# ------------------------------------------------------
+# Multiline comments
+[contexts.javaMultiLineComment]
+start = '/\*'
+end = '\*/'
+fallback = 'comment'
+
+[contexts.javaMultiLineComment.javaTodo]
+keywords = ["todo", "hack"]
+
+# ------------------------------------------------------
+# Single line comments
+[contexts.javaSingleLineComment]
+start = '//'
+end = '[\n\r]'
+fallback = 'comment'
+
+# ------------------------------------------------------
+# Strings & characters
+[contexts.javaString]
+start = '"'
+end = '''(((?<!\\)(\\\\)*)|^)"'''
+fallback = 'string'
+
+[contexts.javaCharacter]
+regex = "('.')"
+fallback = 'string'
+# ------------------------------------------------------
+
+[contexts.javaKeyword]
+keywords = ["abstract", "break", "case", "catch", "class", "continue", "default", "do", "else", "extends", "false", "finally", "for", "goto", "if", "implements", "instanceof", "interface", "native", "new", "null", "private", "protected", "public", "return", "super", "strictfp", "switch", "synchronized", "this", "throws", "throw", "transient", "true", "try", "volatile", "while", "boolean", "byte", "char", "const", "double", "final", "float", "int", "long", "short", "static", "void"]
+fallback = 'keyword'
+
+[contexts.javaNumber]
+regex = '''(?<=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)'''
+fallback = 'number'
+
+[contexts.javaFunction]
+regex = '([A-Za-z0-9_]+ *)(?=\()'
+
+[contexts.javaPreprocessor]
+# Will match either of the two following regex patterns.
+regexes = ['(^[ \t]*import[^\/\n\r]*)(?=\/\/|$)', '(^[ \t]*package[^\/\n\r]*)(?=\/\/|$)']
+fallback = 'directive'
