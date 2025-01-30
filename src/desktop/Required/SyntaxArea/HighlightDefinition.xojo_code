@@ -522,14 +522,34 @@ Protected Class HighlightDefinition
 		  
 		  Var data As Dictionary = ParseTOML(toml)
 		  
-		  // Compatible with the current engine version?
+		  // Check the engine version key is present and valid.
 		  If Not data.HasKey("engineVersion") Then
 		    Raise New InvalidArgumentException("Missing definition `engineVersion` key.")
 		  End If
-		  If data.Value("engineVersion").DoubleValue > VERSION Then
-		    #Pragma Warning "TODO: Make this a string, not a double"
+		  Var requiredVersion As SyntaxArea.SemanticVersion
+		  Try
+		    requiredVersion = New SyntaxArea.SemanticVersion(data.Value("engineVersion").StringValue)
+		  Catch e As RuntimeException
+		    Raise New InvalidArgumentException("Invalid version format for `engineVersion`. " + _
+		    "Expected a semantic version string: " + e.Message)
+		  End Try
+		  
+		  // If a definition version has been provided, assert it is in the correct format.
+		  If data.HasKey("definitionVersion") Then
+		    Var defVersion As String = data.Value("definitionVersion").StringValue
+		    Try
+		      Var defSemVer As New SyntaxArea.SemanticVersion(defVersion)
+		      #Pragma Unused defSemVer
+		    Catch e As RuntimeException
+		      Raise New InvalidArgumentException("If a `definitionVersion` key is provided " + _
+		      "then it must be a semantic version string: " + e.Message)
+		    End Try
+		  End If
+		  
+		  // Is this definition compatible with the current engine version?
+		  If requiredVersion > Version Then
 		    Raise New UnsupportedOperationException("This definition requires SyntaxArea " + _
-		    "highlight engine version " + VERSION.ToString + " (current engine version is " + VERSION.ToString)
+		    "highlight engine version " + requiredVersion.ToString + " (current engine version is " + VERSION.ToString + ").")
 		  End If
 		  
 		  // Definition name.
@@ -659,9 +679,9 @@ Protected Class HighlightDefinition
 		    If root.Name <> "highlightDefinition" Then
 		      Return False
 		    End If
-		    If Val(root.GetAttribute("version")) > VERSION Then
-		      Return False
-		    End If
+		    ' If Val(root.GetAttribute("version")) > VERSION Then
+		    ' Return False
+		    ' End If
 		    
 		    Var lastStartRule As RegEx
 		    
@@ -1334,8 +1354,26 @@ Protected Class HighlightDefinition
 		Private Symbols() As SyntaxArea.SymbolsDefinition
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Static ver As New SyntaxArea.SemanticVersion(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
+			  
+			  Return ver
+			  
+			End Get
+		#tag EndGetter
+		Shared Version As SyntaxArea.SemanticVersion
+	#tag EndComputedProperty
 
-	#tag Constant, Name = VERSION, Type = Double, Dynamic = False, Default = \"1.2", Scope = Public
+
+	#tag Constant, Name = MAJOR_VERSION, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MINOR_VERSION, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PATCH_VERSION, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
 
 

@@ -33,6 +33,7 @@ Class=UndoableReplace;Required/SyntaxArea/UndoableReplace.xojo_code;&h0000000053
 Class=AutocompleteOptions;Required/SyntaxArea/AutocompleteOptions.xojo_code;&h0000000005C63FD2;&h00000000435ADFFF;false
 Folder=Required;Required;&h000000001A8337FF;&h0000000000000000;false
 Module=SyntaxArea;Required/SyntaxArea.xojo_code;&h00000000435ADFFF;&h000000001A8337FF;false
+Class=SemanticVersion;Required/SyntaxArea/SemanticVersion.xojo_code;&h000000002D036FFF;&h00000000435ADFFF;false
 Module=TOMLKit;Required/TOMLKit.xojo_code;&h00000000350517FF;&h000000001A8337FF;false
 Class=Message;Required/SyntaxArea/Message.xojo_code;&h000000000C1E313F;&h00000000435ADFFF;false
 Class=MessageQueue;Required/SyntaxArea/MessageQueue.xojo_code;&h000000006CACEB75;&h00000000435ADFFF;false

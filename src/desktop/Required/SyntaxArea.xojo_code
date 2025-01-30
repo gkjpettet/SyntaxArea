@@ -325,7 +325,7 @@ Protected Module SyntaxArea
 	#tag Constant, Name = TEXT_STORAGE_MEMORYBLOCK, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = Version, Type = String, Dynamic = False, Default = \"1.2.0", Scope = Protected
+	#tag Constant, Name = Version, Type = String, Dynamic = False, Default = \"2.0.0", Scope = Protected
 	#tag EndConstant
 
 

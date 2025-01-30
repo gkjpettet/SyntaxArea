@@ -2914,8 +2914,10 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
+	#tag Method, Flags = &h21, Description = 48656C706572206D6574686F6420666F722064656661756C74696E6720746F206120737065636966696320646566696E6974696F6E20616E64206D61746368696E67206578616D706C65207465787420696E207468652064656D6F2077696E646F772E
 		Private Sub SelectStartingLanguage(languageName As String)
+		  /// Helper method for defaulting to a specific definition and matching example text in the demo window.
+		  
 		  For i As Integer = 0 To PopupDefinition.LastRowIndex
 		    If PopupDefinition.RowTextAt(i) = languageName Then
 		      PopupDefinition.SelectedRowIndex = i
@@ -3142,7 +3144,6 @@ End
 		    Raise New RuntimeException("Successfully found the requested definition extension " + _
 		    "but the file contents are invalid: " + e.Message)
 		  End Try
-		  
 		  
 		  Return Nil
 		  

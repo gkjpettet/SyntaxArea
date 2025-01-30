@@ -1,7 +1,7 @@
 # HTML definition.
 name = 'HTML'
-engineVersion = 1.2
-definitionVersion = 1.0
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
 
 # ======================================================
 # BLOCK RULES
