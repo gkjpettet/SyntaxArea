@@ -826,59 +826,11 @@ Protected Class HighlightDefinition
 		LoadFromTOML(data as string): loads a HighlightDefinition stored in a TOML string
 		LoadFromTOML(data as folderItem): loads a HighlightDefinition stored in a TOML file
 		
-		 
 		Properties:
 		CaseSensitive: gets or sets if the contained syntax is case-sensitive
 		DefaultColor: gets or sets the default color for the text
 		Name: the name of the definition (ie: Wren or Xojo)
 		
-	#tag EndNote
-
-	#tag Note, Name = Block Data Proposal
-		--------------------
-		Current
-		--------------------
-		BlockStartDef
-		Key = condition (String)
-		Value = Pair array:
-		Regex : Pair of (indent as Integer, Pair of (changeState as Boolean : newState as String))
-		--------------------
-		
-		BlockStartDef proposal:
-		Key = condition (String), Value = BlockStartDefinition()
-		
-		BlockStartData
-		- Indent: Integer
-		- State: BlockState
-		
-		BlockStartDefinition
-		- Scanner: RegEx
-		- Data: BlockStartData()
-		
-		
-		--------------------
-		Current
-		--------------------
-		BlockEndDef
-		Key = condition (String)
-		Value = Pair array
-		RegEx : Pair(block start RegEx, Pair(changeStateBoolean : newStateString))
-		--------------------
-		
-		BlockEndDef proposal:
-		Key = condition, Value = BlockEndDefinition()
-		
-		BlockEndDefinition
-		- Scanner: RegEx
-		- Data: BlockEndData()
-		
-		BlockEndData
-		- BlockStartRegex : RegEx
-		- State: BlockState
-		
-		BlockState
-		- ChangeState: Boolean
-		- NewState: String
 	#tag EndNote
 
 
