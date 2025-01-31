@@ -1,0 +1,85 @@
+# XML syntax definition.
+name = "XML/XHTML"
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[blocks.generic]
+start = '^\s*(<[^!?%/](?!.+?(/>|</.+?>))|<[!%]--(?!.+?--%?>)|<%[!]?(?!.+?%>))'
+end = '^\s*(</[^>]+>|[/%]>|-->)\s*$'
+indent = 1
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+[symbols.tag]
+regex = '<\w+\s+[^>]*id *= *"([^"]*)"[^>]*>'
+
+# ======================================================
+# PLACEHOLDERS
+# Placeholders in the editor can be tabbed to and 
+# overwritten. They signify text that should be 
+# amended - in effect they are temporary text.
+# ======================================================
+[placeholders.xmlPlaceholder]
+# E.g: `{#some text#}`
+regex = '\{#(.+?)#\}'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+# Every context in XML is case insensitive so we'll set it at the top level.
+caseSensitive = false
+
+# ------------------------------------------------------
+# Comments
+[contexts.xmlComment]
+start = '<!--'
+end = '-->'
+fallback = 'comment'
+
+[contexts.xmlComment.xmlTodo]
+regex = '(?-i)TODO:|HACK:' # Note the case-sensitive switch in this pattern.
+# ------------------------------------------------------
+
+[contexts.xmlCdata]
+start = '<!\s*\[CDATA\s*\['
+end = '\]\s*\]\s*>'
+
+[contexts.xmlDocType]
+start = '<!'
+end = '>'
+
+[contexts.xmlEscape]
+start = '<\?'
+end = '\?>'
+
+[contexts.xmlEntity]
+regex = '(&\w{1,8};)'
+
+# ------------------------------------------------------
+# Tags
+[contexts.xmlTag]
+regex = '(<[^>]*>)'
+
+[contexts.xmlTag.xmlStringInTag]
+regex = '("[^"><]*")'
+fallback = 'string'
+
+[contexts.xmlTag.xmlSingleStringInTag]
+regex = '''('[^'><]*')'''
+fallback = 'string'
+
+[contexts.xmlTag.xmlAttributeInTag]
+regex = '([\w-]*)[ \t]*=(?=[ \t]*"[^"><]*")'
+fallback = 'directive'
+
+[contexts.xmlTag.xmlTagName]
+regex = '(\w+)'
+fallback = 'identifier'

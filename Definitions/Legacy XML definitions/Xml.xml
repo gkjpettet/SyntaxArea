@@ -17,7 +17,7 @@
 		<highlightContext name="xmlComment" fallback="comment">
 			<startRegEx>&lt;!--</startRegEx>
 			<endRegEx>--&gt;</endRegEx>
-			<highlightContext name="xmlTodos">
+			<highlightContext name="xmlTodo">
 				<entryRegEx>(?-i)TODO:|HACK:</entryRegEx> <!-- Note case sensitive -->
 			</highlightContext>
 		</highlightContext>

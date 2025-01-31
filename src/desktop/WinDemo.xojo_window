@@ -2554,7 +2554,7 @@ End
 		  mFinishedInitialising = True
 		  
 		  // Select the starting definition and matching example text.
-		  SelectStartingLanguage("Wren")
+		  SelectStartingLanguage("XML/XHTML")
 		  
 		  CheckBoxEnableLineFolding.Value = True
 		  
@@ -2894,7 +2894,7 @@ End
 		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_POSTGRESQL
 		  
 		  // XML.
-		  PopupExampleText.AddRow("XML")
+		  PopupExampleText.AddRow("XML/XHTML")
 		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_XML
 		  
 		  // Wren.
