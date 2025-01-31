@@ -32,8 +32,8 @@ The best way to get a feel for the editor is to open and run the demo project in
 
 The editor is a `TextInputCanvas` subclass and is found within the `SyntaxArea` module. You will need to copy three modules from the demo project into your own:
 - `SyntaxArea`: Contains all classes related to the editor.
-- `UndoKit`: Contains classes to support undo/redo. This is in a separate module so that you can use it in other projects.
 - `TOMLKit`: Responsible for parsing and generating TOML.
+- `UndoKit`: Contains classes to support undo/redo. This is in a separate module so that you can use it in other projects.
 For more detailed information, [see the Wiki][wiki].
 
 ## Feedback
