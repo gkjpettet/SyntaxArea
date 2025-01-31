@@ -2151,7 +2151,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 536561726368657320666F722060776861746020696E207468697320656469746F7220626567696E6E696E6720617420607374617274506F736020616E642072657475726E7320746865206F666673657420696620666F756E64206F72202D31206966206E6F742E
-		Function Find(what As String, ignoreCase As Boolean, wrap As Boolean, redraw As Boolean = True, startPos As Integer = -1, highlightSelection As Boolean = True) As integer
+		Function Find(what As String, ignoreCase As Boolean, wrap As Boolean, redraw As Boolean = True, startPos As Integer = -1, highlightSelection As Boolean = True) As Integer
 		  /// Searches for `what` in this editor beginning at `startPos` and returns the offset if
 		  /// found or -1 if not.
 		  ///

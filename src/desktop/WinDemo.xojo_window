@@ -10,7 +10,7 @@ Begin DesktopWindow WinDemo
    HasFullScreenButton=   False
    HasMaximizeButton=   True
    HasMinimizeButton=   True
-   Height          =   762
+   Height          =   776
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -27,7 +27,7 @@ Begin DesktopWindow WinDemo
    Begin DesktopPagePanel Panel
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   762
+      Height          =   776
       Index           =   -2147483648
       Left            =   0
       LockBottom      =   True
@@ -71,7 +71,7 @@ Begin DesktopWindow WinDemo
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   728
+         Top             =   742
          Transparent     =   True
          Value           =   0
          Visible         =   True
@@ -82,7 +82,7 @@ Begin DesktopWindow WinDemo
          AllowFocus      =   True
          AllowLiveScrolling=   True
          Enabled         =   True
-         Height          =   728
+         Height          =   742
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   782
@@ -143,7 +143,7 @@ Begin DesktopWindow WinDemo
          Text            =   ""
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   744
+         Top             =   758
          TopBorderColor  =   &c00000000
          Transparent     =   True
          Visible         =   True
@@ -183,7 +183,7 @@ Begin DesktopWindow WinDemo
          HasLeftBorder   =   True
          HasRightBorder  =   True
          HasTopBorder    =   True
-         Height          =   728
+         Height          =   742
          HighlightBlocksOnMouseOverGutter=   False
          HighlightMatchingBrackets=   True
          HighlightMatchingBracketsMode=   0
@@ -2227,11 +2227,11 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       Italic          =   False
       Left            =   896
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   69
@@ -2319,11 +2319,11 @@ Begin DesktopWindow WinDemo
       Index           =   -2147483648
       Italic          =   False
       Left            =   1024
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   73
