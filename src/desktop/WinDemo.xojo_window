@@ -2554,7 +2554,7 @@ End
 		  mFinishedInitialising = True
 		  
 		  // Select the starting definition and matching example text.
-		  SelectStartingLanguage("Java")
+		  SelectStartingLanguage("ObjoScript")
 		  
 		  
 		  
@@ -2852,6 +2852,61 @@ End
 		  Info.TextColor = DefaultTextColor.SelectedColor
 		  Info.BackColor = BackColor.SelectedColor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, Description = 506F70756C6174657320746865206578616D706C65207465787420706F7075702E
+		Private Sub PopulateExampleTextPopup()
+		  /// Populates the example text popup.
+		  
+		  PopupExampleText.RemoveAllRows
+		  
+		  // C.
+		  PopupExampleText.AddRow("C")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_C
+		  
+		  // HTML.
+		  PopupExampleText.AddRow("HTML")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_HTML
+		  
+		  // Java.
+		  PopupExampleText.AddRow("Java")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_JAVA
+		  
+		  // Javascript.
+		  PopupExampleText.AddRow("Javascript")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_JAVASCRIPT
+		  
+		  // Markdown.
+		  PopupExampleText.AddRow("Markdown")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_MARKDOWN
+		  
+		  // ObjoScript.
+		  PopupExampleText.AddRow("ObjoScript")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_OBJOSCRIPT
+		  
+		  // PHP.
+		  PopupExampleText.AddRow("PHP")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_PHP
+		  
+		  // PostgreSQL.
+		  PopupExampleText.AddRow("PostgreSQL")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_POSTGRESQL
+		  
+		  // XML.
+		  PopupExampleText.AddRow("XML")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_XML
+		  
+		  // Wren.
+		  PopupExampleText.AddRow("Wren")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_WREN
+		  
+		  // Xojo.
+		  PopupExampleText.AddRow("Xojo")
+		  PopupExampleText.RowTagAt(PopupExampleText.LastAddedRowIndex) = EXAMPLE_XOJO
+		  
+		  // Start with the last added example.
+		  PopupExampleText.SelectedRowIndex = PopupExampleText.LastAddedRowIndex
 		End Sub
 	#tag EndMethod
 
@@ -3544,53 +3599,7 @@ End
 #tag Events PopupExampleText
 	#tag Event
 		Sub Opening()
-		  // C.
-		  Me.AddRow("C")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_C
-		  
-		  // HTML.
-		  Me.AddRow("HTML")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_HTML
-		  
-		  // Java.
-		  Me.AddRow("Java")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_JAVA
-		  
-		  // Javascript.
-		  Me.AddRow("Javascript")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_JAVASCRIPT
-		  
-		  // Markdown.
-		  Me.AddRow("Markdown")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_MARKDOWN
-		  
-		  // ObjoScript.
-		  Me.AddRow("Objo")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_OBJOSCRIPT
-		  
-		  // PHP.
-		  Me.AddRow("PHP")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_PHP
-		  
-		  // PostgreSQL.
-		  Me.AddRow("PostgreSQL")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_POSTGRESQL
-		  
-		  // XML.
-		  Me.AddRow("XML")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_XML
-		  
-		  // Wren.
-		  Me.AddRow("Wren")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_WREN
-		  
-		  // Xojo.
-		  Me.AddRow("Xojo")
-		  Me.RowTagAt(Me.LastAddedRowIndex) = EXAMPLE_XOJO
-		  
-		  // Start with the last added example.
-		  Me.SelectedRowIndex = Me.LastAddedRowIndex
-		  
+		  PopulateExampleTextPopup
 		End Sub
 	#tag EndEvent
 	#tag Event

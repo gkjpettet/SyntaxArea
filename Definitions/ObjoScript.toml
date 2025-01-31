@@ -1,0 +1,84 @@
+# ObjoScript syntax definition.
+name = "ObjoScript"
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[blocks.generic]
+start = '\{\W*(?:$|#)'
+end = '^\W*\}'
+indent = 1
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+[symbols.class]
+regex = '^\s*class [^ {]*'
+
+# Note that we strip `{` from the matched symbol name. We use the `rTrim` key 
+# for the constructor and method symbols to tell the engine to do this so we can 
+# avoid using expensive forward look-aheads in the regex patterns.
+[symbols.constructor]
+regex = '^\s*constructor\s*\((?:\w|,|\s)*\)\s*\{'
+rTrim = '{'
+
+[symbols.method]
+regex = '^\s*(?!for\b|foreach|while|do|switch)(static\s*)?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*\{'
+rTrim = '{'
+
+[symbols.prefixOperator]
+regex = '^\s*(static\s*)?([-~]|not)\s*\(\)\s*\{'
+rTrim = '{'
+
+[symbols.infixOperator]
+regex = '^\s*(static\s*)?(\&|\.\.|\.\.\.|\/|\>|\>\=|\>\>|is|\<|\<\=|\<\<|\-|\<\<|\%|\||\+|\*)\s*\(\w+\)\s*\{'
+rTrim = '{'
+
+[symbols.subscriptOperator]
+regex = '^\s*(static\s*)?\[\w(?:\w|\,\s)+\]\s*\{'
+rTrim = '{'
+
+[symbols.subscriptSetter]
+regex = '^\s*(static\s*)?\[\w+\]\=\(\w+\)\s*\{'
+rTrim = '{'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+# Every context in ObjoScript is case sensitive so we'll set it at the top level.
+caseSensitive = true
+
+[contexts.objoscriptType]
+keywords = ["Boolean", "KeyValue", "List", "Nothing", "Number", "String"]
+fallback = 'type'
+
+[contexts.objoscriptKeyword]
+keywords = ["and", "as", "assert", "breakpoint", "case", "class", "continue", "constructor", "do", "else", "exit", "export", "false", "for", "foreach", "foreign", "function", "get", "if", "import", "in", "is", "loop", "not", "nothing", "or", "return", "static", "super", "switch", "then", "this", "true", "until", "var", "while", "xor"]
+fallback = 'keyword'
+
+[contexts.objoscriptComment]
+start = '#'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.objoscriptNumber]
+regex = '(?<=[^\w.]|^)(?=\d+|\d+\.|\.\d+|\d+e(?:\d|\b))((?:\d+_\d+)+|\d+|\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.]|$)|(?<=[^\w.]|^)(?:\d+|0x[[:xdigit:]]*\b|0b[01]*\b)(?=[^\w.]|$)'
+fallback = 'number'
+
+[contexts.objoscriptString]
+regex = '"[^"\r\n]*["\r\n]'
+fallback = 'string'
+
+[contexts.objoscriptUppercaseIdentifier]
+regex = '\b[A-Z]\w*'
+fallback = 'uppercaseIdentifier'
+
+[contexts.objoscriptLowercaseIdentifier]
+regex = '\b[a-z]\w*'
+fallback = 'lowercaseIdentifier'

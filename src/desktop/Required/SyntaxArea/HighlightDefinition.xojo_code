@@ -559,13 +559,13 @@ Protected Class HighlightDefinition
 		    Self.Name = data.Value("name")
 		  End If
 		  
-		  // If this definition supports code blocks then data should contain a dictionary called `block`.
+		  // If this definition supports code blocks then data should contain a dictionary called `blocks`.
 		  Try
-		    If data.HasKey("block") And data.Value("block") IsA Dictionary _
-		      And Dictionary(data.Value("block")).KeyCount > 0 Then
+		    If data.HasKey("blocks") And data.Value("blocks") IsA Dictionary _
+		      And Dictionary(data.Value("blocks")).KeyCount > 0 Then
 		      // A language may have several types of code block. The `block` dictionary keys are the names
 		      // of those different block types and each value is a dictionary.
-		      Var blocks As Dictionary = data.Value("block")
+		      Var blocks As Dictionary = data.Value("blocks")
 		      For Each entry As DictionaryEntry In blocks
 		        ParseTOMLBlock(entry.Key, entry.Value)
 		      Next entry

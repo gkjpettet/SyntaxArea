@@ -7,7 +7,7 @@ definitionVersion = "1.0.0"
 # BLOCK RULES
 # These define the start and end of blocks
 # ======================================================
-[block.tags]
+[blocks.tags]
 start = '''(?!<link|<meta|<br|<img)<((?:\w|-)+)(?:[ ]+(?:\w|[-+"'#=:\\\.\/ ])+)?>(?!.*<\/(\1)>)|<!--(?!.*--\s*>)'''
 end = '(?U)<(\w+).*</\g1(*SKIP)(*FAIL)|</\w+>|^(?!.*?<!--).*?--\s*>'
 indent = 1

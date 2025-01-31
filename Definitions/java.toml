@@ -7,7 +7,7 @@ definitionVersion = "1.0.0"
 # BLOCK RULES
 # These define the start and end of blocks
 # ======================================================
-[block.generic]
+[blocks.generic]
 start = '\{\s*(?:$|//|/\*|\\)|\s*/\*\*?\s*$'
 end = '^\s*\}|^\s*\*\*?/'
 indent = 1
