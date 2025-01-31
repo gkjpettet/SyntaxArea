@@ -931,10 +931,10 @@ Protected Class HighlightDefinition
 		  
 		  // Optional ltrim and rtrim keys.
 		  If data.HasKey("lTrim") Then
-		    symbol.LTrim = data.Value("lTrim")
+		    symbol.LTrim = data.Value("lTrim").StringValue
 		  End If
 		  If data.HasKey("rTrim") Then
-		    symbol.RTrim = data.Value("rTrim")
+		    symbol.RTrim = data.Value("rTrim").StringValue
 		  End If
 		  
 		  AddSymbol(symbol)

@@ -48,3 +48,12 @@
 # Contexts can also provide an array of regex strings that, if match, indicate a token is present:
 # [contexts.preprocessor]
 # regexes = ['regex string 1', 'regex string 2']
+
+# ======================================================
+# MISC
+# ======================================================
+# Contexts, placeholders and symbols can also include an optional string `lTrim` and `rTrim` key. 
+# If present the the value will be left or right trimmed from the matched string.
+# E.g. If the regex matches the string "hello{" and `rTrim = "{"` then the `{` will be trimmed
+# from the right leaving the match as "hello" only.
+ 

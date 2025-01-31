@@ -32,7 +32,7 @@ indent = 1
 
 [lineContinuationMarker]
 regex = '''^((?:"[^"\r\n]*"|(?!'|//|\brem\b)[^\r\n_])*)_[\t\x20]*((?:'|//|\brem\b)[^\r\n]*|)$'''
-indent = 2
+indent = 2 # Line continuations should indent more than blocks.
 
 # ======================================================
 # SYMBOLS

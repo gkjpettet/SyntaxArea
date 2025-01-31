@@ -1,0 +1,96 @@
+# Javascript language definition.
+name = "Javascript"
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[block.generic]
+start = '\{\s*(?:$|#)'
+end = '^\s*\}'
+indent = 1
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+# Note that we strip `{` from the matched symbol name. We use the `rTrim` key 
+# for the constructor and method symbols to tell the engine to do this so we can 
+# avoid using expensive forward look-aheads in the regex patterns.
+[symbols.class]
+regex = '^\s*class [^ {]*'
+
+[symbols.constructor]
+regex = '^\s*constructor\s*\((?:\w|,|\s)*\)\s*\{'
+rTrim = '{'
+
+[symbols.method]
+regex = '^\s*(?!for\b|while|do|switch)(static\s*)?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*\{'
+rTrim = '{'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+caseSensitive = true
+
+[contexts.jsType]
+keywords = ["Boolean", "BigInt", "Null", "Number", "String", "Symbol", "Undefined"]
+fallback = 'type'
+
+[contexts.jsKeyword]
+keywords = ["break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete", "do", "else", "export", "extends", "false", "finally", "for", "function", "if", "import", "in", "instanceof", "new", "null", "return", "super", "switch", "this", "throw", "true", "try", "typeof", "var", "void", "while", "with"]
+fallback = 'keyword'
+
+# ------------------------------------------------------
+# Strings
+[contexts.jsSingleQuoteString]
+start = "'"
+end = "(((?<!\\)(\\\\)*)|^)'"
+fallback = 'string'
+
+[contexts.jsDoubleQuoteString]
+start = '"'
+end = '(((?<!\\)(\\\\)*)|^)"'
+fallback = 'string'
+
+[contexts.jsUnicodeEscapeSequence]
+regex = '\\u[[:xdigit:]]{4}'
+fallback = 'string'
+
+[contexts.jsUnicodeCodepointEscape]
+regex = '\\u{[[:xdigit:]]+}'
+fallback = 'string'
+
+# ------------------------------------------------------
+# Comments
+[contexts.jsSingleLineComment]
+start = '\/\/'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.jsBlockComment]
+start = '/\*'
+end = '\*/'
+fallback = 'comment'
+
+[contexts.jsHashbangComment]
+start = '^\#\!'
+end = '[\n\r]'
+fallbacl = 'comment'
+# ------------------------------------------------------
+
+[contexts.jsNumber]
+regex = '(?<=[^\w.]|^)(?=\d+|\d+\.|\.\d+|\d+e(?:\d|\b))((?:\d+_\d+)+n?|\d+n?|\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.]|$)|(?<=[^\w.]|^)(?:\d+|0x[[:xdigit:]]*\b|0b[01]*\b|0o[0-7]*\b)(?=[^\w.]|$)'
+fallback = 'number'
+
+[contexts.jsUppercaseIdentifier]
+regex = '\b[A-Z]\w*'
+fallback = 'uppercaseIdentifier'
+
+[contexts.jsLowercaseIdentifier]
+regex = '\b[a-z]\w*'
+fallback = 'lowercaseIdentifier'
