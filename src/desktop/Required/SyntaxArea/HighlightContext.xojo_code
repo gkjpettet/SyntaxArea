@@ -370,7 +370,6 @@ Protected Class HighlightContext
 		    // Is this highlight context defined externally? That is, do we need to 
 		    // ask the code editor's host app for a matching syntax definition file?
 		    If data.HasKey("extension") And Owner.EnableDefinitionExtensions Then
-		      #Pragma Warning "BUG: The extension system now seems to not work at all and was buggy before!"
 		      If data.Value("extension") = MySyntax.Name Then
 		        // We will add this completed definition's contexts into this context once this
 		        // definition is finalised to prevent a stackoverflow error due to runaway recursion.
