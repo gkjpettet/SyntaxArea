@@ -1,0 +1,87 @@
+# PostgreSQL syntax definition.
+name = "PostgreSQL"
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[blocks.generic]
+start = '\s*\(\s*$'
+end = '^\s*\)'
+indent = 1
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+# Every context in PostgreSQL is case insensitive so we'll set it at the top level.
+caseSensitive = false
+
+# ------------------------------------------------------
+# Comments
+[contexts.postgresqlDoubleDashComment]
+start = '--'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.postgresqlDoubleSlashComment]
+start = '//'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.postgresqlMultilineComment]
+start = '/\*'
+end = '\*/'
+fallback = 'comment'
+# ------------------------------------------------------
+
+[contexts.postgresqlSquareBracketCommand]
+start = '\[:'
+end = '\]'
+
+[contexts.postgresqlView]
+start = '\[view'
+end = '\]'
+
+# ------------------------------------------------------
+# Strings
+[contexts.postgresqlString]
+start = '"'
+end = '[^"]*"'
+fallback = 'string'
+
+[contexts.postgresqlString.postgresqlSquareBracketCommandInString]
+start = '\[:'
+end = '\]'
+
+[contexts.postgresqlStringB]
+start = "'"
+end = '''[^']*''''
+fallback = 'string'
+
+[contexts.postgresqlStringB.postgresqlSquareBracketCommandInStringB]
+start = '\[:'
+end = '\]'
+# ------------------------------------------------------
+
+[contexts.postgresqlDouble]
+regex = '(?<=[^\w\d]|^)(([0-9]+\.[0-9]*)|([0-9]{11,}))(?=[^\w\d]|$)'
+fallback = 'number'
+
+[contexts.postgresqlInteger]
+regex = '(?<=[^\w\d]|^)([0-9]{1,10})(?=[^\w\d]|$)'
+fallback = 'number'
+
+[contexts.postgresqlRedString]
+keywords = ["DELETE", "UPDATE", "DROP", "ALTER"]
+fallback = 'keyword'
+
+[contexts.postgresqlDataType]
+keywords = ["varchar", "integer", "smallint", "double", "boolean", "text", "blob", "real", "datetime", "dec", "timestamp"]
+fallback = 'type'
+
+[contexts.postgresqlKeyword]
+keywords = ["abort", "abs", "accept", "access", "age", "all", "and", "array", "arraylen", "as", "asc", "assert", "at", "avg", "begin", "between", "body", "by", "case", "coalesce", "columns", "commit", "constant", "count", "create", "cursor", "declare", "default", "definition", "delete", "desc", "dispose", "distinct", "do", "else", "elsif", "end", "entry", "exception", "exists", "exit", "extract", "false", "fetch", "for", "from", "function", "goto", "group", "having", "if", "in", "insert", "intersect", "interval", "into", "is", "join", "left", "like", "limit", "loop", "max", "min", "minus", "mod", "new", "not", "null", "of", "offset", "on", "open", "or", "order", "out", "outer", "overlaps", "package", "partition", "positive", "pragma", "primary", "private", "procedure", "public", "range", "record", "rem", "replace", "return", "right", "rollback", "rowtype", "rowcount", "run", "savepoint", "select", "set", "size", "start", "stddev", "sum", "then", "to", "to_char", "trunc", "type", "union", "unique", "update", "use", "values", "variance", "when", "where", "while", "with", "xor"]
+fallback = 'keyword'

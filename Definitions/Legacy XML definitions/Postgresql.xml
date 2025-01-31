@@ -7,7 +7,7 @@
 	<blockEndMarker>^\s*\)</blockEndMarker>
 	
 	<contexts caseSensitive="no">
-	   <highlightContext name="postgresqlComment" fallback="comment">
+	   <highlightContext name="postgresqlDoubleDashComment" fallback="comment">
 			<startRegEx>--</startRegEx>
 			<endRegEx>[\n\r]</endRegEx>
 		</highlightContext>

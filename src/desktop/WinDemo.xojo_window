@@ -2554,9 +2554,9 @@ End
 		  mFinishedInitialising = True
 		  
 		  // Select the starting definition and matching example text.
-		  SelectStartingLanguage("PHP")
+		  SelectStartingLanguage("PostgreSQL")
 		  
-		  
+		  CheckBoxEnableLineFolding.Value = True
 		  
 		End Sub
 	#tag EndEvent
