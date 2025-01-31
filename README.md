@@ -12,7 +12,7 @@ The syntax highlighting engine has been improved and styling information removed
 Here's a list of the some of the editor's features:
 - Works on macOS and Windows (Linux _should_ work but is untested)
 - 100% API 2.0
-- Syntax highlighting (implemented through XML definition files)
+- Syntax highlighting (implemented through TOML definition files)
 - Theme support
 - High performance (handles thousands of lines of code with ease)
 - Extensive support for keyboard shortcuts
@@ -33,8 +33,7 @@ The best way to get a feel for the editor is to open and run the demo project in
 The editor is a `TextInputCanvas` subclass and is found within the `SyntaxArea` module. You will need to copy three modules from the demo project into your own:
 - `SyntaxArea`: Contains all classes related to the editor.
 - `UndoKit`: Contains classes to support undo/redo. This is in a separate module so that you can use it in other projects.
-- `MessageCentre`: Supports sending and receiving messages between components in a project. It's used internally within `SyntaxArea` but you can also use it for your own purposes within your own projects.
-
+- `TOMLKit`: Responsible for parsing and generating TOML.
 For more detailed information, [see the Wiki][wiki].
 
 ## Feedback
