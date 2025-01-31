@@ -249,43 +249,6 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 4C6F61647320612073796E74617820646566696E6974696F6E20584D4C2066696C652E204D617920726169736520616E2060496E76616C6964417267756D656E74457863657074696F6E602E
-		Shared Function FromXMLFile(f As FolderItem, owner As SyntaxArea.IEditor) As SyntaxArea.HighlightDefinition
-		  /// Loads a syntax definition XML file.
-		  /// May raise an `InvalidArgumentException`.
-		  
-		  If f = Nil Or Not f.Exists Then
-		    Raise New InvalidArgumentException("Cannot load a non-existent definition file.")
-		  End If
-		  
-		  If f.IsFolder Then
-		    Raise New InvalidArgumentException("Expected a definition file instead got a folder.")
-		  End If
-		  
-		  If owner = Nil Then
-		    Raise New InvalidArgumentException("The owning editor cannot be Nil.")
-		  End If
-		  
-		  Var xml As String
-		  Try
-		    Var tin As TextInputStream = TextInputStream.Open(f)
-		    xml = tin.ReadAll
-		    tin.Close
-		  Catch e As IOException
-		    Raise New InvalidArgumentException("Unable to read the contents of the definition file (" + _
-		    e.Message + ").")
-		  End Try
-		  
-		  Var def As New SyntaxArea.HighlightDefinition(owner)
-		  If Not def.LoadFromXml(xml) Then
-		    Raise New InvalidArgumentException("Invalid syntax definition file.")
-		  End If
-		  
-		  Return def
-		  
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Highlight(s As String, tokens() As SyntaxArea.TextSegment, placeholders() As SyntaxArea.TextPlaceholder, forceMatch As SyntaxArea.HighlightContext = Nil) As SyntaxArea.HighlightContext
 		  #Pragma DisableBackgroundTasks
@@ -390,29 +353,6 @@ Protected Class HighlightDefinition
 		  Return openContext
 		  
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub IndentNode(node As XmlNode, level As Integer, indentCloseTag As Boolean = False)
-		  Var ss As String // NOTE: This was static in the original CEF code. Relevant?
-		  
-		  If ss = "" Then
-		    ss = EndOfLine
-		    For i As Integer = 1 To 20
-		      // Append a tab.
-		      ss = ss + Chr(9)
-		    Next i
-		  End If
-		  
-		  Var s As String = ss.Left(level + 1)
-		  
-		  node.Parent.Insert(node.OwnerDocument.CreateTextNode(s), node)
-		  
-		  If indentCloseTag Then
-		    node.AppendChild(node.OwnerDocument.CreateTextNode(s))
-		  End If
-		  
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, Description = 52657475726E7320547275652069662069742773206120626C6F636B20656E642C206E657720737461746520616E6420746865206D6174636865642072756C65
@@ -538,8 +478,7 @@ Protected Class HighlightDefinition
 		  If data.HasKey("definitionVersion") Then
 		    Var defVersion As String = data.Value("definitionVersion").StringValue
 		    Try
-		      Var defSemVer As New SyntaxArea.SemanticVersion(defVersion)
-		      #Pragma Unused defSemVer
+		      Self.Version = New SyntaxArea.SemanticVersion(defVersion)
 		    Catch e As RuntimeException
 		      Raise New InvalidArgumentException("If a `definitionVersion` key is provided " + _
 		      "then it must be a semantic version string: " + e.Message)
@@ -547,9 +486,9 @@ Protected Class HighlightDefinition
 		  End If
 		  
 		  // Is this definition compatible with the current engine version?
-		  If requiredVersion > Version Then
+		  If requiredVersion > EngineVersion Then
 		    Raise New UnsupportedOperationException("This definition requires SyntaxArea " + _
-		    "highlight engine version " + requiredVersion.ToString + " (current engine version is " + VERSION.ToString + ").")
+		    "highlight engine version " + requiredVersion.ToString + " (current engine version is " + EngineVersion.ToString + ").")
 		  End If
 		  
 		  // Definition name.
@@ -644,167 +583,6 @@ Protected Class HighlightDefinition
 		  End If
 		  
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LoadFromXml(data As FolderItem) As Boolean
-		  If data = Nil Then Return False
-		  
-		  Var tis As TextInputStream = TextInputStream.Open(data)
-		  If tis = Nil Then Return False
-		  
-		  Var xml As String = tis.ReadAll(Encodings.UTF8)
-		  tis.Close
-		  
-		  Return LoadFromXml(xml)
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, Description = 4C6F61647320616E20584D4C2073796E74617820646566696E6974696F6E2E
-		Function LoadFromXml(data As String) As Boolean
-		  /// Loads an XML syntax definition.
-		  
-		  Var xml As XmlDocument
-		  Var root, node As XMLNode
-		  Var context As SyntaxArea.HighlightContext
-		  Var symbol As SyntaxArea.SymbolsDefinition
-		  Var i, j As Integer
-		  
-		  Try
-		    xml = New XmlDocument
-		    xml.LoadXml(data)
-		    
-		    root = xml.Child(0)
-		    If root.Name <> "highlightDefinition" Then
-		      Return False
-		    End If
-		    ' If Val(root.GetAttribute("version")) > VERSION Then
-		    ' Return False
-		    ' End If
-		    
-		    Var lastStartRule As RegEx
-		    
-		    For i = 0 To root.ChildCount - 1
-		      node = root.Child(i)
-		      Select Case node.Name
-		      Case "name"
-		        // Syntax name.
-		        Name = node.FirstChild.Value
-		        
-		      Case "blockStartMarker"
-		        If lastStartRule <> Nil Then
-		          // Error: There's still an unfinished start rule open.
-		          Return False
-		        End
-		        Var newstate As XmlAttribute = node.GetAttributeNode("newstate")
-		        Var newstateValue As String
-		        If newstate <> Nil Then newstateValue = newstate.Value
-		        Var cond As String = node.GetAttribute("condition")
-		        
-		        Var re As New RegEx
-		        re.SearchPattern = node.FirstChild.Value
-		        lastStartRule = re
-		        
-		        Var blockStartDefs() As BlockStartDefinition
-		        Var tmpVariant As Variant = BlockStartDef.Lookup(cond, Nil)
-		        If Not tmpVariant.IsArray Then
-		          BlockStartDef.Value(cond) = blockStartDefs
-		        Else
-		          blockStartDefs = tmpVariant
-		        End If
-		        
-		        Var state As New BlockState(newState <> Nil, newstateValue)
-		        Var blockData As New BlockStartData(node.GetAttribute("indent").Val, state)
-		        blockStartDefs.Add(New BlockStartDefinition(re, blockData))
-		        
-		      Case "blockEndMarker"
-		        If lastStartRule = Nil Then
-		          // Error: End rule without start rule.
-		          Return False
-		        End
-		        Var newstate As XmlAttribute = node.GetAttributeNode("newstate")
-		        Var newstateValue As String
-		        If newstate <> Nil Then newstateValue = newstate.Value
-		        Var cond As String = node.GetAttribute("condition")
-		        Var re As New RegEx
-		        re.SearchPattern = node.FirstChild.Value
-		        
-		        Var blockEndDefs() As BlockEndDefinition
-		        Var tmpVariant As Variant = BlockEndDef.Lookup(cond, Nil)
-		        If Not tmpVariant.IsArray Then
-		          BlockEndDef.Value(cond) = blockEndDefs
-		        Else
-		          blockEndDefs = tmpVariant
-		        End If
-		        
-		        Var state As New BlockState(newState <> Nil, newstateValue)
-		        Var blockData As New BlockEndData(lastStartRule, state)
-		        blockEndDefs.Add(New BlockEndDefinition(re, blockData))
-		        
-		        lastStartRule = Nil
-		        
-		      Case "lineContinuationMarker"
-		        // `indent` is the number of indentations.
-		        Var re As New RegEx
-		        re.SearchPattern = node.FirstChild.Value
-		        LineContinuationDef.Value(re) = Val(node.GetAttribute("indent"))
-		        
-		      Case "symbols"
-		        For j = 0 To node.ChildCount - 1
-		          Var child As XmlNode = node.Child(j)
-		          If child.Name = "symbol" Then
-		            symbol = New SyntaxArea.SymbolsDefinition
-		            symbol.loadFromXmlNode(child)
-		            AddSymbol(symbol)
-		          End If
-		        Next j
-		        
-		      Case "placeholders"
-		        PlaceholderContextDef = New SyntaxArea.HighlightContext(Self.Owner, False, False, Self)
-		        PlaceholderContextDef.EntryRegEx = node.FirstChild.Value
-		        PlaceholderContextDef.IsPlaceholder = True
-		        PlaceholderContextDef.Name = "placeholder"
-		        
-		        // Enabled?
-		        Var tmp As String
-		        tmp = node.GetAttribute("enabled")
-		        placeholderContextDef.Enabled = tmp <> "false"
-		        
-		        Self.AddContext(PlaceholderContextDef)
-		        
-		      Case "contexts"
-		        // Contexts.
-		        CaseSensitive = YN2Bool(node.GetAttribute("caseSensitive"))
-		        For j = 0 To node.ChildCount-1
-		          // Ignore XML comments.
-		          If node.Child(j) IsA XMLComment Then Continue
-		          context = New SyntaxArea.HighlightContext(Self.Owner, CaseSensitive, Self)
-		          context.LoadFromXmlNode(node.Child(j))
-		          AddContext(context)
-		        Next j
-		      End Select
-		    Next i
-		    
-		    // Add a blank space context.
-		    Self.AddBlankSpaceContext
-		    
-		    // Finalise self references.
-		    If ContextsToSelfReference.KeyCount > 0 Then
-		      For Each entry As DictionaryEntry In ContextsToSelfReference
-		        Var hc As HighlightContext = entry.Key
-		        For Each c As SyntaxArea.HighlightContext In Self.Contexts
-		          hc.AddSubContext(c)
-		        Next c
-		      Next entry
-		    End If
-		    
-		    Return True
-		  Catch e As RuntimeException
-		    Return False
-		  End Try
-		  
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, Description = 5061727365732061206C696E6520636F6E74696E756174696F6E206D61726B657220544F4D4C207461626C652E
@@ -959,24 +737,6 @@ Protected Class HighlightDefinition
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 53617665732074686520646566696E6974696F6E20746F206066696C656020617320584D4C2E
-		Function SaveAsXml(file As FolderItem) As Boolean
-		  /// Saves the definition to `file` as XML.
-		  
-		  If file = Nil Then Return False
-		  
-		  Try
-		    Var tos As TextOutputStream = TextOutputStream.Create(file)
-		    tos.Write(ToXML)
-		    tos.Close
-		    Return True
-		  Catch
-		    Return False
-		  End Try
-		  
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, Description = 53696D706C652073796D626F6C207363616E2E
 		Function ScanSymbols(forText As String) As Dictionary
 		  /// Simple symbol scan.
@@ -1045,110 +805,6 @@ Protected Class HighlightDefinition
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 52657475726E73207468697320646566696E6974696F6E20617320584D4C2E
-		Function ToXML() As String
-		  /// Returns this definition as XML.
-		  
-		  Var xml As XmlDocument
-		  Var root, node As XMLNode
-		  Var context As SyntaxArea.HighlightContext
-		  Var Symbol As SyntaxArea.SymbolsDefinition
-		  
-		  xml = New XmlDocument
-		  
-		  // Root.
-		  root = xml.AppendChild(xml.CreateElement("highlightDefinition"))
-		  root.SetAttribute("version", Str(VERSION, "#.0"))
-		  
-		  // Name.
-		  node = root.AppendChild(xml.CreateElement("name"))
-		  node.AppendChild(xml.CreateTextNode(name))
-		  IndentNode(node, 1)
-		  
-		  // Block markers.
-		  #Pragma Warning "TODO: Export BlockStartDef to XML"
-		  ' For Each cond As String In BlockStartDef.Keys
-		  ' Var ps() As Pair = BlockStartDef.Value(cond)
-		  ' For Each p As Pair In ps
-		  ' // p.Left: RegEx with SearchPattern
-		  ' // p.Right: Pair of indent and state
-		  ' node = root.AppendChild(xml.CreateElement("blockStartMarker"))
-		  ' node.AppendChild(xml.CreateTextNode(RegEx(p.Left.ObjectValue).SearchPattern))
-		  ' If cond <> "" Then
-		  ' node.SetAttribute("condition", cond)
-		  ' End If
-		  ' Var indentAndState As Pair = p.Right
-		  ' node.SetAttribute("indent", Str(indentAndState.Left, "#"))
-		  ' Var state As Pair = indentAndState.Right
-		  ' If state.Left.BooleanValue Then
-		  ' node.SetAttribute("newstate", state.Right)
-		  ' End If
-		  ' IndentNode(node, 1)
-		  ' Next p
-		  ' Next cond
-		  
-		  #Pragma Warning "TODO: Export BlockEndDef to XML"
-		  ' For Each cond As String In BlockEndDef.Keys
-		  ' Var ps() As Pair = BlockEndDef.Value(cond)
-		  ' For Each p As Pair In ps
-		  ' // p.Left: RegEx with SearchPattern
-		  ' // p.Right: Pair of (rule_ref, Pair of (indent, state))
-		  ' node = root.AppendChild(xml.CreateElement("blockEndMarker"))
-		  ' node.AppendChild(xml.CreateTextNode(RegEx(p.Left.ObjectValue).SearchPattern))
-		  ' If cond <> "" Then
-		  ' node.SetAttribute("condition", cond)
-		  ' End If
-		  ' Var state As Pair = Pair(p.Right).Right
-		  ' If state.Left.BooleanValue Then
-		  ' node.SetAttribute("newstate", state.Right)
-		  ' End If
-		  ' IndentNode(node, 1)
-		  ' Next p
-		  ' Next cond
-		  
-		  For Each key As RegEx In LineContinuationDef.Keys
-		    node = root.AppendChild(xml.CreateElement("lineContinuationMarker"))
-		    node.AppendChild(xml.CreateTextNode(key.SearchPattern))
-		    node.SetAttribute("indent", Str(lineContinuationDef.Value(key), "#"))
-		    IndentNode(node, 1)
-		  Next key
-		  
-		  node = root.AppendChild(xml.CreateElement("symbols"))
-		  For Each symbol In Symbols
-		    symbol.appendToXMLNode(node)
-		  Next symbol
-		  IndentNode(node, 1, True)
-		  
-		  If PlaceholderContextDef <> Nil Then
-		    node = root.AppendChild(xml.CreateElement("placeholders"))
-		    
-		    // Enabled.
-		    If Not PlaceholderContextDef.Enabled Then
-		      node.SetAttribute("enabled", "false")
-		    End If
-		    
-		    node.AppendChild(xml.CreateTextNode(PlaceholderContextDef.EntryRegEx))
-		    
-		    IndentNode(node, 1, False)
-		  End If
-		  
-		  node = root.AppendChild(xml.CreateElement("contexts"))
-		  node.SetAttribute("caseSensitive", Bool2YN(caseSensitive))
-		  
-		  // Process contexts.
-		  For Each context In subContexts
-		    If context.Name = "fieldwhitespace" Or context.IsPlaceholder Then Continue For
-		    context.appendToXMLNode(node)
-		  Next context
-		  
-		  IndentNode(node, 1, True)
-		  IndentNode(root, 0, True)
-		  
-		  Return xml.ToString
-		  
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21, Description = 52657475726E732054727565206966206076616C7565602069732022796573222C206F74686572776973652072657475726E732046616C73652E
 		Private Function YN2Bool(value As String) As Boolean
 		  /// Returns True if `value` is "yes", otherwise returns False.
@@ -1167,14 +823,14 @@ Protected Class HighlightDefinition
 		
 		Methods:
 		Highlight(text as string, style as styledText): highlights the provided text using the provided styledtext object.
-		LoadFromXml(data as string): loads a HighlightDefinition stored in a xml string
-		LoadFromXml(data as folderItem): loads a HighlightDefinition stored in a xml file
-		SaveAsXml(file as folderitem): saves the HighlightDefinition as an xml file.
+		LoadFromTOML(data as string): loads a HighlightDefinition stored in a TOML string
+		LoadFromTOML(data as folderItem): loads a HighlightDefinition stored in a TOML file
+		
 		 
 		Properties:
 		CaseSensitive: gets or sets if the contained syntax is case-sensitive
 		DefaultColor: gets or sets the default color for the text
-		Name: the name of the definition (ie: Xml or REALbasic)
+		Name: the name of the definition (ie: Wren or Xojo)
 		
 	#tag EndNote
 
@@ -1260,6 +916,18 @@ Protected Class HighlightDefinition
 			End Get
 		#tag EndGetter
 		DefaultColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0, Description = 5468652063757272656E742076657273696F6E206F662074686520686967686C69676874696E6720656E67696E652E
+		#tag Getter
+			Get
+			  Static ver As New SyntaxArea.SemanticVersion(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
+			  
+			  Return ver
+			  
+			End Get
+		#tag EndGetter
+		Shared EngineVersion As SyntaxArea.SemanticVersion
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -1354,17 +1022,9 @@ Protected Class HighlightDefinition
 		Private Symbols() As SyntaxArea.SymbolsDefinition
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Static ver As New SyntaxArea.SemanticVersion(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION)
-			  
-			  Return ver
-			  
-			End Get
-		#tag EndGetter
-		Shared Version As SyntaxArea.SemanticVersion
-	#tag EndComputedProperty
+	#tag Property, Flags = &h0, Description = 5468697320646566696E6974696F6E27732076657273696F6E2E
+		Version As SyntaxArea.SemanticVersion
+	#tag EndProperty
 
 
 	#tag Constant, Name = MAJOR_VERSION, Type = Double, Dynamic = False, Default = \"2", Scope = Public

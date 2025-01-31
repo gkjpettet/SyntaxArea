@@ -2226,19 +2226,19 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1030
-      LockBottom      =   False
+      Left            =   896
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   69
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   678
+      Top             =   710
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2275,38 +2275,6 @@ Begin DesktopWindow WinDemo
       Underline       =   False
       Visible         =   True
       Width           =   74
-   End
-   Begin DesktopLabel LabelThemeDetail
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   20
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   810
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   0
-      Selectable      =   False
-      TabIndex        =   71
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Select a built-in theme or load your own."
-      TextAlignment   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   699
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   281
    End
    Begin DesktopPopupMenu PopupTheme
       AllowAutoDeactivate=   True
@@ -2350,12 +2318,12 @@ Begin DesktopWindow WinDemo
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   1030
-      LockBottom      =   False
+      Left            =   1024
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       MacButtonStyle  =   0
       Scope           =   0
       TabIndex        =   73
@@ -2554,7 +2522,7 @@ End
 		  mFinishedInitialising = True
 		  
 		  // Select the starting definition and matching example text.
-		  SelectStartingLanguage("XML/XHTML")
+		  SelectStartingLanguage("Xojo")
 		  
 		  CheckBoxEnableLineFolding.Value = True
 		  
@@ -2920,18 +2888,6 @@ End
 		  
 		  // Grab a reference to the bundled definitions folder.
 		  Var definitions As FolderItem = SpecialFolder.Resource("Definitions")
-		  
-		  ' // Load each XML definition.
-		  ' For Each definitionFile As FolderItem In definitions.Children
-		  ' If Not definitionFile.IsFolder And definitionFile.Extension = "xml" Then
-		  ' Var syntaxDefinition As New SyntaxArea.HighlightDefinition(CodeEditor)
-		  ' If Not syntaxDefinition.LoadFromXml(definitionFile) Then
-		  ' Raise New UnsupportedOperationException("Unable to load the `" + definitionFile.Name + "` definition file.")
-		  ' End If
-		  ' PopupDefinition.AddRow(syntaxDefinition.Name)
-		  ' PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = syntaxDefinition
-		  ' End If
-		  ' Next definitionFile
 		  
 		  // Load each TOML definition.
 		  For Each definitionFile As FolderItem In definitions.Children
@@ -3579,15 +3535,12 @@ End
 #tag Events ButtonLoadDefinition
 	#tag Event
 		Sub Pressed()
-		  Var f As FolderItem = FolderItem.ShowOpenFileDialog(MyFiles.TextXML)
+		  Var f As FolderItem = FolderItem.ShowOpenFileDialog(MyFiles.TextTOML)
 		  
 		  If f = Nil Then Return
 		  
 		  Var def As New SyntaxArea.HighlightDefinition(CodeEditor)
-		  If Not def.LoadFromXml(f) Then
-		    MessageBox("Invalid syntax definition file.")
-		    Return
-		  End If
+		  def.LoadFromTOML(f)
 		  
 		  PopupDefinition.AddRow(def.Name)
 		  PopupDefinition.RowTagAt(PopupDefinition.LastAddedRowIndex) = def

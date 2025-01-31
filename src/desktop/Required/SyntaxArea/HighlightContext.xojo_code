@@ -42,84 +42,6 @@ Protected Class HighlightContext
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 417070656E6473207468697320636F6E7465787420746F2074686520706172656E7420584D4C206E6F64652E20546869732069732075736564207768656E206578706F7274696E6720612073796E74617820646566696E6974696F6E20617320616E20584D4C2066696C652E
-		Sub AppendToXMLNode(parent As XmlNode, depth As Integer = 2)
-		  /// Appends this context to the parent XML node.
-		  /// This is used when exporting a syntax definition as an XML file.
-		  
-		  Var xdoc As XmlDocument
-		  Var node, context As XmlNode
-		  
-		  xdoc = parent.OwnerDocument
-		  context = parent.AppendChild(xdoc.CreateElement("highlightContext"))
-		  
-		  // Name.
-		  context.SetAttribute("name", Name)
-		  
-		  // Enabled.
-		  If Not Enabled Then
-		    context.SetAttribute("enabled", "false")
-		  End If
-		  
-		  // Start regex?
-		  If StartRegEx <> "" Then
-		    node = context.AppendChild(xdoc.CreateElement("startRegEx"))
-		    node.AppendChild(xdoc.CreateTextNode(StartRegEx))
-		    IndentNode(node, depth + 1)
-		  End If
-		  
-		  // End regex?
-		  If EndRegEx <> "" Then
-		    node = context.AppendChild(xdoc.CreateElement("endRegEx"))
-		    node.AppendChild(xdoc.CreateTextNode(EndRegEx))
-		    IndentNode(node, depth + 1)
-		  End If
-		  
-		  // Entry regex?
-		  If EntryRegEx <> "" Then
-		    node = context.AppendChild(xdoc.CreateElement("entryRegEx"))
-		    node.AppendChild(xdoc.CreateTextNode(EntryRegEx))
-		    IndentNode(node, depth + 1)
-		  End If
-		  
-		  // Keywords.
-		  If keywords.LastIndex > -1 Then
-		    node = context.AppendChild(xdoc.CreateElement("keywords"))
-		    Var tmp As String
-		    Var kw As XmlNode
-		    For Each tmp In keywords
-		      kw = node.AppendChild(xdoc.CreateElement("string"))
-		      kw.AppendChild(xdoc.CreateTextNode(tmp))
-		      IndentNode(kw, depth + 2)
-		    Next
-		    IndentNode(node, depth + 1, True)
-		  End If
-		  
-		  // Regexes.
-		  If Regexes.LastIndex > -1 Then
-		    node = context.AppendChild(xdoc.CreateElement("regExes"))
-		    Var tmp As String
-		    Var kw As XmlNode
-		    For Each tmp In Regexes
-		      kw = node.AppendChild(xdoc.CreateElement("string"))
-		      kw.AppendChild(xdoc.CreateTextNode(tmp))
-		      IndentNode(kw, depth + 2)
-		    Next
-		    IndentNode(node, depth + 1, True)
-		  End If
-		  
-		  // Finally subcontexts, if any.
-		  Var subContext As SyntaxArea.HighlightContext
-		  For Each subContext In SubContexts
-		    If subContext.Name = "fieldwhitespace" Or subContext.isPlaceholder Then Continue For
-		    subContext.appendToXMLNode(context, depth + 1)
-		  Next subContext
-		  
-		  IndentNode(context, depth, True)
-		  
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Constructor(owner As SyntaxArea.IEditor, caseSensitive As Boolean, createBlank As Boolean = True, owningSyntax As HighlightDefinition)
 		  Self.Owner = owner
@@ -378,25 +300,6 @@ Protected Class HighlightContext
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub IndentNode(node As XmlNode, level As Integer, indentCloseTag As Boolean = False)
-		  Var i As Integer
-		  Var s As String
-		  s = EndOfLine
-		  For i = 1 To level
-		    // Append a tab.
-		    s = s + Chr(9)
-		  Next i
-		  
-		  node.Parent.Insert(node.OwnerDocument.CreateTextNode(s), node)
-		  
-		  If indentCloseTag Then
-		    node.AppendChild(node.OwnerDocument.CreateTextNode(s))
-		  End If
-		  
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub ListKeywords(storage() As String)
 		  // Add mine.
@@ -575,82 +478,6 @@ Protected Class HighlightContext
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, Description = 4C6F6164732074686520636F6E74657874206F7574206F6620616E20584D4C206E6F64652E
-		Sub LoadFromXmlNode(node As XmlNode)
-		  /// Loads the context out of an XML node.
-		  
-		  Var tmp As String
-		  
-		  // Context name.
-		  Name = node.GetAttribute("name")
-		  
-		  // Case sensitivity override?
-		  If node.GetAttribute("caseSensitive") <> "" Then
-		    mScanner.Options.CaseSensitive = YN2Bool(node.GetAttribute("caseSensitive"))
-		  End If
-		  
-		  // Fallback style name,
-		  Fallback = node.GetAttribute("fallback")
-		  
-		  // Enabled?
-		  tmp = node.GetAttribute("enabled")
-		  Enabled = tmp <> "false"
-		  
-		  // Is this highlight context defined externally? That is, do we need to 
-		  // ask the code editor's host app for a matching syntax definition file?
-		  If node.GetAttribute("extension") <> "" And Owner.EnableDefinitionExtensions Then
-		    #Pragma Warning "BUG: The extension system now seems to not work at all and was buggy before!"
-		    If node.GetAttribute("extension") = MySyntax.Name Then
-		      // We will add this completed definition's contexts into this context once this
-		      // definition is finalised to prevent a stackoverflow error due to runaway recursion.
-		      MySyntax.ContextsToSelfReference.Value(Self) = Nil
-		    Else
-		      Var extension As SyntaxArea.HighlightDefinition = _
-		      Owner.RaiseRequestDefinitionExtension(node.GetAttribute("extension"))
-		      If extension <> Nil Then
-		        // Copy all of the extension definition's contexts into this context.
-		        For Each extensionContext As SyntaxArea.HighlightContext In extension.Contexts
-		          AddSubContext(extensionContext)
-		        Next extensionContext
-		      End If
-		    End If
-		  End If
-		  
-		  Var i, j As Integer
-		  Var subNode As XmlNode
-		  Var subContext As SyntaxArea.HighlightContext
-		  
-		  For i = 0 To node.ChildCount-1
-		    subNode = node.Child(i)
-		    Select Case subNode.Name
-		    Case "startRegEx"
-		      StartRegEx = subNode.FirstChild.Value
-		    Case "endRegEx"
-		      EndRegEx = subNode.FirstChild.Value
-		    Case "entryRegEx"
-		      EntryRegEx = subNode.FirstChild.Value
-		    Case "keywords"
-		      For j = 0 To subNode.ChildCount-1
-		        If Not subNode.Child(j) IsA XmlComment Then
-		          // Add only if it's not a comment.
-		          AddKeyword(subNode.Child(j).FirstChild.Value)
-		        End If
-		      Next
-		    Case "regExes"
-		      For j = 0 To subNode.ChildCount-1
-		        If Not subNode.Child(j) IsA XmlComment Then _
-		        AddRegEx(subNode.Child(j).FirstChild.Value)
-		      Next
-		    Case "highlightContext"
-		      subContext = New HighlightContext(Self.Owner, mScanner.Options.CaseSensitive, MySyntax)
-		      subContext.loadFromXmlNode(subNode)
-		      AddSubContext(subContext)
-		    End Select
-		  Next i
-		  
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Function SubContextPattern() As String
 		  If mSubContextPattern = "" Then
@@ -710,9 +537,6 @@ Protected Class HighlightContext
 		addSubContext(context as HighlightContext): adds the context as a subcontext of this one, for example: properties within 
 		xml tags
 		
-		appendToXMLNode(parent as xmlNode, depth as integer = 2): appends this context to the parent xml node as an xml node, 
-		this is done when exporting the parent definition as an xml.
-		
 		Constructor(caseSensitive as Boolean): the constructor sets the case sensitiviness of the context.
 		
 		contextRegEx as string: returns the composed regular expression with all the contents of the context, if the context 
@@ -720,8 +544,6 @@ Protected Class HighlightContext
 		
 		Highlight(text as string, style as styledText, subExpression as string, position as integer, scanner as regex): Highlights the 
 		subexpression, text is the text of the parent context, position is the position of the first character of the subexpression in the context.
-		
-		loadFromXmlNode(node as XmlNode): loads the context from the xmlNode.
 		
 		Properties:
 		StartRegEx: the regular expression that defines the start of the context (ie: in java, /* for multiline comments)
