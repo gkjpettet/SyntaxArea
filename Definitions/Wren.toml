@@ -1,0 +1,74 @@
+# Wren syntax definition.
+name = "Wren"
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[blocks.generic]
+start = '\{\s*(?:$|//|/\*|\\)|\s*/\*\s*$'
+end = '^\s*\}|^\s*\*/'
+indent = 1
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+# Every context in Wren is case sensitive so we'll set it at the top level.
+caseSensitive = true
+
+# ------------------------------------------------------
+# Strings
+[contexts.wrenString]
+regex = '"[^\n]*"'
+fallback = 'string'
+
+[contexts.wrenString.wrenEscape]
+# Escape sequences within strings.
+regex = '\\(?:[0\\"%abeefnrtv]|x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})'
+fallback = 'escape'
+
+[contexts.wrenString.wrenStringInterpolation]
+regex = '%\(([^()]*|\((?:[^()]*|\([^()]*\))*\))*\)'
+fallback = 'string'
+
+[contexts.wrenRawString]
+# Raw strings (triple quoted)
+start = '"""'
+end = '"""'
+fallback = 'string'
+# ------------------------------------------------------
+# Comments
+[contexts.wrenComment]
+start = '//'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.wrenMultiLineComment]
+start = '/\*'
+end = '\*/'
+fallback = 'comment' 
+# ------------------------------------------------------
+
+[contexts.wrenKeyword]
+keywords = ["as", "break", "class", "construct", "continue", "else", "false", "for", "foreign", "if", "import", "in", "is", "null", "return", "static", "super", "this", "true", "var", "while"]
+fallback = 'keyword'
+
+[contexts.wrenField]
+# Field identifiers (starting with an underscore)
+regex = '_[A-Za-z_][A-Za-z0-9_]*'
+fallback = 'identifier'
+
+[contexts.lowercaseIdentifier]
+regex = '[a-z][A-Za-z0-9_]*'
+fallback = 'identifier'
+
+[contexts.uppercaseIdentifier]
+regex = '[A-Z][A-Za-z0-9_]*'
+fallback = 'identifier'
+
+[contexts.wrenNumber]
+regex = '-?(?:0x[0-9a-f]+|[0-9]+(?:\.[0-9]+)?(?:e[+-]?[0-9]+)?)'
+fallback = 'number'
