@@ -17,12 +17,12 @@ indent = 1
 # Used to identify declared symbols that are useful for 
 # navigation inside larger source files.
 # ======================================================
-# Note that we strip `{` from the matched symbol name. We use the `rTrim` key 
-# for the constructor and method symbols to tell the engine to do this so we can 
-# avoid using expensive forward look-aheads in the regex patterns.
 [symbols.class]
 regex = '^\s*class [^ {]*'
 
+# Note that we strip `{` from the matched symbol name. We use the `rTrim` key 
+# for the constructor and method symbols to tell the engine to do this so we can 
+# avoid using expensive forward look-aheads in the regex patterns.
 [symbols.constructor]
 regex = '^\s*constructor\s*\((?:\w|,|\s)*\)\s*\{'
 rTrim = '{'

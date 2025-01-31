@@ -1,0 +1,93 @@
+# PHP syntax definition.
+name = "PHP"
+engineVersion = "2.0.0"
+definitionVersion = "1.0.0"
+
+# ======================================================
+# BLOCK RULES
+# These define the start and end of blocks
+# ======================================================
+[blocks.generic]
+start = '\{\s*(?:$|#)'
+end = '^\s*\}'
+indent = 1
+
+# ======================================================
+# SYMBOLS
+# Used to identify declared symbols that are useful for 
+# navigation inside larger source files.
+# ======================================================
+[symbols.class]
+regex = '^\s*class [^ {]*'
+
+# Note that we strip `{` from the matched symbol name. We use the `rTrim` key 
+# for the constructor and method symbols to tell the engine to do this so we can 
+# avoid using expensive forward look-aheads in the regex patterns.
+[symbols.constructor]
+regex = '^\s*__construct\s*\((?:\w|,|\s)*\)\s*\{'
+rTrim = '{'
+
+[symbols.method]
+regex = '^\s*(?!for\b|foreach|while|do|switch)((static\s*)|(public\s*)|(protected\s*)|(private\s*))?\w*=?\s*\(?(?:\w|,|\s)*\)?\s*\{'
+rTrim = '{'
+
+# ======================================================
+# CONTEXTS
+# ======================================================
+[contexts]
+# Every context in PHP is case insensitive so we'll set it at the top level.
+caseSensitive = false
+
+[contexts.phpTagStart]
+regex = '<\?php'
+fallback = 'tag'
+
+[contexts.phpTagEnd]
+regex = '\?>'
+fallback = 'tag'
+
+# ------------------------------------------------------
+# Comments
+[contexts.phpSingleLineComment]
+start = '\/\/'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.phpHashComment]
+start = '#'
+end = '[\n\r]'
+fallback = 'comment'
+
+[contexts.phpBlockComment]
+start = '/\*'
+end = '\*/'
+fallback = 'comment'
+
+# ------------------------------------------------------
+# Strings
+[contexts.phpSingleQuoteString]
+start = "'"
+end = '''(((?<!\\)(\\\\)*)|^)''''
+fallback = 'string'
+
+[contexts.phpDoubleQuoteString]
+start = '"'
+end = '(((?<!\\)(\\\\)*)|^)"'
+fallback = 'string'
+# ------------------------------------------------------
+
+[contexts.phpNumber]
+regex = '(?<=[^\w.]|^)(?=\d+|\d+\.|\.\d+|\d+e(?:\d|\b))((?:\d+_\d+)+n?|\d+n?|\d*\.\d*(?:e[-+]?\d*)?|\d+e[-+]?\d*)(?=[^\w.]|$)|(?<=[^\w.]|^)(?:\d+|0x[[:xdigit:]]*\b|0b[01]*\b|0o[0-7]*\b)(?=[^\w.]|$)'
+fallback = 'number'
+
+[contexts.phpKeyword]
+keywords = ["__halt_compiler", "abstract", "and", "array", "as", "break", "callable", "case", "catch", "class", "clone", "const", "continue", "declare", "default", "die", "do", "echo", "else", "elseif", "empty", "enddeclare", "endfor", "endforeach", "endif", "endswitch", "endwhile", "eval", "exit", "extends", "final", "finally", "fn", "for", "foreach", "function", "global", "goto", "if", "implements", "include", "include_once", "instanceof", "insteadof", "interface", "isset", "list", "match", "namespace", "new", "or", "print", "private", "protected", "public", "readonly", "require", "require_once", "return", "static", "switch", "throw", "trait", "try", "unset", "use", "var", "while", "xor", "yield", "yield_from"]
+fallback = 'keyword'
+
+[contexts.phpUppercaseIdentifier]
+regex = '\b[A-Z]\w*'
+fallback = 'uppercaseIdentifier'
+
+[contexts.phpLowercaseIdentifier]
+regex = '\b[a-z]\w*'
+fallback = 'lowercaseIdentifier'
