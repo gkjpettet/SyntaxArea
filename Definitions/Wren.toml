@@ -8,7 +8,7 @@ definitionVersion = "1.0.0"
 # These define the start and end of blocks
 # ======================================================
 [blocks.generic]
-start = '\{\s*(?:$|//|/\*|\\)|\s*/\*\s*$'
+start = '^(?:[^%]|%[^(])*(\{)(?:[^}])*$'
 end = '^\s*\}|^\s*\*/'
 indent = 1
 
