@@ -22,7 +22,7 @@ caseSensitive = true
 # ------------------------------------------------------
 # Strings
 [contexts.wrenString]
-regex = '"[^\n]*"'
+regex = '"(?!"")[^\n]*"'
 fallback = 'string'
 
 [contexts.wrenString.wrenEscape]

@@ -2522,7 +2522,7 @@ End
 		  mFinishedInitialising = True
 		  
 		  // Select the starting definition and matching example text.
-		  SelectStartingLanguage("Xojo")
+		  SelectStartingLanguage("Wren")
 		  
 		  CheckBoxEnableLineFolding.Value = True
 		  
