@@ -73,6 +73,31 @@ fallback = 'identifier'
 regex = '-?(?:0x[0-9a-f]+|[0-9]+(?:\.[0-9]+)?(?:e[+-]?[0-9]+)?)'
 fallback = 'number'
 
-[contexts.annotation]
-regex = '#[a-fA-Z][0-9a-zA-Z]+'
+# ------------------------------------------------------
+# Annotations
+# [contexts.wrenAnnotation]
+# # E.g: #someAnnotation
+# regex = '#[a-zA-Z][0-9a-zA-Z]+\s*'
+# fallback = 'directive'
+
+[contexts.wrenKeyAnnotation]
+# E.: #someAnnotation
+regex = '#[a-zA-Z][0-9a-zA-Z]*(?!\=)\s*[\n]'
+fallback = 'directive'
+
+[contexts.wrenKeyValueAnnotation]
+# E.: #someAnnotation = value
+regex = '#[a-zA-Z][0-9a-zA-Z]*\s*\=\s*(?!""")[^\n]+[\n]'
+fallback = 'directive'
+
+[contexts.wrenDocAnnotation]
+# E.g: #doc = """multiline string"""
+start = '#[a-zA-Z][0-9a-zA-Z]+\s*\=\s*"""'
+end = '"""'
+fallback = 'directive'
+
+[contexts.wrenGroupAnnotation]
+# E.g: #something(...)
+start = '#[a-zA-Z][0-9a-zA-Z]+\s*\('
+end = '\)'
 fallback = 'directive'
