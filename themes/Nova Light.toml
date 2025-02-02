@@ -52,7 +52,7 @@ italic = true
 underline = false
 
 [styles.directive]
-textColor = "&h007C3EA6"
+textColor = "&h00683C00"
 backColor = "&h00000000"
 hasBackColor = false
 bold = false

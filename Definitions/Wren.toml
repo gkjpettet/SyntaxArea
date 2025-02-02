@@ -72,3 +72,7 @@ fallback = 'identifier'
 [contexts.wrenNumber]
 regex = '-?(?:0x[0-9a-f]+|[0-9]+(?:\.[0-9]+)?(?:e[+-]?[0-9]+)?)'
 fallback = 'number'
+
+[contexts.annotation]
+regex = '#[a-fA-Z][0-9a-zA-Z]+'
+fallback = 'directive'
