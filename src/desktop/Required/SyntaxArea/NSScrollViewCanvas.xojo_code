@@ -185,6 +185,8 @@ Inherits DesktopTextInputCanvas
 		      // Call the instance method.
 		      oNSScrollViewCanvas.PerformScrollerStyleChanged
 		    End If
+		  #Else
+		    #Pragma Unused obj
 		  #EndIf
 		  
 		End Sub
@@ -208,6 +210,10 @@ Inherits DesktopTextInputCanvas
 		      // Call the instance method.
 		      oNSScrollViewCanvas.PerformScaling(magnification(evt))
 		    End If
+		    
+		  #Else
+		    #Pragma Unused obj
+		    #Pragma Unused evt
 		  #EndIf
 		  
 		End Sub
@@ -244,6 +250,9 @@ Inherits DesktopTextInputCanvas
 		      // Call the instance method.
 		      oNSScrollViewCanvas.PerformBoundsChanged
 		    End If
+		    
+		  #Else
+		    #Pragma Unused obj
 		  #EndIf
 		  
 		End Sub
@@ -302,6 +311,10 @@ Inherits DesktopTextInputCanvas
 		    
 		    RaiseEvent NSScrollViewMagnify(scaleOffset)
 		    
+		  #Else
+		    
+		    #Pragma Unused scaleOffset
+		    
 		  #EndIf
 		End Sub
 	#tag EndMethod
@@ -340,6 +353,11 @@ Inherits DesktopTextInputCanvas
 		    
 		    ScrollPoint(NSDocumentView, oPoint)
 		    
+		  #Else
+		    
+		    #Pragma Unused x
+		    #Pragma Unused y
+		    
 		  #EndIf
 		End Sub
 	#tag EndMethod
@@ -362,6 +380,10 @@ Inherits DesktopTextInputCanvas
 		    // Set the frame size. Our ScrollView will accomodate.
 		    SetFrameSize(NSDocumentView, oSize)
 		    
+		  #Else
+		    
+		    #Pragma Unused width
+		    #Pragma Unused height
 		    
 		  #EndIf
 		End Sub
