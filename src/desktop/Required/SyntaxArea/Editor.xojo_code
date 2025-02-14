@@ -613,7 +613,12 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		  
 		  If MouseOverBlock <> Nil Then MouseOverBlock = Nil
 		  
-		  ChangeScrollValues(ScrollPositionX + (deltaX * 5), ScrollPosition + deltaY)
+		  If Keyboard.AsyncShiftKey And ScrollHorizontallyWithShiftKey Then
+		    // If the user scrolls with the shift key down then we scroll horizontally.
+		    ChangeScrollValues(ScrollPositionX + (deltaY * 5), ScrollPosition)
+		  Else
+		    ChangeScrollValues(ScrollPositionX + (deltaX * 5), ScrollPosition + deltaY)
+		  End If
 		  
 		End Function
 	#tag EndEvent
@@ -6655,6 +6660,10 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		RightScrollMargin As Integer = 150
 	#tag EndProperty
 
+	#tag Property, Flags = &h0, Description = 49662054727565207468656E2074686520656469746F722077696C6C207363726F6C6C2074686520636F6E74656E747320686F72697A6F6E74616C6C7920696620746865207368696674206B657920697320646570726573736564207768656E20746865206D6F75736520776865656C206973207363726F6C6C65642E20486173206E6F20656666656374206F6E206D61634F532E
+		ScrollHorizontallyWithShiftKey As Boolean = False
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0, Description = 54686520766572746963616C207363726F6C6C20706F736974696F6E2028696E206C696E6573292E
 		#tag Getter
 			Get
@@ -7755,6 +7764,14 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 			Visible=false
 			Group="Autocompletion"
 			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollHorizontallyWithShiftKey"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

@@ -208,6 +208,7 @@ Begin DesktopWindow WinDemo
          RightMarginAtPixel=   0
          RightScrollMargin=   150
          Scope           =   0
+         ScrollHorizontallyWithShiftKey=   False
          ScrollPosition  =   0
          ScrollPositionX =   0
          SelectionLength =   0
@@ -1377,7 +1378,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   540
+      Top             =   564
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1408,7 +1409,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   540
+      Top             =   564
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1440,7 +1441,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   517
+      Top             =   541
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1467,7 +1468,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   518
+      Top             =   542
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1498,7 +1499,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   561
+      Top             =   585
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1525,7 +1526,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   562
+      Top             =   586
       Transparent     =   True
       Visible         =   True
       Width           =   18
@@ -1644,7 +1645,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   593
+      Top             =   617
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1673,7 +1674,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   593
+      Top             =   617
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1705,7 +1706,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   614
+      Top             =   638
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1736,7 +1737,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   593
+      Top             =   617
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1768,7 +1769,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   646
+      Top             =   670
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1797,7 +1798,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   646
+      Top             =   670
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2238,7 +2239,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   710
+      Top             =   734
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2270,7 +2271,7 @@ Begin DesktopWindow WinDemo
       TextAlignment   =   3
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   678
+      Top             =   702
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2299,7 +2300,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   678
+      Top             =   702
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2330,7 +2331,7 @@ Begin DesktopWindow WinDemo
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   710
+      Top             =   734
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -2453,6 +2454,36 @@ Begin DesktopWindow WinDemo
       Visible         =   True
       VisualState     =   1
       Width           =   179
+   End
+   Begin DesktopCheckBox CheckBoxScrollHorizontallyWithShift
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Scroll Horizontally With Shift Key"
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   810
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   78
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   514
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   1
+      Width           =   215
    End
 End
 #tag EndDesktopWindow
@@ -2784,6 +2815,15 @@ End
 		  SelectedSuggestionTextColor.SelectedColor = CodeEditor.SuggestionPopupSelectedTextColor
 		  SuggestionPopupBackColor.SelectedColor = CodeEditor.SuggestionPopupBackColor
 		  
+		  // Scroll horizontally with shift key.
+		  #If TargetMacOS
+		    CheckBoxScrollHorizontallyWithShift.Enabled = False
+		    CheckBoxScrollHorizontallyWithShift.Value = False
+		  #Else
+		    CheckBoxScrollHorizontallyWithShift.Enabled = True
+		    CheckBoxScrollHorizontallyWithShift.Value = CodeEditor.ScrollHorizontallyWithShiftKey
+		  #EndIf
+		  
 		  // Syntax definition.
 		  For i As Integer = 0 To PopupDefinition.LastRowIndex
 		    If PopupDefinition.RowTextAt(i) = CodeEditor.SyntaxDefinition.Name Then
@@ -2993,6 +3033,15 @@ End
 		  
 		  // Extension definitions.
 		  CheckBoxEnableDefinitionExtensions.Value = CodeEditor.EnableDefinitionExtensions
+		  
+		  // Scroll horizontally with shift key.
+		  #If TargetMacOS
+		    CheckBoxScrollHorizontallyWithShift.Enabled = False
+		    CheckBoxScrollHorizontallyWithShift.Value = False
+		  #Else
+		    CheckBoxScrollHorizontallyWithShift.Enabled = True
+		    CheckBoxScrollHorizontallyWithShift.Value = CodeEditor.ScrollHorizontallyWithShiftKey
+		  #EndIf
 		  
 		  // ===========
 		  // Info panel.
@@ -3713,6 +3762,14 @@ End
 		Sub ValueChanged()
 		  CodeEditor.EnableDefinitionExtensions = Me.Value
 		  ReloadDefinitions
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBoxScrollHorizontallyWithShift
+	#tag Event
+		Sub ValueChanged()
+		  CodeEditor.ScrollHorizontallyWithShiftKey = Me.Value
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
