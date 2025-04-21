@@ -401,6 +401,10 @@ Protected Class EditorTheme
 		CaretColor As Color
 	#tag EndProperty
 
+	#tag Property, Flags = &h0, Description = 41726269747261727920646174612E20596F752063616E20757365207468697320666F7220776861746576657220796F75206C696B652E2044656661756C747320746F204E696C2E
+		Data As Variant
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
