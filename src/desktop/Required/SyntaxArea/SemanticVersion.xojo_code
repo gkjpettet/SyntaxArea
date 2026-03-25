@@ -55,6 +55,8 @@ Protected Class SemanticVersion
 		  /// 1 : Self > other
 		  /// ```
 		  
+		  If other Is Nil Then Return 1
+		  
 		  // Equal?
 		  If Self Is other Then Return 0
 		  If Major = other.Major And Minor = other.Minor And Patch = other.Patch Then

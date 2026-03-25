@@ -377,7 +377,6 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 
 	#tag Event
 		Function KeyDown(key As String) As Boolean
-		  #Pragma Unused Key
 		  
 		  // Catch Ctrl-Space key on Windows & Linux.
 		  // This is handled on macOS within `DoCommand` as "noop:"
@@ -389,7 +388,7 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 		    End If
 		  #EndIf
 		  
-		  
+		  Return KeyDown(key)
 		End Function
 	#tag EndEvent
 
@@ -5121,6 +5120,10 @@ Implements SyntaxArea.IEditor,SyntaxArea.MessageReceiver
 
 	#tag Hook, Flags = &h0
 		Event HorizontalScrollValueChanged()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event KeyDown(key As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
